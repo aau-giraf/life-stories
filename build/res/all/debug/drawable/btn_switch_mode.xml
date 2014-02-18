@@ -1,0 +1,5 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- use "@android:drawable/btn_default" to keep consistent with system -->
+    <item android:drawable="@drawable/btn_custom_toggle" />
+    <item android:drawable="@drawable/btn_switch_mode_image" />
+</layer-list> <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Tortoise/res/drawable/btn_switch_mode.xml -->

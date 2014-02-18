@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="TortoiseOasisLibUnspecified.aar" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Tortoise\build\exploded-bundles\TortoiseOasisLibUnspecified.aar\assets" />
+    </dataSet>
+    <dataSet config="TortoisePictogramLibUnspecified.aar" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Tortoise\build\exploded-bundles\TortoisePictogramLibUnspecified.aar\assets" />
+    </dataSet>
+    <dataSet config="main" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Tortoise\assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Tortoise\build-types\debug\assets" />
+    </dataSet>
+
+</merger>

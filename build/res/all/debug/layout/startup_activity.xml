@@ -1,0 +1,85 @@
+<LinearLayout 
+	android:id="@+id/parent_container"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="@drawable/main_gradient_bg"
+	android:focusableInTouchMode="true" >
+
+    <RelativeLayout
+        android:id="@+id/sequence_bar"
+        android:layout_width="match_parent"
+        android:layout_height="140sp"
+        android:background="@drawable/main_topbar_gradient_bg"
+        android:orientation="horizontal" >
+	
+        <ImageView 
+            android:id="@+id/profileImage"
+            android:layout_alignParentLeft="true"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="12dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/profile_image_container_bg"
+            android:layout_centerVertical="true"/>
+        
+        <TextView
+            android:id="@+id/child_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="TORTOISE"
+            android:textSize="60sp"
+            android:textColor="@color/text_color" />
+        
+        <ImageButton
+            android:id="@+id/add_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_toLeftOf="@+id/edit_mode_toggle"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/add"
+            android:background="@drawable/custom_btn" />
+        
+        <ToggleButton
+            android:id="@+id/edit_mode_toggle"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_toLeftOf="@+id/template_mode_toggle"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_edit"
+            android:src="@null"
+            android:textOn=""
+            android:textOff=""
+            android:layout_marginRight="15dp" />
+        
+        <ToggleButton
+            android:id="@+id/template_mode_toggle"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+			android:layout_centerVertical="true"
+			android:layout_alignParentRight="true"
+			android:src="@null"
+            android:background="@drawable/btn_switch_mode"
+            android:layout_marginRight="15dp"
+            android:textOn=""
+            android:textOff="" />
+	    
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/sequence_grid"
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+        android:layout_marginTop="-6dp"
+    	android:baselineAligned="false"
+        android:gravity="center"
+        android:numColumns="6"
+        android:listSelector="#00000000"
+        android:fadeScrollbars="false">
+    </GridView>
+</LinearLayout><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Tortoise/res/layout/startup_activity.xml -->

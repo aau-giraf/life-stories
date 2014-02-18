@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+     <shape xmlns:android="http://schemas.android.com/apk/res/android">
+         <stroke
+             android:width="4dp"
+             android:color="#fe9e6435" />
+
+         <solid android:color="#FFFFFF" />
+         <padding
+             android:bottom="8dp"
+             android:left="8dp"
+             android:right="8dp"
+             android:top="8dp" />
+         <corners android:radius="16dp" />
+     </shape><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Tortoise/res/layout/border_selected.xml -->

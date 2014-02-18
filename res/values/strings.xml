@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Tortoise</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_tortoise_startup_screen">Tortoise</string>
+    <string name="new_lifestory">Create a new life story</string>
+    <string name="bin">Papirkurv</string>
+    <string name="test_data">Test Data</string>
+    <string name="contentDes_lifestories">Image representing lifestory</string>
+    <string name="story_name">Navn på historie</string>
+    <string name="dialog_exit_title">Er du sikker på du vil afslutte?</string>
+    <string name="dialog_exit_message">Dit arbejde vil blive slettet!</string>
+    <string name="dialog_save_title">Hvordan vil du gemme sekvensen?</string>
+    <string name="dialog_save_template">Skabelon</string>
+    <string name="dialog_save_story">Historie</string>
+    <string name="dialog_promt_for_title_title">Historie ikke navngivet eller intet billede valgt</string>
+    <string name="dialog_promt_for_title_message">Du skal vælge et billede og en titel til historien, før den kan gemmes.</string>
+    <string name="dialog_select_choice_title">Tilføj til valg</string>
+    <string name="dialog_delete_title">Vil du slette denne historie?</string>
+    <string name="dialog_delete_message">Vil du slette</string>
+    <string name="choice">Valg</string>
+    <string name="save">Gem</string>
+    <string name="no">Nej</string>
+    <string name="yes">Ja</string>
+    <string name="ok">Ok</string>
+    <string name="abort">Fortryd</string>
+    <string name="end">Afslut</string>
+
+</resources>
