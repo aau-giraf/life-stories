@@ -1,6 +1,0 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/switch_mode" android:state_checked="true"  android:state_pressed="true"/>
-    <item android:drawable="@drawable/switch_mode" android:state_checked="true"  android:state_focused="false"/>
-    <item android:drawable="@drawable/switch_mode"  android:state_checked="false" android:state_pressed="true"/>
-    <item android:drawable="@drawable/switch_mode"  android:state_checked="false" android:state_focused="false"/>
-</selector><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Tortoise/res/drawable/btn_switch_mode_image.xml -->
