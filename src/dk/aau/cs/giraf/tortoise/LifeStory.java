@@ -14,7 +14,8 @@ public class LifeStory {
 	private int currentIndex;
 	private Profile guardian;
 	private Profile child;
-	
+
+    // Singleton pattern
 	public static LifeStory getInstance() {
 		if(instance == null)
 			instance = new LifeStory(0);

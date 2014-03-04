@@ -41,21 +41,26 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.startup_activity);
-		
+
+        // Warn user and do not execute Tortoise if not launched from Giraf
 		if (getIntent().getExtras() == null) {
 			Toast t = Toast.makeText(this, 
 					"Tortoise skal startes fra GIRAF", Toast.LENGTH_LONG);
 			t.show();
 			finish();
 		}
+        // If launched from Giraf, then execute!
 		else {
+            // Initialize image and name of profile
 			ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
 			TextView profileName = (TextView)findViewById(R.id.child_name);
-		
+
 			Intent i = getIntent();
 			Helper h = new Helper(this);
+
+            // Set guardian- and child profiles
 			LifeStory.getInstance().setGuardian(
 					h.profilesHelper.getProfileById(i.getLongExtra("currentGuardianID", -1)));
 			LifeStory.getInstance().setChild(
@@ -63,9 +68,12 @@ public class MainActivity extends Activity {
 			profileName.setText(LifeStory.getInstance().getChild().getFirstname());
 			setProfileImages();
 			profileImage.setImageBitmap(childImage);
+
+            // Clear existing life stories
 			LifeStory.getInstance().getStories().clear();
 			LifeStory.getInstance().getTemplates().clear();
-			  
+
+            // Set templates belonging to the chosen guardian and stories belonging to the chosen child
 			JSONSerializer js = new JSONSerializer();
 			try {
 				LifeStory.getInstance().setTemplates(
@@ -83,7 +91,8 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
+            // Initialize grid view
 			GridView sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
 			sequenceAdapter = initAdapter();
 			sequenceGrid.setAdapter(sequenceAdapter);
@@ -102,16 +111,15 @@ public class MainActivity extends Activity {
 					startActivity(i);
 				}
 			});
-			
-			
-			//Load Sequence
+
+			// Load Sequence
 			sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 	
 					Intent i;
-					
+
 					if(isInTemplateMode) {
 						canFinish = false;
 						i = new Intent(getApplicationContext(), EditModeActivity.class);
@@ -280,12 +288,16 @@ public class MainActivity extends Activity {
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		String storyName;
+
+        // If isInTemplateMode is true then the guardian profile is active. If not, the child profile is active.
 		if(isInTemplateMode) {
 			storyName = LifeStory.getInstance().getTemplates().get(position).getTitle();
 		}
 		else {
 			storyName = LifeStory.getInstance().getStories().get(position).getTitle();
 		}
+
+        // Dialog that prompts for deleting a story or template
 		switch (dialogId) {
 		case DIALOG_DELETE:
 			dialog.setContentView(R.layout.dialog_custom);
