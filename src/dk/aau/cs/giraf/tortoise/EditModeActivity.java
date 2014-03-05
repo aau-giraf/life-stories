@@ -384,7 +384,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 		}
 		renderPictograms();
 	}
-	
+
 	public void renderPictograms() {
         // Initialize layout containing pictograms in case more than one is preselected
 		LinearLayout newChoiceContent = (LinearLayout)findViewById(R.id.newChoiceContent);
@@ -661,7 +661,11 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 		});
 	}
-	
+
+    /**
+     * Adds a linear layout View to menuBar
+     * @param id
+     */
 	public void renderMenuBar(int id) {
 		LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		LinearLayout menu = (LinearLayout)inflater.inflate(id, null);
@@ -670,9 +674,16 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 		}
 		menuBar.addView(menu);
 	}
-	
+
+    /**
+     * Makes sure that the View v is positioned on the mainLayout where is is dropped
+     * @param v
+     * @param event
+     * @return
+     */
 	public boolean mainLayoutDrag(View v, DragEvent event) {
 
+        // Grim, grim GRIM switch!
 		switch(event.getAction()) {
 		case DragEvent.ACTION_DROP:
 			EditModeFrameView view = (EditModeFrameView) event.getLocalState();
@@ -738,7 +749,12 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 		}
 	}
-	
+
+    /**
+     * Possibly obsolete, as it overrides an identical method
+     * @param menu
+     * @return
+     */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
