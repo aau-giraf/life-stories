@@ -1,7 +1,15 @@
 package dk.aau.cs.giraf.tortoise;
 
-/**
- * Created by Avalon on 05-03-14.
- */
-public class GuiHelper {
+import android.content.Context;
+import android.widget.Toast;
+
+public class GuiHelper
+{
+    public static void ShowToast(Context context, CharSequence msg)
+    {
+        int duration = Toast.LENGTH_LONG;
+
+        Toast toast = Toast.makeText(context, msg, duration);
+        toast.show();
+    }
 }
