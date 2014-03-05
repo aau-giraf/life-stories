@@ -99,7 +99,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			LifeStory.getInstance().setCurrentStory(new Sequence());
 		}
 		else {
-			LifeStory.getInstance().setCurrentTemplate(EditModeActivity.this.getApplicationContext(), template);
+			LifeStory.getInstance().setCurrentTemplate(EditModeActivity.this.getApplicationContext(), template); // todo - kan EditModeActivity. slettes?!?
 			renderTemplate();
 		}
 		
@@ -386,9 +386,15 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 	}
 	
 	public void renderPictograms() {
+        // Initialize layout containing pictograms in case more than one is preselected
 		LinearLayout newChoiceContent = (LinearLayout)findViewById(R.id.newChoiceContent);
+        // Initializes the button that accepts the current choice
 		ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
 		int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
+        /* Activates or disables the "Accept"-button
+        * WHY IS THIS NECESSARY FOR THE BUTTON TO BECOME ACTIVE?!?
+        * currentEditModeFrame.getMediaFrame().getContent().size() == 0
+        * */
 		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getContent().size() == 0) {
 			selectChoices.setAlpha(1.0f);
 			selectChoices.setEnabled(true);
@@ -682,12 +688,14 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 	
 	public void renderTemplate() {
 		RelativeLayout.LayoutParams params;
+
+        // For every MediaFrame in the current LifeStory...
 		for (MediaFrame m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
 			m.setOnContentChangedListener(new OnContentChangedEventListener() {
 				
 				@Override
 				public void OnIsChoiceListener(MediaFrame mediaFrame, boolean isChoice) {
-					EditModeActivity.this.updateMediaFrameChoice(mediaFrame, isChoice);	
+                    EditModeActivity.this.updateMediaFrameChoice(mediaFrame, isChoice);
 				}
 
 				@Override
