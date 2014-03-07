@@ -47,6 +47,12 @@ public class MainActivity extends Activity {
     private Bitmap guardianImage;
     private Profile currGuard;
 
+    /**
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -70,7 +76,10 @@ public class MainActivity extends Activity {
         }
     }
 
-
+    /**
+     * Initializes all app elements.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
