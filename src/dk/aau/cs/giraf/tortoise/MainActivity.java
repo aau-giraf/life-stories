@@ -6,6 +6,7 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -155,8 +156,8 @@ public class MainActivity extends Activity {
                     //Intent intent = new Intent();
                     //intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.ProfileSelectActivity"));
                     //startActivity(intent);
-/*
-                    Intent intent = new Intent();
+
+                    Intent intent = new Intent("dk.aau.cs.giraf.launcher.action.SELECTPROFILE");
                     // put package name
                     intent.putExtra("appPackageName", "dk.aau.cs.giraf.tortoise");
                     // put Activity name
@@ -167,13 +168,14 @@ public class MainActivity extends Activity {
                     intent.putExtra("currentGuardianID", currGuard.getId()); // tony stark
 
                     intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.ProfileSelectActivity"));
-                    startActivity(intent);
-*/
 
-                    Intent intent = new Intent();
-                    intent.putExtra("currentGuardianID", currGuard.getId());
-                    intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.ProfileSelectActivity"));
-                    startActivityForResult(intent, 11);
+                    // Verify the intent will resolve to at least one activity
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }else
+                    {
+                        GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
+                    }
                 }
             });
 
