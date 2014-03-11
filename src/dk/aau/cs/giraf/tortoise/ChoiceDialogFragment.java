@@ -30,7 +30,7 @@ public class ChoiceDialogFragment extends DialogFragment {
         frag.setArguments(args);
         return frag;
     }
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
