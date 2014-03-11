@@ -17,7 +17,12 @@ public class ChoiceDialogFragment extends DialogFragment {
     }
 	
 	NoticeDialogListener mListener;
-	
+
+    /**
+     * Static constructor that returns an instance of this class
+     * @param numChoices
+     * @return
+     */
 	public static ChoiceDialogFragment newInstance(int numChoices) {
         ChoiceDialogFragment frag = new ChoiceDialogFragment();
         Bundle args = new Bundle();
@@ -25,7 +30,7 @@ public class ChoiceDialogFragment extends DialogFragment {
         frag.setArguments(args);
         return frag;
     }
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -36,7 +41,7 @@ public class ChoiceDialogFragment extends DialogFragment {
                     + " must implement NoticeDialogListener");
         }
 	}
-	
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
