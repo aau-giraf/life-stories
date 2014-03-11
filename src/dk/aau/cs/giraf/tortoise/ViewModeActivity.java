@@ -333,7 +333,13 @@ public class ViewModeActivity extends Activity {
 			}
 		}
 	}
-	
+
+    /**
+     * Returns true if the provided Pictogram is in the provided ViewModeFrameView
+     * @param p
+     * @param e
+     * @return
+     */
 	public boolean isPictogramInList(Pictogram p, ViewModeFrameView e) {
 		boolean isTrue;
 		int index = e.getMediaFrame().getContent().indexOf(p);
@@ -385,7 +391,7 @@ public class ViewModeActivity extends Activity {
 		}
 		menuBar.addView(menu);
 	}
-	
+
 	public void detatchAllPictos() {
 		for(MediaFrame m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
 			for(Pictogram p : m.getContent()) {

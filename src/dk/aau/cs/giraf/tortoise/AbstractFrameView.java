@@ -35,7 +35,11 @@ public abstract class AbstractFrameView extends FrameLayout {
 		this.setPadding((int)(15*scale), (int) (15*scale), (int) (15*scale), (int) (15*scale));
 		this.setLayoutParams(getOuterLayoutParams());
 	}
-	
+
+    /**
+     * Adds text to a MediaFrame.
+     * @param text
+     */
 	public void addText(String text) {
         if(textView == null) {
             textView = new TextView(this.getContext());
@@ -73,6 +77,10 @@ public abstract class AbstractFrameView extends FrameLayout {
 		return pictogram;
 	}
 
+    /**
+     * Adds the Pictogram parameter to this FrameView.
+     * @param pictogram
+     */
 	public void setPictogram(Pictogram pictogram) {
 		this.pictogram = pictogram;
 		FrameLayout.LayoutParams params =
@@ -80,7 +88,10 @@ public abstract class AbstractFrameView extends FrameLayout {
 		pictogram.setLayoutParams(params);
 		this.addView(pictogram);
 	}
-	
+
+    /**
+     * Removes the Pictogram from this View if it has any.
+     */
 	public void removePictogram() {
 		if(this.pictogram != null) {
 			this.removeView(pictogram);
