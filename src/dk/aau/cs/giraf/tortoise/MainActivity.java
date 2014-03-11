@@ -18,6 +18,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -147,32 +148,59 @@ public class MainActivity extends Activity {
                 }
             });
 
+            // this is the button with the profile image the user can click to change profiles
             final ImageView changeProfileButton = (ImageView)findViewById(R.id.profileImage);
 
-            changeProfileButton.setOnClickListener(new OnClickListener() {
-
+            changeProfileButton.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View v) {
-                    //Intent intent = new Intent();
-                    //intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.ProfileSelectActivity"));
-                    //startActivity(intent);
+                public boolean onTouch(View v, MotionEvent motionEvent)
+                {
+                    // set the profile image button to be faded - it is changed back to a solid
+                    // color (1.0) in changeProfileButton.setOnClickListener
+                    changeProfileButton.setAlpha(0.3f);
 
+                    // return false to indicate that the event for the profile image has not been
+                    // consumed. If this is changed to true, the changeProfileButton.setOnClickListener
+                    // does not work
+                    return false;
+                }
+            });
+
+            changeProfileButton.setOnClickListener(new OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    // change color of profile button from faded back to solid color
+                    // 0f is invisible and 1f is solid
+                    changeProfileButton.setAlpha(1f);
+
+                    // this is the code for launching the profile selector in the launcher project
+                    // the launcher then creates a new instance of the tortoise project
+
+                    // create a new intent
                     Intent intent = new Intent("dk.aau.cs.giraf.launcher.action.SELECTPROFILE");
+
                     // put package name
                     intent.putExtra("appPackageName", "dk.aau.cs.giraf.tortoise");
+
                     // put Activity name
                     intent.putExtra("appActivityName", "dk.aau.cs.giraf.tortoise.MainActivity");
+
                     // put App Background Color
                     intent.putExtra("appBackgroundColor", 0xFF16A765);
+
                     // Put current guardian id
-                    intent.putExtra("currentGuardianID", currGuard.getId()); // tony stark
+                    intent.putExtra("currentGuardianID", currGuard.getId());
 
                     intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.ProfileSelectActivity"));
 
                     // Verify the intent will resolve to at least one activity
-                    if (intent.resolveActivity(getPackageManager()) != null) {
+                    if (intent.resolveActivity(getPackageManager()) != null)
+                    {
                         startActivity(intent);
-                    }else
+                    }
+                    else
                     {
                         GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
                     }
