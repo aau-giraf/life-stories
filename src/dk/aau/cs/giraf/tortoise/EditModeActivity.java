@@ -52,7 +52,8 @@ import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.MediaFrame.OnContentChangedEventListener;
 
 public class EditModeActivity extends Activity implements OnCurrentFrameEventListener {
-	
+
+
 	private static final int DIALOG_SAVE = 1;
 	private static final int DIALOG_EXIT = 2;
 	private static final int DIALOG_PROMT_FOR_TITLE = 3;
@@ -434,8 +435,11 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 	
 	public void renderAddContentMenu() {
 		renderMenuBar(R.layout.choice_menu);
+
 		ImageButton addChoice = (ImageButton)findViewById(R.id.addChoice);
 		ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
+        ImageButton previous = (ImageButton)findViewById(R.id.previous);
+
 		int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
 		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getChoiceNumber() == 0) {
 			selectChoices.setAlpha(1.0f);
@@ -459,9 +463,17 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 				EditModeActivity.this.startActivityForResult(i, 1);
 			}
 		});
-		
+
+        previous.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 		selectChoices.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				if(EditModeActivity.this.currentEditModeFrame.getMediaFrame().getContent().size() == 0
@@ -470,7 +482,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 				else {
 					Toast t = Toast.makeText(EditModeActivity.this, "Kan ikke tilføjes til valg.", Toast.LENGTH_LONG);
 					t.show();
-				}	
+				}
 			}
 		});
 		renderPictograms();

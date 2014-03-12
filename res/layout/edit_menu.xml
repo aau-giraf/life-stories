@@ -41,7 +41,7 @@
 	    android:layout_marginTop="10dp"
 	    android:scaleType="fitCenter"
 	    android:src="@drawable/add_large"
-	    android:background="@@drawable/custom_btn"/>
+	    android:background="@drawable/custom_btn"/>
 	<LinearLayout 
 	    android:layout_width="200dp"
 	    android:layout_height="95dp"
@@ -53,7 +53,7 @@
 	    	android:layout_height="95dp"
 	    	android:scaleType="fitCenter"
 	    	android:src="@drawable/save"
-	    	android:background="@@drawable/custom_btn"/>
+	    	android:background="@drawable/custom_btn"/>
 	    <ImageButton 
 	        android:id="@+id/exitEditMode"
 	        android:layout_width="95dp"
@@ -61,7 +61,7 @@
 	    	android:layout_marginLeft="10dp"
 	    	android:scaleType="fitCenter"
 	    	android:src="@drawable/exit"
-	    	android:background="@@drawable/custom_btn"/>
+	    	android:background="@drawable/custom_btn"/>
 	</LinearLayout>
 	<ImageView
 	    android:id="@+id/bin"
