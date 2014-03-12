@@ -45,7 +45,8 @@ public class ChoiceFrameView extends FrameLayout implements OnDragListener{
     /**
      * In case the DragEvent action is a drop, the Pictogram associated with the DragEvent
      * is moved from its parent to the View provided as the v parameter.
-     * Always returns false, so that the onDragEvent() method is invoked. Dunno why.
+     * Always returns false, so that the onDragEvent() method is invoked (or else the event is consumed).
+     * see the documentation for onDrag
      * @param v
      * @param event
      * @return
