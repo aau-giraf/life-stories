@@ -493,8 +493,13 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 		});
 		renderPictograms();
 	}
-	
-	public void renderEditMenu() {
+
+    /**
+     * Loads / displays life story edit menu. It is here new life stories are edited.
+     * The layout file related to this method is edit_menu.xml
+     */
+	public void renderEditMenu()
+    {
 		renderMenuBar(R.layout.edit_menu);
 		ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
 		storyImage.setOnClickListener(new OnClickListener() {
