@@ -151,6 +151,9 @@ public class MainActivity extends Activity {
                 }
             });
 
+            final ImageView homeButton = (ImageView)findViewById(R.id.exitEditMode);
+//            homeButton.setOnClickListener(new OnClickListener(){});
+
             // this is the button with the profile image the user can click to change profiles
             final ImageView changeProfileButton = (ImageView)findViewById(R.id.profileImage);
 
@@ -458,5 +461,10 @@ public class MainActivity extends Activity {
                 break;
         }
         dialog.show();
+    }
+
+    public void doExit(View v){
+//        GuiHelper.ShowToast(getApplicationContext(), "doExit pressed!");
+        finish();
     }
 }
