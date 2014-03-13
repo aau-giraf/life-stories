@@ -464,11 +464,17 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 		});
 
-        previous.setOnClickListener(new OnClickListener() {
-
+        previous.setOnClickListener(new OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-
+            public void onClick(View v)
+            {
+                /* the following code refocuses the edit menu and changes the borders of the life
+                   stories from dashed back to solid. It also changes their size back to normal
+                */
+                EditModeActivity.this.renderEditMenu();
+                currentEditModeFrame.lowLight();
+                currentEditModeFrame.setBackgroundResource(R.layout.border);
             }
         });
 
@@ -487,8 +493,13 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 		});
 		renderPictograms();
 	}
-	
-	public void renderEditMenu() {
+
+    /**
+     * Loads / displays life story edit menu. It is here new life stories are edited.
+     * The layout file related to this method is edit_menu.xml
+     */
+	public void renderEditMenu()
+    {
 		renderMenuBar(R.layout.edit_menu);
 		ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
 		storyImage.setOnClickListener(new OnClickListener() {
