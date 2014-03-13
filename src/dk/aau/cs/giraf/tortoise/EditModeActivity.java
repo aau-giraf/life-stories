@@ -164,15 +164,24 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 			else
 			{
-				LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-				Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-				Bitmap bitmap = LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
-				bitmap = LayoutTools.getSquareBitmap(bitmap);
-				bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
-				LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
-				ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
-				storyImage.setImageBitmap(bitmap);	
-			}
+                try{
+                    LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                    Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                    Bitmap bitmap = LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
+                    bitmap = LayoutTools.getSquareBitmap(bitmap);
+                    bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+                    LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
+                    ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
+                    storyImage.setImageBitmap(bitmap);
+			    }
+                //We expect a null pointer exception if the pictogram is without image
+                //TODO: Investigate if this still happens with the new DB.
+                catch (NullPointerException e){
+                    Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
+                    t.show();
+
+                }
+            }
 		}
 	}
 	
