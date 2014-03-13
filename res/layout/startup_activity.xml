@@ -44,6 +44,18 @@
             android:scaleType="fitCenter"
             android:src="@drawable/add"
             android:background="@drawable/custom_btn" />
+
+        <ImageButton
+            android:id="@+id/home_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/exit"
+            android:background="@drawable/custom_btn"
+            android:onClick="doExit"/>
         
         <ToggleButton
             android:id="@+id/edit_mode_toggle"
@@ -62,7 +74,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/home_button"
             android:src="@null"
             android:background="@drawable/btn_switch_mode"
             android:layout_marginRight="15dp"
