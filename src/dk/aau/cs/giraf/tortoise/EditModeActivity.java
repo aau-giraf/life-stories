@@ -149,10 +149,39 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 			else
 			{
-				for (int i=0; i < checkoutIds.length; i++) {
+                List<Long> pictoIDList = new ArrayList<Long>();
+
+                // get the pictograms that are currently being shown
+                List<Pictogram> pictoList = currentEditModeFrame.getMediaFrame().getContent();
+
+                // put all their IDs in a list
+                for(Pictogram p : pictoList)
+                {
+                    pictoIDList.add(p.getPictogramID());
+                }
+
+				for (int i = 0; i < checkoutIds.length; i++)
+                {
 					Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[i]);
 					picto.renderAll();
-					currentEditModeFrame.getMediaFrame().addContent(picto);
+
+                    boolean shouldAddToList = true;
+
+                    // if pictogram already exists, don't add it. We don't want duplicates
+                    for (Long element : pictoIDList)
+                    {
+                        if(element == picto.getPictogramID())
+                        {
+                            shouldAddToList = false;
+                        }
+                    }
+
+                    if(shouldAddToList)
+                    {
+                        // add pictogram
+                        pictoIDList.add(picto.getPictogramID());
+                        currentEditModeFrame.getMediaFrame().addContent(picto);
+                    }
 				}
 			}
 		}
