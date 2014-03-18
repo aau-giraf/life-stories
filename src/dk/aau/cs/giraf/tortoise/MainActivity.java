@@ -199,7 +199,7 @@ public class MainActivity extends Activity {
                     // Put current guardian id
                     intent.putExtra("currentGuardianID", currGuard.getId());
 
-                    intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.ProfileSelectActivity"));
+                    intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.activities.ProfileSelectActivity"));
 
                     // Verify the intent will resolve to at least one activity
                     if (intent.resolveActivity(getPackageManager()) != null)
