@@ -7,3 +7,6 @@
 [submodule "GIRAF-components"]
 	path = GIRAF-components
 	url = ../../git-ro/giraf-component
+[submodule "GIRAF_Components"]
+	path = GIRAF_Components
+	url = ../../git-ro/giraf-component
