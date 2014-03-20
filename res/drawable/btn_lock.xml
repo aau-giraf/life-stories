@@ -1,5 +1,5 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- use "@android:drawable/btn_default" to keep consistent with system -->
-    <item android:drawable="@drawable/btn_custom_toggle" />
+    <item android:drawable="@drawable/gbutton" />
     <item android:drawable="@drawable/btn_lock_image" />
 </layer-list> 
