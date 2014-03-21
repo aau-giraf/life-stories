@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
@@ -386,8 +388,8 @@ public class MainActivity extends Activity {
     }
 
     public void renderDialog(int dialogId, final int position) {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+
         String storyName;
 
         // If isInTemplateMode is true then the guardian profile is active. If not, the child profile is active.
@@ -401,66 +403,60 @@ public class MainActivity extends Activity {
         // Dialog that prompts for deleting a story or template
         switch (dialogId) {
             case DIALOG_DELETE:
-                dialog.setContentView(R.layout.dialog_custom);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                TextView exitTitle = (TextView)dialog.findViewById(R.id.titleTextView);
-                exitTitle.setText(R.string.dialog_delete_title);
-                TextView exitMessage = (TextView)dialog.findViewById(R.id.messageTextView);
-                exitMessage.setText(getResources().getString(R.string.dialog_delete_message) + " \"" + storyName + "\"");
-                Button exitYes = (Button)dialog.findViewById(R.id.btn_yes);
-                exitYes.setText(R.string.yes);
-                exitYes.setOnClickListener(new OnClickListener() {
+                GDialog gdialog;
 
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        JSONSerializer js = new JSONSerializer();
-                        if(isInTemplateMode) {
-                            LifeStory.getInstance().getTemplates().remove(position);
-                            try {
-                                js.saveSettingsToFile(getApplicationContext(),
-                                        LifeStory.getInstance().getTemplates(),
-                                        LifeStory.getInstance().getGuardian().getId());
-                            } catch (IOException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                        }
-                        else {
-                            LifeStory.getInstance().getStories().remove(position);
-                            try {
-                                js.saveSettingsToFile(getApplicationContext(),
-                                        LifeStory.getInstance().getStories(),
-                                        LifeStory.getInstance().getChild().getId());
-                            } catch (IOException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                        }
-                        sequenceAdapter.setItems();
-                        sequenceAdapter.notifyDataSetChanged();
-                    }
-                });
-                Button exitNo = (Button)dialog.findViewById(R.id.btn_no);
-                exitNo.setText(R.string.no);
-                exitNo.setOnClickListener(new OnClickListener() {
+                gdialog = new GDialog(this,
+                        R.drawable.ic_launcher,
+                        getString(R.string.dialog_delete_title),
+                        getResources().getString(R.string.dialog_delete_message) + " \"" + storyName + "\"",
+                        new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                JSONSerializer js = new JSONSerializer();
+                                if(isInTemplateMode) {
+                                    LifeStory.getInstance().getTemplates().remove(position);
+                                    try {
+                                        js.saveSettingsToFile(getApplicationContext(),
+                                                LifeStory.getInstance().getTemplates(),
+                                                LifeStory.getInstance().getGuardian().getId());
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    } catch (JSONException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    LifeStory.getInstance().getStories().remove(position);
+                                    try {
+                                        js.saveSettingsToFile(getApplicationContext(),
+                                                LifeStory.getInstance().getStories(),
+                                                LifeStory.getInstance().getChild().getId());
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    } catch (JSONException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                }
+                                sequenceAdapter.setItems();
+                                sequenceAdapter.notifyDataSetChanged();
 
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+                            }
+
+                        });
+
+                gdialog.show();
                 break;
             default:
                 break;
+
         }
-        dialog.show();
+
+
     }
 
     public void doExit(View v){
