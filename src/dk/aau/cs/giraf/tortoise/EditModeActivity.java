@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.MediaFrame.OnContentChangedEventListener;
@@ -100,7 +101,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			LifeStory.getInstance().setCurrentStory(new Sequence());
 		}
 		else {
-			LifeStory.getInstance().setCurrentTemplate(EditModeActivity.this.getApplicationContext(), template); // todo - kan EditModeActivity. slettes?!?
+			LifeStory.getInstance().setCurrentTemplate(EditModeActivity.this.getApplicationContext(), template); // TODO: kan EditModeActivity. slettes?!?
 			renderTemplate();
 		}
 		
@@ -213,11 +214,18 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
             }
 		}
 	}
-	
+
+    // placed here so it can be accessed from all places in switch case
+    GDialog gdialog;
+
 	public void renderDialog(int dialogId) {
+        // TODO: Start herfra mandag d. 24
+        boolean showOverlay = true; // TODO: remove this and replace all dialogs with Gdialogs!
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		switch (dialogId) {
+
+		switch (dialogId)
+        {
 		case DIALOG_SAVE:
 			dialog.setContentView(R.layout.dialog_save);
 			CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
@@ -305,7 +313,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			});
 			break;
 		case DIALOG_EXIT:
-			dialog.setContentView(R.layout.dialog_custom);
+			/*dialog.setContentView(R.layout.dialog_custom);
 			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 			TextView exitTitle = (TextView)dialog.findViewById(R.id.titleTextView);
 			exitTitle.setText(R.string.dialog_exit_title);
@@ -330,9 +338,26 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 				dialog.dismiss();
 					
 				}
-			});
+			});*/
+
+            gdialog = new GDialog(this,
+                    R.drawable.ic_launcher,
+                    getString(R.string.dialog_exit_title),
+                    getResources().getString(R.string.dialog_exit_message),
+                    new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+            gdialog.show();
+            showOverlay = false;
 			break;
 		case DIALOG_PROMT_FOR_TITLE:
+            /*
 			dialog.setContentView(R.layout.dialog_custom);
 			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 			TextView promtTitle = (TextView)dialog.findViewById(R.id.titleTextView);
@@ -349,7 +374,23 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 				public void onClick(View v) {
 					dialog.dismiss();
 				}
-			});
+			});*/
+
+            GDialog gdialog;
+
+            gdialog = new GDialog(this,
+                    R.drawable.ic_launcher,
+                    getString(R.string.dialog_promt_for_title_title),
+                    getResources().getString(R.string.dialog_promt_for_title_message),
+                    new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            dialog.dismiss();
+                        }
+                    });
+            gdialog.show();
 			break;
 		case DIALOG_SELECT_CHOICE:
 			final int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
@@ -409,7 +450,11 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 		default:
 			break;
 		}
-		dialog.show();
+
+        if(showOverlay)
+        {
+            dialog.show();
+        }
 	}
 	
 	public void updateMediaFrameChoice(MediaFrame mediaFrame, boolean isChoice) {
