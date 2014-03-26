@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.MediaFrame.OnContentChangedEventListener;
@@ -142,7 +143,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 		
 		if (resultCode == RESULT_OK && requestCode == 1) {
 
-			long[] checkoutIds = data.getExtras().getLongArray("checkoutIds");
+			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 			
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -150,7 +151,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 			else
 			{
-                List<Long> pictoIDList = new ArrayList<Long>();
+                List<Integer> pictoIDList = new ArrayList<Integer>();
 
                 // get the pictograms that are currently being shown
                 List<Pictogram> pictoList = currentEditModeFrame.getMediaFrame().getContent();
@@ -169,7 +170,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
                     boolean shouldAddToList = true;
 
                     // if pictogram already exists, don't add it. We don't want duplicates
-                    for (Long element : pictoIDList)
+                    for (Integer element : pictoIDList)
                     {
                         if(element == picto.getPictogramID())
                         {
@@ -187,7 +188,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 		}
 		else if (resultCode == RESULT_OK && requestCode == 2) {
-			long[] checkoutIds = data.getExtras().getLongArray("checkoutIds");
+			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
 				t.show();
@@ -197,7 +198,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
                 try{
                     LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
                     Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                    Bitmap bitmap = LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
+                    Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
                     bitmap = LayoutTools.getSquareBitmap(bitmap);
                     bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
                     LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
@@ -340,7 +341,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 				}
 			});*/
 
-            gdialog = new GDialog(this,
+            gdialog = new GDialogMessage(this,
                     R.drawable.ic_launcher,
                     getString(R.string.dialog_exit_title),
                     getResources().getString(R.string.dialog_exit_message),
@@ -378,7 +379,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 
             GDialog gdialog;
 
-            gdialog = new GDialog(this,
+            gdialog = new GDialogMessage(this,
                     R.drawable.ic_launcher,
                     getString(R.string.dialog_promt_for_title_title),
                     getResources().getString(R.string.dialog_promt_for_title_message),
