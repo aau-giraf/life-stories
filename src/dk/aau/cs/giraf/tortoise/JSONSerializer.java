@@ -49,7 +49,7 @@ public class JSONSerializer {
 		return jsonSettings.toString();
 	}
 	
-	public void saveSettingsToFile(Context context, List<SerializableSequence> stories, long profileId) throws IOException, JSONException {	
+	public void saveSettingsToFile(Context context, List<SerializableSequence> stories, Integer profileId) throws IOException, JSONException {
 		String content = serialize(stories);
 		
 		FileOutputStream outputStream;
@@ -58,7 +58,7 @@ public class JSONSerializer {
 		outputStream.close();
 	}
 	
-	public List<SerializableSequence> loadSettingsFromFile(Context context, long profileId) throws IOException, JSONException {
+	public List<SerializableSequence> loadSettingsFromFile(Context context, Integer profileId) throws IOException, JSONException {
 
 		BufferedReader reader = new BufferedReader( new FileReader (context.getFilesDir() + "/tortoise_settings_" + profileId));
 	    String         line = null;
@@ -108,15 +108,15 @@ public class JSONSerializer {
 		return jsonMediaFrame;
 	}
 	
-	private JSONArray writePictograms(List<Long> pictograms) throws JSONException {
+	private JSONArray writePictograms(List<Integer> pictograms) throws JSONException {
 		final JSONArray jsonPictograms = new JSONArray();
-		for (Long p : pictograms) {
+		for (Integer p : pictograms) {
 			jsonPictograms.put(writePictogram(p));
 		}
 		return jsonPictograms;
 	}
 
-	private JSONObject writePictogram(Long p) throws JSONException {
+	private JSONObject writePictogram(Integer p) throws JSONException {
 		final JSONObject jsonPictogram = new JSONObject();
 		jsonPictogram.put(KEY_PICTOGRAM_ID, p);
 		
@@ -160,7 +160,7 @@ public class JSONSerializer {
 
 	private SerializableSequence readSequence(JSONObject jsonSequence) throws JSONException {
 		String title = jsonSequence.getString(KEY_SEQUENCE_TITLE);
-		long titlePictoId = jsonSequence.getLong(KEY_SEQUENCE_TITLEPICTO);
+		int titlePictoId = jsonSequence.getInt(KEY_SEQUENCE_TITLEPICTO);
 		int numChoices = jsonSequence.getInt(KEY_SEQUENCE_NUMCHOICES);
 		
 		SerializableSequence sequence = new SerializableSequence();
@@ -196,7 +196,7 @@ public class JSONSerializer {
 		mediaFrame.setFrames(frames);
 		
 		JSONArray jsonPictograms = jsonMediaFrame.getJSONArray(KEY_MEDIAFRAME_PICTOGRAMS);
-		List<Long> pictos = readPictograms(jsonPictograms);
+		List<Integer> pictos = readPictograms(jsonPictograms);
 		mediaFrame.setContent(pictos);
 		
 		return mediaFrame;
@@ -222,20 +222,20 @@ public class JSONSerializer {
 		return frame;
 	}
 
-	private List<Long> readPictograms(JSONArray jsonPictograms) throws JSONException {
-		List<Long> pictograms = new ArrayList<Long>();
+	private List<Integer> readPictograms(JSONArray jsonPictograms) throws JSONException {
+		List<Integer> pictograms = new ArrayList<Integer>();
 		
 		for (int i = 0; i < jsonPictograms.length(); i++) {
 			JSONObject jsonPictogram = jsonPictograms.getJSONObject(i);
-			Long pictogram = readPictogram(jsonPictogram);
+			Integer pictogram = readPictogram(jsonPictogram);
 			pictograms.add(pictogram);
 		}
 		
 		return pictograms;
 	}
 
-	private Long readPictogram(JSONObject jsonPictogram) throws JSONException {
-		return jsonPictogram.getLong(KEY_PICTOGRAM_ID);
+	private Integer readPictogram(JSONObject jsonPictogram) throws JSONException {
+		return jsonPictogram.getInt(KEY_PICTOGRAM_ID);
 	}
 	
 }

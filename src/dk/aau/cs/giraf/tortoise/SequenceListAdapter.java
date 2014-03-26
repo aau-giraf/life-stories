@@ -12,7 +12,6 @@ import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 
 /**
- * Adapter for a List of Sequences typically associated with a {@link Child}.
  *
  */
 public class SequenceListAdapter extends BaseAdapter {
@@ -43,7 +42,7 @@ public class SequenceListAdapter extends BaseAdapter {
         v.setEditModeEnabled(isInEditMode);
         
         Pictogram p = PictoFactory.getPictogram(context, s.getTitlePictoId());
-        Bitmap bm = LayoutTools.decodeSampledBitmapFromFile(p.getImagePath(), 100, 100);
+        Bitmap bm = p.getImageData();
         v.setImage(LayoutTools.getSquareBitmap(bm));
         
         if (onAdapterGetViewListener != null)

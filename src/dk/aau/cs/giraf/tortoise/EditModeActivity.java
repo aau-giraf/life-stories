@@ -207,6 +207,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			    }
                 //We expect a null pointer exception if the pictogram is without image
                 //TODO: Investigate if this still happens with the new DB.
+                // It still does
                 catch (NullPointerException e){
                     Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
                     t.show();
