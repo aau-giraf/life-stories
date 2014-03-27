@@ -19,7 +19,7 @@ public class MediaFrame extends AbstractMediaFrame{
 	
 	public MediaFrame(Context context, SerializableMediaFrame m) {
 		setContent(new ArrayList<Pictogram>());
-		for(Long p : m.getContent()) {
+		for(Integer p : m.getContent()) {
 			this.getContent().add(PictoFactory.getPictogram(context, p));
 		}
 		this.choiceNumber = m.choiceNumber;

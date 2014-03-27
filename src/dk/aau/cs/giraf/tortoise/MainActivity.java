@@ -14,7 +14,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -32,11 +34,11 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.tortoise.SequenceListAdapter.OnAdapterGetViewListener;
-import dk.aau.cs.giraf.oasis.lib.models.App;
 
 public class MainActivity extends Activity {
 
@@ -83,13 +85,19 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.startup_activity);
 
+        Bundle extras = getIntent().getExtras();
         // Warn user and do not execute Tortoise if not launched from Giraf
-        if (getIntent().getExtras() == null) {
+        if (extras == null) {
             GuiHelper.ShowToast(getApplicationContext(), "Tortoise skal startes fra GIRAF");
             finish();
         }
         // If launched from Giraf, then execute!
         else {
+            int color = extras.getInt("appBackgroundColor");
+            Drawable d = getResources().getDrawable(R.drawable.main_gradient_bg);
+            d.setColorFilter(color, PorterDuff.Mode.OVERLAY);
+            findViewById(R.id.parent_container).setBackgroundDrawable(d);
+
             // Initialize image and name of profile
             ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
             TextView profileName = (TextView)findViewById(R.id.child_name);
@@ -99,14 +107,14 @@ public class MainActivity extends Activity {
 
             // Set guardian- and child profiles
             LifeStory.getInstance().setGuardian(
-                    h.profilesHelper.getProfileById(i.getLongExtra("currentGuardianID", -1)));
+                    h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
 
-            currGuard = h.profilesHelper.getProfileById(i.getLongExtra("currentGuardianID", -1)); // YIHAAA!
+            currGuard = h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)); // YIHAAA!
             //GuiHelper.ShowToast(getApplicationContext(), currGuard.toString());
 
             LifeStory.getInstance().setChild(
-                    h.profilesHelper.getProfileById(i.getLongExtra("currentChildID", -1)));
-            profileName.setText(LifeStory.getInstance().getChild().getFirstname());
+                    h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+            profileName.setText(LifeStory.getInstance().getChild().getName());
             setProfileImages();
             profileImage.setImageBitmap(childImage);
 
@@ -277,13 +285,12 @@ public class MainActivity extends Activity {
                     TextView profileName = (TextView)findViewById(R.id.child_name);
                     if(button.isChecked()) {
                         Profile g = LifeStory.getInstance().getGuardian();
-                        profileName.setText(
-                                g.getFirstname() + " " + g.getSurname());
+                        profileName.setText(g.getName());
                         profileImage.setImageBitmap(guardianImage);
                     }
                     else {
                         Profile c = LifeStory.getInstance().getChild();
-                        profileName.setText(c.getFirstname());
+                        profileName.setText(c.getName());
                         profileImage.setImageBitmap(childImage);
                     }
                     isInTemplateMode = button.isChecked();
@@ -354,7 +361,7 @@ public class MainActivity extends Activity {
         templateMode.setChecked(false);
         editMode.setChecked(false);
         Profile c = LifeStory.getInstance().getChild();
-        profileName.setText(c.getFirstname());
+        profileName.setText(c.getName());
         profileImage.setImageBitmap(childImage);
         sequenceAdapter.setEditModeEnabled(isInEditMode);
         sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
@@ -365,9 +372,8 @@ public class MainActivity extends Activity {
     private void setProfileImages() {
 
         Bitmap bm;
-        if(LifeStory.getInstance().getChild().getPicture() != null) {
-            bm = LayoutTools.decodeSampledBitmapFromFile(
-                    LifeStory.getInstance().getChild().getPicture(), 100, 100);
+        if(LifeStory.getInstance().getChild().getImage() != null) {
+            bm = LifeStory.getInstance().getChild().getImage();
 
         }
         else {
@@ -376,9 +382,8 @@ public class MainActivity extends Activity {
 
         childImage = LayoutTools.getRoundedCornerBitmap(bm, this, 10);
 
-        if(LifeStory.getInstance().getGuardian().getPicture() != null) {
-            bm = LayoutTools.decodeSampledBitmapFromFile(
-                    LifeStory.getInstance().getGuardian().getPicture(), 100, 100);
+        if(LifeStory.getInstance().getGuardian().getImage() != null) {
+            bm = LifeStory.getInstance().getGuardian().getImage();
         }
         else {
             bm = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
@@ -403,9 +408,7 @@ public class MainActivity extends Activity {
         // Dialog that prompts for deleting a story or template
         switch (dialogId) {
             case DIALOG_DELETE:
-                GDialog gdialog;
-
-                gdialog = new GDialog(this,
+                GDialogMessage gdialog = new GDialogMessage(this,
                         R.drawable.ic_launcher,
                         getString(R.string.dialog_delete_title),
                         getResources().getString(R.string.dialog_delete_message) + " \"" + storyName + "\"",

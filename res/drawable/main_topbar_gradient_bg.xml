@@ -26,10 +26,11 @@
     <item>
         <shape android:shape="rectangle">
 			<gradient
-			    android:startColor="#ffe498"
-			    android:endColor="#ffd96e"
-			    android:angle="270"
-			    android:type="linear"/>
+                android:startColor="#00FFFFFF"
+                android:centerColor="#10000000"
+                android:endColor="#37000000"
+                android:angle="270"
+                android:type="linear"/>
 		</shape>
     </item>
     

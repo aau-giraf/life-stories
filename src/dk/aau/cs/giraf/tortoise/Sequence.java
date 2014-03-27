@@ -27,8 +27,7 @@ public class Sequence extends AbstractSequence {
 		this.numChoices = s.numChoices;
 		this.title = s.title;
 		this.titlePictoId = s.titlePictoId;
-		Bitmap bitmap = LayoutTools.decodeSampledBitmapFromFile(PictoFactory.getPictogram(
-				context, this.getTitlePictoId()).getImagePath(), 150, 150);
+		Bitmap bitmap = PictoFactory.getPictogram(context, this.getTitlePictoId()).getImageData();
 		bitmap = LayoutTools.getSquareBitmap(bitmap);
 		bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, context, 20);
 		this.titleImage = bitmap;
