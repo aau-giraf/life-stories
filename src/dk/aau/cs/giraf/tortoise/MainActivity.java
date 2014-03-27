@@ -5,17 +5,12 @@ import java.io.IOException;
 import org.json.JSONException;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,17 +18,13 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -86,31 +77,34 @@ public class MainActivity extends Activity {
         setContentView(R.layout.startup_activity);
 
         Bundle extras = getIntent().getExtras();
+
+
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (extras == null) {
             GuiHelper.ShowToast(getApplicationContext(), "Tortoise skal startes fra GIRAF");
             finish();
         }
         // If launched from Giraf, then execute!
-        else {
-            int color = extras.getInt("appBackgroundColor");
-            Drawable d = getResources().getDrawable(R.drawable.main_gradient_bg);
-            d.setColorFilter(color, PorterDuff.Mode.OVERLAY);
-            findViewById(R.id.parent_container).setBackgroundDrawable(d);
 
-            // Initialize image and name of profile
-            ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
-            TextView profileName = (TextView)findViewById(R.id.child_name);
+        int color = extras.getInt("appBackgroundColor");
+        Drawable d = getResources().getDrawable(R.drawable.main_gradient_bg);
+        d.setColorFilter(color, PorterDuff.Mode.OVERLAY);
+        findViewById(R.id.parent_container).setBackgroundDrawable(d);
+        finish();
 
-            Intent i = getIntent();
-            Helper h = new Helper(this);
+        // Initialize image and name of profile
+        ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
+        TextView profileName = (TextView) findViewById(R.id.child_name);
 
-            // Set guardian- and child profiles
-            LifeStory.getInstance().setGuardian(
-                    h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        Intent i = getIntent();
+        Helper h = new Helper(this);
+        try{
+        // Set guardian- and child profiles
+        LifeStory.getInstance().setGuardian(
+                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
 
-            currGuard = h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)); // YIHAAA!
-            //GuiHelper.ShowToast(getApplicationContext(), currGuard.toString());
+        currGuard = h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)); // YIHAAA!
+        //GuiHelper.ShowToast(getApplicationContext(), currGuard.toString());
 
             LifeStory.getInstance().setChild(
                     h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
@@ -121,184 +115,183 @@ public class MainActivity extends Activity {
             // Clear existing life stories
             LifeStory.getInstance().getStories().clear();
             LifeStory.getInstance().getTemplates().clear();
-
             // Set templates belonging to the chosen guardian and stories belonging to the chosen child
-            JSONSerializer js = new JSONSerializer();
-            try {
-                LifeStory.getInstance().setTemplates(
-                        js.loadSettingsFromFile(
-                                getApplicationContext(),
-                                LifeStory.getInstance().getGuardian().getId()));
-                LifeStory.getInstance().setStories(
-                        js.loadSettingsFromFile(
-                                getApplicationContext(),
-                                LifeStory.getInstance().getChild().getId()));
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+
+        JSONSerializer js = new JSONSerializer();
+        try {
+            LifeStory.getInstance().setTemplates(
+                js.loadSettingsFromFile(
+                    getApplicationContext(),
+                    LifeStory.getInstance().getGuardian().getId())
+            );
+
+            LifeStory.getInstance().setStories(
+                js.loadSettingsFromFile(
+                    getApplicationContext(),
+                    LifeStory.getInstance().getChild().getId())
+            );
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        }catch (Exception e){
+            GuiHelper.ShowToast(getApplicationContext(), "THIS! is " + e.toString());
+            finish();
+        }
+        // Initialize grid view
+        GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceAdapter = initAdapter();
+        sequenceGrid.setAdapter(sequenceAdapter);
+
+        // Creates clean sequence and starts the sequence activity - ready to add pictograms.
+        final ImageButton createButton = (ImageButton) findViewById(R.id.add_button);
+
+        createButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                canFinish = false;
+                Intent i = new Intent(getApplicationContext(), EditModeActivity.class);
+                i.putExtra("template", -1);
+
+                startActivity(i);
+            }
+        });
+
+        final ImageView homeButton = (ImageView) findViewById(R.id.exitEditMode);
+        //    homeButton.setOnClickListener(new OnClickListener(){});
+
+        // this is the button with the profile image the user can click to change profiles
+        final ImageView changeProfileButton = (ImageView) findViewById(R.id.profileImage);
+
+        changeProfileButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent motionEvent) {
+                // set the profile image button to be faded - it is changed back to a solid
+                // color (1.0) in changeProfileButton.setOnClickListener
+                changeProfileButton.setAlpha(0.3f);
+
+                // return false to indicate that the event for the profile image has not been
+                // consumed. If this is changed to true, the changeProfileButton.setOnClickListener
+                // does not work
+                return false;
+            }
+        });
+
+        changeProfileButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // change color of profile button from faded back to solid color
+                // 0f is invisible and 1f is solid
+                changeProfileButton.setAlpha(1f);
+
+                // this is the code for launching the profile selector in the launcher project
+                // the launcher then creates a new instance of the tortoise project
+
+                // create a new intent
+                Intent intent = new Intent("dk.aau.cs.giraf.launcher.action.SELECTPROFILE");
+
+                // put package name
+                intent.putExtra("appPackageName", "dk.aau.cs.giraf.tortoise");
+
+                // put Activity name
+                intent.putExtra("appActivityName", "dk.aau.cs.giraf.tortoise.MainActivity");
+
+                // put App Background Color
+                intent.putExtra("appBackgroundColor", 0xFF16A765);
+
+                // Put current guardian id
+                intent.putExtra("currentGuardianID", currGuard.getId());
+
+                intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.activities.ProfileSelectActivity"));
+
+                // Verify the intent will resolve to at least one activity
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
+                }
+            }
+        });
+
+        // Load Sequence
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+            Intent i;
+
+            if (isInTemplateMode) {
+                canFinish = false;
+                i = new Intent(getApplicationContext(), EditModeActivity.class);
+                i.putExtra("template", arg2);
+            } else {
+                canFinish = false;
+                i = new Intent(getApplicationContext(), ViewModeActivity.class);
+                i.putExtra("story", arg2);
             }
 
-            // Initialize grid view
-            GridView sequenceGrid = (GridView)findViewById(R.id.sequence_grid);
-            sequenceAdapter = initAdapter();
-            sequenceGrid.setAdapter(sequenceAdapter);
+            startActivity(i);
+            }
+        });
 
-            // Creates clean sequence and starts the sequence activity - ready to add pictograms.
-            final ImageButton createButton = (ImageButton)findViewById(R.id.add_button);
+        // Edit mode switcher button
+        ToggleButton button = (ToggleButton) findViewById(R.id.edit_mode_toggle);
 
-            createButton.setOnClickListener(new OnClickListener() {
+        button.setOnClickListener(new ImageButton.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    canFinish = false;
-                    Intent i = new Intent(getApplicationContext(), EditModeActivity.class);
-                    i.putExtra("template", -1);
+            @Override
+            public void onClick(View v) {
+                ToggleButton button = (ToggleButton) v;
+                isInEditMode = button.isChecked();
+                GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
 
-                    startActivity(i);
-                }
-            });
+                // Make sure that all views currently not visible will have the correct editmode when they become visible
+                sequenceAdapter.setEditModeEnabled(isInEditMode);
 
-            final ImageView homeButton = (ImageView)findViewById(R.id.exitEditMode);
-//            homeButton.setOnClickListener(new OnClickListener(){});
+                //createButton.setVisibility(isInEditMode ? View.VISIBLE : View.GONE);
 
-            // this is the button with the profile image the user can click to change profiles
-            final ImageView changeProfileButton = (ImageView)findViewById(R.id.profileImage);
+                // Update the editmode of all visible views in the grid
+                for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
+                    View view = sequenceGrid.getChildAt(i);
 
-            changeProfileButton.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent motionEvent)
-                {
-                    // set the profile image button to be faded - it is changed back to a solid
-                    // color (1.0) in changeProfileButton.setOnClickListener
-                    changeProfileButton.setAlpha(0.3f);
-
-                    // return false to indicate that the event for the profile image has not been
-                    // consumed. If this is changed to true, the changeProfileButton.setOnClickListener
-                    // does not work
-                    return false;
-                }
-            });
-
-            changeProfileButton.setOnClickListener(new OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    // change color of profile button from faded back to solid color
-                    // 0f is invisible and 1f is solid
-                    changeProfileButton.setAlpha(1f);
-
-                    // this is the code for launching the profile selector in the launcher project
-                    // the launcher then creates a new instance of the tortoise project
-
-                    // create a new intent
-                    Intent intent = new Intent("dk.aau.cs.giraf.launcher.action.SELECTPROFILE");
-
-                    // put package name
-                    intent.putExtra("appPackageName", "dk.aau.cs.giraf.tortoise");
-
-                    // put Activity name
-                    intent.putExtra("appActivityName", "dk.aau.cs.giraf.tortoise.MainActivity");
-
-                    // put App Background Color
-                    intent.putExtra("appBackgroundColor", 0xFF16A765);
-
-                    // Put current guardian id
-                    intent.putExtra("currentGuardianID", currGuard.getId());
-
-                    intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.activities.ProfileSelectActivity"));
-
-                    // Verify the intent will resolve to at least one activity
-                    if (intent.resolveActivity(getPackageManager()) != null)
-                    {
-                        startActivity(intent);
-                    }
-                    else
-                    {
-                        GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
+                    if (view instanceof PictogramView) {
+                        ((PictogramView) view).setEditModeEnabled(isInEditMode);
                     }
                 }
-            });
+            }
+        });
 
-			// Load Sequence
-            sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // Template mode switcher button
+        ToggleButton templateToggle = (ToggleButton) findViewById(R.id.template_mode_toggle);
 
-                @Override
-                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        templateToggle.setOnClickListener(new ImageButton.OnClickListener() {
 
-                    Intent i;
-
-                    if(isInTemplateMode) {
-                        canFinish = false;
-                        i = new Intent(getApplicationContext(), EditModeActivity.class);
-                        i.putExtra("template", arg2);
-                    }
-                    else {
-                        canFinish = false;
-                        i = new Intent(getApplicationContext(), ViewModeActivity.class);
-                        i.putExtra("story", arg2);
-                    }
-
-                    startActivity(i);
+            @Override
+            public void onClick(View v) {
+                ToggleButton button = (ToggleButton) v;
+                ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
+                TextView profileName = (TextView) findViewById(R.id.child_name);
+                if (button.isChecked()) {
+                    Profile g = LifeStory.getInstance().getGuardian();
+                    profileName.setText(g.getName());
+                    profileImage.setImageBitmap(guardianImage);
+                } else {
+                    Profile c = LifeStory.getInstance().getChild();
+                    profileName.setText(c.getName());
+                    profileImage.setImageBitmap(childImage);
                 }
-            });
-
-            // Edit mode switcher button
-            ToggleButton button = (ToggleButton) findViewById(R.id.edit_mode_toggle);
-
-            button.setOnClickListener(new ImageButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    ToggleButton button = (ToggleButton)v;
-                    isInEditMode = button.isChecked();
-                    GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
-
-                    // Make sure that all views currently not visible will have the correct editmode when they become visible
-                    sequenceAdapter.setEditModeEnabled(isInEditMode);
-
-                    //createButton.setVisibility(isInEditMode ? View.VISIBLE : View.GONE);
-
-                    // Update the editmode of all visible views in the grid
-                    for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
-                        View view = sequenceGrid.getChildAt(i);
-
-                        if (view instanceof PictogramView) {
-                            ((PictogramView)view).setEditModeEnabled(isInEditMode);
-                        }
-                    }
-                }
-            });
-
-            // Template mode switcher button
-            ToggleButton templateToggle = (ToggleButton) findViewById(R.id.template_mode_toggle);
-
-            templateToggle.setOnClickListener(new ImageButton.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    ToggleButton button = (ToggleButton)v;
-                    ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
-                    TextView profileName = (TextView)findViewById(R.id.child_name);
-                    if(button.isChecked()) {
-                        Profile g = LifeStory.getInstance().getGuardian();
-                        profileName.setText(g.getName());
-                        profileImage.setImageBitmap(guardianImage);
-                    }
-                    else {
-                        Profile c = LifeStory.getInstance().getChild();
-                        profileName.setText(c.getName());
-                        profileImage.setImageBitmap(childImage);
-                    }
-                    isInTemplateMode = button.isChecked();
-                    sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
-                    sequenceAdapter.notifyDataSetChanged();
-                }
-            });
-        }
+                isInTemplateMode = button.isChecked();
+                sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
+                sequenceAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public SequenceListAdapter initAdapter() {
