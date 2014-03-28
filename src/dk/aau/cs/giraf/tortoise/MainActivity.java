@@ -372,8 +372,9 @@ public class MainActivity extends Activity {
         }
 
         guardianImage = LayoutTools.getRoundedCornerBitmap(bm, this, 10);
-    }catch (Exception e){
-        GuiHelper.ShowToast(getApplicationContext(), " FIX ME! " + e.toString());
+    }catch (NullPointerException e){
+        //TODO
+        //GuiHelper.ShowToast(getApplicationContext(), " FIX ME! " + e.toString());
     }
     }
 
