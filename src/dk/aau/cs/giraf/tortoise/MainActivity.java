@@ -42,7 +42,6 @@ public class MainActivity extends Activity {
     private SequenceListAdapter sequenceAdapter;
     private Bitmap childImage;
     private Bitmap guardianImage;
-    private Profile currGuard;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -76,21 +75,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.startup_activity);
 
-        Bundle extras = getIntent().getExtras();
-
-
         // Warn user and do not execute Tortoise if not launched from Giraf
-        if (extras == null) {
+   /*     if (extras == null) {
             GuiHelper.ShowToast(getApplicationContext(), "Tortoise skal startes fra GIRAF");
             finish();
-        }
+        }*/
         // If launched from Giraf, then execute!
-
-        int color = extras.getInt("appBackgroundColor");
-        Drawable d = getResources().getDrawable(R.drawable.main_gradient_bg);
-        d.setColorFilter(color, PorterDuff.Mode.OVERLAY);
-        findViewById(R.id.parent_container).setBackgroundDrawable(d);
-        finish();
 
         // Initialize image and name of profile
         ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
@@ -98,25 +88,29 @@ public class MainActivity extends Activity {
 
         Intent i = getIntent();
         Helper h = new Helper(this);
-        try{
+
+        int color = i.getIntExtra("appBackgroundColor", 0x7f090002); //Get backgound color from launcher
+        Drawable d = getResources().getDrawable(R.drawable.main_gradient_bg);
+        d.setColorFilter(color, PorterDuff.Mode.OVERLAY);
+        findViewById(R.id.parent_container).setBackgroundDrawable(d);
+
         // Set guardian- and child profiles
-        LifeStory.getInstance().setGuardian(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        LifeStory.getInstance().setGuardian(new Profile("Tony Stark", 12345678, null, "tony@stark.dk", Profile.Roles.GUARDIAN, "address 1", null, 1, 2, 1));
+     //       h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        LifeStory.getInstance().setChild(new Profile("William Jensen", 88888888,  null, "william@jensen.dk", Profile.Roles.CHILD, "address 1", null, 11, 2, 1));
+      //      h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
 
-        currGuard = h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)); // YIHAAA!
-        //GuiHelper.ShowToast(getApplicationContext(), currGuard.toString());
+        profileName.setText(LifeStory.getInstance().getChild().getName());
 
-            LifeStory.getInstance().setChild(
-                    h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
-            profileName.setText(LifeStory.getInstance().getChild().getName());
-            setProfileImages();
-            profileImage.setImageBitmap(childImage);
+        setProfileImages();
+        profileImage.setImageBitmap(childImage);
 
-            // Clear existing life stories
-            LifeStory.getInstance().getStories().clear();
-            LifeStory.getInstance().getTemplates().clear();
-            // Set templates belonging to the chosen guardian and stories belonging to the chosen child
 
+        // Clear existing life stories
+        LifeStory.getInstance().getStories().clear();
+        LifeStory.getInstance().getTemplates().clear();
+
+        // Set templates belonging to the chosen guardian and stories belonging to the chosen child
         JSONSerializer js = new JSONSerializer();
         try {
             LifeStory.getInstance().setTemplates(
@@ -130,6 +124,7 @@ public class MainActivity extends Activity {
                     getApplicationContext(),
                     LifeStory.getInstance().getChild().getId())
             );
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -138,11 +133,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-
-        }catch (Exception e){
-            GuiHelper.ShowToast(getApplicationContext(), "THIS! is " + e.toString());
-            finish();
-        }
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
@@ -206,7 +196,7 @@ public class MainActivity extends Activity {
                 intent.putExtra("appBackgroundColor", 0xFF16A765);
 
                 // Put current guardian id
-                intent.putExtra("currentGuardianID", currGuard.getId());
+                intent.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
 
                 intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.activities.ProfileSelectActivity"));
 
@@ -363,11 +353,10 @@ public class MainActivity extends Activity {
     }
 
     private void setProfileImages() {
-
         Bitmap bm;
+    try{
         if(LifeStory.getInstance().getChild().getImage() != null) {
             bm = LifeStory.getInstance().getChild().getImage();
-
         }
         else {
             bm = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
@@ -383,6 +372,9 @@ public class MainActivity extends Activity {
         }
 
         guardianImage = LayoutTools.getRoundedCornerBitmap(bm, this, 10);
+    }catch (Exception e){
+        GuiHelper.ShowToast(getApplicationContext(), " FIX ME! " + e.toString());
+    }
     }
 
     public void renderDialog(int dialogId, final int position) {
