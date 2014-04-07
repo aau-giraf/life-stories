@@ -89,11 +89,6 @@ public class MainActivity extends Activity {
         Intent i = getIntent();
         Helper h = new Helper(this);
 
-        int color = i.getIntExtra("appBackgroundColor", 0x7f090002); //Get backgound color from launcher
-        Drawable d = getResources().getDrawable(R.drawable.main_gradient_bg);
-        d.setColorFilter(color, PorterDuff.Mode.OVERLAY);
-        findViewById(R.id.parent_container).setBackgroundDrawable(d);
-
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(new Profile("Tony Stark", 12345678, null, "tony@stark.dk", Profile.Roles.GUARDIAN, "address 1", null, 1, 2, 1));
      //       h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
