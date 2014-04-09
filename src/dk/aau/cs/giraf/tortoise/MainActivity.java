@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise;
 
+
 import java.io.IOException;
 
 import org.json.JSONException;
@@ -10,8 +11,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -87,13 +86,18 @@ public class MainActivity extends Activity {
         TextView profileName = (TextView) findViewById(R.id.child_name);
 
         Intent i = getIntent();
-        Helper h = new Helper(this);
+        Helper h;
+        try {
+            h = new Helper(this);
+
 
         // Set guardian- and child profiles
-        LifeStory.getInstance().setGuardian(new Profile("Tony Stark", 12345678, null, "tony@stark.dk", Profile.Roles.GUARDIAN, "address 1", null, 1, 2, 1));
-     //       h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
-        LifeStory.getInstance().setChild(new Profile("William Jensen", 88888888,  null, "william@jensen.dk", Profile.Roles.CHILD, "address 1", null, 11, 2, 1));
-      //      h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+        LifeStory.getInstance().setGuardian(h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", 8)));
+        LifeStory.getInstance().setChild(h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 12)));
+
+
+
+
 
         profileName.setText(LifeStory.getInstance().getChild().getName());
 
@@ -126,8 +130,11 @@ public class MainActivity extends Activity {
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }}
+        catch (Exception e){
+            GuiHelper.ShowToast(this, e.toString());
+            finish(); //no connection to DB
         }
-
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
@@ -444,7 +451,6 @@ public class MainActivity extends Activity {
     }
 
     public void doExit(View v){
-//        GuiHelper.ShowToast(getApplicationContext(), "doExit pressed!");
         finish();
     }
 }
