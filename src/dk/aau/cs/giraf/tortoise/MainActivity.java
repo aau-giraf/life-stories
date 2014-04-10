@@ -74,29 +74,28 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.startup_activity);
 
+        Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf
-   /*     if (extras == null) {
-            GuiHelper.ShowToast(getApplicationContext(), "Tortoise skal startes fra GIRAF");
+        if (i.getExtras() == null) {
+            GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
             finish();
-        }*/
+        }
         // If launched from Giraf, then execute!
 
         // Initialize image and name of profile
         ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
         TextView profileName = (TextView) findViewById(R.id.child_name);
 
-        Intent i = getIntent();
-        Helper h;
+
+        Helper h = null;
         try {
             h = new Helper(this);
 
 
+
         // Set guardian- and child profiles
-        LifeStory.getInstance().setGuardian(h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", 8)));
-        LifeStory.getInstance().setChild(h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 12)));
-
-
-
+        LifeStory.getInstance().setGuardian(h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        LifeStory.getInstance().setChild(h.profilesHelper.getProfileById((int)i.getLongExtra("currentChildID", -1)));
 
 
         profileName.setText(LifeStory.getInstance().getChild().getName());
@@ -132,7 +131,7 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }}
         catch (Exception e){
-            GuiHelper.ShowToast(this, e.toString());
+            GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF"); //TODO fusk fix senere
             finish(); //no connection to DB
         }
         // Initialize grid view
