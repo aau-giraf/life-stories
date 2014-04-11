@@ -142,8 +142,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if (resultCode == RESULT_OK && requestCode == 1) {
-
-			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+			long[] checkoutIds = data.getExtras().getLongArray("checkoutIds");
 			
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -164,7 +163,7 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 
 				for (int i = 0; i < checkoutIds.length; i++)
                 {
-					Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[i]);
+					Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), (int)checkoutIds[i]);
 					picto.renderAll();
 
                     boolean shouldAddToList = true;
@@ -188,7 +187,8 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			}
 		}
 		else if (resultCode == RESULT_OK && requestCode == 2) {
-			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+          try{
+			long[] checkoutIds = data.getExtras().getLongArray("checkoutIds"); // .getLongArray("checkoutIds");
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
 				t.show();
@@ -196,8 +196,8 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 			else
 			{
                 try{
-                    LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-                    Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                    LifeStory.getInstance().getCurrentStory().setTitlePictoId((int)checkoutIds[0]);
+                    Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), (int)checkoutIds[0]);
                     Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
                     bitmap = LayoutTools.getSquareBitmap(bitmap);
                     bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
@@ -214,6 +214,9 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
 
                 }
             }
+          } catch (Exception e){
+            GuiHelper.ShowToast(this, e.toString());
+          }
 		}
 	}
 
