@@ -1,10 +1,12 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.helpers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
+import dk.aau.cs.giraf.tortoise.controller.SerializableSequence;
 
 public class LifeStory {
 	

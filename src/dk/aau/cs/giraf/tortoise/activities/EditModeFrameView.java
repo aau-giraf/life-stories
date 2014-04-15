@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.ClipData;
 import android.content.Context;
@@ -11,11 +11,19 @@ import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.AbstractFrameView;
+import dk.aau.cs.giraf.tortoise.Frame;
+import dk.aau.cs.giraf.tortoise.LayoutTools;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
+import dk.aau.cs.giraf.tortoise.interfaces.OnCurrentFrameEventListener;
+import dk.aau.cs.giraf.tortoise.interfaces.OnMainLayoutEventListener;
+import dk.aau.cs.giraf.tortoise.interfaces.OnMediaFrameEventListener;
+import dk.aau.cs.giraf.tortoise.R;
 
 public class EditModeFrameView extends AbstractFrameView implements OnDragListener,
-																	OnCurrentFrameEventListener,
-																	OnMediaFrameEventListener,
-																	OnMainLayoutEventListener,
+        OnCurrentFrameEventListener,
+        OnMediaFrameEventListener,
+        OnMainLayoutEventListener,
 																	OnTouchListener {
 
 	EditModeActivity mainActivity;
@@ -80,9 +88,9 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 			}
 		case DragEvent.ACTION_DROP:
 			EditModeFrameView view = (EditModeFrameView) event.getLocalState();
-			LayoutTools.placeFrame(parentLayout, view, 
-					(int) ((event.getX() + this.getLeft()) - (view.width / 2)), 
-					(int) (event.getY() + this.getTop()) - (view.height / 2));
+			LayoutTools.placeFrame(parentLayout, view,
+                    (int) ((event.getX() + this.getLeft()) - (view.width / 2)),
+                    (int) (event.getY() + this.getTop()) - (view.height / 2));
 			break;
 		case DragEvent.ACTION_DRAG_ENDED:
 			setVisibility(View.VISIBLE);

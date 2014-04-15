@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.controller;
 
 
 public abstract class AbstractSequence {

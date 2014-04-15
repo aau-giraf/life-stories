@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import android.content.Context;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 
-public class SerializableMediaFrame extends AbstractMediaFrame{
+public class SerializableMediaFrame extends AbstractMediaFrame {
 	
 	private List<Integer> content;
 

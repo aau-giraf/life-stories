@@ -6,8 +6,9 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
-public abstract class AbstractFrameView extends FrameLayout {
+    public abstract class AbstractFrameView extends FrameLayout {
 	
 	public int width;
 	public int height;

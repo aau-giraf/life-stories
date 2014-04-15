@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.activities;
 
 import java.util.List;
 
@@ -28,6 +28,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.ChoiceFrameView;
+import dk.aau.cs.giraf.tortoise.Frame;
+import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
+import dk.aau.cs.giraf.tortoise.R;
 
 public class ViewModeActivity extends Activity {
 

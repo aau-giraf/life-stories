@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.Context;
 import android.view.DragEvent;
@@ -8,6 +8,9 @@ import android.view.View.OnDragListener;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.AbstractFrameView;
+import dk.aau.cs.giraf.tortoise.Frame;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
 public class ViewModeFrameView extends AbstractFrameView implements OnDragListener, OnClickListener {
 	

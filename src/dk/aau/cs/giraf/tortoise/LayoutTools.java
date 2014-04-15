@@ -14,6 +14,12 @@ import android.graphics.RectF;
 import android.util.Log;
 import android.widget.RelativeLayout;
 
+import dk.aau.cs.giraf.tortoise.Frame;
+import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
+import dk.aau.cs.giraf.tortoise.activities.EditModeFrameView;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
+import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
+
 public class LayoutTools {
     
 	static int offsetX = 0;

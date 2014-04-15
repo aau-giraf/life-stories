@@ -8,6 +8,8 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.view.View.DragShadowBuilder;
 
+import dk.aau.cs.giraf.tortoise.activities.EditModeFrameView;
+
 public class FrameDragShadowBuilder extends DragShadowBuilder{
 	private EditModeFrameView frame;
 	private RectF rectangle;

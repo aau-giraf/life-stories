@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.helpers;
 
 import android.content.Context;
 import android.widget.Toast;

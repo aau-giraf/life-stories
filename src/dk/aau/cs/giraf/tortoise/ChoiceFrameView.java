@@ -6,6 +6,8 @@ import android.view.View.OnDragListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.activities.ViewModeActivity;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
 public class ChoiceFrameView extends FrameLayout implements OnDragListener{
 	

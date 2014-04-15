@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
+import dk.aau.cs.giraf.tortoise.LayoutTools;
 
 public class Sequence extends AbstractSequence {
 	

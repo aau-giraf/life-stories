@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.controller;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Point;
+
+import dk.aau.cs.giraf.tortoise.Frame;
 
 public class JSONSerializer {
 	

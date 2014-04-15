@@ -27,8 +27,13 @@ import android.widget.ToggleButton;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
+import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.tortoise.SequenceListAdapter.OnAdapterGetViewListener;
+import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
+import dk.aau.cs.giraf.tortoise.activities.ViewModeActivity;
+import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
 
 public class MainActivity extends Activity {
 

@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.controller.SerializableSequence;
+import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 /**
  *

@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.activities;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -38,7 +38,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -51,7 +50,20 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
-import dk.aau.cs.giraf.tortoise.MediaFrame.OnContentChangedEventListener;
+import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
+import dk.aau.cs.giraf.tortoise.Frame;
+import dk.aau.cs.giraf.tortoise.FrameDragShadowBuilder;
+import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
+import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
+import dk.aau.cs.giraf.tortoise.LayoutTools;
+import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame.OnContentChangedEventListener;
+import dk.aau.cs.giraf.tortoise.interfaces.OnCurrentFrameEventListener;
+import dk.aau.cs.giraf.tortoise.interfaces.OnMainLayoutEventListener;
+import dk.aau.cs.giraf.tortoise.interfaces.OnMediaFrameEventListener;
+import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
 public class EditModeActivity extends Activity implements OnCurrentFrameEventListener {
 
@@ -66,11 +78,11 @@ public class EditModeActivity extends Activity implements OnCurrentFrameEventLis
     EditModeFrameView currentEditModeFrame;
 	RelativeLayout menuBar;
 	RelativeLayout mainLayout;
-	public List<OnMainLayoutEventListener> mainLayoutListeners = 
+	public List<OnMainLayoutEventListener> mainLayoutListeners =
 			new ArrayList<OnMainLayoutEventListener>();
 	public List<OnCurrentFrameEventListener> currentFrameListeners = 
 			new ArrayList<OnCurrentFrameEventListener>();
-	public List<OnMediaFrameEventListener> mediaFrameListeners = 
+	public List<OnMediaFrameEventListener> mediaFrameListeners =
 			new ArrayList<OnMediaFrameEventListener>();
 	
 	public void addOnMainLayoutEventListener(OnMainLayoutEventListener mainLayoutListener) {

@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
 public class EditChoiceFrameView extends RelativeLayout implements OnClickListener{
 	

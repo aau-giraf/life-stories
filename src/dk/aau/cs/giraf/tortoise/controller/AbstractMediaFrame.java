@@ -1,7 +1,9 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import dk.aau.cs.giraf.tortoise.Frame;
 
 public abstract class AbstractMediaFrame {
 	

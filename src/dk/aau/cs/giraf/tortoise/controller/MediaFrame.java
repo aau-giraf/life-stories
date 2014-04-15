@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.tortoise;
+package dk.aau.cs.giraf.tortoise.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import android.content.Context;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 
-public class MediaFrame extends AbstractMediaFrame{
+public class MediaFrame extends AbstractMediaFrame {
 	
 	private List<Pictogram> content;
 	private OnContentChangedEventListener mListener;
