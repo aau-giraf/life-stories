@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
         TextView profileName = (TextView) findViewById(R.id.child_name);
 
 
-        Helper h = null;
+        Helper h;
         try {
             h = new Helper(this);
 
@@ -143,6 +143,21 @@ public class MainActivity extends Activity {
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
         sequenceGrid.setAdapter(sequenceAdapter);
+
+        final ImageButton createWeekButton = (ImageButton) findViewById(R.id.add_week_button);
+
+        createWeekButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                canFinish = false;
+                Intent i = new Intent(getApplicationContext(), EditModeActivity.class);
+                i.putExtra("template", -1);
+
+                startActivity(i);
+            }
+        });
+
 
         // Creates clean sequence and starts the sequence activity - ready to add pictograms.
         final ImageButton createButton = (ImageButton) findViewById(R.id.add_button);
