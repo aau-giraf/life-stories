@@ -3,11 +3,12 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 
-public class ScheduleActivity extends Activity
+public class ScheduleActivity extends TortoiseActivity
 {
     protected void onCreate(Bundle savedInstanceState)
     {

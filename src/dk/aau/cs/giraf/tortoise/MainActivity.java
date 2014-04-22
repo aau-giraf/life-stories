@@ -28,6 +28,7 @@ import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
+import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
@@ -36,7 +37,7 @@ import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
 import dk.aau.cs.giraf.tortoise.activities.ViewModeActivity;
 import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
 
-public class MainActivity extends Activity {
+public class MainActivity extends TortoiseActivity {
 
     private final int DIALOG_DELETE = 1;
     private final int PROFILE_CHANGE = 11; // constant for profile change intent
@@ -453,9 +454,5 @@ public class MainActivity extends Activity {
         i.putExtra("template", -1);
 
         startActivity(i);
-    }
-
-    public void doExit(View v){
-        finish();
     }
 }

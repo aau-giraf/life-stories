@@ -34,7 +34,7 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.R;
 
-public class ViewModeActivity extends Activity {
+public class ViewModeActivity extends TortoiseActivity {
 
 	private final int DIALOG_EXIT = 1;
 	

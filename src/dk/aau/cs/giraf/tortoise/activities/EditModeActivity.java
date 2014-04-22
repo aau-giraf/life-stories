@@ -65,7 +65,7 @@ import dk.aau.cs.giraf.tortoise.interfaces.OnMediaFrameEventListener;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
-public class EditModeActivity extends Activity implements OnCurrentFrameEventListener {
+public class EditModeActivity extends TortoiseActivity implements OnCurrentFrameEventListener {
 
 
 	private static final int DIALOG_SAVE = 1;
