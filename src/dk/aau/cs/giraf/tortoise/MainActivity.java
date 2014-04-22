@@ -27,6 +27,7 @@ import android.widget.ToggleButton;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
@@ -91,17 +92,13 @@ public class MainActivity extends Activity {
         ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
         TextView profileName = (TextView) findViewById(R.id.child_name);
 
-
         Helper h;
         try {
             h = new Helper(this);
 
-
-
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
         LifeStory.getInstance().setChild(h.profilesHelper.getProfileById((int)i.getLongExtra("currentChildID", -1)));
-
 
         profileName.setText(LifeStory.getInstance().getChild().getName());
 
@@ -144,40 +141,6 @@ public class MainActivity extends Activity {
         sequenceAdapter = initAdapter();
         sequenceGrid.setAdapter(sequenceAdapter);
 
-        final ImageButton createWeekButton = (ImageButton) findViewById(R.id.add_week_button);
-
-        createWeekButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                canFinish = false;
-                Intent i = new Intent(getApplicationContext(), EditModeActivity.class);
-                i.putExtra("template", -1);
-
-                startActivity(i);
-            }
-        });
-
-
-        // Creates clean sequence and starts the sequence activity - ready to add pictograms.
-        final ImageButton createButton = (ImageButton) findViewById(R.id.add_button);
-
-        createButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                canFinish = false;
-                Intent i = new Intent(getApplicationContext(), EditModeActivity.class);
-                i.putExtra("template", -1);
-
-                startActivity(i);
-            }
-        });
-
-        final ImageView homeButton = (ImageView) findViewById(R.id.exitEditMode);
-        //    homeButton.setOnClickListener(new OnClickListener(){});
-
-        // this is the button with the profile image the user can click to change profiles
         final ImageView changeProfileButton = (ImageView) findViewById(R.id.profileImage);
 
         changeProfileButton.setOnTouchListener(new View.OnTouchListener() {
@@ -467,6 +430,24 @@ public class MainActivity extends Activity {
         }
 
 
+    }
+
+    public void addSchedule(View v)
+    {
+        canFinish = false;
+        Intent i = new Intent(getApplicationContext(), ScheduleActivity.class);
+        i.putExtra("template", -1);
+
+        startActivity(i);
+    }
+
+    public void addStory(View v)
+    {
+        canFinish = false;
+        Intent i = new Intent(getApplicationContext(), EditModeActivity.class);
+        i.putExtra("template", -1);
+
+        startActivity(i);
     }
 
     public void doExit(View v){
