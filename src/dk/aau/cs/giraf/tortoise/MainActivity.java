@@ -435,10 +435,15 @@ public class MainActivity extends Activity {
     public void addSchedule(View v)
     {
         canFinish = false;
-        Intent i = new Intent(getApplicationContext(), ScheduleActivity.class);
+        Intent i = new Intent(this, ScheduleActivity.class);
         i.putExtra("template", -1);
 
-        startActivity(i);
+        if (i.resolveActivity(getPackageManager()) != null) {
+            startActivity(i);
+        } else
+        {
+            GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
+        }
     }
 
     public void addStory(View v)
