@@ -60,7 +60,8 @@
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:background="@color/green"
-            android:layout_weight="0.142">
+            android:layout_weight="0.142"
+            android:id="@+id/monday">
             </RelativeLayout>
 
         <RelativeLayout
@@ -68,42 +69,42 @@
             android:layout_height="match_parent"
             android:layout_weight="0.142"
             android:background="@color/purple"
-            android:id="@+id/relativeLayout" />
+            android:id="@+id/tuesday" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
             android:background="@color/orange"
-            android:id="@+id/relativeLayout2" />
+            android:id="@+id/wednesday" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
             android:background="@color/blue"
-            android:id="@+id/relativeLayout3" />
+            android:id="@+id/thursday" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
             android:background="@color/yellow"
-            android:id="@+id/relativeLayout5" />
+            android:id="@+id/friday" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
             android:background="@color/red"
-            android:id="@+id/relativeLayout4" />
+            android:id="@+id/saturday" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
             android:background="@color/white"
-            android:id="@+id/relativeLayout6" />
+            android:id="@+id/sunday" />
     </LinearLayout>
 
 </LinearLayout>
