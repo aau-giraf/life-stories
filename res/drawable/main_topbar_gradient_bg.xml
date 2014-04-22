@@ -4,19 +4,19 @@
      <!-- Drop Shadow -->
      <item>
         <shape>
-            <padding android:bottom="2dp" />
+            <padding android:bottom="0dp" />
             <solid android:color="#0A9e6435" />
         </shape>
     </item>
      <item>
         <shape>
-            <padding android:bottom="2dp" />
+            <padding android:bottom="0dp" />
             <solid android:color="#149e6435" />
         </shape>
     </item>
      <item>
         <shape>
-            <padding android:bottom="2dp" />
+            <padding android:bottom="0dp" />
             <solid android:color="#1e9e6435" />
         </shape>
     </item>

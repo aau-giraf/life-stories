@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <!--/* <color name="text_color">#000000</color>-->
-
+    <color name="red">#ffff0000</color>
+    <color name="green">#ff007700</color>
+    <color name="white">#ffffffff</color>
+    <color name="yellow">#ffffdd00</color>
+    <color name="blue">#ff0000ff</color>
+    <color name="orange">#ffff8500</color>
+    <color name="purple">#ff800080</color>
 </resources>

@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
-        android:layout_height="110sp"
+        android:layout_height="110dp"
         android:background="@drawable/main_topbar_gradient_bg"
         android:orientation="horizontal" >
 
@@ -59,42 +59,50 @@
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.142"></RelativeLayout>
+            android:background="@color/green"
+            android:layout_weight="0.142">
+            </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
+            android:background="@color/purple"
             android:id="@+id/relativeLayout" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
+            android:background="@color/orange"
             android:id="@+id/relativeLayout2" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
+            android:background="@color/blue"
             android:id="@+id/relativeLayout3" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
+            android:background="@color/yellow"
             android:id="@+id/relativeLayout5" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
+            android:background="@color/red"
             android:id="@+id/relativeLayout4" />
 
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="0.142"
+            android:background="@color/white"
             android:id="@+id/relativeLayout6" />
     </LinearLayout>
 
