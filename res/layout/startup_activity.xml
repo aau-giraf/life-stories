@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
-        android:layout_height="140sp"
+        android:layout_height="110sp"
         android:background="@drawable/main_topbar_gradient_bg"
         android:orientation="horizontal" >
 

@@ -1,22 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/parent_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/main_gradient_bg"
+    android:focusableInTouchMode="true" >
 
-    <TextView
-        android:id="@+id/displayintentextra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Input"
-        />
-
-    <EditText
-        android:id="@+id/returnValue"
+    <RelativeLayout
+        android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="110sp"
+        android:background="@drawable/main_topbar_gradient_bg"
+        android:orientation="horizontal" >
 
-        <requestFocus />
-    </EditText>
+        <ImageButton
+            android:id="@+id/storyImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/no_image_big"
+            android:background="@drawable/gbutton"
+            android:onClick="doExit"/>
 
-</LinearLayout> 
+        <TextView
+            android:id="@+id/child_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Skemanavn"
+            android:textSize="60sp"
+            android:textColor="@color/text_color" />
+
+        <ImageButton
+            android:id="@+id/home_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/exit"
+            android:background="@drawable/gbutton"
+            android:onClick="doExit"/>
+
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/sequence_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="-6dp"
+        android:baselineAligned="false"
+        android:gravity="center"
+        android:numColumns="6"
+        android:listSelector="#00000000"
+        android:fadeScrollbars="false">
+    </GridView>
+</LinearLayout>
