@@ -26,6 +26,11 @@
     <string name="yes">Ja</string>
     <string name="ok">Ok</string>
     <string name="abort">Fortryd</string>
-    <string name="end">Afslut</string>
-
+    <string name="monday">Mandag</string>
+    <string name="tuesday">Tirsdag</string>
+    <string name="wednesday">Onsdag</string>
+    <string name="thursday">Torsdag</string>
+    <string name="friday">Fredag</string>
+    <string name="saturday">Lørdag</string>
+    <string name="sunday">Søndag</string>
 </resources>
