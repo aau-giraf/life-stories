@@ -3,26 +3,26 @@
     android:id="@+id/parentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:background="@drawable/main_gradient_bg"
     android:baselineAligned="false"
     tools:context=".EditModeActivity" >
-    
+
+    <RelativeLayout
+        android:id="@+id/menuBar"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:gravity="center_horizontal"
+        android:background="@drawable/main_topbar_gradient_bg">
+        <include layout="@layout/edit_menu" />
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/mainLayout"
         android:layout_weight="1"
-        android:layout_width="0dp"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent" >
 	
 	</RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/menuBar"
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:background="@drawable/overview_list_bg" >  
-        <include layout="@layout/edit_menu"/>"
-    </RelativeLayout>
-    
 </LinearLayout>

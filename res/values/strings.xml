@@ -20,12 +20,19 @@
     <string name="dialog_select_choice_title">Tilføj til valg</string>
     <string name="dialog_delete_title">Vil du slette denne historie?</string>
     <string name="dialog_delete_message">Vil du slette</string>
+    <string name="dialog_add_frames_title">Vælg ikon</string>
+    <string name="dialog_add_frames_choices">Tilføj valgmuligheder</string>
     <string name="choice">Valg</string>
     <string name="save">Gem</string>
     <string name="no">Nej</string>
     <string name="yes">Ja</string>
     <string name="ok">Ok</string>
     <string name="abort">Fortryd</string>
-    <string name="end">Afslut</string>
-
+    <string name="monday">Mandag</string>
+    <string name="tuesday">Tirsdag</string>
+    <string name="wednesday">Onsdag</string>
+    <string name="thursday">Torsdag</string>
+    <string name="friday">Fredag</string>
+    <string name="saturday">Lørdag</string>
+    <string name="sunday">Søndag</string>
 </resources>
