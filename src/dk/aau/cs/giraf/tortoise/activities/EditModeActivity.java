@@ -532,8 +532,15 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			currentEditModeFrame.addText("Valg " + currentEditModeFrame.getMediaFrame().getChoiceNumber());
 		}
 	}
-	
+
+    GDialog dialogAddFrames;
+
 	public void renderAddContentMenu() {
+
+
+
+        dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null));
+
 		renderMenuBar(R.layout.choice_menu);
 
 		ImageButton addChoice = (ImageButton)findViewById(R.id.addChoice);
@@ -550,25 +557,24 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			selectChoices.setEnabled(false);
 		}
 		addChoice.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent();
-				i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch", 
-					"dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
-				i.putExtra("purpose", "multi");
-				i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
-				i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
 
-				EditModeActivity.this.startActivityForResult(i, 1);
-			}
-		});
-
-        previous.setOnClickListener(new OnClickListener()
-        {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
+                        "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+                i.putExtra("purpose", "multi");
+                i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+                i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+
+                EditModeActivity.this.startActivityForResult(i, 1);
+            }
+        });
+
+        //TODO: Should be deleted when button has been rebound.
+        previous.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 /* the following code refocuses the edit menu and changes the borders of the life
                    stories from dashed back to solid. It also changes their size back to normal
                 */
@@ -580,18 +586,20 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 		selectChoices.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				if(EditModeActivity.this.currentEditModeFrame.getMediaFrame().getContent().size() == 0
-						&& LifeStory.getInstance().getCurrentStory().getNumChoices() > 0)
-					renderDialog(DIALOG_SELECT_CHOICE);
-				else {
-					Toast t = Toast.makeText(EditModeActivity.this, "Kan ikke tilføjes til valg.", Toast.LENGTH_LONG);
-					t.show();
-				}
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                if (EditModeActivity.this.currentEditModeFrame.getMediaFrame().getContent().size() == 0
+                        && LifeStory.getInstance().getCurrentStory().getNumChoices() > 0)
+                    renderDialog(DIALOG_SELECT_CHOICE);
+                else {
+                    Toast t = Toast.makeText(EditModeActivity.this, "Kan ikke tilføjes til valg.", Toast.LENGTH_LONG);
+                    t.show();
+                }
+            }
+        });
 		renderPictograms();
+
+        dialogAddFrames.show();
 	}
 
     /**
@@ -620,6 +628,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			storyImage.setImageBitmap(LifeStory.getInstance().getCurrentStory().getTitleImage());
 		}
 		EditText storyName = (EditText) findViewById(R.id.storyName);
+        storyName.setHighlightColor(00000000);
+
+
 		storyName.setInputType(InputType.TYPE_NULL);
 		if(LifeStory.getInstance().getCurrentStory().getTitle() != "") {
 			storyName.setText(LifeStory.getInstance().getCurrentStory().getTitle());
@@ -791,7 +802,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      */
 	public void renderMenuBar(int id) {
 		LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		LinearLayout menu = (LinearLayout)inflater.inflate(id, null);
+		RelativeLayout menu = (RelativeLayout)inflater.inflate(id, null);
 		if (menuBar.getChildCount() > 0) {
 			menuBar.removeAllViews();
 		}
@@ -872,6 +883,10 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		}
 	}
+
+    public void dismissDialog(View v){
+        dialogAddFrames.dismiss();
+    }
 
     /**
      * Possibly obsolete, as it overrides an identical method

@@ -20,6 +20,8 @@
     <string name="dialog_select_choice_title">Tilføj til valg</string>
     <string name="dialog_delete_title">Vil du slette denne historie?</string>
     <string name="dialog_delete_message">Vil du slette</string>
+    <string name="dialog_add_frames_title">Vælg ikon</string>
+    <string name="dialog_add_frames_choices">Tilføj valgmuligheder</string>
     <string name="choice">Valg</string>
     <string name="save">Gem</string>
     <string name="no">Nej</string>
