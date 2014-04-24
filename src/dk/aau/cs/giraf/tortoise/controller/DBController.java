@@ -82,4 +82,16 @@ public class DBController {
         // This is where the magic should happen
         return sequences;
     }
+
+    private DBSequence morphSequenceToDBSequence(Sequence seq, int sequenceType){
+        DBSequence dbSeq = new DBSequence();
+        dbSeq.setTitlePictoID(seq.getTitlePictoId());
+        dbSeq.setTitle(seq.getTitle());
+        dbSeq.setNumChoices(seq.getNumChoices());
+        dbSeq.setFrames(seq.getMediaFrames());
+        dbSeq.setNestedSequenceID(seq.getNestedSequenceID());
+        dbSeq.setSequenceType(sequenceType);
+        // TODO: NOT DONE!!!
+        return dbSeq;
+    }
 }
