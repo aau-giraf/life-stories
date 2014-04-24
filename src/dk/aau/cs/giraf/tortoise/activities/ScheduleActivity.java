@@ -1,9 +1,7 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
@@ -35,14 +33,18 @@ public class ScheduleActivity extends TortoiseActivity
     @Override
     public void onResume()
     {
+        // this method is also called after oncreate()
+        // makes sure that current weekday is also marked after resume of the app
         super.onResume();
-        
+
         // mark the current weekday in the scheduler
         markCurrentWeekday();
     }
 
     private void markCurrentWeekday()
     {
+        unmarkWeekdays();
+
         String weekday = getWeekday();
 
         if(weekday.equals(getResources().getString(R.string.monday)))
@@ -74,6 +76,26 @@ public class ScheduleActivity extends TortoiseActivity
             GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
             btn.setToggled(false);
         }
+    }
+
+    private void unmarkWeekdays()
+    {
+        GToggleButton btn;
+
+        btn = (GToggleButton) findViewById(R.id.monday);
+        btn.setToggled(true);
+        btn = (GToggleButton) findViewById(R.id.tuesday);
+        btn.setToggled(true);
+        btn = (GToggleButton) findViewById(R.id.wednesday);
+        btn.setToggled(true);
+        btn = (GToggleButton) findViewById(R.id.thursday);
+        btn.setToggled(true);
+        btn = (GToggleButton) findViewById(R.id.friday);
+        btn.setToggled(true);
+        btn = (GToggleButton) findViewById(R.id.saturday);
+        btn.setToggled(true);
+        btn = (GToggleButton) findViewById(R.id.sunday);
+        btn.setToggled(true);
     }
 
     // because the intial state of week day buttons are toggled
