@@ -82,7 +82,7 @@ public class DBController {
         // This is where the magic should happen
         return sequences;
     }
-
+/*
     private DBSequence morphSequenceToDBSequence(Sequence seq, int sequenceType){
         DBSequence dbSeq = new DBSequence();
         dbSeq.setTitlePictoID(seq.getTitlePictoId());
@@ -94,4 +94,5 @@ public class DBController {
         // TODO: NOT DONE!!!
         return dbSeq;
     }
+    */
 }
