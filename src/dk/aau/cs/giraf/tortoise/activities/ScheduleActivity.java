@@ -16,44 +16,69 @@ import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 
 public class ScheduleActivity extends TortoiseActivity
 {
-    //View layout;
-
     protected void onCreate(Bundle savedInstanceState)
     {
-        // mark the current weekday in the scheduler
-        //markCurrentWeekday();
-
         super.onCreate(savedInstanceState);
         //layout = LayoutInflater.from(getApplicationContext()).inflate(R.layout.schedule_activity, null);
         setContentView(R.layout.schedule_activity);
+
+        // mark the current weekday in the scheduler
+        markCurrentWeekday();
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
 
         if (intent.getExtras() == null)
         {
-
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+
     }
 
     private void markCurrentWeekday()
     {
         String weekday = getWeekday();
 
-        if(weekday.equals("torsdag") || weekday.equals("thursday"))
+        if(weekday.equals(getResources().getString(R.string.monday)))
         {
-            GToggleButton btn = (GToggleButton) layout.findViewById(R.id.thursday);
+            GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
             btn.setToggled(false);
-            GuiHelper.ShowToast(this, "toggled");
+        }else if(weekday.equals(getResources().getString(R.string.tuesday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
+            btn.setToggled(false);
+        }else if(weekday.equals(getResources().getString(R.string.wednesday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
+            btn.setToggled(false);
+        }else if(weekday.equals(getResources().getString(R.string.thursday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
+            btn.setToggled(false);
+        }else if(weekday.equals(getResources().getString(R.string.friday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
+            btn.setToggled(false);
+        }else if(weekday.equals(getResources().getString(R.string.saturday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
+            btn.setToggled(false);
+        }else if(weekday.equals(getResources().getString(R.string.sunday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
+            btn.setToggled(false);
         }
     }
 
     // because the intial state of week day buttons are toggled
     // their on-click action is triggered by oncreate()
     // this variable makes sure that nothing is done on the first pass
-
     int numOfPasses = 0;
 
     public void weekdaySelected(View v)
@@ -72,7 +97,6 @@ public class ScheduleActivity extends TortoiseActivity
 
                     break;
                 case R.id.thursday:
-                    GuiHelper.ShowToast(this, "Påskeferie!!");
                     break;
                 case R.id.friday:
 
@@ -93,6 +117,6 @@ public class ScheduleActivity extends TortoiseActivity
         SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEEE");
         String weekday = dateFormatter.format(date);
 
-        return weekday;
+        return weekday.substring(0, 1).toUpperCase() + weekday.substring(1);
     }
 }
