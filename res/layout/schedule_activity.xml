@@ -75,10 +75,7 @@
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -86,9 +83,6 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/monday"
                     android:id="@id/child_name"
-                    android:layout_below="@+id/frameLayout7"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -114,19 +108,13 @@
                     android:id="@+id/tuesday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/tuesday"
-                    android:layout_below="@+id/frameLayout7"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -152,19 +140,13 @@
                     android:id="@+id/wednesday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/wednesday"
-                    android:layout_below="@+id/frameLayout7"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -197,9 +179,6 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/thursday"
-                    android:layout_below="@+id/frameLayout7"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -210,8 +189,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/yellow"
-            android:id="@+id/relativeLayout" >
+            android:background="@color/yellow" >
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -225,19 +203,13 @@
                     android:id="@+id/friday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/friday"
-                    android:layout_below="@+id/frameLayout7"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -262,19 +234,13 @@
                     android:id="@+id/saturday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/saturday"
-                    android:layout_below="@+id/frameLayout7"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -300,19 +266,13 @@
                     android:id="@+id/sunday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/sunday"
-                    android:layout_below="@+id/frameLayout7"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
