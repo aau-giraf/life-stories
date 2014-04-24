@@ -22,9 +22,6 @@ public class ScheduleActivity extends TortoiseActivity
         //layout = LayoutInflater.from(getApplicationContext()).inflate(R.layout.schedule_activity, null);
         setContentView(R.layout.schedule_activity);
 
-        // mark the current weekday in the scheduler
-        markCurrentWeekday();
-
         // Get intent, action and MIME type
         Intent intent = getIntent();
 
@@ -36,9 +33,12 @@ public class ScheduleActivity extends TortoiseActivity
     }
 
     @Override
-    protected void onResume()
+    public void onResume()
     {
-
+        super.onResume();
+        
+        // mark the current weekday in the scheduler
+        markCurrentWeekday();
     }
 
     private void markCurrentWeekday()
