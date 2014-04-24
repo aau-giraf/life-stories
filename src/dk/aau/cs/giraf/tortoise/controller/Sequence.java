@@ -13,7 +13,25 @@ public class Sequence extends AbstractSequence {
 	private List<MediaFrame> mediaFrames;
 	private Bitmap titleImage;
 	private OnNumChoicesEventListener mListener;
-	
+    private int nestedSequenceID;
+    private Sequence nestedSequence;
+
+    public int getNestedSequenceID() {
+        return nestedSequenceID;
+    }
+
+    public void setNestedSequenceID(int nestedSequenceID) {
+        this.nestedSequenceID = nestedSequenceID;
+    }
+
+    public Sequence getNestedSequence() {
+        return nestedSequence;
+    }
+
+    public void setNestedSequence(Sequence nestedSequence) {
+        this.nestedSequence = nestedSequence;
+    }
+
 	public Sequence(){
 		super();
 		setMediaFrames(new ArrayList<MediaFrame>());
