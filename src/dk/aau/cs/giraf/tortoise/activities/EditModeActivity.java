@@ -486,26 +486,24 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			mediaFrame.setChoiceNumber(0);
 			LifeStory.getInstance().getCurrentStory().decrementNumChoices();
 		}
-		//renderPictograms();
+		renderPictograms();
 	}
 
     /**
      * Updates the views to show associated pictograms. This will update the choice dialog and the main view.
      */
 	public void renderPictograms() {
-        // Initialize layout containing pictograms in case more than one is preselected
-		//LinearLayout newChoiceContent = (LinearLayout)findViewById(R.id.newChoiceContent2);
-        // Initializes the button that accepts the current choice
-
         LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
         List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
 
-		if(pictograms.size() == 0) {
+		if(pictograms.size() == 0)
+        {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 		}
-		else {
+		else
+        {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 
@@ -513,25 +511,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
 				choiceFramView.addDeleteButton();
 				newChoiceContent.addView(choiceFramView);
+                currentEditModeFrame.setPictogram(p);
 			}
-            currentEditModeFrame.detachPictograms();
-            currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+           // currentEditModeFrame.detachPictograms();
+           // currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
 
-            //currentEditModeFrame.addText("test");
-
-            if(pictograms.size() == 1)
-            {
-                //Pictogram pic = currentEditModeFrame.getMediaFrame().getContent().get(0);
-
-                //pic.getHeight();
-                //currentEditModeFrame.detachPictograms();
-
-            }
-            else
-            {
-                //TODO: Update this to show choice icon.
-                //currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-            }
 		}
 	}
 
@@ -648,7 +632,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 					@Override
 					public void OnContentSizeChanged(MediaFrame mediaFrame) {
 						//TODO: Is this even used (will outcomment)
-                        //EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
+                        EditModeActivity.this.renderPictograms();
 					}
 				});
 				ClipData data = ClipData.newPlainText("", "");
@@ -674,7 +658,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 					@Override
 					public void OnContentSizeChanged(MediaFrame mediaFrame) {
 						//TODO: Is this used?
-                        //EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
+                        EditModeActivity.this.renderPictograms();
 						
 					}
 				});
@@ -833,6 +817,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     public void dismissDialog(View v){
         dialogAddFrames.dismiss();
+        renderPictograms();
     }
 
     public void addPictograms(View v) {
