@@ -19,7 +19,7 @@ import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
-public class ScheduleViewActivity extends TortoiseActivity
+public class ScheduleViewActivity extends ScheduleActivity
 {
     protected void onCreate(Bundle savedInstanceState)
     {
