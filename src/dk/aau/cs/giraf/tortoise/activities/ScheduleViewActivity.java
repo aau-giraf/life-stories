@@ -3,17 +3,12 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
@@ -24,13 +19,12 @@ import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
-public class ScheduleActivity extends TortoiseActivity
+public class ScheduleViewActivity extends TortoiseActivity
 {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        //layout = LayoutInflater.from(getApplicationContext()).inflate(R.layout.schedule_activity, null);
-        setContentView(R.layout.schedule_activity);
+        setContentView(R.layout.schedule_view_activity);
 
         // Get intent, action and MIME type
         Intent intent = getIntent();

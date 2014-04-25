@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.json.JSONException;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
@@ -27,7 +26,8 @@ import android.widget.ToggleButton;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
 import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
@@ -436,7 +436,7 @@ public class MainActivity extends TortoiseActivity {
     public void addSchedule(View v)
     {
         canFinish = false;
-        Intent i = new Intent(this, ScheduleActivity.class);
+        Intent i = new Intent(this, ScheduleViewActivity.class);
         i.putExtra("template", -1);
 
         if (i.resolveActivity(getPackageManager()) != null) {
