@@ -58,14 +58,16 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 
 	@Override
 	public void onClick(View v) {
-		if(this.getMediaFrame().getFrames().size() > 1
+/*		if(this.getMediaFrame().getFrames().size() > 1
 			&& this.getMediaFrame().getContent().size() == 2) {
 			Toast t = Toast.makeText(mainActivity, "Piktogram kan ikke fjernes.", Toast.LENGTH_LONG);
 			t.show();
 		}
 		else {
 			this.getMediaFrame().removeContent(this.pictogram);
-		}
+		}*/
+
+        this.getMediaFrame().removeContent(this.pictogram);
 	}
 
 	public MediaFrame getMediaFrame() {

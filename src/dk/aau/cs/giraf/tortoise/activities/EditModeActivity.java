@@ -197,6 +197,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                         pictoIDList.add(picto.getPictogramID());
                         currentEditModeFrame.getMediaFrame().addContent(picto);
                     }
+                    renderPictograms();
 				}
 			}
 		}
@@ -485,73 +486,36 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			mediaFrame.setChoiceNumber(0);
 			LifeStory.getInstance().getCurrentStory().decrementNumChoices();
 		}
-		//renderPictograms();
+		renderPictograms();
 	}
 
+    /**
+     * Updates the views to show associated pictograms. This will update the choice dialog and the main view.
+     */
 	public void renderPictograms() {
-        // Initialize layout containing pictograms in case more than one is preselected
-		//LinearLayout newChoiceContent = (LinearLayout)findViewById(R.id.newChoiceContent2);
-        // Initializes the button that accepts the current choice
-
-
-
-        //TODO: Remove this block.
-        //int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
-        //ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
-        /* Activates or disables the "multi choice"-button
-        * currentEditModeFrame.getMediaFrame().getContent().size() == 0
-        * */
-/*		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getContent().size() == 0) {
-			selectChoices.setAlpha(1.0f);
-			selectChoices.setEnabled(true);
-		}
-		else {
-			selectChoices.setAlpha(0.3f);
-			selectChoices.setEnabled(false);
-		}*/
-
         LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
-
-		LinearLayout pictoListArea = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null).findViewById(R.id.newChoiceContent2);
-
-        // float scale = getApplicationContext().getResources().getDisplayMetrics().density;
-		//int parentWidth = -10; // (int) (pictoListArea.getHeight() - (120 / scale));
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -1);
-		//params.topMargin =  (10 / (int)scale);
-		//params.leftMargin = (10 / (int)scale);
-		//params.rightMargin =(10 / (int)scale);
-
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
         List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
 
-
-
-		if(pictograms.size() == 0) {
+		if(pictograms.size() == 0)
+        {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 		}
-/*		else if(pictograms.size() == 1) {
+		else
+        {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 
-            for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
-                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
-                choiceFramView.addDeleteButton();
-                newChoiceContent.addView(choiceFramView);
-            }
-            Pictogram pic = currentEditModeFrame.getMediaFrame().getContent().get(0);
-            int i = pic.getHeight();
-            currentEditModeFrame.addText("?");
-			//currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-		}*/
-		else {
-			newChoiceContent.removeAllViews();
-			currentEditModeFrame.detachPictograms();
 			for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
 				EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
 				choiceFramView.addDeleteButton();
 				newChoiceContent.addView(choiceFramView);
+                //currentEditModeFrame.setPictogram(p);
 			}
-			currentEditModeFrame.addText("Valg " + currentEditModeFrame.getMediaFrame().getChoiceNumber());
+           // currentEditModeFrame.detachPictograms();
+           // currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+
 		}
 	}
 
@@ -561,66 +525,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 
         dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null));
-
-
-		//renderMenuBar(R.layout.choice_menu);
-
-		/*ImageButton addChoice = (ImageButton)findViewById(R.id.addChoice2);
-		ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
-        ImageButton previous = (ImageButton)findViewById(R.id.previous);
-
-		int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
-		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getChoiceNumber() == 0) {
-			selectChoices.setAlpha(1.0f);
-			selectChoices.setEnabled(true);
-		}
-		else {
-			selectChoices.setAlpha(0.3f);
-			selectChoices.setEnabled(false);
-		}
-		addChoice.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent();
-                i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
-                        "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
-                i.putExtra("purpose", "multi");
-                i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
-                i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-
-                EditModeActivity.this.startActivityForResult(i, 1);
-            }
-        });
-
-        //TODO: Should be deleted when button has been rebound.
-        previous.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                *//* the following code refocuses the edit menu and changes the borders of the life
-                   stories from dashed back to solid. It also changes their size back to normal
-                *//*
-                EditModeActivity.this.renderEditMenu();
-                currentEditModeFrame.lowLight();
-                currentEditModeFrame.setBackgroundResource(R.layout.border);
-            }
-        });
-
-		selectChoices.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (EditModeActivity.this.currentEditModeFrame.getMediaFrame().getContent().size() == 0
-                        && LifeStory.getInstance().getCurrentStory().getNumChoices() > 0)
-                    renderDialog(DIALOG_SELECT_CHOICE);
-                else {
-                    Toast t = Toast.makeText(EditModeActivity.this, "Kan ikke tilføjes til valg.", Toast.LENGTH_LONG);
-                    t.show();
-                }
-            }
-        });*/
-
-
 
 		renderPictograms();
         dialogAddFrames.show();
@@ -728,7 +632,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 					@Override
 					public void OnContentSizeChanged(MediaFrame mediaFrame) {
 						//TODO: Is this even used (will outcomment)
-                        //EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
+                        EditModeActivity.this.renderPictograms();
 					}
 				});
 				ClipData data = ClipData.newPlainText("", "");
@@ -754,7 +658,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 					@Override
 					public void OnContentSizeChanged(MediaFrame mediaFrame) {
 						//TODO: Is this used?
-                        //EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
+                        EditModeActivity.this.renderPictograms();
 						
 					}
 				});
@@ -913,6 +817,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     public void dismissDialog(View v){
         dialogAddFrames.dismiss();
+        renderPictograms();
     }
 
     public void addPictograms(View v) {

@@ -84,21 +84,9 @@
             android:id="@+id/btn_yes"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="12.5dp"
             android:layout_weight="0.5"
             android:gravity="center"
             android:text="@string/ok"
-            android:textSize="13sp"
-            android:textColor="@color/text_color" />
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/btn_no"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="12.5dp"
-            android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="@string/abort"
             android:textSize="13sp"
             android:textColor="@color/text_color"
             android:onClick="dismissDialog"/>
