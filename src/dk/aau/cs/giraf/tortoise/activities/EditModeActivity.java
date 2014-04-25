@@ -197,6 +197,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                         pictoIDList.add(picto.getPictogramID());
                         currentEditModeFrame.getMediaFrame().addContent(picto);
                     }
+                    renderPictograms();
 				}
 			}
 		}
