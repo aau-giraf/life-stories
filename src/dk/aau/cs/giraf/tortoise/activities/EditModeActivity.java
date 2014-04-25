@@ -488,70 +488,49 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		//renderPictograms();
 	}
 
+    /**
+     * Updates the views to show associated pictograms. This will update the choice dialog and the main view.
+     */
 	public void renderPictograms() {
         // Initialize layout containing pictograms in case more than one is preselected
 		//LinearLayout newChoiceContent = (LinearLayout)findViewById(R.id.newChoiceContent2);
         // Initializes the button that accepts the current choice
 
-
-
-        //TODO: Remove this block.
-        //int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
-        //ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
-        /* Activates or disables the "multi choice"-button
-        * currentEditModeFrame.getMediaFrame().getContent().size() == 0
-        * */
-/*		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getContent().size() == 0) {
-			selectChoices.setAlpha(1.0f);
-			selectChoices.setEnabled(true);
-		}
-		else {
-			selectChoices.setAlpha(0.3f);
-			selectChoices.setEnabled(false);
-		}*/
-
         LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
-
-		LinearLayout pictoListArea = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null).findViewById(R.id.newChoiceContent2);
-
-        // float scale = getApplicationContext().getResources().getDisplayMetrics().density;
-		//int parentWidth = -10; // (int) (pictoListArea.getHeight() - (120 / scale));
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -1);
-		//params.topMargin =  (10 / (int)scale);
-		//params.leftMargin = (10 / (int)scale);
-		//params.rightMargin =(10 / (int)scale);
-
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
         List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
-
-
 
 		if(pictograms.size() == 0) {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 		}
-/*		else if(pictograms.size() == 1) {
-			newChoiceContent.removeAllViews();
-			currentEditModeFrame.detachPictograms();
-
-            for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
-                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
-                choiceFramView.addDeleteButton();
-                newChoiceContent.addView(choiceFramView);
-            }
-            Pictogram pic = currentEditModeFrame.getMediaFrame().getContent().get(0);
-            int i = pic.getHeight();
-            currentEditModeFrame.addText("?");
-			//currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-		}*/
 		else {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
+
 			for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
 				EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
 				choiceFramView.addDeleteButton();
 				newChoiceContent.addView(choiceFramView);
 			}
-			currentEditModeFrame.addText("Valg " + currentEditModeFrame.getMediaFrame().getChoiceNumber());
+            currentEditModeFrame.detachPictograms();
+            currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+
+            //currentEditModeFrame.addText("test");
+
+            if(pictograms.size() == 1)
+            {
+                //Pictogram pic = currentEditModeFrame.getMediaFrame().getContent().get(0);
+
+                //pic.getHeight();
+                //currentEditModeFrame.detachPictograms();
+
+            }
+            else
+            {
+                //TODO: Update this to show choice icon.
+                //currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+            }
 		}
 	}
 

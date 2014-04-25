@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:padding="25dp" >
+    android:padding="25dp">
 
     <TextView
         android:id="@+id/title"
