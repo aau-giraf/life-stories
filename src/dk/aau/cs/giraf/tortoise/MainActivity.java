@@ -318,7 +318,8 @@ public class MainActivity extends TortoiseActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         ToggleButton editMode = (ToggleButton) findViewById(R.id.edit_mode_toggle);
         ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
@@ -436,11 +437,17 @@ public class MainActivity extends TortoiseActivity {
     public void addSchedule(View v)
     {
         canFinish = false;
-        Intent i = new Intent(this, ScheduleViewActivity.class);
+        Intent i = new Intent(this, ScheduleEditActivity.class);
         i.putExtra("template", -1);
 
-        if (i.resolveActivity(getPackageManager()) != null) {
+        if (i.resolveActivity(getPackageManager()) != null)
+        {
+            try{
             startActivity(i);
+            } catch (Exception ex)
+            {
+                GuiHelper.ShowToast(this, ex.toString());
+            }
         } else
         {
             GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte ugeplanlægger");

@@ -104,33 +104,61 @@ public class ScheduleViewActivity extends TortoiseActivity
         btn.setToggled(true);
     }
 
-    int numOfPasses = 0;
-
     public void weekdaySelected(View v)
     {
-        if(numOfPasses == 7)
+
+        int btnId = v.getId();
+
+        GToggleButton btn = (GToggleButton) findViewById(v.getId());
+
+        // "push" week day button immediately to "disable" toggle feature.
+        // The week day buttons should not act as normal buttons
+        btn.setToggled(true);
+
+         switch(btnId)
         {
-            switch (v.getId())
-            {
-                case R.id.monday:
-                    break;
-                case R.id.tuesday:
-                    break;
-                case R.id.wednesday:
-                    break;
-                case R.id.thursday:
-                    break;
-                case R.id.friday:
-                    break;
-                case R.id.sunday:
-                    break;
-            }
-        }else
-        {
-            // because the intial state of week day buttons are toggled
-            // their on-click action is triggered by oncreate()
-            // this variable makes sure that nothing is done on the first pass
-            numOfPasses++;
+            case R.id.monday:
+                if(getWeekday().equals("Mandag"))
+                {
+                    btn.setToggled(false);
+                }
+                break;
+            case R.id.tuesday:
+                if(getWeekday().equals("Tirsdag"))
+                {
+                    btn.setToggled(false);
+                }
+                break;
+            case R.id.wednesday:
+                if(getWeekday().equals("Onsdag"))
+                {
+                    btn.setToggled(false);
+                }
+                break;
+            case R.id.thursday:
+                if(getWeekday().equals("Torsdag"))
+                {
+                    btn.setToggled(false);
+                };
+                break;
+            case R.id.friday:
+                if(getWeekday().equals("Fredag"))
+                {
+                    btn.setToggled(false);
+                }
+                break;
+            case R.id.saturday:
+                if(getWeekday().equals("Lørdag"))
+                {
+                    btn.setToggled(false);
+                }
+                break;
+            case R.id.sunday:
+                if(getWeekday().equals("Søndag"))
+                {
+                    btn.setToggled(false);
+                }
+                break;
         }
     }
 

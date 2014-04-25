@@ -11,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="90dp"
         android:background="@drawable/main_topbar_gradient_bg"
         android:orientation="horizontal" >
 
@@ -74,7 +74,7 @@
                     android:onClick="weekdaySelected"
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="50dp"
                     android:scaleType="fitCenter" />
 
                 <TextView
