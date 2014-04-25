@@ -30,7 +30,8 @@
                 android:centerColor="#10000000"
                 android:endColor="#37000000"
                 android:angle="270"
-                android:type="linear"/>
+                android:type="linear"
+                android:layout_height="90dp"/>
 		</shape>
     </item>
     
