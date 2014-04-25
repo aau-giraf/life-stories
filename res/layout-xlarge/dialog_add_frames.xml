@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:padding="25dp" >
+    android:padding="25dp">
 
     <TextView
         android:id="@+id/title"
@@ -84,24 +84,13 @@
             android:id="@+id/btn_yes"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="25dp"
             android:layout_weight="0.5"
             android:gravity="center"
             android:text="@string/ok"
             android:textSize="26sp"
-            android:textColor="@color/text_color" />
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/btn_no"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="25dp"
-            android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="@string/abort"
-            android:textSize="26sp"
             android:textColor="@color/text_color"
             android:onClick="dismissDialog"/>
+
     </LinearLayout>
 
 </RelativeLayout>
