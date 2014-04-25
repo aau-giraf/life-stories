@@ -542,66 +542,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null));
 
-
-		//renderMenuBar(R.layout.choice_menu);
-
-		/*ImageButton addChoice = (ImageButton)findViewById(R.id.addChoice2);
-		ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
-        ImageButton previous = (ImageButton)findViewById(R.id.previous);
-
-		int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
-		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getChoiceNumber() == 0) {
-			selectChoices.setAlpha(1.0f);
-			selectChoices.setEnabled(true);
-		}
-		else {
-			selectChoices.setAlpha(0.3f);
-			selectChoices.setEnabled(false);
-		}
-		addChoice.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent();
-                i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
-                        "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
-                i.putExtra("purpose", "multi");
-                i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
-                i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-
-                EditModeActivity.this.startActivityForResult(i, 1);
-            }
-        });
-
-        //TODO: Should be deleted when button has been rebound.
-        previous.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                *//* the following code refocuses the edit menu and changes the borders of the life
-                   stories from dashed back to solid. It also changes their size back to normal
-                *//*
-                EditModeActivity.this.renderEditMenu();
-                currentEditModeFrame.lowLight();
-                currentEditModeFrame.setBackgroundResource(R.layout.border);
-            }
-        });
-
-		selectChoices.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (EditModeActivity.this.currentEditModeFrame.getMediaFrame().getContent().size() == 0
-                        && LifeStory.getInstance().getCurrentStory().getNumChoices() > 0)
-                    renderDialog(DIALOG_SELECT_CHOICE);
-                else {
-                    Toast t = Toast.makeText(EditModeActivity.this, "Kan ikke tilføjes til valg.", Toast.LENGTH_LONG);
-                    t.show();
-                }
-            }
-        });*/
-
-
-
 		renderPictograms();
         dialogAddFrames.show();
 	}
