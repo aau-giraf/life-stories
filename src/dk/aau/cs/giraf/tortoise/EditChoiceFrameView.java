@@ -32,7 +32,7 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 		innerLayout = new FrameLayout(mainActivity.getApplicationContext());
 		RelativeLayout.LayoutParams innerParams = new RelativeLayout.LayoutParams(
 				android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
-		innerParams.setMargins(20, 20, 20, 20);
+		innerParams.setMargins(2, 2, 2, 2);
 		innerLayout.setLayoutParams(innerParams);
 		innerLayout.setBackgroundResource(R.layout.border);
 		innerLayout.setPadding((int)(15*scale), (int) (15*scale), (int) (15*scale), (int) (15*scale));

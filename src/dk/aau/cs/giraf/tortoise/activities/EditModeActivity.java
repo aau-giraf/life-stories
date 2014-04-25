@@ -78,6 +78,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     EditModeFrameView currentEditModeFrame;
 	RelativeLayout menuBar;
 	RelativeLayout mainLayout;
+    GDialog dialogAddFrames;
+
 	public List<OnMainLayoutEventListener> mainLayoutListeners =
 			new ArrayList<OnMainLayoutEventListener>();
 	public List<OnCurrentFrameEventListener> currentFrameListeners = 
@@ -451,7 +453,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 						}
 						selectedChoice = 0;
 						LifeStory.getInstance().getCurrentStory().getMediaFrames().remove(mediaFrame);
-						renderPictograms();
+//						renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
 					}
 				}
 			});
@@ -483,44 +485,64 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			mediaFrame.setChoiceNumber(0);
 			LifeStory.getInstance().getCurrentStory().decrementNumChoices();
 		}
-		renderPictograms();
+		//renderPictograms();
 	}
 
 	public void renderPictograms() {
         // Initialize layout containing pictograms in case more than one is preselected
-		LinearLayout newChoiceContent = (LinearLayout)findViewById(R.id.newChoiceContent);
+		//LinearLayout newChoiceContent = (LinearLayout)findViewById(R.id.newChoiceContent2);
         // Initializes the button that accepts the current choice
-		ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
-		int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
-        /* Activates or disables the "Accept"-button
-        * WHY IS THIS NECESSARY FOR THE BUTTON TO BECOME ACTIVE?!?
+
+
+
+        //TODO: Remove this block.
+        //int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
+        //ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
+        /* Activates or disables the "multi choice"-button
         * currentEditModeFrame.getMediaFrame().getContent().size() == 0
         * */
-		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getContent().size() == 0) {
+/*		if(numChoices > 0 && currentEditModeFrame.getMediaFrame().getContent().size() == 0) {
 			selectChoices.setAlpha(1.0f);
 			selectChoices.setEnabled(true);
 		}
 		else {
 			selectChoices.setAlpha(0.3f);
 			selectChoices.setEnabled(false);
-		}
-		RelativeLayout menuBar = (RelativeLayout) findViewById(R.id.menuBar);
-		float scale = getApplicationContext().getResources().getDisplayMetrics().density;
-		int parentWidth = (int) (menuBar.getWidth() - (120 / scale));
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(parentWidth, parentWidth);
-		params.topMargin = (int) (10 / scale);
-		params.leftMargin = (int) (10 / scale);
-		params.rightMargin = (int) (10 / scale);
-		List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
+		}*/
+
+        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+
+		LinearLayout pictoListArea = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null).findViewById(R.id.newChoiceContent2);
+
+        // float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+		//int parentWidth = -10; // (int) (pictoListArea.getHeight() - (120 / scale));
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -1);
+		//params.topMargin =  (10 / (int)scale);
+		//params.leftMargin = (10 / (int)scale);
+		//params.rightMargin =(10 / (int)scale);
+
+        List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
+
+
+
 		if(pictograms.size() == 0) {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 		}
-		else if(pictograms.size() == 1) {
+/*		else if(pictograms.size() == 1) {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
-			currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-		}
+
+            for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
+                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
+                choiceFramView.addDeleteButton();
+                newChoiceContent.addView(choiceFramView);
+            }
+            Pictogram pic = currentEditModeFrame.getMediaFrame().getContent().get(0);
+            int i = pic.getHeight();
+            currentEditModeFrame.addText("?");
+			//currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+		}*/
 		else {
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
@@ -533,17 +555,17 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		}
 	}
 
-    GDialog dialogAddFrames;
+
 
 	public void renderAddContentMenu() {
 
 
-
         dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null));
 
-		renderMenuBar(R.layout.choice_menu);
 
-		ImageButton addChoice = (ImageButton)findViewById(R.id.addChoice);
+		//renderMenuBar(R.layout.choice_menu);
+
+		/*ImageButton addChoice = (ImageButton)findViewById(R.id.addChoice2);
 		ImageButton selectChoices = (ImageButton)findViewById(R.id.selectChoices);
         ImageButton previous = (ImageButton)findViewById(R.id.previous);
 
@@ -575,9 +597,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         previous.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                /* the following code refocuses the edit menu and changes the borders of the life
+                *//* the following code refocuses the edit menu and changes the borders of the life
                    stories from dashed back to solid. It also changes their size back to normal
-                */
+                *//*
                 EditModeActivity.this.renderEditMenu();
                 currentEditModeFrame.lowLight();
                 currentEditModeFrame.setBackgroundResource(R.layout.border);
@@ -596,9 +618,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     t.show();
                 }
             }
-        });
-		renderPictograms();
+        });*/
 
+
+
+		renderPictograms();
         dialogAddFrames.show();
 	}
 
@@ -703,7 +727,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 					@Override
 					public void OnContentSizeChanged(MediaFrame mediaFrame) {
-						EditModeActivity.this.renderPictograms();
+						//TODO: Is this even used (will outcomment)
+                        //EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
 					}
 				});
 				ClipData data = ClipData.newPlainText("", "");
@@ -728,7 +753,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 					@Override
 					public void OnContentSizeChanged(MediaFrame mediaFrame) {
-						EditModeActivity.this.renderPictograms();
+						//TODO: Is this used?
+                        //EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
 						
 					}
 				});
@@ -845,7 +871,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 				@Override
 				public void OnContentSizeChanged(MediaFrame mediaFrame) {
-					EditModeActivity.this.renderPictograms();
+					//TODO: Used?
+					//EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
 				}
 			});
 			for(Pictogram p : m.getContent()) {
@@ -886,6 +913,17 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     public void dismissDialog(View v){
         dialogAddFrames.dismiss();
+    }
+
+    public void addPictograms(View v) {
+        Intent i = new Intent();
+        i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
+                "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        i.putExtra("purpose", "multi");
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+
+        EditModeActivity.this.startActivityForResult(i, 1);
     }
 
     /**
