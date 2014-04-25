@@ -511,7 +511,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
 				choiceFramView.addDeleteButton();
 				newChoiceContent.addView(choiceFramView);
-                currentEditModeFrame.setPictogram(p);
+                //currentEditModeFrame.setPictogram(p);
 			}
            // currentEditModeFrame.detachPictograms();
            // currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
