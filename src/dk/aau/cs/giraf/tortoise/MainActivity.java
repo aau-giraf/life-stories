@@ -443,7 +443,7 @@ public class MainActivity extends TortoiseActivity {
             startActivity(i);
         } else
         {
-            GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
+            GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte ugeplanlægger");
         }
     }
 
