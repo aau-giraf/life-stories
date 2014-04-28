@@ -74,11 +74,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	private static final int DIALOG_SELECT_CHOICE = 4;
 	
 	static int selectedChoice = 0;
+    private boolean dialogAddFramesActive;
 	
     EditModeFrameView currentEditModeFrame;
 	RelativeLayout menuBar;
 	RelativeLayout mainLayout;
     GDialog dialogAddFrames;
+
 
 	public List<OnMainLayoutEventListener> mainLayoutListeners =
 			new ArrayList<OnMainLayoutEventListener>();
@@ -197,8 +199,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                         pictoIDList.add(picto.getPictogramID());
                         currentEditModeFrame.getMediaFrame().addContent(picto);
                     }
-                    renderPictograms();
 				}
+                renderPictograms();
 			}
 		}
 		else if (resultCode == RESULT_OK && requestCode == 2) {
@@ -507,14 +509,23 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 
-			for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
-				EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
-				choiceFramView.addDeleteButton();
-				newChoiceContent.addView(choiceFramView);
-                //currentEditModeFrame.setPictogram(p);
-			}
-           // currentEditModeFrame.detachPictograms();
-           // currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+            if(dialogAddFramesActive)
+            {
+                for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
+                    EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
+                    choiceFramView.addDeleteButton();
+                    newChoiceContent.addView(choiceFramView);
+                }
+            }
+            else
+            {
+                currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+
+            }
+
+
+
+
 
 		}
 	}
@@ -526,6 +537,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null));
 
+        dialogAddFramesActive = true;
 		renderPictograms();
         dialogAddFrames.show();
 	}
@@ -817,6 +829,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     public void dismissDialog(View v){
         dialogAddFrames.dismiss();
+        dialogAddFramesActive = false;
         renderPictograms();
     }
 
