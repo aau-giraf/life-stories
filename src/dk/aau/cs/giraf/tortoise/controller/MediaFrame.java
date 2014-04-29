@@ -8,7 +8,8 @@ import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 
 public class MediaFrame extends AbstractMediaFrame {
-	
+
+    private Pictogram choicePictogram;
 	private List<Pictogram> content;
 	private OnContentChangedEventListener mListener;
 	
@@ -51,6 +52,13 @@ public class MediaFrame extends AbstractMediaFrame {
 		else if (mListener != null)
 			mListener.OnContentSizeChanged(this);*/
 	}
+    public Pictogram getChoicePictogram(){
+        return choicePictogram;
+    }
+    public void setChoicePictogram(Pictogram picto){
+        choicePictogram = picto;
+    }
+
 	
 	public void removeContent(Pictogram content){
 		this.content.remove(content);
