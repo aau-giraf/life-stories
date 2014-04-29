@@ -109,7 +109,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         int btnId = v.getId();
 
-        GToggleButton btn = (GToggleButton) findViewById(v.getId());
+        GToggleButton btn = (GToggleButton) findViewById(btnId);
 
         // "push" week day button immediately to "disable" toggle feature.
         // The week day buttons should not act as normal buttons

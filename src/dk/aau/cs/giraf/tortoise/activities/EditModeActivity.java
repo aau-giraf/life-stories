@@ -493,6 +493,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     /**
      * Updates the views to show associated pictograms. This will update the choice dialog and the main view.
+     *
      */
 	public void renderPictograms() {
         LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
@@ -509,6 +510,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			newChoiceContent.removeAllViews();
 			currentEditModeFrame.detachPictograms();
 
+            //TODO: THIS IS A WORKAROUND!!
+            // If doalog is shown - put pictograms on it.
             if(dialogAddFramesActive)
             {
                 for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
@@ -517,6 +520,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     newChoiceContent.addView(choiceFramView);
                 }
             }
+            // Otherwise show the pictogram on current frame.
             else
             {
                 currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
