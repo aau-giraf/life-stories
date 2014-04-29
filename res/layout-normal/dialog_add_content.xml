@@ -118,7 +118,7 @@
             android:text="@string/ok"
             android:textSize="13sp"
             android:textColor="@color/text_color"
-            android:onClick="dismissDialog" />
+            android:onClick="dismissAddContentDialog" />
     </LinearLayout>
 
 </RelativeLayout>
