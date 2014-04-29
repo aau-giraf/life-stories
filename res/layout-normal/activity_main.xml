@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@drawable/main_gradient_bg"
     android:baselineAligned="false"
-    tools:context=".EditModeActivity" >
+    tools:context=".EditModeActivity">
 
     <RelativeLayout
         android:id="@+id/menuBar"
@@ -15,6 +15,7 @@
         android:gravity="center_horizontal"
         android:background="@drawable/main_topbar_gradient_bg"
         android:paddingTop="5dp">
+
         <include layout="@layout/edit_menu" />
     </RelativeLayout>
 
@@ -22,8 +23,23 @@
         android:id="@+id/mainLayout"
         android:layout_weight="1"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent" >
-	
-	</RelativeLayout>
+        android:layout_height="match_parent">
+
+        <android.support.v4.view.ViewPager
+            android:layout_height="100dp"
+            android:layout_width="fill_parent"
+            android:layout_alignParentTop="true">
+
+            <ImageButton
+                android:id="@+id/addChoice2"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginLeft="25dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/add"
+                android:background="@layout/border_selected"
+                android:onClick="addPictograms" />
+        </android.support.v4.view.ViewPager>
+    </RelativeLayout>
 
 </LinearLayout>
