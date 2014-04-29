@@ -21,8 +21,6 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleEditActivity extends ScheduleActivity
 {
-    Boolean deviceInPortraitMode = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -48,6 +46,17 @@ public class ScheduleEditActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+    }
+
+    @Override
+    public void onResume()
+    {
+        // this method is also called after oncreate()
+        // makes sure that current weekday is also marked after resume of the app
+        super.onResume();
+
+        // mark the current weekday in the scheduler
+        markCurrentWeekday();
     }
 
     public void weekdaySelected(View v)
@@ -89,8 +98,7 @@ public class ScheduleEditActivity extends ScheduleActivity
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
-                    Toast t = Toast.makeText(this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
-                    t.show();
+                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 }
                 else
                 {
@@ -108,10 +116,9 @@ public class ScheduleEditActivity extends ScheduleActivity
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
                     // It still does
-                    catch (NullPointerException e){
-                        Toast t = Toast.makeText(this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
-                        t.show();
-
+                    catch (NullPointerException e)
+                    {
+                        GuiHelper.ShowToast(this, "Der skete en uventet fejl");
                     }
                 }
             } catch (Exception e)

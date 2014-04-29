@@ -47,66 +47,9 @@ public class ScheduleViewActivity extends ScheduleActivity
         markCurrentWeekday();
     }
 
-    private void markCurrentWeekday()
-    {
-        unmarkWeekdays();
-
-        String weekday = getWeekday();
-
-        if(weekday.equals(getResources().getString(R.string.monday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.tuesday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.wednesday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.thursday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.friday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.saturday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.sunday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
-            btn.setToggled(false);
-        }
-    }
-
-    private void unmarkWeekdays()
-    {
-        GToggleButton btn;
-
-        btn = (GToggleButton) findViewById(R.id.monday);
-        btn.setToggled(true);
-        btn = (GToggleButton) findViewById(R.id.tuesday);
-        btn.setToggled(true);
-        btn = (GToggleButton) findViewById(R.id.wednesday);
-        btn.setToggled(true);
-        btn = (GToggleButton) findViewById(R.id.thursday);
-        btn.setToggled(true);
-        btn = (GToggleButton) findViewById(R.id.friday);
-        btn.setToggled(true);
-        btn = (GToggleButton) findViewById(R.id.saturday);
-        btn.setToggled(true);
-        btn = (GToggleButton) findViewById(R.id.sunday);
-        btn.setToggled(true);
-    }
 
     public void weekdaySelected(View v)
     {
-
         int btnId = v.getId();
 
         GToggleButton btn = (GToggleButton) findViewById(btnId);
@@ -160,16 +103,6 @@ public class ScheduleViewActivity extends ScheduleActivity
                 }
                 break;
         }
-    }
-
-    private String getWeekday()
-    {
-        Date date = new Date();
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEEE");
-        String weekday = dateFormatter.format(date);
-
-        // return week day with first letter as uppercase - e.g Mandag
-        return weekday.substring(0, 1).toUpperCase() + weekday.substring(1);
     }
 
     @Override
