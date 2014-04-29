@@ -95,7 +95,7 @@ public class ScheduleActivity extends TortoiseActivity{
         }catch (NullPointerException ex)
         {
             // the exception is ignored because it is thrown when using portrait mode
-            // the exception is not serious
+            // the exception is a work-around
         }
     }
 }
