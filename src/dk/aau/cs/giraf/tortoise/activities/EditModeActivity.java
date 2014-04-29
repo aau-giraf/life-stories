@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -234,7 +235,34 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
           } catch (Exception e){
             GuiHelper.ShowToast(this, e.toString());
           }
-		}
+		}else if (resultCode == RESULT_OK && requestCode == 3){
+            try{
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                if (checkoutIds.length == 0) {
+                    Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
+                    t.show();
+                }
+                else
+                {
+                    try{
+                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        currentEditModeFrame.getMediaFrame().setChoicePictogram(picto);
+                        renderChoiceIcon();
+                    }
+                    //We expect a null pointer exception if the pictogram is without image
+                    //TODO: Investigate if this still happens with the new DB.
+                    // It still does
+                    catch (NullPointerException e){
+                        Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
+                        t.show();
+                    }
+                }
+            } catch (Exception e){
+                GuiHelper.ShowToast(this, e.toString());
+            }
+
+        }
 	}
 
     // placed here so it can be accessed from all places in switch case
@@ -497,8 +525,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      */
 	public void renderPictograms() {
         LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
         List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
+
+        //renderChoiceIcon();
 
 		if(pictograms.size() == 0)
         {
@@ -847,6 +878,42 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         EditModeActivity.this.startActivityForResult(i, 1);
     }
+
+    public void chooseChoicePictogram(View v){
+        Intent i = new Intent();
+        i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
+                "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        i.putExtra("purpose", "single");
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        EditModeActivity.this.startActivityForResult(i, 3);
+    }
+
+    public void renderChoiceIcon(){
+        ImageView choiceIcon = (ImageView) dialogAddFrames.findViewById(R.id.choiceIcon);
+        ImageView deleteBtn = (ImageView) dialogAddFrames.findViewById(R.id.removeChoiceIcon);
+
+        Pictogram currentChoiceIcon = currentEditModeFrame.getMediaFrame().getChoicePictogram();
+
+        if (currentChoiceIcon == null){
+
+            Bitmap defaultBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.question);
+
+            choiceIcon.setImageBitmap(defaultBitmap);
+            deleteBtn.setVisibility(View.GONE);
+        }
+        else{
+            choiceIcon.setImageBitmap(currentChoiceIcon.getImageData());
+            deleteBtn.setVisibility(View.VISIBLE);
+
+        }
+    }
+
+    public void removeChoiceIcon(View v){
+        currentEditModeFrame.getMediaFrame().setChoicePictogram(null);
+        renderChoiceIcon();
+    }
+
 
     /**
      * Possibly obsolete, as it overrides an identical method

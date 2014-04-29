@@ -12,19 +12,35 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="17.5dp"
+        android:layout_marginTop="37.5dp"
         android:text="@string/dialog_add_frames_title"
         android:textSize="15sp"
         android:textColor="@color/text_color" />
 
-    <ImageView
-        android:id="@+id/choiceIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/question"
-        android:background="@layout/border_selected"
-        android:layout_marginLeft="25dp"
-        android:layout_toRightOf="@id/title" />
+    <RelativeLayout
+        android:id="@+id/choiceContainer"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_toRightOf="@id/title"
+        android:layout_marginLeft="25dp">
+        <ImageView
+            android:id="@+id/choiceIcon"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/question"
+            android:background="@layout/border_selected"
+            android:onClick="chooseChoicePictogram"/>
+        <ImageView
+            android:id="@+id/removeChoiceIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_delete"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+            android:onClick="removeChoiceIcon"/>
+    </RelativeLayout>
+
 
     <ImageView
         android:id="@+id/seperatorLine"
@@ -33,7 +49,7 @@
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:background="@color/text_color"
-        android:layout_below="@id/choiceIcon" />
+        android:layout_below="@id/choiceContainer" />
 
     <TextView
         android:id="@+id/choicesText"
