@@ -46,10 +46,10 @@ public class MediaFrame extends AbstractMediaFrame {
 	
 	public void addContent(Pictogram content){
 		this.content.add(content);
-		if(mListener != null && getContent().size() == 2)
+/*		if(mListener != null && getContent().size() == 2)
 			mListener.OnIsChoiceListener(this, true);
 		else if (mListener != null)
-			mListener.OnContentSizeChanged(this);
+			mListener.OnContentSizeChanged(this);*/
 	}
 	
 	public void removeContent(Pictogram content){
