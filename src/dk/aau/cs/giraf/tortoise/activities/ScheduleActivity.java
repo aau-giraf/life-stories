@@ -25,6 +25,17 @@ public class ScheduleActivity extends TortoiseActivity{
         this.startActivityForResult(i, 2);
     }
 
+    public void startPictosearchForScheduler(View v)
+    {
+        Intent i = new Intent();
+        i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch", "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        i.putExtra("purpose", "single");
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+
+        this.startActivityForResult(i, 3);
+    }
+
     public void markCurrentWeekday()
     {
         unmarkWeekdays();

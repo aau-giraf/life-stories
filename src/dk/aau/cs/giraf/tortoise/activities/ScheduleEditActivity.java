@@ -66,7 +66,7 @@ public class ScheduleEditActivity extends ScheduleActivity
         btn.setToggled(true);
     }
 
-    public void addItems()
+    public void addItems(Bitmap bm)
     {
         try
         {
@@ -76,13 +76,9 @@ public class ScheduleEditActivity extends ScheduleActivity
             int ss = R.id.layoutTest;
             LinearLayout sv = (LinearLayout) findViewById(R.id.layoutTest);
 
-            int i;
-
-            for(i = 0; i < 50; i++)
-            {
-                RadioButton rb = new RadioButton(this);
-                sv.addView(rb);
-            }
+            ImageView iw = new ImageView(this);
+            iw.setImageBitmap(bm);
+            sv.addView(iw);
         } catch (Exception ex)
         {
             GuiHelper.ShowToast(this, ex.toString());
@@ -94,7 +90,8 @@ public class ScheduleEditActivity extends ScheduleActivity
     {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == 2) {
+        if (resultCode == RESULT_OK && requestCode == 2)
+        {
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
@@ -112,6 +109,7 @@ public class ScheduleEditActivity extends ScheduleActivity
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
                         storyImage.setImageBitmap(bitmap);
+                        addItems(bitmap);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
@@ -124,6 +122,38 @@ public class ScheduleEditActivity extends ScheduleActivity
             } catch (Exception e)
             {
                 GuiHelper.ShowToast(this, e.toString());
+            }
+        }
+        else if (resultCode == RESULT_OK && requestCode == 3)
+        {
+            // this code is executed when the week scheduler requests an image from pictosearch
+            try
+            {
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                if (checkoutIds.length == 0)
+                {
+                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
+                }
+                else
+                {
+                    try
+                    {
+                        LifeStory.getInstance().setCurrentStory(new Sequence());
+                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
+                        bitmap = LayoutTools.getSquareBitmap(bitmap);
+                        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+                        addItems(bitmap);
+                    }
+                    catch (NullPointerException e)
+                    {
+                        GuiHelper.ShowToast(this, "Der skete en uventet fejl");
+                    }
+                }
+            } catch (NullPointerException e)
+            {
+                GuiHelper.ShowToast(this, "Fejl");
             }
         }
     }
