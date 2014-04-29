@@ -524,56 +524,72 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      *
      */
 	public void renderPictograms() {
+
+        List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
+        //Pictogram choicePictogram = currentEditModeFrame.getMediaFrame().getChoicePictogram();
         LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
 
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
-        List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
 
-        //renderChoiceIcon();
+        currentEditModeFrame.detachPictograms();
+        currentEditModeFrame.removeAllViews();
+        newChoiceContent.removeAllViews();
 
-		if(pictograms.size() == 0)
+        if(pictograms.size() == 0)
         {
-			newChoiceContent.removeAllViews();
-			currentEditModeFrame.detachPictograms();
-		}
-		else
-        {
-			newChoiceContent.removeAllViews();
-			currentEditModeFrame.detachPictograms();
+            //TODO: Delete pictogram if no data.
+        }
+        else{
 
-            //TODO: THIS IS A WORKAROUND!!
-            // If doalog is shown - put pictograms on it.
-            if(dialogAddFramesActive)
-            {
+            if(pictograms.size() == 1){
+                if(dialogAddFramesActive){
+                    // If there is only one pictogram, it is shown on the big frame. Temporarily replace it with a bitmap.
+                    ImageView tempBitmap = new ImageView(this);
+                    tempBitmap.setImageBitmap(currentEditModeFrame.getMediaFrame().getContent().get(0).getImageData());
+                    currentEditModeFrame.addView(tempBitmap);
+                }
+                else{
+                    currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+                }
+            }
+            else{
+                if(pictograms.size() == 1){
+                    currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+                }
+                else{
+                    ImageView choiceBackground = new ImageView(this);
+
+                    if(currentEditModeFrame.getMediaFrame().getChoicePictogram() == null){
+                        choiceBackground.setImageResource(R.drawable.question);
+                    }
+                    else{
+                        choiceBackground.setImageBitmap(currentEditModeFrame.getMediaFrame().getChoicePictogram().getImageData());
+                    }
+
+                    currentEditModeFrame.addView(choiceBackground);
+                }
+            }
+
+            if(dialogAddFramesActive){
                 for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
                     EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
                     choiceFramView.addDeleteButton();
                     newChoiceContent.addView(choiceFramView);
                 }
             }
-            // Otherwise show the pictogram on current frame.
-            else
-            {
-                currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-
-            }
 
 
-
-
-
-		}
-	}
-
+        }
+        }
 
 
 	public void renderAddContentMenu() {
 
 
-        dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null));
+        dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content,null));
 
         dialogAddFramesActive = true;
-		renderPictograms();
+        renderPictograms();
         dialogAddFrames.show();
 	}
 
@@ -862,7 +878,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		}
 	}
 
-    public void dismissDialog(View v){
+    public void dismissAddContentDialog(View v){
         dialogAddFrames.dismiss();
         dialogAddFramesActive = false;
         renderPictograms();
@@ -907,6 +923,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             deleteBtn.setVisibility(View.VISIBLE);
 
         }
+        renderPictograms();
     }
 
     public void removeChoiceIcon(View v){

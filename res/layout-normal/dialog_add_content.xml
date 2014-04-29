@@ -29,7 +29,7 @@
             android:layout_height="75dp"
             android:layout_alignParentBottom="true"
             android:src="@drawable/question"
-            android:background="@layout/border_selected"
+            android:background="@layout/border"
             android:onClick="chooseChoicePictogram"/>
         <ImageView
             android:id="@+id/removeChoiceIcon"
