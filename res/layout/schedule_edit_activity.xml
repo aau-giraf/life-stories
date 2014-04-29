@@ -65,7 +65,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/weekday_button_height"
                 android:background="#FFDD9639"
                 android:id="@+id/frameLayout7">
 
@@ -74,7 +74,7 @@
                     android:onClick="weekdaySelected"
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="60dp"
                     android:scaleType="fitCenter" />
 
                 <TextView
@@ -106,7 +106,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/weekday_button_height"
                 android:background="#FFDD9639"
                 android:id="@+id/frameLayout">
 
@@ -145,7 +145,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/weekday_button_height"
                 android:background="#FFDD9639"
                 android:id="@+id/frameLayout2">
 
@@ -184,7 +184,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/weekday_button_height"
                 android:background="#FFDD9639"
                 android:id="@+id/frameLayout3">
 
@@ -224,7 +224,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/weekday_button_height"
                 android:background="#FFDD9639"
                 android:id="@+id/frameLayout4">
 
@@ -263,7 +263,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/weekday_button_height"
                 android:background="#FFDD9639"
                 android:id="@+id/frameLayout5">
 
@@ -303,7 +303,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/weekday_button_height"
                 android:background="#FFDD9639"
                 android:id="@+id/frameLayout6">
 
