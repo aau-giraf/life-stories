@@ -54,6 +54,7 @@ import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.Frame;
 import dk.aau.cs.giraf.tortoise.FrameDragShadowBuilder;
+import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -348,7 +349,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+                        saveSequence(LifeStory.getInstance().getCurrentStory(),
+                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                            LifeStory.getInstance().getChild().getId());
 					}
+
 					finish();
 				}
 			});
@@ -506,8 +511,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             dialog.show();
         }
 	}
-	
-	public void updateMediaFrameChoice(MediaFrame mediaFrame, boolean isChoice) {
+
+    public void updateMediaFrameChoice(MediaFrame mediaFrame, boolean isChoice) {
 		if (isChoice) {
 			mediaFrame.setChoiceNumber(LifeStory.getInstance().getCurrentStory().getNumChoices() + 1);
 			LifeStory.getInstance().getCurrentStory().incrementNumChoices();
@@ -949,5 +954,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	public void OnCurrentFrameChanged(
 			EditModeFrameView editModeFrameView, int ChoiceNumber) {
 	}
+
+    private void saveSequence(Sequence currentStory, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType type, int id) {
+        DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
+    }
 
 }
