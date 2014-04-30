@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -235,7 +236,34 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
           } catch (Exception e){
             GuiHelper.ShowToast(this, e.toString());
           }
-		}
+		}else if (resultCode == RESULT_OK && requestCode == 3){
+            try{
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                if (checkoutIds.length == 0) {
+                    Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
+                    t.show();
+                }
+                else
+                {
+                    try{
+                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        currentEditModeFrame.getMediaFrame().setChoicePictogram(picto);
+                        renderChoiceIcon();
+                    }
+                    //We expect a null pointer exception if the pictogram is without image
+                    //TODO: Investigate if this still happens with the new DB.
+                    // It still does
+                    catch (NullPointerException e){
+                        Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
+                        t.show();
+                    }
+                }
+            } catch (Exception e){
+                GuiHelper.ShowToast(this, e.toString());
+            }
+
+        }
 	}
 
     // placed here so it can be accessed from all places in switch case
@@ -501,53 +529,72 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      *
      */
 	public void renderPictograms() {
-        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
+
         List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
+        //Pictogram choicePictogram = currentEditModeFrame.getMediaFrame().getChoicePictogram();
+        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
 
-		if(pictograms.size() == 0)
-        {
-			newChoiceContent.removeAllViews();
-			currentEditModeFrame.detachPictograms();
-		}
-		else
-        {
-			newChoiceContent.removeAllViews();
-			currentEditModeFrame.detachPictograms();
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(145, 145);
 
-            //TODO: THIS IS A WORKAROUND!!
-            // If doalog is shown - put pictograms on it.
-            if(dialogAddFramesActive)
-            {
+        currentEditModeFrame.detachPictograms();
+        currentEditModeFrame.removeAllViews();
+        newChoiceContent.removeAllViews();
+
+        if(pictograms.size() == 0)
+        {
+            //TODO: Delete pictogram if no data.
+        }
+        else{
+
+            if(pictograms.size() == 1){
+                if(dialogAddFramesActive){
+                    // If there is only one pictogram, it is shown on the big frame. Temporarily replace it with a bitmap.
+                    ImageView tempBitmap = new ImageView(this);
+                    tempBitmap.setImageBitmap(currentEditModeFrame.getMediaFrame().getContent().get(0).getImageData());
+                    currentEditModeFrame.addView(tempBitmap);
+                }
+                else{
+                    currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+                }
+            }
+            else{
+                if(pictograms.size() == 1){
+                    currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
+                }
+                else{
+                    ImageView choiceBackground = new ImageView(this);
+
+                    if(currentEditModeFrame.getMediaFrame().getChoicePictogram() == null){
+                        choiceBackground.setImageResource(R.drawable.question);
+                    }
+                    else{
+                        choiceBackground.setImageBitmap(currentEditModeFrame.getMediaFrame().getChoicePictogram().getImageData());
+                    }
+
+                    currentEditModeFrame.addView(choiceBackground);
+                }
+            }
+
+            if(dialogAddFramesActive){
                 for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
                     EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
                     choiceFramView.addDeleteButton();
                     newChoiceContent.addView(choiceFramView);
                 }
             }
-            // Otherwise show the pictogram on current frame.
-            else
-            {
-                currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-
-            }
 
 
-
-
-
-		}
-	}
-
+        }
+        }
 
 
 	public void renderAddContentMenu() {
 
 
-        dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_frames,null));
+        dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content,null));
 
         dialogAddFramesActive = true;
-		renderPictograms();
+        renderPictograms();
         dialogAddFrames.show();
 	}
 
@@ -836,7 +883,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		}
 	}
 
-    public void dismissDialog(View v){
+    public void dismissAddContentDialog(View v){
         dialogAddFrames.dismiss();
         dialogAddFramesActive = false;
         renderPictograms();
@@ -852,6 +899,43 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         EditModeActivity.this.startActivityForResult(i, 1);
     }
+
+    public void chooseChoicePictogram(View v){
+        Intent i = new Intent();
+        i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
+                "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        i.putExtra("purpose", "single");
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        EditModeActivity.this.startActivityForResult(i, 3);
+    }
+
+    public void renderChoiceIcon(){
+        ImageView choiceIcon = (ImageView) dialogAddFrames.findViewById(R.id.choiceIcon);
+        ImageView deleteBtn = (ImageView) dialogAddFrames.findViewById(R.id.removeChoiceIcon);
+
+        Pictogram currentChoiceIcon = currentEditModeFrame.getMediaFrame().getChoicePictogram();
+
+        if (currentChoiceIcon == null){
+
+            Bitmap defaultBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.question);
+
+            choiceIcon.setImageBitmap(defaultBitmap);
+            deleteBtn.setVisibility(View.GONE);
+        }
+        else{
+            choiceIcon.setImageBitmap(currentChoiceIcon.getImageData());
+            deleteBtn.setVisibility(View.VISIBLE);
+
+        }
+        renderPictograms();
+    }
+
+    public void removeChoiceIcon(View v){
+        currentEditModeFrame.getMediaFrame().setChoicePictogram(null);
+        renderChoiceIcon();
+    }
+
 
     /**
      * Possibly obsolete, as it overrides an identical method

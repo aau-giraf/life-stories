@@ -70,6 +70,8 @@ public class MediaFrame extends AbstractMediaFrame {
         choicePictogram = picto;
     }
 
+
+
 	
 	public void removeContent(Pictogram content){
 		this.content.remove(content);
