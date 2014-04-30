@@ -590,6 +590,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         dialogAddFramesActive = true;
         renderPictograms();
+        renderChoiceIcon();
         dialogAddFrames.show();
 	}
 
