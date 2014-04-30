@@ -1,7 +1,14 @@
 package dk.aau.cs.giraf.tortoise.controller;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import dk.aau.cs.giraf.oasis.lib.controllers.SequenceController;
+import dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType;
+import dk.aau.cs.giraf.pictogram.Pictogram;
+
 
 /**
  * Created by David on 28-03-14.
@@ -48,13 +55,13 @@ public class DBController {
      * Save Sequence.
      *
      * @param seq
-     * @param sequenceType
-     * @param citizenID
+     * @param seqType
+     * @param profileID
      * @return boolean
      */
-    public boolean saveSequence(Sequence seq, int sequenceType, int citizenID){
-        success = false;
-        // This is where the magic should happen
+    public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
+        SequenceController sc = new SequenceController(con);
+        success = sc.insertSequenceAndFrames(morphSequenceToDBSequence(seq, seqType, profileID));
         return success;
     }
 
@@ -75,6 +82,7 @@ public class DBController {
      *
      * @param citizenID
      * @param sequenceType
+        new dk.aau.cs.giraf.oasis.lib.models.Pictogram()
      * @return ArrayList of Sequences
      */
     public ArrayList loadCurrentProfileSequences(int citizenID, int sequenceType){
@@ -82,17 +90,57 @@ public class DBController {
         // This is where the magic should happen
         return sequences;
     }
-/*
-    private DBSequence morphSequenceToDBSequence(Sequence seq, int sequenceType){
-        DBSequence dbSeq = new DBSequence();
-        dbSeq.setTitlePictoID(seq.getTitlePictoId());
-        dbSeq.setTitle(seq.getTitle());
-        dbSeq.setNumChoices(seq.getNumChoices());
-        dbSeq.setFrames(seq.getMediaFrames());
-        dbSeq.setNestedSequenceID(seq.getNestedSequenceID());
-        dbSeq.setSequenceType(sequenceType);
-        // TODO: NOT DONE!!!
+
+    private dk.aau.cs.giraf.oasis.lib.models.Sequence morphSequenceToDBSequence(
+            Sequence seq, SequenceType seqType, int profileID){
+        dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = new dk.aau.cs.giraf.oasis.lib.models.Sequence();
+
+        dbSeq.setName(seq.getTitle());
+        dbSeq.setPictogramId(seq.getTitlePictoId());
+        dbSeq.setProfileId(profileID);
+        dbSeq.setSequenceType(seqType);
+        dbSeq.setFramesList(morphMediaFramesToDBFrames(seq.getMediaFrames()));
+
         return dbSeq;
     }
-*/
+
+    private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq){
+        Sequence Seq = new Sequence();
+        return Seq;
+    }
+
+
+    private List<dk.aau.cs.giraf.oasis.lib.models.Frame> morphMediaFramesToDBFrames(List<MediaFrame> mediaFrames) {
+        List<dk.aau.cs.giraf.oasis.lib.models.Frame> DBframes = new ArrayList<dk.aau.cs.giraf.oasis.lib.models.Frame>();
+        for (MediaFrame mf :mediaFrames ){
+            DBframes.add(morphMediaFramesToDBFrames(mf));
+        }
+        return DBframes;
+    }
+
+
+    private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf){
+        dk.aau.cs.giraf.oasis.lib.models.Frame f = new dk.aau.cs.giraf.oasis.lib.models.Frame();
+        f.setPictogramId(mf.getChoicePictogram().getPictogramID());
+        f.setNestedSequence(mf.getNestedSequenceID());
+        f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
+        f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
+        f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
+        return f;
+    }
+
+    private List<dk.aau.cs.giraf.oasis.lib.models.Pictogram> morphPictogramsToDBPictograms(List<Pictogram> content) {
+        List<dk.aau.cs.giraf.oasis.lib.models.Pictogram> DBPictos = new ArrayList<dk.aau.cs.giraf.oasis.lib.models.Pictogram>();
+        for (Pictogram p :content ){
+            DBPictos.add(morphPictogramsToDBPictograms(p));
+        }
+        return DBPictos;
+    }
+
+    private dk.aau.cs.giraf.oasis.lib.models.Pictogram morphPictogramsToDBPictograms(Pictogram picto) {
+        dk.aau.cs.giraf.oasis.lib.models.Pictogram DBPicto = new dk.aau.cs.giraf.oasis.lib.models.Pictogram();
+        DBPicto.setId(picto.getId());
+        return DBPicto;
+    }
+
 }
