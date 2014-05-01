@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.tortoise.controller;
 
 import android.content.Context;
+import android.graphics.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,8 @@ public class DBController {
      *******************************/
     private boolean success;
     Helper oasisLibHelper;
+    private final int frameHeight = 140;
+    private final int frameWidth = 140;
 
     /***********************
      * SequenceType ENUMS: *
@@ -85,6 +88,13 @@ public class DBController {
         lifeStory.setStories(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
     }
 
+    /**
+     * Sets the templates of the current guardian
+     *
+     * @param profileID
+     * @param sequenceType
+     * @param con
+     */
     public void loadCurrentGuardianTemplates(int profileID, SequenceType sequenceType, Context con){
         oasisLibHelper = new Helper(con);
         LifeStory lifeStory = LifeStory.getInstance();
@@ -140,11 +150,12 @@ public class DBController {
      * @param con
      * @return MediaFrame
      */
-    private MediaFrame morphDBFrameToMediaFrame(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame, Context con){
+    private MediaFrame morphDBFrameToMediaFrame(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame, Context con) {
         MediaFrame mediaFrame = new MediaFrame();
         PictogramController pictoController = oasisLibHelper.pictogramHelper;
         mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con, pictoController.getPictogramById(dbFrame.getPictogramId())));
         mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
+        mediaFrame.setFirstFrame(new dk.aau.cs.giraf.tortoise.Frame(frameWidth, frameHeight, new Point(dbFrame.getPosX(), dbFrame.getPosY())));
         return mediaFrame;
     }
 
