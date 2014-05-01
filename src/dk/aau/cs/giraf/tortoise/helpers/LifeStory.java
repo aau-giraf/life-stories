@@ -11,8 +11,7 @@ import dk.aau.cs.giraf.tortoise.controller.SerializableSequence;
 public class LifeStory {
 	
 	private Sequence currentStory;
-	private List<SerializableSequence> stories, templates;
-    private ArrayList<Sequence> stories2, templates2;
+    private List<Sequence> stories, templates;
 	private static LifeStory instance;
 	private int currentIndex;
 	private Profile guardian;
@@ -27,16 +26,16 @@ public class LifeStory {
 	
 	private LifeStory(int index) {
 		this.currentIndex = index;
-		this.stories = new ArrayList<SerializableSequence>();
-		this.templates = new ArrayList<SerializableSequence>();
+		this.stories = new ArrayList<Sequence>();
+		this.templates = new ArrayList<Sequence>();
 	}
 	
 	public void addStory() {
-		stories.add(currentStory.getSerializableSequence());
+		stories.add(currentStory);
 	}
 	
 	public void addTemplate() {
-		templates.add(currentStory.getSerializableSequence());
+		templates.add(currentStory);
 	}
 	
 	public void removeTemplate(int index) {
@@ -45,7 +44,7 @@ public class LifeStory {
 	
 	public void setCurrentStory(Context context, int index) {
 		this.currentIndex = index;
-		currentStory = stories.get(index).getSequence(context);
+		currentStory = stories.get(index);
 	}
 	
 	public void setCurrentStory(Sequence s) {
@@ -53,7 +52,7 @@ public class LifeStory {
 	}
 	
 	public void setCurrentTemplate(Context context, int index) {
-		currentStory = templates.get(index).getSequence(context);
+		currentStory = templates.get(index);
 	}
 	
 	public void setNextStory(Context context) {
@@ -67,46 +66,44 @@ public class LifeStory {
 		currentIndex = currentIndex < 0 ? stories.size() - 1 : currentIndex;
 		setCurrentStory(context, currentIndex);
 	}
-	
-	public List<SerializableSequence> getStories() {
-		return this.stories;
-	}
-	
-	public List<SerializableSequence> getTemplates() {
-		return this.templates;
-	}
-
-    public List<Sequence> getStories2() {
-        return this.stories2;
+/*
+    public List<Sequence> getStories() {
+        return this.stories;
     }
 
-    public List<Sequence> getTemplates2() {
-        return this.templates2;
+    public List<Sequence> getTemplates() {
+        return this.templates;
+    }
+*/
+    public List<SerializableSequence> getStories() {
+        List<SerializableSequence> ss = new ArrayList<SerializableSequence>();
+        for(Sequence s : this.stories){
+            ss.add(s.getSerializableSequence());
+        }
+        return ss;
+    }
+
+    public List<SerializableSequence> getTemplates() {
+        List<SerializableSequence> ss = new ArrayList<SerializableSequence>();
+        for(Sequence s : this.templates){
+            ss.add(s.getSerializableSequence());
+        }
+        return ss;
     }
 	
 	public Sequence getCurrentStory() {
 		return this.currentStory;
 	}
 	
-	public void setTemplates(List<SerializableSequence> templates) {
+	public void setTemplates(List<Sequence> templates) {
 		this.templates.clear();
 		this.templates.addAll(templates);
 	}
-
-    public void setTemplates(ArrayList<Sequence> templates) {
-        this.templates2.clear();
-        this.templates2.addAll(templates);
-    }
 	
-	public void setStories(List<SerializableSequence> stories) {
+	public void setStories(List<Sequence> stories) {
 		this.stories.clear();
 		this.stories.addAll(stories);
 	}
-
-    public void setStories(ArrayList<Sequence> stories) {
-        this.stories2.clear();
-        this.stories2.addAll(stories);
-    }
 
 	public Profile getGuardian() {
 		return guardian;

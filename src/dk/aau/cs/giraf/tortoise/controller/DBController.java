@@ -75,7 +75,7 @@ public class DBController {
     /**
      * Sets the lifestories of the current citizen
      *
-     * @param citizenID
+     * @param profileID
      * @param sequenceType
      * @param con
      */

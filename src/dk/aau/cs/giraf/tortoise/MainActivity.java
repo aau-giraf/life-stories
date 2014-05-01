@@ -138,14 +138,14 @@ public class MainActivity extends TortoiseActivity {
             e.printStackTrace();
         }
         */
+
+            DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
+            DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
         }
         catch (Exception e){
             GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF"); //TODO fusk fix senere
             finish(); //no connection to DB
         }
-
-        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
-        DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
 
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);

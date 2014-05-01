@@ -324,6 +324,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 					JSONSerializer js = new JSONSerializer();
 					CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
 					CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
+
 					if(template.isChecked()) {
 						LifeStory.getInstance().addTemplate();
 						try {
@@ -349,11 +350,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-                        saveSequence(LifeStory.getInstance().getCurrentStory(),
-                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                            LifeStory.getInstance().getChild().getId());
 					}
 
+                    saveSequence(LifeStory.getInstance().getCurrentStory(),
+                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                            LifeStory.getInstance().getGuardian().getId());
 					finish();
 				}
 			});
