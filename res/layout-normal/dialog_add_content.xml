@@ -42,13 +42,12 @@
     </RelativeLayout>
 
 
-    <ImageView
+    <dk.aau.cs.giraf.gui.GDividerHorizontal
         android:id="@+id/seperatorLine"
         android:layout_width="375dp"
         android:layout_height="2dp"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:background="@color/text_color"
         android:layout_below="@id/choiceContainer" />
 
     <TextView

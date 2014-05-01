@@ -121,11 +121,17 @@ public class DBController {
 
     private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf){
         dk.aau.cs.giraf.oasis.lib.models.Frame f = new dk.aau.cs.giraf.oasis.lib.models.Frame();
-        f.setPictogramId(mf.getChoicePictogram().getPictogramID());
-        f.setNestedSequence(mf.getNestedSequenceID());
-        f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
-        f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
-        f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
+        try {
+            if (mf.getChoicePictogram() != null){
+                f.setPictogramId(mf.getChoicePictogram().getPictogramID());
+            }
+            f.setNestedSequence(mf.getNestedSequenceID());
+            f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
+            f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
+            f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
+        }catch (Exception e){
+
+        }
         return f;
     }
 
