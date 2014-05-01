@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/main_gradient_bg"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true">
 
     <RelativeLayout
         android:id="@+id/sequence_bar"
@@ -62,7 +62,7 @@
             android:layout_height="match_parent"
             android:background="@color/green"
             android:layout_weight="1"
-            android:onClick="startPictosearchForScheduler">
+            android:id="@id/mLayout">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -72,7 +72,6 @@
 
                 <dk.aau.cs.giraf.gui.GToggleButton
                     gcomponent:Toggled="true"
-                    android:onClick="addItems"
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -89,18 +88,33 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/scrollView" >
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/frameLayout7"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:onClick="startPictosearchForScheduler">
 
-                <LinearLayout
-                    android:orientation="vertical"
+                <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@id/layoutTest">
-                </LinearLayout>
-            </ScrollView>
+                    android:id="@+id/scrollView"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:id="@id/layoutTest"
+                        android:baselineAligned="false"
+                        android:layout_centerInParent="true" >
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
 
         </RelativeLayout>
 

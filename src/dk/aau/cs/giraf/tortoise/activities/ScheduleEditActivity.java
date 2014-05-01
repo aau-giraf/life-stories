@@ -3,16 +3,23 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -66,23 +73,49 @@ public class ScheduleEditActivity extends ScheduleActivity
         btn.setToggled(true);
     }
 
+    Boolean firstPass = true;
+
     public void addItems(Bitmap bm)
     {
         try
         {
-            LifeStory.getInstance().setCurrentStory(new Sequence());
 
+            LifeStory.getInstance().setCurrentStory(new Sequence());
 
             int ss = R.id.layoutTest;
             LinearLayout sv = (LinearLayout) findViewById(R.id.layoutTest);
 
             ImageView iw = new ImageView(this);
+            iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
             iw.setImageBitmap(bm);
+
+
+            if(firstPass)
+            {
+                // add spacing above first pictogram
+                addSpacing(sv);
+            }
+
+            // add image to the linear view contained in the scroll view
             sv.addView(iw);
+
+            // add spacing between pictograms
+            addSpacing(sv);
         } catch (Exception ex)
         {
             GuiHelper.ShowToast(this, ex.toString());
         }
+
+    }
+
+    private void addSpacing(LinearLayout sv)
+    {
+        // this is a workaround for adding spaces between pictograms
+        TextView tv = new TextView(this);
+        tv.setHeight(20);
+        tv.setWidth(10);
+        sv.addView(tv);
+        firstPass = false;
     }
 
     // this method handles pictograms sent back via an intent from pictosearch
@@ -144,6 +177,8 @@ public class ScheduleEditActivity extends ScheduleActivity
                         Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
                         bitmap = LayoutTools.getSquareBitmap(bitmap);
                         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+
+                        // add item to scroll view
                         addItems(bitmap);
                     }
                     catch (NullPointerException e)

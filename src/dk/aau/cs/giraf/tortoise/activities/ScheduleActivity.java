@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +12,8 @@ import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
-public class ScheduleActivity extends TortoiseActivity{
+public class ScheduleActivity extends TortoiseActivity
+{
     //TODO move common methods here
 
     public void startPictosearch(View v)
@@ -42,34 +44,41 @@ public class ScheduleActivity extends TortoiseActivity{
 
         String weekday = getWeekday();
 
-        if(weekday.equals(getResources().getString(R.string.monday)))
+        try
         {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.tuesday)))
+
+            if(weekday.equals(getResources().getString(R.string.monday)))
+            {
+                GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
+                btn.setToggled(false);
+            }else if(weekday.equals(getResources().getString(R.string.tuesday)))
+            {
+                GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
+                btn.setToggled(false);
+            }else if(weekday.equals(getResources().getString(R.string.wednesday)))
+            {
+                GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
+                btn.setToggled(false);
+            }else if(weekday.equals(getResources().getString(R.string.thursday)))
+            {
+                GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
+//                btn.setToggled(false);
+            }else if(weekday.equals(getResources().getString(R.string.friday)))
+            {
+                GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
+                btn.setToggled(false);
+            }else if(weekday.equals(getResources().getString(R.string.saturday)))
+            {
+                GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
+                btn.setToggled(false);
+            }else if(weekday.equals(getResources().getString(R.string.sunday)))
+            {
+                GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
+                btn.setToggled(false);
+            }
+        } catch (Exception ex)
         {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.wednesday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.thursday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.friday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.saturday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
-            btn.setToggled(false);
-        }else if(weekday.equals(getResources().getString(R.string.sunday)))
-        {
-            GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
-            btn.setToggled(false);
+            // TODO: handle exception by making dynamic week days
         }
     }
 
