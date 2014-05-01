@@ -1,31 +1,26 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.Toast;
 
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
+import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleEditActivity extends ScheduleActivity
 {
-    Boolean deviceInPortraitMode = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -53,6 +48,17 @@ public class ScheduleEditActivity extends ScheduleActivity
         }
     }
 
+    @Override
+    public void onResume()
+    {
+        // this method is also called after oncreate()
+        // makes sure that current weekday is also marked after resume of the app
+        super.onResume();
+
+        // mark the current weekday in the scheduler
+        markCurrentWeekday();
+    }
+
     public void weekdaySelected(View v)
     {
         // pushing a toggle button has no effect
@@ -60,138 +66,95 @@ public class ScheduleEditActivity extends ScheduleActivity
         btn.setToggled(true);
     }
 
-    public List<Sequence> getPictograms()
+    public void addItems(Bitmap bm)
     {
-        List<Sequence> pictogramSequence = new List<Sequence>() {
+        try
+        {
+            LifeStory.getInstance().setCurrentStory(new Sequence());
 
-            @Override
-            public void add(int i, Sequence sequence) {
 
+            int ss = R.id.layoutTest;
+            LinearLayout sv = (LinearLayout) findViewById(R.id.layoutTest);
+
+            ImageView iw = new ImageView(this);
+            iw.setImageBitmap(bm);
+            sv.addView(iw);
+        } catch (Exception ex)
+        {
+            GuiHelper.ShowToast(this, ex.toString());
+        }
+    }
+
+    // this method handles pictograms sent back via an intent from pictosearch
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == 2)
+        {
+            try{
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                if (checkoutIds.length == 0) {
+                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
+                }
+                else
+                {
+                    try{
+                        LifeStory.getInstance().setCurrentStory(new Sequence());
+                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
+                        bitmap = LayoutTools.getSquareBitmap(bitmap);
+                        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+                        LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
+                        ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
+                        storyImage.setImageBitmap(bitmap);
+                        addItems(bitmap);
+                    }
+                    //We expect a null pointer exception if the pictogram is without image
+                    //TODO: Investigate if this still happens with the new DB.
+                    // It still does
+                    catch (NullPointerException e)
+                    {
+                        GuiHelper.ShowToast(this, "Der skete en uventet fejl");
+                    }
+                }
+            } catch (Exception e)
+            {
+                GuiHelper.ShowToast(this, e.toString());
             }
-
-            @Override
-            public boolean add(Sequence sequence) {
-                return false;
+        }
+        else if (resultCode == RESULT_OK && requestCode == 3)
+        {
+            // this code is executed when the week scheduler requests an image from pictosearch
+            try
+            {
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                if (checkoutIds.length == 0)
+                {
+                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
+                }
+                else
+                {
+                    try
+                    {
+                        LifeStory.getInstance().setCurrentStory(new Sequence());
+                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
+                        bitmap = LayoutTools.getSquareBitmap(bitmap);
+                        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+                        addItems(bitmap);
+                    }
+                    catch (NullPointerException e)
+                    {
+                        GuiHelper.ShowToast(this, "Der skete en uventet fejl");
+                    }
+                }
+            } catch (NullPointerException e)
+            {
+                GuiHelper.ShowToast(this, "Fejl");
             }
-
-            @Override
-            public boolean addAll(int i, Collection<? extends Sequence> sequences) {
-                return false;
-            }
-
-            @Override
-            public boolean addAll(Collection<? extends Sequence> sequences) {
-                return false;
-            }
-
-            @Override
-            public void clear() {
-
-            }
-
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-
-            @Override
-            public boolean containsAll(Collection<?> objects) {
-                return false;
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                return false;
-            }
-
-            @Override
-            public Sequence get(int i) {
-                return null;
-            }
-
-            @Override
-            public int hashCode() {
-                return 0;
-            }
-
-            @Override
-            public int indexOf(Object o) {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public Iterator<Sequence> iterator() {
-                return null;
-            }
-
-            @Override
-            public int lastIndexOf(Object o) {
-                return 0;
-            }
-
-            @Override
-            public ListIterator<Sequence> listIterator() {
-                return null;
-            }
-
-            @Override
-            public ListIterator<Sequence> listIterator(int i) {
-                return null;
-            }
-
-            @Override
-            public Sequence remove(int i) {
-                return null;
-            }
-
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-
-            @Override
-            public boolean removeAll(Collection<?> objects) {
-                return false;
-            }
-
-            @Override
-            public boolean retainAll(Collection<?> objects) {
-                return false;
-            }
-
-            @Override
-            public Sequence set(int i, Sequence sequence) {
-                return null;
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public List<Sequence> subList(int i, int i2) {
-                return null;
-            }
-
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-
-            @Override
-            public <T> T[] toArray(T[] ts) {
-                return null;
-            }
-        };
-
-
-
-        return pictogramSequence;
+        }
     }
 }
