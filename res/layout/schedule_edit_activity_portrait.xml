@@ -61,7 +61,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@color/green"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:onClick="startPictosearchForScheduler">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -71,7 +72,7 @@
 
                 <dk.aau.cs.giraf.gui.GToggleButton
                     gcomponent:Toggled="true"
-                    android:onClick="weekdaySelected"
+                    android:onClick="addItems"
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -88,13 +89,18 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView"
-                android:layout_alignParentRight="false"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/frameLayout7" />
+                android:id="@+id/scrollView" >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@id/layoutTest">
+                </LinearLayout>
+            </ScrollView>
 
         </RelativeLayout>
 
