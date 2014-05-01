@@ -86,6 +86,7 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
+
             </FrameLayout>
 
             <LinearLayout
@@ -103,7 +104,8 @@
                     android:id="@+id/scrollView"
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"
-                    android:scrollbars="none">
+                    android:scrollbars="none"
+                    android:layout_gravity="center_horizontal">
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -111,7 +113,9 @@
                         android:layout_height="wrap_content"
                         android:id="@id/layoutTest"
                         android:baselineAligned="false"
-                        android:layout_centerInParent="true" >
+                        android:layout_centerInParent="true"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_horizontal|bottom">
                     </LinearLayout>
                 </ScrollView>
             </LinearLayout>
