@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="800dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="25dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="75dp"
+        android:text="@string/dialog_add_frames_title"
+        android:textSize="30sp"
+        android:textColor="@color/text_color" />
+
+    <RelativeLayout
+        android:id="@+id/choiceContainer"
+        android:layout_width="165dp"
+        android:layout_height="165dp"
+        android:layout_toRightOf="@id/title"
+        android:layout_marginLeft="50dp">
+        <ImageView
+            android:id="@+id/choiceIcon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/question"
+            android:background="@layout/border"
+            android:onClick="chooseChoicePictogram"/>
+        <ImageView
+            android:id="@+id/removeChoiceIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_delete"
+            android:layout_alignParentRight="true"
+            android:visibility="visible"
+            android:onClick="removeChoiceIcon"/>
+    </RelativeLayout>
+
+
+    <dk.aau.cs.giraf.gui.GDividerHorizontal
+        android:id="@+id/seperatorLine"
+        android:layout_width="750dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/choiceContainer" />
+
+    <TextView
+        android:id="@+id/choicesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="35dp"
+        android:layout_below="@id/seperatorLine"
+        android:text="@string/dialog_add_frames_choices"
+        android:textSize="30sp"
+        android:textColor="@color/text_color" />
+
+    <HorizontalScrollView
+        android:id="@+id/addedChoicesScrollView"
+        android:layout_height="150dp"
+        android:layout_width="750dp"
+        android:layout_below="@id/choicesText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:fadeScrollbars="false">
+
+        <LinearLayout
+            android:id="@+id/scrollContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:minHeight="150dp">
+
+            <RelativeLayout
+                android:id="@+id/newChoiceContent2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:orientation="horizontal"
+                android:minHeight="150dp"></RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/addChoice2"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/add"
+                android:background="@layout/border_selected"
+                android:onClick="addPictograms" />
+        </LinearLayout>
+
+
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addedChoicesScrollView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp">
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/btn_yes"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="@string/ok"
+            android:textSize="30sp"
+            android:textColor="@color/text_color"
+            android:onClick="dismissAddContentDialog" />
+    </LinearLayout>
+
+</RelativeLayout>

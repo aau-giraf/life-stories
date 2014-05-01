@@ -8,9 +8,11 @@ import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 
 public class MediaFrame extends AbstractMediaFrame {
-	
+
+    private Pictogram choicePictogram;
 	private List<Pictogram> content;
 	private OnContentChangedEventListener mListener;
+    private int nestedSequenceID;
 	
 	public MediaFrame(){
 		super();
@@ -25,8 +27,18 @@ public class MediaFrame extends AbstractMediaFrame {
 		this.choiceNumber = m.choiceNumber;
 		this.frames = m.frames;
 	}
-	
-	public interface OnContentChangedEventListener {
+
+
+    public int getNestedSequenceID() {
+        return nestedSequenceID;
+    }
+
+    public void setNestedSequenceID(int nestedSequenceID) {
+        this.nestedSequenceID = nestedSequenceID;
+    }
+
+
+    public interface OnContentChangedEventListener {
 		
 		public void OnIsChoiceListener(MediaFrame mediaFrame, boolean isChoice);
 		public void OnContentSizeChanged(MediaFrame mediaFrame);
@@ -51,6 +63,15 @@ public class MediaFrame extends AbstractMediaFrame {
 		else if (mListener != null)
 			mListener.OnContentSizeChanged(this);*/
 	}
+    public Pictogram getChoicePictogram(){
+        return choicePictogram;
+    }
+    public void setChoicePictogram(Pictogram picto){
+        choicePictogram = picto;
+    }
+
+
+
 	
 	public void removeContent(Pictogram content){
 		this.content.remove(content);
