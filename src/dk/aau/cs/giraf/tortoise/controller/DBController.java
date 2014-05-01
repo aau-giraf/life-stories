@@ -121,17 +121,13 @@ public class DBController {
 
     private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf){
         dk.aau.cs.giraf.oasis.lib.models.Frame f = new dk.aau.cs.giraf.oasis.lib.models.Frame();
-        try {
-            if (mf.getChoicePictogram() != null){
-                f.setPictogramId(mf.getChoicePictogram().getPictogramID());
-            }
-            f.setNestedSequence(mf.getNestedSequenceID());
-            f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
-            f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
-            f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
-        }catch (Exception e){
-
+        if (mf.getChoicePictogram() != null){
+            f.setPictogramId(mf.getChoicePictogram().getPictogramID());
         }
+        f.setNestedSequence(mf.getNestedSequenceID());
+        f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
+        f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
+        f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
         return f;
     }
 
@@ -145,7 +141,7 @@ public class DBController {
 
     private dk.aau.cs.giraf.oasis.lib.models.Pictogram morphPictogramsToDBPictograms(Pictogram picto) {
         dk.aau.cs.giraf.oasis.lib.models.Pictogram DBPicto = new dk.aau.cs.giraf.oasis.lib.models.Pictogram();
-        DBPicto.setId(picto.getId());
+        DBPicto.setId(picto.getPictogramID());
         return DBPicto;
     }
 
