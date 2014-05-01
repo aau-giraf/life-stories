@@ -21,7 +21,7 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 	Pictogram pictogram;
 	EditModeActivity mainActivity;
 	
-	public EditChoiceFrameView(EditModeActivity mainActivity, MediaFrame mediaFrame, Pictogram pictogram, LinearLayout.LayoutParams params) {
+	public EditChoiceFrameView(EditModeActivity mainActivity, MediaFrame mediaFrame, Pictogram pictogram, RelativeLayout.LayoutParams params) {
 		super(mainActivity.getApplicationContext());
 		this.mainActivity = mainActivity;
 		this.setMediaFrame(mediaFrame);
@@ -33,6 +33,7 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 		RelativeLayout.LayoutParams innerParams = new RelativeLayout.LayoutParams(
 				android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 		innerParams.setMargins(2, 2, 2, 2);
+        //innerParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		innerLayout.setLayoutParams(innerParams);
 		innerLayout.setBackgroundResource(R.layout.border);
 		innerLayout.setPadding((int)(15*scale), (int) (15*scale), (int) (15*scale), (int) (15*scale));
