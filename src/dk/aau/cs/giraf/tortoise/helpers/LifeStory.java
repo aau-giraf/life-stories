@@ -12,6 +12,7 @@ public class LifeStory {
 	
 	private Sequence currentStory;
 	private List<SerializableSequence> stories, templates;
+    private ArrayList<Sequence> stories2, templates2;
 	private static LifeStory instance;
 	private int currentIndex;
 	private Profile guardian;
@@ -74,6 +75,14 @@ public class LifeStory {
 	public List<SerializableSequence> getTemplates() {
 		return this.templates;
 	}
+
+    public List<Sequence> getStories2() {
+        return this.stories2;
+    }
+
+    public List<Sequence> getTemplates2() {
+        return this.templates2;
+    }
 	
 	public Sequence getCurrentStory() {
 		return this.currentStory;
@@ -83,11 +92,21 @@ public class LifeStory {
 		this.templates.clear();
 		this.templates.addAll(templates);
 	}
+
+    public void setTemplates(ArrayList<Sequence> templates) {
+        this.templates2.clear();
+        this.templates2.addAll(templates);
+    }
 	
 	public void setStories(List<SerializableSequence> stories) {
 		this.stories.clear();
 		this.stories.addAll(stories);
 	}
+
+    public void setStories(ArrayList<Sequence> stories) {
+        this.stories2.clear();
+        this.stories2.addAll(stories);
+    }
 
 	public Profile getGuardian() {
 		return guardian;
