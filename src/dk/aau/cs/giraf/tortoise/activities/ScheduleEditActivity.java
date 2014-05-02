@@ -42,7 +42,7 @@ public class ScheduleEditActivity extends ScheduleActivity
         }
         else
         {
-            setContentView(R.layout.schedule_edit_activity_portrait);
+            //setContentView(R.layout.schedule_edit_activity_portrait);
         }
 
         // Get intent, action and MIME type
@@ -68,14 +68,27 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     public void weekdaySelected(View v)
     {
-        // pushing a toggle button has no effect
-        GToggleButton btn = (GToggleButton) findViewById(v.getId());
-        btn.setToggled(true);
+        markCurrentWeekday();
+    }
+
+    public void weekdayClick(View v)
+    {
+        int id = v.getId();
+
+        switch (id)
+        {
+            case R.id.layoutMonday:
+                GuiHelper.ShowToast(this, "Monday!!");
+            default:
+                break;
+        }
+
+        LinearLayout weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
     }
 
     Boolean firstPass = true;
 
-    public void addItems(Bitmap bm)
+    public void addItems(Bitmap bm, LinearLayout layout)
     {
         try
         {
@@ -83,7 +96,7 @@ public class ScheduleEditActivity extends ScheduleActivity
             LifeStory.getInstance().setCurrentStory(new Sequence());
 
             int ss = R.id.layoutTest;
-            LinearLayout sv = (LinearLayout) findViewById(R.id.layoutTest);
+            LinearLayout sv = layout;
 
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
@@ -118,6 +131,8 @@ public class ScheduleEditActivity extends ScheduleActivity
         firstPass = false;
     }
 
+    LinearLayout weekdayLayout;
+
     // this method handles pictograms sent back via an intent from pictosearch
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -142,7 +157,7 @@ public class ScheduleEditActivity extends ScheduleActivity
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
                         storyImage.setImageBitmap(bitmap);
-                        addItems(bitmap);
+                        addItems(bitmap, weekdayLayout);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
@@ -179,7 +194,7 @@ public class ScheduleEditActivity extends ScheduleActivity
                         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
 
                         // add item to scroll view
-                        addItems(bitmap);
+                        addItems(bitmap, weekdayLayout);
                     }
                     catch (NullPointerException e)
                     {

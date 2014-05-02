@@ -46,7 +46,6 @@ public class ScheduleActivity extends TortoiseActivity
 
         try
         {
-
             if(weekday.equals(getResources().getString(R.string.monday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
@@ -62,7 +61,7 @@ public class ScheduleActivity extends TortoiseActivity
             }else if(weekday.equals(getResources().getString(R.string.thursday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
-//                btn.setToggled(false);
+                btn.setToggled(false);
             }else if(weekday.equals(getResources().getString(R.string.friday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
@@ -78,7 +77,7 @@ public class ScheduleActivity extends TortoiseActivity
             }
         } catch (Exception ex)
         {
-            // TODO: handle exception by making dynamic week days
+            // TODO: handling of exception should be made by making dynamic week days?
         }
     }
 
