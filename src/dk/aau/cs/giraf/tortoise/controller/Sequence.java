@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 
 public class Sequence extends AbstractSequence {
@@ -20,9 +21,10 @@ public class Sequence extends AbstractSequence {
 		titleImage = null;
 	}
 
-    public Sequence(int id, int titlePictoId, String title, List<MediaFrame> mediaFrames){
+    public Sequence(int id, int titlePictoId, String title, List<MediaFrame> mediaFrames, Context con){
         super(id, titlePictoId, title);
         this.mediaFrames = mediaFrames;
+        setBitmapFromTitlePictoID(con);
     }
 	
 	public Sequence(Context context, SerializableSequence s) {
@@ -33,11 +35,15 @@ public class Sequence extends AbstractSequence {
 		this.numChoices = s.numChoices;
 		this.title = s.title;
 		this.titlePictoId = s.titlePictoId;
-		Bitmap bitmap = PictoFactory.getPictogram(context, this.getTitlePictoId()).getImageData();
-		bitmap = LayoutTools.getSquareBitmap(bitmap);
-		bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, context, 20);
-		this.titleImage = bitmap;
+        setBitmapFromTitlePictoID(context);
 	}
+
+    private void setBitmapFromTitlePictoID(Context con){
+        Bitmap bitmap = PictoFactory.getPictogram(con, this.getTitlePictoId()).getImageData();
+        bitmap = LayoutTools.getSquareBitmap(bitmap);
+        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
+        this.titleImage = bitmap;
+    }
 	
 	public interface OnNumChoicesEventListener {
 		

@@ -124,7 +124,7 @@ public class DBController {
      * @return Sequence
      */
     private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq, Context con){
-        Sequence seq = new Sequence(dbSeq.getId(), dbSeq.getPictogramId(), dbSeq.getName(), morphDBFramesToMediaFrames(dbSeq.getFramesList(), con));
+        Sequence seq = new Sequence(dbSeq.getId(), dbSeq.getPictogramId(), dbSeq.getName(), morphDBFramesToMediaFrames(dbSeq.getFramesList(), con), con);
         return seq;
     }
 
