@@ -75,7 +75,7 @@ public class ScheduleEditActivity extends ScheduleActivity
     {
     }
 
-    Boolean firstPass = true;
+    //Boolean firstPass = true;
 
     public void addItems(Bitmap bm, LinearLayout layout)
     {
@@ -88,11 +88,11 @@ public class ScheduleEditActivity extends ScheduleActivity
             iw.setImageBitmap(bm);
 
 
-            if(firstPass)
+            /*if(firstPass)
             {
                 // add spacing above first pictogram
                 addSpacing(layout);
-            }
+            }*/
 
             // add image to the linear view contained in the scroll view
             layout.addView(iw);
