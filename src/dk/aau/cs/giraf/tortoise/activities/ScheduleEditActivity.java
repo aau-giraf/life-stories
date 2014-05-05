@@ -89,18 +89,17 @@ public class ScheduleEditActivity extends ScheduleActivity
             iw.setImageBitmap(bm);
             iw.setScaleType(ImageView.ScaleType.FIT_XY);
 
-            if(firstPass)
+           /* if(firstPass)
             {
                 // add spacing above first pictogram
                 addSpacing(layout);
-            }
-
-            // add image to the linear view contained in the scroll view
-            layout.addView(iw);
+            }*/
 
             // add spacing between pictograms
             addSpacing(layout);
 
+            // add image to the linear view contained in the scroll view
+            layout.addView(iw);
         }
         catch (Exception ex)
         {

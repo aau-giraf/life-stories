@@ -163,7 +163,9 @@
                     android:onClick="weekdayClick"
                     android:layout_below="@+id/frameLayout"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
             </ScrollView>
 
         </RelativeLayout>
@@ -216,7 +218,9 @@
                     android:onClick="weekdayClick"
                     android:layout_below="@+id/frameLayout2"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp" />
             </ScrollView>
 
         </RelativeLayout>
@@ -271,7 +275,9 @@
                     android:onClick="weekdayClick"
                     android:layout_below="@+id/frameLayout3"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
             </ScrollView>
 
         </RelativeLayout>
@@ -323,7 +329,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutFriday"
-                    android:onClick="weekdayClick" />
+                    android:onClick="weekdayClick"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp" />
             </ScrollView>
 
         </RelativeLayout>
@@ -377,7 +385,9 @@
                     android:onClick="weekdayClick"
                     android:layout_below="@+id/frameLayout5"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
             </ScrollView>
 
         </RelativeLayout>
@@ -431,7 +441,9 @@
                     android:onClick="weekdayClick"
                     android:layout_below="@+id/frameLayout6"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
             </ScrollView>
 
         </RelativeLayout>
