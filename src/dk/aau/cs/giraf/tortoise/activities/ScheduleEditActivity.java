@@ -87,18 +87,23 @@ public class ScheduleEditActivity extends ScheduleActivity
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
             iw.setImageBitmap(bm);
-            iw.setScaleType(ImageView.ScaleType.FIT_XY);
+            //iw.setScaleType(ImageView.ScaleType.FIT_XY);
 
-           /* if(firstPass)
+            final LinearLayout workaroundLayout = layout;
+
+            // add image to the linear view contained in the scroll view
+            iw.setOnLongClickListener(new View.OnLongClickListener()
             {
-                // add spacing above first pictogram
-                addSpacing(layout);
-            }*/
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    workaroundLayout.removeView(v);
+                    return true;
+                }
+            });
 
             // add spacing between pictograms
             addSpacing(layout);
-
-            // add image to the linear view contained in the scroll view
             layout.addView(iw);
         }
         catch (Exception ex)
