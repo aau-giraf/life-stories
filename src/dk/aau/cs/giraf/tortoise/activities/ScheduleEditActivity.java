@@ -42,7 +42,7 @@ public class ScheduleEditActivity extends ScheduleActivity
         }
         else
         {
-            //setContentView(R.layout.schedule_edit_activity_portrait);
+            setContentView(R.layout.schedule_edit_activity_portrait);
         }
 
         // Get intent, action and MIME type
@@ -73,17 +73,6 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     public void weekdayClick(View v)
     {
-        int id = v.getId();
-
-        switch (id)
-        {
-            case R.id.layoutMonday:
-                GuiHelper.ShowToast(this, "Monday!!");
-            default:
-                break;
-        }
-
-        LinearLayout weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
     }
 
     Boolean firstPass = true;
@@ -92,11 +81,7 @@ public class ScheduleEditActivity extends ScheduleActivity
     {
         try
         {
-
             LifeStory.getInstance().setCurrentStory(new Sequence());
-
-            int ss = R.id.layoutTest;
-            LinearLayout sv = layout;
 
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
@@ -106,15 +91,17 @@ public class ScheduleEditActivity extends ScheduleActivity
             if(firstPass)
             {
                 // add spacing above first pictogram
-                addSpacing(sv);
+                addSpacing(layout);
             }
 
             // add image to the linear view contained in the scroll view
-            sv.addView(iw);
+            layout.addView(iw);
 
             // add spacing between pictograms
-            addSpacing(sv);
-        } catch (Exception ex)
+            addSpacing(layout);
+
+        }
+        catch (Exception ex)
         {
             GuiHelper.ShowToast(this, ex.toString());
         }
@@ -131,7 +118,7 @@ public class ScheduleEditActivity extends ScheduleActivity
         firstPass = false;
     }
 
-    LinearLayout weekdayLayout;
+    public static LinearLayout weekdayLayout;
 
     // this method handles pictograms sent back via an intent from pictosearch
     protected void onActivityResult(int requestCode, int resultCode, Intent data)

@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import java.text.SimpleDateFormat;
@@ -35,7 +36,49 @@ public class ScheduleActivity extends TortoiseActivity
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
 
+        DetermineWeekSection(v);
+
         this.startActivityForResult(i, 3);
+    }
+
+    public void DetermineWeekSection(View v)
+    {
+        int weekdayId = v.getId();
+        LinearLayout layout;
+
+        switch (weekdayId)
+        {
+            case R.id.sectionMonday:
+                layout = (LinearLayout) findViewById(R.id.layoutMonday);
+                ScheduleEditActivity.weekdayLayout = layout;
+                break;
+            case R.id.sectionTuesday:
+                layout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                ScheduleEditActivity.weekdayLayout = layout;
+                break;
+            case R.id.sectionWednesday:
+                layout = (LinearLayout) findViewById(R.id.layoutWednesday);
+                ScheduleEditActivity.weekdayLayout = layout;
+                break;
+            case R.id.sectionThursday:
+                layout = (LinearLayout) findViewById(R.id.layoutThursday);
+                ScheduleEditActivity.weekdayLayout = layout;
+                break;
+            case R.id.sectionFriday:
+                layout = (LinearLayout) findViewById(R.id.layoutFriday);
+                ScheduleEditActivity.weekdayLayout = layout;
+                break;
+            case R.id.sectionSaturday:
+                layout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                ScheduleEditActivity.weekdayLayout = layout;
+                break;
+            case R.id.sectionSunday:
+                layout = (LinearLayout) findViewById(R.id.layoutSunday);
+                ScheduleEditActivity.weekdayLayout = layout;
+                break;
+            default:
+                break;
+        }
     }
 
     public void markCurrentWeekday()
@@ -50,30 +93,53 @@ public class ScheduleActivity extends TortoiseActivity
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
                 btn.setToggled(false);
+
+                // this variable is for knowing which linear layout in the scroll view in ScheduleEditActivity
+                // to put pictogram in
+                // TODO: ugly workaround.. should be fixed
+                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
             }else if(weekday.equals(getResources().getString(R.string.tuesday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
                 btn.setToggled(false);
+
+                // TODO: ugly workaround.. should be fixed
+                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
             }else if(weekday.equals(getResources().getString(R.string.wednesday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
                 btn.setToggled(false);
+
+                // TODO: ugly workaround.. should be fixed
+                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
             }else if(weekday.equals(getResources().getString(R.string.thursday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
                 btn.setToggled(false);
+
+                // TODO: ugly workaround.. should be fixed
+                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
             }else if(weekday.equals(getResources().getString(R.string.friday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
                 btn.setToggled(false);
+
+                // TODO: ugly workaround.. should be fixed
+                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
             }else if(weekday.equals(getResources().getString(R.string.saturday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
                 btn.setToggled(false);
+
+                // TODO: ugly workaround.. should be fixed
+                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
             }else if(weekday.equals(getResources().getString(R.string.sunday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
                 btn.setToggled(false);
+
+                // TODO: ugly workaround.. should be fixed
+                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
             }
         } catch (Exception ex)
         {
