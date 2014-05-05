@@ -51,7 +51,15 @@ public class Sequence extends AbstractSequence {
 		bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, context, 20);
 		this.titleImage = bitmap;
 	}
-	
+
+    public void rearrange(int oldIndex, int newIndex) {
+        if (oldIndex < 0 || oldIndex >= mediaFrames.size()) throw new IllegalArgumentException("oldIndex out of range");
+        if (newIndex < 0 || newIndex >= mediaFrames.size()) throw new IllegalArgumentException("newIndex out of range");
+
+        MediaFrame temp = mediaFrames.remove(oldIndex);
+        mediaFrames.add(newIndex, temp);
+    }
+
 	public interface OnNumChoicesEventListener {
 		
 		public void onNumChoicesChanged(int numChoices);
