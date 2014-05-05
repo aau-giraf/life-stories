@@ -105,7 +105,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutMonday"
-                    android:onClick="weekdayClick">
+                    android:onClick="weekdayClick"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp">
                 </LinearLayout>
 
             </ScrollView>

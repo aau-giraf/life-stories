@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
@@ -75,7 +76,7 @@ public class ScheduleEditActivity extends ScheduleActivity
     {
     }
 
-    //Boolean firstPass = true;
+    Boolean firstPass = true;
 
     public void addItems(Bitmap bm, LinearLayout layout)
     {
@@ -86,13 +87,13 @@ public class ScheduleEditActivity extends ScheduleActivity
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
             iw.setImageBitmap(bm);
+            iw.setScaleType(ImageView.ScaleType.FIT_XY);
 
-
-            /*if(firstPass)
+            if(firstPass)
             {
                 // add spacing above first pictogram
                 addSpacing(layout);
-            }*/
+            }
 
             // add image to the linear view contained in the scroll view
             layout.addView(iw);
