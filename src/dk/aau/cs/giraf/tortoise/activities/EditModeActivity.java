@@ -324,6 +324,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 					JSONSerializer js = new JSONSerializer();
 					CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
 					CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
+
 					if(template.isChecked()) {
 						LifeStory.getInstance().addTemplate();
 						try {
@@ -349,11 +350,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-                        saveSequence(LifeStory.getInstance().getCurrentStory(),
-                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                            LifeStory.getInstance().getChild().getId());
 					}
 
+                    saveSequence(LifeStory.getInstance().getCurrentStory(),
+                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                            LifeStory.getInstance().getGuardian().getId());
 					finish();
 				}
 			});
@@ -532,9 +533,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
         //Pictogram choicePictogram = currentEditModeFrame.getMediaFrame().getChoicePictogram();
-        RelativeLayout newChoiceContent = (RelativeLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(150, 150);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
         //params.setMargins(10,10,10,10);
 
 

@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 
 public class Sequence extends AbstractSequence {
@@ -13,30 +14,18 @@ public class Sequence extends AbstractSequence {
 	private List<MediaFrame> mediaFrames;
 	private Bitmap titleImage;
 	private OnNumChoicesEventListener mListener;
-    private int nestedSequenceID;
-    private Sequence nestedSequence;
-
-    public int getNestedSequenceID() {
-        return nestedSequenceID;
-    }
-
-    public void setNestedSequenceID(int nestedSequenceID) {
-        this.nestedSequenceID = nestedSequenceID;
-    }
-
-    public Sequence getNestedSequence() {
-        return nestedSequence;
-    }
-
-    public void setNestedSequence(Sequence nestedSequence) {
-        this.nestedSequence = nestedSequence;
-    }
 
 	public Sequence(){
 		super();
 		setMediaFrames(new ArrayList<MediaFrame>());
 		titleImage = null;
 	}
+
+    public Sequence(int id, int titlePictoId, String title, List<MediaFrame> mediaFrames, Context con){
+        super(id, titlePictoId, title);
+        this.mediaFrames = mediaFrames;
+        setBitmapFromTitlePictoID(con);
+    }
 	
 	public Sequence(Context context, SerializableSequence s) {
 		setMediaFrames(new ArrayList<MediaFrame>());
@@ -46,11 +35,15 @@ public class Sequence extends AbstractSequence {
 		this.numChoices = s.numChoices;
 		this.title = s.title;
 		this.titlePictoId = s.titlePictoId;
-		Bitmap bitmap = PictoFactory.getPictogram(context, this.getTitlePictoId()).getImageData();
-		bitmap = LayoutTools.getSquareBitmap(bitmap);
-		bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, context, 20);
-		this.titleImage = bitmap;
+        setBitmapFromTitlePictoID(context);
 	}
+
+    private void setBitmapFromTitlePictoID(Context con){
+        Bitmap bitmap = PictoFactory.getPictogram(con, this.getTitlePictoId()).getImageData();
+        bitmap = LayoutTools.getSquareBitmap(bitmap);
+        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
+        this.titleImage = bitmap;
+    }
 	
 	public interface OnNumChoicesEventListener {
 		

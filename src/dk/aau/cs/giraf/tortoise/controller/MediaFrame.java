@@ -52,7 +52,7 @@ public class MediaFrame extends AbstractMediaFrame {
 		return content;
 	}
 
-	private void setContent(List<Pictogram> content){
+	public void setContent(List<Pictogram> content){
 		this.content = content;
 	}
 	

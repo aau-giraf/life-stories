@@ -26,9 +26,11 @@ import android.widget.ToggleButton;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
 import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
+import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
@@ -84,6 +86,7 @@ public class MainActivity extends TortoiseActivity {
         Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
+
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
             finish();
         }
@@ -112,6 +115,7 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().getTemplates().clear();
 
         // Set templates belonging to the chosen guardian and stories belonging to the chosen child
+        /*
         JSONSerializer js = new JSONSerializer();
         try {
             LifeStory.getInstance().setTemplates(
@@ -132,11 +136,17 @@ public class MainActivity extends TortoiseActivity {
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }}
+        }
+        */
+
+            DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
+            DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
+        }
         catch (Exception e){
             GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF"); //TODO fusk fix senere
             finish(); //no connection to DB
         }
+
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
