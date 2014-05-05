@@ -141,6 +141,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 		renderEditMenu();
 
+        // TODO: Always true.. for now (Dan)
+        isInEditMode = true;
+
         // Set current sequence
         sequence = LifeStory.getInstance().getCurrentStory();
 
@@ -281,7 +284,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                             .setOnDeleteClickListener(new OnDeleteClickListener() {
                                 @Override
                                 public void onDeleteClick() {
-                                    sequence.deletePictogram(position);
+                                    sequence.deleteMediaFrame(position);
                                     adapter.notifyDataSetChanged();
                                 }
                             });

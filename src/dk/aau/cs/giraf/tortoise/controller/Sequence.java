@@ -100,4 +100,8 @@ public class Sequence extends AbstractSequence {
 	public SerializableSequence getSerializableSequence() {
 		return new SerializableSequence(this);
 	}
+
+    public void deleteMediaFrame(int position) {
+        mediaFrames.remove(position);
+    }
 }
