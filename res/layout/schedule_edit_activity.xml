@@ -107,7 +107,8 @@
                     android:id="@+id/layoutMonday"
                     android:onClick="weekdayClick"
                     android:paddingLeft="20dp"
-                    android:paddingRight="20dp">
+                    android:paddingRight="20dp"
+                    android:dividerPadding="2dp">
                 </LinearLayout>
 
             </ScrollView>

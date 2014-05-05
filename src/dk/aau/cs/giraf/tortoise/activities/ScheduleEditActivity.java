@@ -74,9 +74,8 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     public void weekdayClick(View v)
     {
+        // TODO: this should be removed or used. Check usages before doing anything!!
     }
-
-    Boolean firstPass = true;
 
     public void addItems(Bitmap bm, LinearLayout layout)
     {
@@ -87,7 +86,11 @@ public class ScheduleEditActivity extends ScheduleActivity
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
             iw.setImageBitmap(bm);
-            //iw.setScaleType(ImageView.ScaleType.FIT_XY);
+
+            // set padding of each imageview containing
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0, 20, 0, 20);
+            iw.setLayoutParams(lp);
 
             final LinearLayout workaroundLayout = layout;
 
@@ -102,8 +105,7 @@ public class ScheduleEditActivity extends ScheduleActivity
                 }
             });
 
-            // add spacing between pictograms
-            addSpacing(layout);
+            // add pictogram to weekday
             layout.addView(iw);
         }
         catch (Exception ex)
@@ -111,16 +113,6 @@ public class ScheduleEditActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, ex.toString());
         }
 
-    }
-
-    private void addSpacing(LinearLayout sv)
-    {
-        // this is a workaround for adding spaces between pictograms
-        TextView tv = new TextView(this);
-        tv.setHeight(20);
-        tv.setWidth(10);
-        sv.addView(tv);
-        firstPass = false;
     }
 
     public static LinearLayout weekdayLayout;
