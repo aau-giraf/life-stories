@@ -143,7 +143,7 @@ public class MainActivity extends TortoiseActivity {
             DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
         }
         catch (Exception e){
-            GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF"); //TODO fusk fix senere
+            GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF");
             finish(); //no connection to DB
         }
 
