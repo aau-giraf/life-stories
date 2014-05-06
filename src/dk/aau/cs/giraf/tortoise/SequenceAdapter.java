@@ -1,12 +1,10 @@
 package dk.aau.cs.giraf.tortoise;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import android.graphics.Bitmap;
@@ -46,7 +44,7 @@ public class SequenceAdapter extends BaseAdapter {
 	@Override
 	public boolean hasStableIds() {
 		return false;
-	};
+	}
 	
 	@Override
 	public long getItemId(int position) {
@@ -70,7 +68,7 @@ public class SequenceAdapter extends BaseAdapter {
         {
             if(sequence.getMediaFrames().get(position).getChoicePictogram() == null)
             {
-                choiceImage = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.question);
+                choiceImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.questionwhite);
             }
             else
             {

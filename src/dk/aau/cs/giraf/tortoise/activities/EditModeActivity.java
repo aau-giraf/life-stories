@@ -1076,6 +1076,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             deleteBtn.setVisibility(View.VISIBLE);
 
         }
+        adapter.notifyDataSetChanged();
 //TODO:        renderPictograms();
     }
 
