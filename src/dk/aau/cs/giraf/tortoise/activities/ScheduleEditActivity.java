@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
@@ -46,6 +47,8 @@ public class ScheduleEditActivity extends ScheduleActivity
             setContentView(R.layout.schedule_edit_activity_portrait);
         }
 
+        showAddButtons();
+
         // Get intent, action and MIME type
         Intent intent = getIntent();
 
@@ -77,6 +80,38 @@ public class ScheduleEditActivity extends ScheduleActivity
         // TODO: this should be removed or used. Check usages before doing anything!!
     }
 
+    public void showAddButtons()
+    {
+        // TODO: refactor for redundancy. Left some sample code in the for loop
+        LinearLayout weekday = (LinearLayout) findViewById(R.id.layoutMonday);
+        weekday.addView(addButton());
+        weekday = (LinearLayout) findViewById(R.id.layoutTuesday);
+        weekday.addView(addButton());
+        weekday = (LinearLayout) findViewById(R.id.layoutWednesday);
+        weekday.addView(addButton());
+        weekday = (LinearLayout) findViewById(R.id.layoutThursday);
+        weekday.addView(addButton());
+        weekday = (LinearLayout) findViewById(R.id.layoutFriday);
+        weekday.addView(addButton());
+        weekday = (LinearLayout) findViewById(R.id.layoutSaturday);
+        weekday.addView(addButton());
+        weekday = (LinearLayout) findViewById(R.id.layoutSunday);
+        weekday.addView(addButton());
+        /*
+        RelativeLayout level1 = (RelativeLayout) findViewById(R.id.completeWeekLayout);
+
+        int childcount = level1.getChildCount();
+
+        // find each of the individual week days
+        for (int i = 0; i < childcount; i++)
+        {
+            View v = parentLayout.getChildAt(i);
+            RelativeLayout childView = (RelativeLayout) v;
+            childView.addView(addButton());
+
+        }*/
+    }
+
     public void addItems(Bitmap bm, LinearLayout layout)
     {
         try
@@ -94,7 +129,7 @@ public class ScheduleEditActivity extends ScheduleActivity
 
             final LinearLayout workaroundLayout = layout;
 
-            // add image to the linear view contained in the scroll view
+            // remove pictogram in the linear view contained in the scroll view
             iw.setOnLongClickListener(new View.OnLongClickListener()
             {
                 @Override
@@ -106,7 +141,10 @@ public class ScheduleEditActivity extends ScheduleActivity
             });
 
             // add pictogram to weekday
+            layout.removeViewAt(layout.getChildCount() - 1);
             layout.addView(iw);
+            layout.addView(addButton());
+
         }
         catch (Exception ex)
         {
@@ -115,6 +153,32 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     }
 
+    // this method returns an imageview containing the add pictogram button
+    public ImageView addButton()
+    {
+        ImageView iv = new ImageView(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 20, 0, 20);
+        iv.setLayoutParams(lp);
+        iv.setBackgroundResource(R.drawable.week_schedule_bg_tile);
+        Drawable d = getResources().getDrawable(R.drawable.add);
+        Bitmap b = ((BitmapDrawable) d).getBitmap();
+        Drawable dr = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(b, 100, 100, true));
+        iv.setImageDrawable(dr);
+
+        iv.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                startPictosearchForScheduler(view);
+            }
+        });
+
+        return iv;
+    }
+
+    // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
 
     // this method handles pictograms sent back via an intent from pictosearch
