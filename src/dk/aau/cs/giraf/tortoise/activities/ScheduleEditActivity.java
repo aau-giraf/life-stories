@@ -115,7 +115,7 @@ public class ScheduleEditActivity extends ScheduleActivity
 
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
-            iw.setImageBitmap(bm);
+            iw.setImageBitmap(resizeBitmap(bm, 100, 100));
 
             // set padding of each imageview containing
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
