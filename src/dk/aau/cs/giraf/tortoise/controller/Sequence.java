@@ -73,6 +73,10 @@ public class Sequence extends AbstractSequence {
 		return mediaFrames;
 	}
 
+    public MediaFrame getMediaFrame(int position){
+        return mediaFrames.get(position);
+    }
+
 	public void setMediaFrames(List<MediaFrame> mediaFrames) {
 		this.mediaFrames = mediaFrames;
 	}

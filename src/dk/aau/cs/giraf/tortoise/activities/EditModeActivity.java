@@ -166,7 +166,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
         sequenceGroup.placeDownAddNewButton();
 
-        //Add pictograms
+        //Add pictograms to NEW MediaFrame
 		if (resultCode == RESULT_OK && requestCode == 1) {
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
@@ -293,7 +293,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 GuiHelper.ShowToast(this, e.toString());
             }
         }
-        // New add pictograms option
+        // Add picotgrams to EXISTING MediaFrame
         else if(resultCode == RESULT_OK && requestCode == 4){
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
@@ -303,19 +303,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 }
                 else
                 {
-                    MediaFrame mediaFrame = sequence.get;
+                    MediaFrame mediaFrame = sequence.getMediaFrame(lastPosition);
 
                     for(int id : checkoutIds)
                     {
                         Pictogram pictogram = PictoFactory.getPictogram(this, id);
-                        sequence.getMediaFrames()
+                        mediaFrame.addContent(pictogram);
                     }
-
-                    List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
-                    mediaFrames = sequence.getMediaFrames();
-                    mediaFrames.add(mediaFrame);
-
-                    sequence.setMediaFrames(mediaFrames);
 
                     adapter.notifyDataSetChanged();
                 }
