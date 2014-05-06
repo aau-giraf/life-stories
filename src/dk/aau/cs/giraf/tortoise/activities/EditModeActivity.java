@@ -27,6 +27,7 @@ import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -66,6 +67,13 @@ import dk.aau.cs.giraf.tortoise.interfaces.OnMainLayoutEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnMediaFrameEventListener;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
+import dk.aau.cs.giraf.tortoise.SequenceViewGroup;
+import dk.aau.cs.giraf.tortoise.SequenceAdapter;
+import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
+import dk.aau.cs.giraf.tortoise.SequenceAdapter.OnAdapterGetViewListener;
+import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnNewButtonClickedListener;
+import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnRearrangeListener;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 
 public class EditModeActivity extends TortoiseActivity implements OnCurrentFrameEventListener {
 
@@ -76,20 +84,24 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	private static final int DIALOG_SELECT_CHOICE = 4;
 	
 	static int selectedChoice = 0;
-    private boolean dialogAddFramesActive;
-	
-    EditModeFrameView currentEditModeFrame;
-	RelativeLayout menuBar;
-	RelativeLayout mainLayout;
-    GDialog dialogAddFrames;
-
-
 	public List<OnMainLayoutEventListener> mainLayoutListeners =
 			new ArrayList<OnMainLayoutEventListener>();
-	public List<OnCurrentFrameEventListener> currentFrameListeners = 
+	public List<OnCurrentFrameEventListener> currentFrameListeners =
 			new ArrayList<OnCurrentFrameEventListener>();
 	public List<OnMediaFrameEventListener> mediaFrameListeners =
 			new ArrayList<OnMediaFrameEventListener>();
+    EditModeFrameView currentEditModeFrame;
+	RelativeLayout menuBar;
+	//RelativeLayout mainLayout;
+    GDialog dialogAddFrames;
+    // placed here so it can be accessed from all places in switch case
+    GDialog gdialog;
+    private boolean dialogAddFramesActive;
+    private boolean isInEditMode;
+    private SequenceViewGroup sequenceViewGroup;
+    private SequenceAdapter adapter;
+    private Sequence sequence;
+    private int lastPosition;
 	
 	public void addOnMainLayoutEventListener(OnMainLayoutEventListener mainLayoutListener) {
 		this.mainLayoutListeners.add(mainLayoutListener);
@@ -106,51 +118,42 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	public void addOnMediaFrameChangedListener(OnMediaFrameEventListener mediaFrameListener) {
 		this.mediaFrameListeners.add(mediaFrameListener);
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_main);
 		menuBar = (RelativeLayout) findViewById(R.id.menuBar);
-		mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
-		
+		//mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
+
 		int template = this.getIntent().getExtras().getInt("template");
 		if(template == -1) {
 			LifeStory.getInstance().setCurrentStory(new Sequence());
 		}
 		else {
 			LifeStory.getInstance().setCurrentTemplate(EditModeActivity.this.getApplicationContext(), template); // TODO: kan EditModeActivity. slettes?!?
-			renderTemplate();
+			//TODO: Render template again when fixed.
+			// renderTemplate();
 		}
-		
-		mainLayout.setOnDragListener(new OnDragListener() {
-			
-			@Override
-			public boolean onDrag(View v, DragEvent e) {
-				return mainLayoutDrag(v, e);
-			}
-		});
-		mainLayout.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				for(OnMainLayoutEventListener e : mainLayoutListeners) {
-					e.OnMainLayoutTouchListener();
-				}
-				if(menuBar.getChildAt(0).getId() == R.id.choiceMenu) {
-					EditModeActivity.this.renderEditMenu();
-				}
-				else {
-					EditText storyName = (EditText) findViewById(R.id.storyName);
-					storyName.clearFocus();
-				}
-			}
-		});
+
 		renderEditMenu();
+
+        // TODO: Always true.. for now (Dan)
+        isInEditMode = true;
+
+        // Set current sequence
+        sequence = LifeStory.getInstance().getCurrentStory();
+
+
+        // Create Adapter
+        adapter = setupAdapter();
+
+        // Create Sequence Group
+        sequenceViewGroup = setupSequenceViewGroup(adapter);
 	}
 
-	@Override 
+	@Override
 	public void onBackPressed() {
 		renderDialog(DIALOG_EXIT);
 	}
@@ -158,17 +161,39 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
+
+        // Remove the highlight from the add pictogram button
+        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+        sequenceGroup.placeDownAddNewButton();
+
+        //Add pictograms to NEW MediaFrame
 		if (resultCode == RESULT_OK && requestCode == 1) {
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
-			
+
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
 				t.show();
 			}
 			else
 			{
-                List<Integer> pictoIDList = new ArrayList<Integer>();
+                MediaFrame newMediaFrame = new MediaFrame();
+
+                for(int id : checkoutIds)
+                {
+                    Pictogram pictogram = PictoFactory.getPictogram(this, id);
+                    newMediaFrame.addContent(pictogram);
+                }
+
+                List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
+                mediaFrames = sequence.getMediaFrames();
+                mediaFrames.add(newMediaFrame);
+
+                sequence.setMediaFrames(mediaFrames);
+
+                adapter.notifyDataSetChanged();
+
+
+                /*List<Integer> pictoIDList = new ArrayList<Integer>();
 
                 // get the pictograms that are currently being shown
                 List<Pictogram> pictoList = currentEditModeFrame.getMediaFrame().getContent();
@@ -202,9 +227,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                         currentEditModeFrame.getMediaFrame().addContent(picto);
                     }
 				}
-                renderPictograms();
+                renderPictograms();*/
+
+
+
 			}
 		}
+        //Change story image
 		else if (resultCode == RESULT_OK && requestCode == 2) {
           try{
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
@@ -236,7 +265,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
           } catch (Exception e){
             GuiHelper.ShowToast(this, e.toString());
           }
-		}else if (resultCode == RESULT_OK && requestCode == 3){
+		}
+        //Change choice icon
+        else if (resultCode == RESULT_OK && requestCode == 3){
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
@@ -246,10 +277,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 else
                 {
                     try{
-                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
                         Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                        currentEditModeFrame.getMediaFrame().setChoicePictogram(picto);
-                        renderChoiceIcon();
+                        sequence.getMediaFrames().get(lastPosition).setChoicePictogram(picto);
+                        renderChoiceIcon(lastPosition);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
@@ -262,12 +292,98 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             } catch (Exception e){
                 GuiHelper.ShowToast(this, e.toString());
             }
+        }
+        // Add picotgrams to EXISTING MediaFrame
+        else if(resultCode == RESULT_OK && requestCode == 4){
+            try{
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
+                if (checkoutIds.length == 0) {
+                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt.");
+                }
+                else
+                {
+                    MediaFrame mediaFrame = sequence.getMediaFrame(lastPosition);
+
+                    for(int id : checkoutIds)
+                    {
+                        Pictogram pictogram = PictoFactory.getPictogram(this, id);
+                        mediaFrame.addContent(pictogram);
+                    }
+
+                    adapter.notifyDataSetChanged();
+                    renderContentPictograms(lastPosition);
+                }
+            }
+            catch (Exception e){
+                GuiHelper.ShowToast(this, e.toString());
+            }
         }
 	}
 
-    // placed here so it can be accessed from all places in switch case
-    GDialog gdialog;
+    private SequenceAdapter setupAdapter() {
+        final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
+
+        // Setup delete handler.
+        adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
+            @Override
+            public void onAdapterGetView(final int position, final View view) {
+
+                if (view instanceof PictogramView) {
+                    PictogramView pictoView = (PictogramView) view;
+
+                    pictoView
+                            .setOnDeleteClickListener(new OnDeleteClickListener() {
+                                @Override
+                                public void onDeleteClick() {
+                                    sequence.deleteMediaFrame(position);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
+                }
+            }
+        });
+
+        return adapter;
+    }
+
+    private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
+        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+        sequenceGroup.setEditModeEnabled(isInEditMode);
+        sequenceGroup.setAdapter(adapter);
+
+        // Handle rearrange
+        sequenceGroup
+                .setOnRearrangeListener(new OnRearrangeListener() {
+                    @Override
+                    public void onRearrange(int indexFrom, int indexTo) {
+                        LifeStory.getInstance().getCurrentStory().rearrange(indexFrom, indexTo);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+
+        // Handle new view
+        sequenceGroup
+                .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
+                    @Override
+                    public void onNewButtonClicked() {
+                        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+                        sequenceGroup.liftUpAddNewButton();
+
+                        addPictograms(findViewById(R.id.addMediaFrame));
+                    }
+                });
+
+        sequenceGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view,
+                                    int position, long id) {
+                renderAddContentMenu(position);
+            }
+        });
+
+        return sequenceGroup;
+    }
 
 	public void renderDialog(int dialogId) {
         // TODO: Start herfra mandag d. 24
@@ -581,7 +697,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             if(dialogAddFramesActive){
                 for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
                     EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
-                    choiceFramView.addDeleteButton();
+                    //   choiceFramView.addDeleteButton();
                     newChoiceContent.addView(choiceFramView);
                 }
             }
@@ -590,16 +706,69 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         }
         }
 
+    public void renderContentPictograms(int position){
 
-	public void renderAddContentMenu() {
+        if(sequence.getMediaFrames().get(position).getContent().size() == 0)
+        {
+            sequence.getMediaFrames().remove(position);
+            adapter.notifyDataSetChanged();
+            dismissAddContentDialog(getCurrentFocus());
+        }
+        else
+        {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
+            LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+            newChoiceContent.removeAllViews();
+
+            for(Pictogram p : sequence.getMediaFrames().get(position).getContent()) {
+                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, sequence.getMediaFrames().get(position), p, params);
+                choiceFramView.addDeleteButton(position);
+                newChoiceContent.addView(choiceFramView);
+            }
+
+            renderChoiceIcon(position);
+            adapter.notifyDataSetChanged();
+        }
 
 
+    }
+
+
+	public void renderAddContentMenu(int position) {
+
+        if(sequence.getMediaFrames().get(position).getContent().size() == 0)
+        {
+            sequence.getMediaFrames().remove(position);
+            adapter.notifyDataSetChanged();
+        }
+        else
+        {
         dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content,null));
 
+        if(dialogAddFrames.isShowing())
+        {
+            dialogAddFrames.dismiss();
+        }
+
         dialogAddFramesActive = true;
-        renderPictograms();
-        renderChoiceIcon();
+        lastPosition = position;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
+        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+        newChoiceContent.removeAllViews();
+
+        for(Pictogram p : sequence.getMediaFrames().get(position).getContent()) {
+            EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, sequence.getMediaFrames().get(position), p, params);
+            choiceFramView.addDeleteButton(position);
+            newChoiceContent.addView(choiceFramView);
+        }
+
+        adapter.notifyDataSetChanged();
+
+        //renderPictograms();
+
+        renderChoiceIcon(position);
         dialogAddFrames.show();
+        }
 	}
 
     /**
@@ -688,7 +857,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				return false;
 			}
 		});
-		ImageButton addSmallFrame = (ImageButton)findViewById(R.id.smallFrame);
+		/*ImageButton addSmallFrame = (ImageButton)findViewById(R.id.smallFrame);
 		addSmallFrame.setOnTouchListener(new OnTouchListener() {
 			
 			@Override
@@ -739,7 +908,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				v.startDrag(data, shadowBuilder, frame, 0);
 				return false;
 			}
-		});
+		});*/
 		ImageButton exit = (ImageButton)findViewById(R.id.exitEditMode);
 		exit.setOnClickListener(new OnClickListener() {
 			
@@ -811,13 +980,14 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		menuBar.addView(menu);
 	}
 
-    /**
+    /*
      * Makes sure that the View v is positioned on the mainLayout where is is dropped
      * @param v
      * @param event
      * @return
      */
-	public boolean mainLayoutDrag(View v, DragEvent event) {
+
+	/*public boolean mainLayoutDrag(View v, DragEvent event) {
 
         // Grim, grim GRIM switch!
 		switch(event.getAction()) {
@@ -831,9 +1001,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			return true;
 		}
 		return true;
-	}
+	}*/
 	
-	public void renderTemplate() {
+	/*public void renderTemplate() {
 		RelativeLayout.LayoutParams params;
 
         // For every MediaFrame in the current LifeStory...
@@ -872,9 +1042,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				mainLayout.addView(editModeFrameView);
 			}
 		}
-	}
+	}*/
 	
-	public void removeAllViews() {
+	/*public void removeAllViews() {
 		mainLayout.removeAllViews();
 		menuBar.removeAllViews();
 		for(MediaFrame mf : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
@@ -885,12 +1055,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 					((EditModeFrameView)p.getParent()).removeView(p);
 			}
 		}
-	}
+	}*/
 
     public void dismissAddContentDialog(View v){
         dialogAddFrames.dismiss();
         dialogAddFramesActive = false;
-        renderPictograms();
+        adapter.notifyDataSetChanged();
+//        renderPictograms();
     }
 
     public void addPictograms(View v) {
@@ -901,7 +1072,17 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
 
-        EditModeActivity.this.startActivityForResult(i, 1);
+        switch(v.getId()){
+            case R.id.addChoice2:
+                EditModeActivity.this.startActivityForResult(i, 4);
+                break;
+            case R.id.addMediaFrame:
+                EditModeActivity.this.startActivityForResult(i, 1);
+                break;
+            default:
+                GuiHelper.ShowToast(this, "EditModeActivity -> addPictograms(View): Supplied View not recognized!");
+                break;
+        }
     }
 
     public void chooseChoicePictogram(View v){
@@ -914,11 +1095,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         EditModeActivity.this.startActivityForResult(i, 3);
     }
 
-    public void renderChoiceIcon(){
+    public void renderChoiceIcon(int position){
         ImageView choiceIcon = (ImageView) dialogAddFrames.findViewById(R.id.choiceIcon);
         ImageView deleteBtn = (ImageView) dialogAddFrames.findViewById(R.id.removeChoiceIcon);
 
-        Pictogram currentChoiceIcon = currentEditModeFrame.getMediaFrame().getChoicePictogram();
+        Pictogram currentChoiceIcon = sequence.getMediaFrames().get(position).getChoicePictogram();
 
         if (currentChoiceIcon == null){
 
@@ -932,12 +1113,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             deleteBtn.setVisibility(View.VISIBLE);
 
         }
-        renderPictograms();
+        adapter.notifyDataSetChanged();
+//TODO:        renderPictograms();
     }
 
     public void removeChoiceIcon(View v){
-        currentEditModeFrame.getMediaFrame().setChoicePictogram(null);
-        renderChoiceIcon();
+        sequence.getMediaFrames().get(lastPosition).setChoicePictogram(null);
+        renderChoiceIcon(lastPosition);
     }
 
 
