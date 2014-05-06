@@ -57,7 +57,8 @@
         android:layout_toLeftOf="@id/exitEditMode"
         android:scaleType="fitCenter"
         android:src="@drawable/save"
-        android:background="@drawable/gbutton"/>
+        android:background="@drawable/gbutton"
+        />
 
     <ImageButton
         android:id="@+id/largeFrame"
@@ -68,7 +69,8 @@
         android:layout_toLeftOf="@id/save"
         android:scaleType="fitCenter"
         android:src="@drawable/add_large"
-        android:background="@drawable/gbutton"/>
+        android:background="@drawable/gbutton"
+        android:visibility="invisible"/>
 
     <ImageButton
         android:id="@+id/smallFrame"
@@ -78,7 +80,8 @@
         android:layout_toLeftOf="@id/largeFrame"
         android:scaleType="fitCenter"
         android:src="@drawable/add_small"
-        android:background="@drawable/gbutton"/>
+        android:background="@drawable/gbutton"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/bin"
@@ -87,7 +90,8 @@
         android:layout_toLeftOf="@id/smallFrame"
         android:layout_marginRight="20dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/bin_closed"/>
+        android:src="@drawable/bin_closed"
+        android:visibility="invisible"/>
 
 
 </RelativeLayout>

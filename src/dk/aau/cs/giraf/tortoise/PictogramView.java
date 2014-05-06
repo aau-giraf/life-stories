@@ -17,8 +17,10 @@ import android.widget.TextView;
  * It also adds support for highlighting.
  */
 public class PictogramView extends LinearLayout {
-	
-	public final static float NORMAL_SCALE = 0.8f;
+
+    public final static float NORMAL_SCALE = 0.8f;
+    public final static float HIGHLIGHT_SCALE = 0.9f;
+    public final static float LOWLIGHT_SCALE = 0.7f;
 	private final static float DEFAULT_TEXT_SIZE = 18f;
 	
 	private RoundedImageView pictogram;
@@ -133,6 +135,38 @@ public class PictogramView extends LinearLayout {
 			}
 		});
 	}
+
+    public void liftUp() {
+        pictogram.setScaleX(HIGHLIGHT_SCALE);
+        pictogram.setScaleY(HIGHLIGHT_SCALE);
+        this.setAlpha(0.7f);
+        setDeleteButtonVisible(false);
+        invalidate();
+    }
+
+    public void placeDown() {
+        pictogram.setScaleX(NORMAL_SCALE);
+        pictogram.setScaleY(NORMAL_SCALE);
+        this.setAlpha(1.0f);
+        setDeleteButtonVisible(isInEditMode);
+        invalidate();
+    }
+
+    public void setLowlighted() {
+        pictogram.setScaleX(LOWLIGHT_SCALE);
+        pictogram.setScaleY(LOWLIGHT_SCALE);
+        this.setAlpha(0.4f);
+
+        this.invalidate();
+    }
+
+    public void setSelected() {
+        pictogram.setScaleX(HIGHLIGHT_SCALE);
+        pictogram.setScaleY(HIGHLIGHT_SCALE);
+        this.setAlpha(1f);
+
+        this.invalidate();
+    }
 
 	public void setOnDeleteClickListener(OnDeleteClickListener listener) {
 		onDeleteClickListener = listener;
