@@ -75,11 +75,6 @@ public class ScheduleEditActivity extends ScheduleActivity
         markCurrentWeekday();
     }
 
-    public void weekdayClick(View v)
-    {
-        // TODO: this should be removed or used. Check usages before doing anything!!
-    }
-
     public void showAddButtons()
     {
         // TODO: refactor for redundancy. Left some sample code in the for loop
