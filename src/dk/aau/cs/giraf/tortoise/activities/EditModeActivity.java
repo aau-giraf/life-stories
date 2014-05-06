@@ -293,6 +293,37 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 GuiHelper.ShowToast(this, e.toString());
             }
         }
+        // New add pictograms option
+        else if(resultCode == RESULT_OK && requestCode == 4){
+            try{
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+
+                if (checkoutIds.length == 0) {
+                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt.");
+                }
+                else
+                {
+                    MediaFrame mediaFrame = sequence.get;
+
+                    for(int id : checkoutIds)
+                    {
+                        Pictogram pictogram = PictoFactory.getPictogram(this, id);
+                        sequence.getMediaFrames()
+                    }
+
+                    List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
+                    mediaFrames = sequence.getMediaFrames();
+                    mediaFrames.add(mediaFrame);
+
+                    sequence.setMediaFrames(mediaFrames);
+
+                    adapter.notifyDataSetChanged();
+                }
+            }
+            catch (Exception e){
+                GuiHelper.ShowToast(this, e.toString());
+            }
+        }
 	}
 
     private SequenceAdapter setupAdapter() {
@@ -1045,7 +1076,17 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
 
-        EditModeActivity.this.startActivityForResult(i, 1);
+        switch(v.getId()){
+            case R.id.addChoice2:
+                EditModeActivity.this.startActivityForResult(i, 4);
+                break;
+            case R.id.addMediaFrame:
+                EditModeActivity.this.startActivityForResult(i, 1);
+                break;
+            default:
+                GuiHelper.ShowToast(this, "addPictograms(View): Supplied View not recognized!");
+                break;
+        }
     }
 
     public void chooseChoicePictogram(View v){
