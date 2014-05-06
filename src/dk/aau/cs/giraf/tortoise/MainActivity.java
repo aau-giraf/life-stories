@@ -102,7 +102,7 @@ public class MainActivity extends TortoiseActivity {
 
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
-        LifeStory.getInstance().setChild(h.profilesHelper.getProfileById((int)i.getLongExtra("currentChildID", -1)));
+        LifeStory.getInstance().setChild(h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
 
         profileName.setText(LifeStory.getInstance().getChild().getName());
 
