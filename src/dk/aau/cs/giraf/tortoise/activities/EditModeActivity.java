@@ -232,7 +232,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 			}
 		}
-        //Change profile
+        //Change story image
 		else if (resultCode == RESULT_OK && requestCode == 2) {
           try{
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
@@ -292,7 +292,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             } catch (Exception e){
                 GuiHelper.ShowToast(this, e.toString());
             }
-
         }
 	}
 
@@ -677,6 +676,30 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         }
         }
+
+    public void renderContentPictograms(int position){
+
+        if(sequence.getMediaFrames().get(position).getContent().size() == 0)
+        {
+            sequence.getMediaFrames().remove(position);
+            adapter.notifyDataSetChanged();
+            dialogAddFrames.dismiss();
+        }
+        else
+        {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
+            LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+            newChoiceContent.removeAllViews();
+
+            for(Pictogram p : sequence.getMediaFrames().get(position).getContent()) {
+                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, sequence.getMediaFrames().get(position), p, params);
+                choiceFramView.addDeleteButton(position);
+                newChoiceContent.addView(choiceFramView);
+            }
+        }
+
+
+    }
 
 
 	public void renderAddContentMenu(int position) {
