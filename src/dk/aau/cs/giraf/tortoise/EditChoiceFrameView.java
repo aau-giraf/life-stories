@@ -78,7 +78,6 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 
         this.getMediaFrame().removeContent(this.pictogram);
         mainActivity.renderContentPictograms(position);
-
 	}
 
 	public MediaFrame getMediaFrame() {

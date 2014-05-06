@@ -1,12 +1,15 @@
 package dk.aau.cs.giraf.tortoise;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
+import android.graphics.Bitmap;
 
 public class SequenceAdapter extends BaseAdapter {
 
@@ -60,8 +63,28 @@ public class SequenceAdapter extends BaseAdapter {
 			view = new PictogramView(context, 24f);
 		} else
 			view = (PictogramView)convertView;
-		
-		view.setImage(mediaFrame.getContent().get(0).getImageData());
+
+        //Set pictogramview image to choice pictogram if more choices.
+        Bitmap choiceImage;
+        if(sequence.getMediaFrames().get(position).getContent().size() > 1)
+        {
+            if(sequence.getMediaFrames().get(position).getChoicePictogram() == null)
+            {
+                choiceImage = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.question);
+            }
+            else
+            {
+                choiceImage = sequence.getMediaFrames().get(position).getChoicePictogram().getImageData();
+            }
+            view.setImage(choiceImage);
+        }
+        //Set pictogramview image to the only pictogram in it, if there is only one.
+        else
+        {
+            view.setImage(mediaFrame.getContent().get(0).getImageData());
+        }
+
+
 		
 		if (onAdapterGetViewListener != null)
 			onAdapterGetViewListener.onAdapterGetView(position, view);

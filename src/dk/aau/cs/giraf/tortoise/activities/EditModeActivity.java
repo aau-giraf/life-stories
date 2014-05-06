@@ -101,6 +101,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     private SequenceViewGroup sequenceViewGroup;
     private SequenceAdapter adapter;
     private Sequence sequence;
+    private int lastPosition;
 	
 	public void addOnMainLayoutEventListener(OnMainLayoutEventListener mainLayoutListener) {
 		this.mainLayoutListeners.add(mainLayoutListener);
@@ -276,10 +277,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 else
                 {
                     try{
-                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
                         Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                        currentEditModeFrame.getMediaFrame().setChoicePictogram(picto);
-                        //TODO:renderChoiceIcon();
+                        sequence.getMediaFrames().get(lastPosition).setChoicePictogram(picto);
+                        renderChoiceIcon(lastPosition);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
@@ -302,8 +302,10 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
             @Override
             public void onAdapterGetView(final int position, final View view) {
+
                 if (view instanceof PictogramView) {
                     PictogramView pictoView = (PictogramView) view;
+
                     pictoView
                             .setOnDeleteClickListener(new OnDeleteClickListener() {
                                 @Override
@@ -683,7 +685,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         {
             sequence.getMediaFrames().remove(position);
             adapter.notifyDataSetChanged();
-            dialogAddFrames.dismiss();
+            dismissAddContentDialog(getCurrentFocus());
         }
         else
         {
@@ -696,6 +698,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 choiceFramView.addDeleteButton(position);
                 newChoiceContent.addView(choiceFramView);
             }
+
+            renderChoiceIcon(position);
+            adapter.notifyDataSetChanged();
         }
 
 
@@ -719,6 +724,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         }
 
         dialogAddFramesActive = true;
+        lastPosition = position;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
         LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
         newChoiceContent.removeAllViews();
@@ -1027,6 +1033,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     public void dismissAddContentDialog(View v){
         dialogAddFrames.dismiss();
         dialogAddFramesActive = false;
+        adapter.notifyDataSetChanged();
 //        renderPictograms();
     }
 
@@ -1073,8 +1080,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
     public void removeChoiceIcon(View v){
-        currentEditModeFrame.getMediaFrame().setChoicePictogram(null);
-        //TODO: renderChoiceIcon();
+        sequence.getMediaFrames().get(lastPosition).setChoicePictogram(null);
+        renderChoiceIcon(lastPosition);
     }
 
 
