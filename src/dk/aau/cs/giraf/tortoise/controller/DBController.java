@@ -112,7 +112,8 @@ public class DBController {
         ArrayList<Sequence> seqs = new ArrayList<Sequence>();
         SequenceController sc = new SequenceController(con);
         for(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq : dbSeqs){
-            seqs.add(morphDBSequenceToSequence(sc.getSequenceAndFrames(dbSeq.getId()), con));
+            dk.aau.cs.giraf.oasis.lib.models.Sequence dbs = sc.getSequenceAndFrames(dbSeq.getId());
+            seqs.add(morphDBSequenceToSequence(dbs, con));
         }
         return seqs;
     }
@@ -155,10 +156,8 @@ public class DBController {
         MediaFrame mediaFrame = new MediaFrame();
         PictogramController pictoController = oasisLibHelper.pictogramHelper;
         mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con, pictoController.getPictogramById(dbFrame.getPictogramId())));
-        if (!dbFrame.getPictogramList().isEmpty()) {
-            mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
-        }
-        mediaFrame.setFirstFrame(new dk.aau.cs.giraf.tortoise.Frame(frameWidth, frameHeight, new Point(dbFrame.getPosX(), dbFrame.getPosY())));
+        mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
+        mediaFrame.addFrame(new dk.aau.cs.giraf.tortoise.Frame(frameWidth, frameHeight, new Point(dbFrame.getPosX(), dbFrame.getPosY())));
         return mediaFrame;
     }
 
