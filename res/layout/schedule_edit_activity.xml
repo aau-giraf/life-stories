@@ -61,7 +61,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@color/green"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:onClick="startPictosearchForScheduler"
+            android:id="@+id/sectionMonday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -88,13 +90,28 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView"
-                android:layout_alignParentRight="false"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/frameLayout7" />
+                android:id="@+id/scrollView"
+                android:layout_below="@+id/frameLayout7"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutMonday"
+                    android:onClick="weekdayClick"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:dividerPadding="2dp">
+                </LinearLayout>
+
+            </ScrollView>
 
         </RelativeLayout>
 
@@ -102,7 +119,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/purple" >
+            android:background="@color/purple"
+            android:onClick="startPictosearchForScheduler"
+            android:id="@+id/sectionTuesday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -128,12 +147,27 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView2"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/frameLayout" />
+                android:id="@+id/scrollView3"
+                android:layout_below="@+id/frameLayout"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutTuesday"
+                    android:onClick="weekdayClick"
+                    android:layout_below="@+id/frameLayout"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
+            </ScrollView>
 
         </RelativeLayout>
 
@@ -141,7 +175,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/orange" >
+            android:background="@color/orange"
+            android:onClick="startPictosearchForScheduler"
+            android:id="@+id/sectionWednesday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -167,20 +203,36 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView3"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/frameLayout2"
-                android:layout_alignParentLeft="false" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutWednesday"
+                    android:onClick="weekdayClick"
+                    android:layout_below="@+id/frameLayout2"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp" />
+            </ScrollView>
+
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/blue" >
+            android:background="@color/blue"
+            android:onClick="startPictosearchForScheduler"
+            android:id="@+id/sectionThursday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -207,20 +259,37 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView4"
+                android:id="@+id/scrollView4"
                 android:layout_below="@+id/frameLayout3"
-                android:layout_alignParentRight="false"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutThursday"
+                    android:onClick="weekdayClick"
+                    android:layout_below="@+id/frameLayout3"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
+            </ScrollView>
+
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/yellow" >
+            android:background="@color/yellow"
+            android:onClick="startPictosearchForScheduler"
+            android:id="@+id/sectionFriday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -244,22 +313,37 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
+
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView5"
-                android:layout_alignParentLeft="false"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/frameLayout4" />
+                android:id="@+id/scrollView2"
+                android:layout_below="@+id/frameLayout4"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutFriday"
+                    android:onClick="weekdayClick"
+                    android:paddingRight="20dp"
+                    android:paddingLeft="20dp" />
+            </ScrollView>
+
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/red" >
+            android:background="@color/red"
+            android:onClick="startPictosearchForScheduler"
+            android:id="@+id/sectionSaturday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -285,13 +369,28 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView6"
-                android:layout_alignParentLeft="false"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/frameLayout5" />
+                android:id="@+id/scrollView5"
+                android:layout_below="@+id/frameLayout5"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutSaturday"
+                    android:onClick="weekdayClick"
+                    android:layout_below="@+id/frameLayout5"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
+            </ScrollView>
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -299,7 +398,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/white"
-            android:id="@+id/relativeLayout" >
+            android:id="@+id/sectionSunday"
+            android:onClick="startPictosearchForScheduler">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -325,12 +425,28 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView7"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/frameLayout6" />
+                android:id="@+id/scrollView6"
+                android:layout_below="@+id/frameLayout6"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutSunday"
+                    android:onClick="weekdayClick"
+                    android:layout_below="@+id/frameLayout6"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp" />
+            </ScrollView>
+
         </RelativeLayout>
     </LinearLayout>
 

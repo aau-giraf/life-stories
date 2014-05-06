@@ -3,16 +3,24 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -61,29 +69,53 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     public void weekdaySelected(View v)
     {
-        // pushing a toggle button has no effect
-        GToggleButton btn = (GToggleButton) findViewById(v.getId());
-        btn.setToggled(true);
+        markCurrentWeekday();
     }
 
-    public void addItems(Bitmap bm)
+    public void weekdayClick(View v)
+    {
+        // TODO: this should be removed or used. Check usages before doing anything!!
+    }
+
+    public void addItems(Bitmap bm, LinearLayout layout)
     {
         try
         {
             LifeStory.getInstance().setCurrentStory(new Sequence());
 
-
-            int ss = R.id.layoutTest;
-            LinearLayout sv = (LinearLayout) findViewById(R.id.layoutTest);
-
             ImageView iw = new ImageView(this);
+            iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
             iw.setImageBitmap(bm);
-            sv.addView(iw);
-        } catch (Exception ex)
+
+            // set padding of each imageview containing
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0, 20, 0, 20);
+            iw.setLayoutParams(lp);
+
+            final LinearLayout workaroundLayout = layout;
+
+            // add image to the linear view contained in the scroll view
+            iw.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    workaroundLayout.removeView(v);
+                    return true;
+                }
+            });
+
+            // add pictogram to weekday
+            layout.addView(iw);
+        }
+        catch (Exception ex)
         {
             GuiHelper.ShowToast(this, ex.toString());
         }
+
     }
+
+    public static LinearLayout weekdayLayout;
 
     // this method handles pictograms sent back via an intent from pictosearch
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -109,7 +141,7 @@ public class ScheduleEditActivity extends ScheduleActivity
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
                         storyImage.setImageBitmap(bitmap);
-                        addItems(bitmap);
+                        addItems(bitmap, weekdayLayout);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
@@ -144,7 +176,9 @@ public class ScheduleEditActivity extends ScheduleActivity
                         Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
                         bitmap = LayoutTools.getSquareBitmap(bitmap);
                         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
-                        addItems(bitmap);
+
+                        // add item to scroll view
+                        addItems(bitmap, weekdayLayout);
                     }
                     catch (NullPointerException e)
                     {

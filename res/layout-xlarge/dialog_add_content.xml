@@ -78,13 +78,13 @@
             android:orientation="horizontal"
             android:minHeight="150dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/newChoiceContent2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="left"
                 android:orientation="horizontal"
-                android:minHeight="150dp"></RelativeLayout>
+                android:minHeight="150dp"></LinearLayout>
 
             <ImageButton
                 android:id="@+id/addChoice2"

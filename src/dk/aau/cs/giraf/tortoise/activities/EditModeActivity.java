@@ -533,9 +533,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
         //Pictogram choicePictogram = currentEditModeFrame.getMediaFrame().getChoicePictogram();
-        RelativeLayout newChoiceContent = (RelativeLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(150, 150);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
         //params.setMargins(10,10,10,10);
 
 

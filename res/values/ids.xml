@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<item name="layoutTest" type="id">layoutTest</item></resources>
+<item name="layoutTest" type="id">layoutTest</item><item name="mLayout" type="id">mLayout</item></resources>

@@ -49,7 +49,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 
 
     public void weekdaySelected(View v)
-    {
+    {/*
         int btnId = v.getId();
 
         GToggleButton btn = (GToggleButton) findViewById(btnId);
@@ -58,7 +58,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         // The week day buttons should not act as normal buttons
         btn.setToggled(true);
 
-         switch(btnId)
+        switch(btnId)
         {
             case R.id.monday:
                 if(getWeekday().equals("Mandag"))
@@ -102,7 +102,11 @@ public class ScheduleViewActivity extends ScheduleActivity
                     btn.setToggled(false);
                 }
                 break;
-        }
+        }*/
+
+        // in this case we "misuse" the markCurrentWeekday method to
+        // "disable" the toggle feature of the toggle button
+        markCurrentWeekday();
     }
 
     @Override

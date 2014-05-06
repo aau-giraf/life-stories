@@ -21,7 +21,7 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 	Pictogram pictogram;
 	EditModeActivity mainActivity;
 	
-	public EditChoiceFrameView(EditModeActivity mainActivity, MediaFrame mediaFrame, Pictogram pictogram, RelativeLayout.LayoutParams params) {
+	public EditChoiceFrameView(EditModeActivity mainActivity, MediaFrame mediaFrame, Pictogram pictogram, LinearLayout.LayoutParams params) {
 		super(mainActivity.getApplicationContext());
 		this.mainActivity = mainActivity;
 		this.setMediaFrame(mediaFrame);
