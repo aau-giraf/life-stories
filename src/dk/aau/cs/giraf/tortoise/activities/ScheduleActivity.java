@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -35,7 +36,7 @@ public class ScheduleActivity extends TortoiseActivity
         i.putExtra("purpose", "single");
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-
+        ScheduleEditActivity.weekdayLayout = (LinearLayout) v.getParent();
         DetermineWeekSection(v);
 
         this.startActivityForResult(i, 3);
