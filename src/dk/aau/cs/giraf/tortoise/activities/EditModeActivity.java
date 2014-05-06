@@ -312,6 +312,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     }
 
                     adapter.notifyDataSetChanged();
+                    renderContentPictograms(lastPosition);
                 }
             }
             catch (Exception e){
@@ -369,7 +370,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                         final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
                         sequenceGroup.liftUpAddNewButton();
 
-                        addPictograms(getCurrentFocus());
+                        addPictograms(findViewById(R.id.addMediaFrame));
                     }
                 });
 
@@ -1078,7 +1079,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 EditModeActivity.this.startActivityForResult(i, 1);
                 break;
             default:
-                GuiHelper.ShowToast(this, "addPictograms(View): Supplied View not recognized!");
+                GuiHelper.ShowToast(this, "EditModeActivity -> addPictograms(View): Supplied View not recognized!");
                 break;
         }
     }
