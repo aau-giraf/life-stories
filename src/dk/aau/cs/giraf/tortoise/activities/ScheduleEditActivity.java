@@ -107,12 +107,18 @@ public class ScheduleEditActivity extends ScheduleActivity
         // find each of the individual week days
         for (int i = 0; i < childcount; i++)
         {
-            // TODO: fix hardcoding of 1
-            RelativeLayout v = (RelativeLayout) level1.getChildAt(i); // the +1 is to choose the element at depth 2
-            ScrollView level2 = (ScrollView) v.getChildAt(1);
-            LinearLayout level3 = (LinearLayout) v.getChildAt(0);
+            try
+            {
+                // TODO: fix hardcoding of 1
+                RelativeLayout v = (RelativeLayout) level1.getChildAt(i); // the +1 is to choose the element at depth 2
+                ScrollView level2 = (ScrollView) v.getChildAt(1);
+                LinearLayout level3 = (LinearLayout) level2.getChildAt(0);
+                level3.addView(addButton());
 
-            level3.addView(addButton());
+            }catch (Exception ex)
+            {
+                GuiHelper.ShowToast(this, "Der skete en fejl");
+            }
 
         }
     }

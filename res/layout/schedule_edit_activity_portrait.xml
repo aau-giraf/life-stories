@@ -55,7 +55,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/completeWeekLayout">
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -89,36 +90,26 @@
 
             </FrameLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/scrollView"
+                android:scrollbars="none"
+                android:layout_gravity="center_horizontal"
                 android:layout_below="@+id/frameLayout7"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:onClick="startPictosearchForScheduler">
+                android:layout_centerHorizontal="true">
 
-                <ScrollView
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/scrollView"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:scrollbars="none"
-                    android:layout_gravity="center_horizontal">
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="140dp"
-                        android:layout_height="wrap_content"
-                        android:id="@id/layoutTest"
-                        android:baselineAligned="false"
-                        android:layout_centerInParent="true"
-                        android:gravity="center_horizontal"
-                        android:layout_gravity="center_horizontal|bottom">
-                    </LinearLayout>
-                </ScrollView>
-            </LinearLayout>
+                    android:id="@id/layoutTest"
+                    android:baselineAligned="false"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal|bottom">
+                </LinearLayout>
+            </ScrollView>
 
         </RelativeLayout>
 
@@ -152,12 +143,25 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView2"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/frameLayout" />
+                android:id="@+id/scrollView2"
+                android:scrollbars="none"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/frameLayout"
+                android:layout_centerHorizontal="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/linearLayout"
+                    android:baselineAligned="false"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal|bottom" />
+            </ScrollView>
 
         </RelativeLayout>
 
@@ -191,13 +195,26 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
-            <ListView
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView3"
-                android:layout_centerHorizontal="true"
+                android:id="@+id/scrollView3"
+                android:scrollbars="none"
+                android:layout_gravity="center_horizontal"
                 android:layout_below="@+id/frameLayout2"
-                android:layout_alignParentLeft="false" />
+                android:layout_centerHorizontal="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/linearLayout2"
+                    android:baselineAligned="false"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal|bottom" />
+            </ScrollView>
+
         </RelativeLayout>
 
     </LinearLayout>
