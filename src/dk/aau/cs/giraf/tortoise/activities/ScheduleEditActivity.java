@@ -15,8 +15,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
@@ -30,6 +33,8 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleEditActivity extends ScheduleActivity
 {
+    public List<List<ImageView>> weekdayLists;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -78,6 +83,7 @@ public class ScheduleEditActivity extends ScheduleActivity
     public void showAddButtons()
     {
         // TODO: refactor for redundancy. Left some sample code in the for loop
+        /*
         LinearLayout weekday = (LinearLayout) findViewById(R.id.layoutMonday);
         weekday.addView(addButton());
         weekday = (LinearLayout) findViewById(R.id.layoutTuesday);
@@ -92,19 +98,23 @@ public class ScheduleEditActivity extends ScheduleActivity
         weekday.addView(addButton());
         weekday = (LinearLayout) findViewById(R.id.layoutSunday);
         weekday.addView(addButton());
-        /*
-        RelativeLayout level1 = (RelativeLayout) findViewById(R.id.completeWeekLayout);
+        */
+
+        LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
 
         int childcount = level1.getChildCount();
 
         // find each of the individual week days
         for (int i = 0; i < childcount; i++)
         {
-            View v = parentLayout.getChildAt(i);
-            RelativeLayout childView = (RelativeLayout) v;
-            childView.addView(addButton());
+            // TODO: fix hardcoding of 1
+            RelativeLayout v = (RelativeLayout) level1.getChildAt(i); // the +1 is to choose the element at depth 2
+            ScrollView level2 = (ScrollView) v.getChildAt(1);
+            LinearLayout level3 = (LinearLayout) v.getChildAt(0);
 
-        }*/
+            level3.addView(addButton());
+
+        }
     }
 
     public void addItems(Bitmap bm, LinearLayout layout)
