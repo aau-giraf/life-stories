@@ -135,10 +135,10 @@ public class ScheduleEditActivity extends ScheduleActivity
                 }
             });
 
-            // add pictogram to weekday
-            layout.removeViewAt(layout.getChildCount() - 1);
-            layout.addView(iw);
-            layout.addView(addButton());
+            // add pictogram to week day and make sure the add button is always at the bottom of the week day
+            layout.removeViewAt(layout.getChildCount() - 1); // remove add button
+            layout.addView(iw); // add new pictogram
+            layout.addView(addButton()); // add the add button again
 
         }
         catch (Exception ex)
@@ -148,7 +148,7 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     }
 
-    // this method returns an imageview containing the add pictogram button
+    // this method returns an imageview containing the add pictogram button with a plus on it
     public ImageView addButton()
     {
         ImageView iv = new ImageView(this);
@@ -156,11 +156,10 @@ public class ScheduleEditActivity extends ScheduleActivity
         lp.setMargins(0, 20, 0, 20);
         iv.setLayoutParams(lp);
         iv.setBackgroundResource(R.drawable.week_schedule_bg_tile);
-        Drawable d = getResources().getDrawable(R.drawable.add);
-        Bitmap b = ((BitmapDrawable) d).getBitmap();
-        Drawable dr = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(b, 100, 100, true));
-        iv.setImageDrawable(dr);
+        Drawable resizedDrawable = resizeDrawable(R.drawable.add, 100, 100);
+        iv.setImageDrawable(resizedDrawable);
 
+        // set listener on the add button so it starts pictosearch when clicked
         iv.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -170,6 +169,7 @@ public class ScheduleEditActivity extends ScheduleActivity
             }
         });
 
+        // return the imageview with the plus image on it
         return iv;
     }
 
