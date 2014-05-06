@@ -1,6 +1,8 @@
 package dk.aau.cs.giraf.tortoise;
 
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
+import android.graphics.Bitmap;
 
 public class EditChoiceFrameView extends RelativeLayout implements OnClickListener{
 	
@@ -18,14 +21,15 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 	FrameLayout innerLayout;
 	ImageView btn;
 	private MediaFrame mediaFrame;
-	Pictogram pictogram;
+    Pictogram pictogram;
 	EditModeActivity mainActivity;
+    int position;
 	
 	public EditChoiceFrameView(EditModeActivity mainActivity, MediaFrame mediaFrame, Pictogram pictogram, LinearLayout.LayoutParams params) {
 		super(mainActivity.getApplicationContext());
 		this.mainActivity = mainActivity;
 		this.setMediaFrame(mediaFrame);
-		this.pictogram = pictogram;
+        this.pictogram = pictogram;
 		this.scale = mainActivity.getApplicationContext().getResources().getDisplayMetrics().density;
 		this.setLayoutParams(params);
 		this.btn = null;
@@ -37,12 +41,15 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 		innerLayout.setLayoutParams(innerParams);
 		innerLayout.setBackgroundResource(R.layout.border);
 		innerLayout.setPadding((int)(15*scale), (int) (15*scale), (int) (15*scale), (int) (15*scale));
-		innerLayout.addView(pictogram);
+
+        Drawable picToDrawable = new BitmapDrawable(getResources(), pictogram.getImageData());
+		innerLayout.setBackgroundDrawable(picToDrawable);
 		this.addView(innerLayout);
 	}
 	
-	public void addDeleteButton() {
+	public void addDeleteButton(int position) {
 		if(btn == null) {
+            this.position = position;
 			btn = new ImageView(mainActivity.getApplicationContext());
 			btn.setImageResource(R.drawable.btn_delete);
 			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -68,7 +75,12 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 			this.getMediaFrame().removeContent(this.pictogram);
 		}*/
 
+
         this.getMediaFrame().removeContent(this.pictogram);
+
+        mainActivity.dismissAddContentDialog(v);
+        mainActivity.renderAddContentMenu(position);
+
 	}
 
 	public MediaFrame getMediaFrame() {

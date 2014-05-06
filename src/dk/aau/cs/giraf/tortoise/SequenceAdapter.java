@@ -61,7 +61,7 @@ public class SequenceAdapter extends BaseAdapter {
 		} else
 			view = (PictogramView)convertView;
 		
-		view.setImage(mediaFrame.getChoicePictogram().getImageData());
+		view.setImage(mediaFrame.getContent().get(0).getImageData());
 		
 		if (onAdapterGetViewListener != null)
 			onAdapterGetViewListener.onAdapterGetView(position, view);
