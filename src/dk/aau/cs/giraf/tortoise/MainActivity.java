@@ -114,33 +114,8 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
 
-        // Set templates belonging to the chosen guardian and stories belonging to the chosen child
-        /*
-        JSONSerializer js = new JSONSerializer();
-        try {
-            LifeStory.getInstance().setTemplates(
-                js.loadSettingsFromFile(
-                    getApplicationContext(),
-                    LifeStory.getInstance().getGuardian().getId())
-            );
-
-            LifeStory.getInstance().setStories(
-                js.loadSettingsFromFile(
-                    getApplicationContext(),
-                    LifeStory.getInstance().getChild().getId())
-            );
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
-
-            DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
-            DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
+        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
+        DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
         }
         catch (Exception e){
             GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF");
@@ -209,14 +184,12 @@ public class MainActivity extends TortoiseActivity {
 
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-
+            canFinish = false;
             Intent i;
             if (isInTemplateMode) {
-                canFinish = false;
                 i = new Intent(getApplicationContext(), EditModeActivity.class);
                 i.putExtra("template", arg2);
             } else {
-                canFinish = false;
                 i = new Intent(getApplicationContext(), ViewModeActivity.class);
                 i.putExtra("story", arg2);
             }
@@ -404,7 +377,7 @@ public class MainActivity extends TortoiseActivity {
                                     lifeStory.removeTemplate(seq);
                                 }else {
                                     dbc.deleteSequence(seq, Sequence.SequenceType.STORY, lifeStory.getChild().getId(), parentObj);
-                                    lifeStory.removeTemplate(seq);
+                                    lifeStory.removeStory(seq);
                                 }
                                 sequenceAdapter.setItems();
                                 sequenceAdapter.notifyDataSetChanged();

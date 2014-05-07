@@ -92,8 +92,10 @@ public class DBController {
 
     public void deleteSequence(Sequence seq, SequenceType sequenceType, int profileID, Context con){
         oasisLibHelper = new Helper(con);
+        int success;
         SequenceController sc = oasisLibHelper.sequenceController;
-        sc.removeSequence(morphSequenceToDBSequence(seq, sequenceType, profileID));
+        success = sc.removeSequence(seq.getId());
+
     }
 
     /**
