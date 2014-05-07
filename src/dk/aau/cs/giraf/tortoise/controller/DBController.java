@@ -24,9 +24,7 @@ public class DBController {
      * Singleton pattern *
      *********************/
     private static DBController instance;
-
     private DBController(){};
-
     public static DBController getInstance(){
         DBController dbController;
         if(instance != null){
@@ -43,17 +41,9 @@ public class DBController {
      *******************************/
     private boolean success;
     Helper oasisLibHelper;
+    LifeStory lifeStory;
     private final int frameHeight = 140;
     private final int frameWidth = 140;
-
-    /***********************
-     * SequenceType ENUMS: *
-     ***********************
-     * SEQUENCE = 0        *
-     * SCHEDULE = 1        *
-     * STORY = 2           *
-     * PARROT = 3          *
-     ***********************/
 
     /******************
      * Public methods *
@@ -83,7 +73,7 @@ public class DBController {
      */
     public void loadCurrentCitizenSequences(int profileID, SequenceType sequenceType, Context con){
         oasisLibHelper = new Helper(con);
-        LifeStory lifeStory = LifeStory.getInstance();
+        lifeStory = LifeStory.getInstance();
         lifeStory.setStories(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
     }
 
@@ -96,8 +86,14 @@ public class DBController {
      */
     public void loadCurrentGuardianTemplates(int profileID, SequenceType sequenceType, Context con){
         oasisLibHelper = new Helper(con);
-        LifeStory lifeStory = LifeStory.getInstance();
+        lifeStory = LifeStory.getInstance();
         lifeStory.setTemplates(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
+    }
+
+    public void deleteSequence(Sequence seq, SequenceType sequenceType, int profileID, Context con){
+        oasisLibHelper = new Helper(con);
+        SequenceController sc = oasisLibHelper.sequenceController;
+        sc.removeSequence(morphSequenceToDBSequence(seq, sequenceType, profileID));
     }
 
     /**
@@ -175,24 +171,24 @@ public class DBController {
 
     private List<dk.aau.cs.giraf.oasis.lib.models.Frame> morphMediaFramesToDBFrames(List<MediaFrame> mediaFrames) {
         List<dk.aau.cs.giraf.oasis.lib.models.Frame> DBframes = new ArrayList<dk.aau.cs.giraf.oasis.lib.models.Frame>();
-        int i = 0;
+        int x = 0;
         for (MediaFrame mf :mediaFrames ){
-            DBframes.add(morphMediaFramesToDBFrames(mf,i));
-            i++;
+            DBframes.add(morphMediaFramesToDBFrames(mf, x, 0));
+            x++;
         }
         return DBframes;
     }
 
 
-    private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf, int i){
+    private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf, int x, int y){
         dk.aau.cs.giraf.oasis.lib.models.Frame f = new dk.aau.cs.giraf.oasis.lib.models.Frame();
         if (mf.getChoicePictogram() != null){
             f.setPictogramId(mf.getChoicePictogram().getPictogramID());
         }
         f.setNestedSequence(mf.getNestedSequenceID());
         f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
-        f.setPosX(i);
-        f.setPosY(1); //TODO temp
+        f.setPosX(x);
+        f.setPosY(y);
 
         //f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
         //f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future

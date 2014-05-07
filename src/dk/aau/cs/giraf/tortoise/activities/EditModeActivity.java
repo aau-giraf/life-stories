@@ -426,42 +426,24 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				
 				@Override
 				public void onClick(View v) {
-					//JSONSerializer js = new JSONSerializer();
 					CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
 					CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
+                    LifeStory ls = LifeStory.getInstance();
 
 					if(template.isChecked()) {
-						LifeStory.getInstance().addTemplate();
-						/*try {
-							js.saveSettingsToFile(getApplicationContext(),
-									LifeStory.getInstance().getTemplates(), LifeStory.getInstance().getGuardian().getId());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}*/
-                        saveSequence(LifeStory.getInstance().getCurrentStory(),
+                        ls.addTemplate();
+                        saveSequence(ls.getCurrentStory(),
                                 dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                                LifeStory.getInstance().getChild().getId());
+                                ls.getGuardian().getId());
 					}
 					if(story.isChecked()) {
-						LifeStory.getInstance().addStory();
-						/*try {
-							js.saveSettingsToFile(getApplicationContext(),
-									LifeStory.getInstance().getStories(), LifeStory.getInstance().getChild().getId());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();*/
-
-                        saveSequence(LifeStory.getInstance().getCurrentStory(),
+                        ls.addStory();
+                        saveSequence(ls.getCurrentStory(),
                                 dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                                LifeStory.getInstance().getChild().getId());
+                                ls.getChild().getId());
 					}
+
+
 					finish();
 				}
 			});
