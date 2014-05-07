@@ -3,28 +3,18 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
-import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -84,24 +74,6 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     public void showAddButtons()
     {
-        // TODO: refactor for redundancy. Left some sample code in the for loop
-        /*
-        LinearLayout weekday = (LinearLayout) findViewById(R.id.layoutMonday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutTuesday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutWednesday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutThursday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutFriday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutSaturday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutSunday);
-        weekday.addView(addButton());
-        */
-
         LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
 
         int childcount = level1.getChildCount();
