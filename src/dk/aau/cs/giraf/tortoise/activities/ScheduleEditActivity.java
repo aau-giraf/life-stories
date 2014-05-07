@@ -45,10 +45,12 @@ public class ScheduleEditActivity extends ScheduleActivity
         int screenOrientation = getResources().getConfiguration().orientation;
         if(screenOrientation == Configuration.ORIENTATION_LANDSCAPE)
         {
+            isInLandscape = true;
             setContentView(R.layout.schedule_edit_activity);
         }
         else
         {
+            isInLandscape = false;
             setContentView(R.layout.schedule_edit_activity_portrait);
         }
 
@@ -123,6 +125,8 @@ public class ScheduleEditActivity extends ScheduleActivity
         }
     }
 
+    public boolean isInLandscape;
+
     public void addItems(Bitmap bm, LinearLayout layout)
     {
         try
@@ -131,11 +135,25 @@ public class ScheduleEditActivity extends ScheduleActivity
 
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
-            iw.setImageBitmap(resizeBitmap(bm, 100, 100));
+
+            int xy;
+
+            // use wider buttons when in portrait mode
+            if(isInLandscape)
+            {
+                // small buttons
+                xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+            }else
+            {
+                // big buttons
+                xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
+            }
+
+            iw.setImageBitmap(resizeBitmap(bm, xy, xy)); // the same value is used for height and width because the pictogram should be square
 
             // set padding of each imageview containing
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 10, 0, 0);
+            lp.setMargins(0, 10, 0, 0); // pad pictogram at top to space them out
             iw.setLayoutParams(lp);
 
             final LinearLayout workaroundLayout = layout;
@@ -172,7 +190,21 @@ public class ScheduleEditActivity extends ScheduleActivity
         lp.setMargins(0, 10, 0, 0); // only pad top of pictogram to create space between them
         iv.setLayoutParams(lp);
         iv.setBackgroundResource(R.layout.border_selected);
-        Drawable resizedDrawable = resizeDrawable(R.drawable.add, 100, 100);
+
+        // use wider buttons when in portrait mode
+        int xy;
+
+        if(isInLandscape)
+        {
+            // small buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+        }else
+        {
+            // big buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
+        }
+
+        Drawable resizedDrawable = resizeDrawable(R.drawable.add, xy, xy);
         iv.setImageDrawable(resizedDrawable);
 
         // set listener on the add button so it starts pictosearch when clicked

@@ -105,8 +105,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutMonday"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
                     android:dividerPadding="2dp">
                 </LinearLayout>
 
@@ -161,9 +159,7 @@
                     android:id="@+id/layoutTuesday"
                     android:layout_below="@+id/frameLayout"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
         </RelativeLayout>
@@ -214,9 +210,7 @@
                     android:id="@+id/layoutWednesday"
                     android:layout_below="@+id/frameLayout2"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingRight="20dp"
-                    android:paddingLeft="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
         </RelativeLayout>
@@ -269,9 +263,7 @@
                     android:id="@+id/layoutThursday"
                     android:layout_below="@+id/frameLayout3"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
         </RelativeLayout>
@@ -321,9 +313,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:id="@+id/layoutFriday"
-                    android:paddingRight="20dp"
-                    android:paddingLeft="20dp" />
+                    android:id="@+id/layoutFriday" />
             </ScrollView>
 
         </RelativeLayout>
@@ -375,9 +365,7 @@
                     android:id="@+id/layoutSaturday"
                     android:layout_below="@+id/frameLayout5"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
         </RelativeLayout>
@@ -429,9 +417,7 @@
                     android:id="@+id/layoutSunday"
                     android:layout_below="@+id/frameLayout6"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
         </RelativeLayout>

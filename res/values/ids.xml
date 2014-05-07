@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<item name="layoutTest" type="id">layoutTest</item><item name="mLayout" type="id">mLayout</item></resources>
+    <item name="layoutTest" type="id">layoutTest</item>
+    <item name="mLayout" type="id">mLayout</item>
+    <item name="weekschedule_picto_xy_landscape" format="integer" type="dimen">100</item>
+    <item name="weekschedule_picto_xy_portrait" format="integer" type="dimen">160</item>
+</resources>
