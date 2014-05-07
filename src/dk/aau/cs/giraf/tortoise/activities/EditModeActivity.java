@@ -443,14 +443,18 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 					if(template.isChecked()) {
                         ls.addTemplate();
+                        saveSequence(ls.getCurrentStory(),
+                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                                ls.getGuardian().getId());
 					}
 					if(story.isChecked()) {
                         ls.addStory();
+                        saveSequence(ls.getCurrentStory(),
+                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                                ls.getChild().getId());
 					}
 
-                    saveSequence(ls.getCurrentStory(),
-                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                            ls.getGuardian().getId());
+
 					finish();
 				}
 			});
