@@ -269,5 +269,15 @@ public class ScheduleEditActivity extends ScheduleActivity
                 GuiHelper.ShowToast(this, "Fejl");
             }
         }
+
     }
+    public boolean saveSchedule(View v){
+        Sequence story = LifeStory.getInstance().getCurrentStory();
+        if (story == null){ return false; }
+        story.getTitleImage();
+        return true;
+    }
+
+
+
 }
