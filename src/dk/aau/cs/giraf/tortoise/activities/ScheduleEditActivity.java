@@ -203,6 +203,7 @@ public class ScheduleEditActivity extends ScheduleActivity
 
         if (resultCode == RESULT_OK && requestCode == 2)
         {
+            // i think this is triggered when a profile image is chosen from pictosearch
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
@@ -220,7 +221,6 @@ public class ScheduleEditActivity extends ScheduleActivity
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
                         storyImage.setImageBitmap(bitmap);
-                        addItems(bitmap, weekdayLayout);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
