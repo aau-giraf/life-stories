@@ -78,7 +78,8 @@
         android:layout_toLeftOf="@id/largeFrame"
         android:scaleType="centerCrop"
         android:src="@drawable/add_small"
-        android:background="@drawable/gbutton"/>
+        android:background="@drawable/gbutton"
+        android:onClick="printSequence"/>
 
     <ImageView
         android:id="@+id/bin"

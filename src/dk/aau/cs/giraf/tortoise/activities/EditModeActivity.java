@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -863,6 +864,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
     }
 
+
     private void sendSequenceOnEmail(Bitmap seqImage, String emailAddress, String subject, String message){
         Intent email = new Intent(Intent.ACTION_SEND);
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
@@ -872,4 +874,30 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         startActivity(Intent.createChooser(email, "Vælg en email-klient"));
     }
+
+    public void printSequence(View v){
+        Bitmap combinedSequence = combineFrames();
+        sendEmail(combinedSequence ,LifeStory.getInstance().getGuardian().getEmail());
+    }
+
+    private Bitmap combineFrames(){
+
+
+        int width = (320*sequence.getMediaFrames().size())-20;
+        int height = 300;
+
+        Bitmap combinedSequence;
+        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas comboImage = new Canvas(combinedSequence);
+
+
+        float leftOffset = 0f;
+        for(MediaFrame frame : sequence.getMediaFrames()){
+            comboImage.drawBitmap(frame.getContent().get(0).getImageData(), leftOffset, 0f, null);
+            leftOffset += 320;
+        }
+
+        return combinedSequence;
+    }
+
 }
