@@ -135,7 +135,7 @@ public class ScheduleEditActivity extends ScheduleActivity
 
             // set padding of each imageview containing
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 20, 0, 20);
+            lp.setMargins(0, 10, 0, 0);
             iw.setLayoutParams(lp);
 
             final LinearLayout workaroundLayout = layout;
@@ -169,9 +169,9 @@ public class ScheduleEditActivity extends ScheduleActivity
     {
         ImageView iv = new ImageView(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 20, 0, 20);
+        lp.setMargins(0, 10, 0, 0); // only pad top of pictogram to create space between them
         iv.setLayoutParams(lp);
-        iv.setBackgroundResource(R.drawable.week_schedule_bg_tile);
+        iv.setBackgroundResource(R.layout.border_selected);
         Drawable resizedDrawable = resizeDrawable(R.drawable.add, 100, 100);
         iv.setImageDrawable(resizedDrawable);
 
