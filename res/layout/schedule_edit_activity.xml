@@ -27,15 +27,25 @@
             android:background="@drawable/gbutton"
             android:onClick="startPictosearch"/>
 
-        <TextView
-            android:id="@+id/child_name"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@id/storyName"
+            android:layout_width="800dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Skemanavn"
+            android:saveEnabled="true"
+            android:maxLength="24"
+            android:lines="1"
+            android:selectAllOnFocus="true"
+            android:background="#00000000"
+            android:textColorHighlight="#00000000"
             android:textSize="60sp"
-            android:textColor="@color/text_color" />
+            android:textColor="@color/text_color"
+            android:hint="@string/schedule_name"
+            android:textAlignment="textStart"
+            android:textIsSelectable="false"
+            android:layout_alignBottom="@+id/schedule_image_button"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:singleLine="true" />
 
         <ImageButton
             android:id="@+id/home_button"
@@ -84,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/monday"
-                    android:id="@id/child_name"
+                    android:id="@id/storyName"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
