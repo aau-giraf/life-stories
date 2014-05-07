@@ -3,28 +3,18 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
-import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -45,10 +35,12 @@ public class ScheduleEditActivity extends ScheduleActivity
         int screenOrientation = getResources().getConfiguration().orientation;
         if(screenOrientation == Configuration.ORIENTATION_LANDSCAPE)
         {
+            isInLandscape = true;
             setContentView(R.layout.schedule_edit_activity);
         }
         else
         {
+            isInLandscape = false;
             setContentView(R.layout.schedule_edit_activity_portrait);
         }
 
@@ -82,24 +74,6 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     public void showAddButtons()
     {
-        // TODO: refactor for redundancy. Left some sample code in the for loop
-        /*
-        LinearLayout weekday = (LinearLayout) findViewById(R.id.layoutMonday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutTuesday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutWednesday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutThursday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutFriday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutSaturday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutSunday);
-        weekday.addView(addButton());
-        */
-
         LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
 
         int childcount = level1.getChildCount();
@@ -123,6 +97,8 @@ public class ScheduleEditActivity extends ScheduleActivity
         }
     }
 
+    public boolean isInLandscape;
+
     public void addItems(Bitmap bm, LinearLayout layout)
     {
         try
@@ -131,11 +107,25 @@ public class ScheduleEditActivity extends ScheduleActivity
 
             ImageView iw = new ImageView(this);
             iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
-            iw.setImageBitmap(resizeBitmap(bm, 100, 100));
+
+            int xy;
+
+            // use wider buttons when in portrait mode
+            if(isInLandscape)
+            {
+                // small buttons
+                xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+            }else
+            {
+                // big buttons
+                xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
+            }
+
+            iw.setImageBitmap(resizeBitmap(bm, xy, xy)); // the same value is used for height and width because the pictogram should be square
 
             // set padding of each imageview containing
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 10, 0, 0);
+            lp.setMargins(0, 10, 0, 0); // pad pictogram at top to space them out
             iw.setLayoutParams(lp);
 
             final LinearLayout workaroundLayout = layout;
@@ -172,7 +162,21 @@ public class ScheduleEditActivity extends ScheduleActivity
         lp.setMargins(0, 10, 0, 0); // only pad top of pictogram to create space between them
         iv.setLayoutParams(lp);
         iv.setBackgroundResource(R.layout.border_selected);
-        Drawable resizedDrawable = resizeDrawable(R.drawable.add, 100, 100);
+
+        // use wider buttons when in portrait mode
+        int xy;
+
+        if(isInLandscape)
+        {
+            // small buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+        }else
+        {
+            // big buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
+        }
+
+        Drawable resizedDrawable = resizeDrawable(R.drawable.add, xy, xy);
         iv.setImageDrawable(resizedDrawable);
 
         // set listener on the add button so it starts pictosearch when clicked
@@ -199,6 +203,7 @@ public class ScheduleEditActivity extends ScheduleActivity
 
         if (resultCode == RESULT_OK && requestCode == 2)
         {
+            // i think this is triggered when a profile image is chosen from pictosearch
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
@@ -216,7 +221,6 @@ public class ScheduleEditActivity extends ScheduleActivity
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
                         storyImage.setImageBitmap(bitmap);
-                        addItems(bitmap, weekdayLayout);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
