@@ -9,7 +9,6 @@ import java.util.List;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.PictogramController;
 import dk.aau.cs.giraf.oasis.lib.controllers.SequenceController;
-import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
@@ -176,22 +175,27 @@ public class DBController {
 
     private List<dk.aau.cs.giraf.oasis.lib.models.Frame> morphMediaFramesToDBFrames(List<MediaFrame> mediaFrames) {
         List<dk.aau.cs.giraf.oasis.lib.models.Frame> DBframes = new ArrayList<dk.aau.cs.giraf.oasis.lib.models.Frame>();
+        int i = 0;
         for (MediaFrame mf :mediaFrames ){
-            DBframes.add(morphMediaFramesToDBFrames(mf));
+            DBframes.add(morphMediaFramesToDBFrames(mf,i));
+            i++;
         }
         return DBframes;
     }
 
 
-    private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf){
+    private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf, int i){
         dk.aau.cs.giraf.oasis.lib.models.Frame f = new dk.aau.cs.giraf.oasis.lib.models.Frame();
         if (mf.getChoicePictogram() != null){
             f.setPictogramId(mf.getChoicePictogram().getPictogramID());
         }
         f.setNestedSequence(mf.getNestedSequenceID());
         f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
-        f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
-        f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
+        f.setPosX(i);
+        f.setPosY(1); //TODO temp
+
+        //f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
+        //f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
         return f;
     }
 

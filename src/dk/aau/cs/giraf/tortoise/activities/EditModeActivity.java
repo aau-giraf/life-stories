@@ -1,8 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +12,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,7 +30,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,9 +38,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,15 +47,11 @@ import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
-import dk.aau.cs.giraf.tortoise.Frame;
-import dk.aau.cs.giraf.tortoise.FrameDragShadowBuilder;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
-import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
-import dk.aau.cs.giraf.tortoise.controller.MediaFrame.OnContentChangedEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnCurrentFrameEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnMainLayoutEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnMediaFrameEventListener;
@@ -70,7 +60,6 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup;
 import dk.aau.cs.giraf.tortoise.SequenceAdapter;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
-import dk.aau.cs.giraf.tortoise.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnRearrangeListener;
 import dk.aau.cs.giraf.tortoise.PictogramView;
@@ -253,8 +242,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
                     storyImage.setImageBitmap(bitmap);
 			    }
-                //We expect a null pointer exception if the pictogram is without image
-                //TODO: Investigate if this still happens with the new DB.
+                // We expect a null pointer exception if the pictogram is without image
+                // TODO: Investigate if this still happens with the new DB.
                 // It still does
                 catch (NullPointerException e){
                     Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
@@ -437,14 +426,14 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				
 				@Override
 				public void onClick(View v) {
-					JSONSerializer js = new JSONSerializer();
+					//JSONSerializer js = new JSONSerializer();
 					CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
 					CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
 
 					if(template.isChecked()) {
 						LifeStory.getInstance().addTemplate();
-						try {
-							js.saveSettingsToFile(getApplicationContext(), 
+						/*try {
+							js.saveSettingsToFile(getApplicationContext(),
 									LifeStory.getInstance().getTemplates(), LifeStory.getInstance().getGuardian().getId());
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -452,11 +441,14 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}
+						}*/
+                        saveSequence(LifeStory.getInstance().getCurrentStory(),
+                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                                LifeStory.getInstance().getChild().getId());
 					}
 					if(story.isChecked()) {
 						LifeStory.getInstance().addStory();
-						try {
+						/*try {
 							js.saveSettingsToFile(getApplicationContext(),
 									LifeStory.getInstance().getStories(), LifeStory.getInstance().getChild().getId());
 						} catch (IOException e) {
@@ -464,13 +456,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 							e.printStackTrace();
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+							e.printStackTrace();*/
 
-                    saveSequence(LifeStory.getInstance().getCurrentStory(),
-                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                            LifeStory.getInstance().getGuardian().getId());
+                        saveSequence(LifeStory.getInstance().getCurrentStory(),
+                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                                LifeStory.getInstance().getChild().getId());
+					}
 					finish();
 				}
 			});
