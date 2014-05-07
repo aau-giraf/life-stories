@@ -99,6 +99,8 @@ public class ScheduleActivity extends TortoiseActivity
                 // to put pictogram in
                 // TODO: ugly workaround.. should be fixed
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
+                LinearLayout rl = (LinearLayout) findViewById(R.id.border_monday);
+                rl.setBackgroundResource(R.layout.weekday_selected);
             }else if(weekday.equals(getResources().getString(R.string.tuesday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
@@ -106,6 +108,8 @@ public class ScheduleActivity extends TortoiseActivity
 
                 // TODO: ugly workaround.. should be fixed
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                LinearLayout rl = (LinearLayout) findViewById(R.id.border_tuesday);
+                rl.setBackgroundResource(R.layout.weekday_selected);
             }else if(weekday.equals(getResources().getString(R.string.wednesday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
@@ -113,6 +117,11 @@ public class ScheduleActivity extends TortoiseActivity
 
                 // TODO: ugly workaround.. should be fixed
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
+
+                // highlights current day with a border
+                // TODO: put this in method
+                LinearLayout rl = (LinearLayout) findViewById(R.id.border_wednesday);
+                rl.setBackgroundResource(R.layout.weekday_selected);
             }else if(weekday.equals(getResources().getString(R.string.thursday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
@@ -120,6 +129,8 @@ public class ScheduleActivity extends TortoiseActivity
 
                 // TODO: ugly workaround.. should be fixed
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
+                LinearLayout rl = (LinearLayout) findViewById(R.id.border_thursday);
+                rl.setBackgroundResource(R.layout.weekday_selected);
             }else if(weekday.equals(getResources().getString(R.string.friday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
@@ -127,6 +138,8 @@ public class ScheduleActivity extends TortoiseActivity
 
                 // TODO: ugly workaround.. should be fixed
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
+                LinearLayout rl = (LinearLayout) findViewById(R.id.border_friday);
+                rl.setBackgroundResource(R.layout.weekday_selected);
             }else if(weekday.equals(getResources().getString(R.string.saturday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
@@ -134,6 +147,8 @@ public class ScheduleActivity extends TortoiseActivity
 
                 // TODO: ugly workaround.. should be fixed
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                LinearLayout rl = (LinearLayout) findViewById(R.id.border_saturday);
+                rl.setBackgroundResource(R.layout.weekday_selected);
             }else if(weekday.equals(getResources().getString(R.string.sunday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
@@ -141,6 +156,8 @@ public class ScheduleActivity extends TortoiseActivity
 
                 // TODO: ugly workaround.. should be fixed
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
+                LinearLayout rl = (LinearLayout) findViewById(R.id.border_sunday);
+                rl.setBackgroundResource(R.layout.weekday_selected);
             }
         } catch (Exception ex)
         {

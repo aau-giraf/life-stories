@@ -120,6 +120,16 @@
 
             </ScrollView>
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_monday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout7" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -172,6 +182,16 @@
                     android:layout_alignParentStart="true" />
             </ScrollView>
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_tuesday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -210,7 +230,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/frameLayout2"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:id="@+id/scrollView7">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -222,6 +243,16 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/frameLayout2"
+                android:id="@+id/border_wednesday"
+                android:layout_alignParentBottom="true"></LinearLayout>
 
         </RelativeLayout>
 
@@ -276,6 +307,16 @@
                     android:layout_alignParentStart="true" />
             </ScrollView>
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_thursday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout3" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -325,6 +366,16 @@
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutFriday" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_friday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout4" />
 
         </RelativeLayout>
 
@@ -378,6 +429,16 @@
                     android:layout_alignParentStart="true" />
             </ScrollView>
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_saturday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout5" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -429,6 +490,16 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_sunday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout6" />
 
         </RelativeLayout>
     </LinearLayout>
