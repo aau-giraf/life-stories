@@ -862,4 +862,14 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     private void saveSequence(Sequence currentStory, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType type, int id) {
         DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
     }
+
+    private void sendSequenceOnEmail(Bitmap seqImage, String emailAddress, String subject, String message){
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
+        email.putExtra(Intent.EXTRA_SUBJECT, subject);
+        email.putExtra(Intent.EXTRA_TEXT, message);
+        email.putExtra(Intent.EXTRA_STREAM, seqImage);
+
+        startActivity(Intent.createChooser(email, "Vælg en email-klient"));
+    }
 }
