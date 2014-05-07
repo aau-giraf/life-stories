@@ -12,6 +12,7 @@ public class TortoiseActivity extends Activity
     @Override
     protected void onResume()
     {
+
         super.onResume();
         //hideNavigationBar();
     }
