@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.controller.SerializableSequence;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
@@ -21,11 +22,11 @@ public class SequenceListAdapter extends BaseAdapter {
 	private Context context;
 	private boolean isInEditMode = false;
 	private boolean isInTemplateMode = false;
-	private List<SerializableSequence> items;
+	private List<Sequence> items;
 	private OnAdapterGetViewListener onAdapterGetViewListener;
 	
 	public SequenceListAdapter(Context context) {
-		this.items = new ArrayList<SerializableSequence>();
+		this.items = new ArrayList<Sequence>();
 		setItems();
 		this.context = context;
 	}
@@ -38,7 +39,7 @@ public class SequenceListAdapter extends BaseAdapter {
 			v = new PictogramView(context, 16f);
 		}
 		
-		SerializableSequence s = items.get(position);
+		Sequence s = items.get(position);
         
         v.setTitle(s.getTitle());
         v.setEditModeEnabled(isInEditMode);
@@ -59,7 +60,7 @@ public class SequenceListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public SerializableSequence getItem(int position) {
+	public Sequence getItem(int position) {
         return items.get(position);
     }
 	

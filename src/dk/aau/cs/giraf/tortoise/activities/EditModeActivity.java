@@ -437,40 +437,20 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				
 				@Override
 				public void onClick(View v) {
-					JSONSerializer js = new JSONSerializer();
 					CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
 					CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
+                    LifeStory ls = LifeStory.getInstance();
 
 					if(template.isChecked()) {
-						LifeStory.getInstance().addTemplate();
-						try {
-							js.saveSettingsToFile(getApplicationContext(), 
-									LifeStory.getInstance().getTemplates(), LifeStory.getInstance().getGuardian().getId());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+                        ls.addTemplate();
 					}
 					if(story.isChecked()) {
-						LifeStory.getInstance().addStory();
-						try {
-							js.saveSettingsToFile(getApplicationContext(),
-									LifeStory.getInstance().getStories(), LifeStory.getInstance().getChild().getId());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+                        ls.addStory();
 					}
 
-                    saveSequence(LifeStory.getInstance().getCurrentStory(),
+                    saveSequence(ls.getCurrentStory(),
                             dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                            LifeStory.getInstance().getGuardian().getId());
+                            ls.getGuardian().getId());
 					finish();
 				}
 			});

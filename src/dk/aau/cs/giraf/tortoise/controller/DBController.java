@@ -25,9 +25,7 @@ public class DBController {
      * Singleton pattern *
      *********************/
     private static DBController instance;
-
     private DBController(){};
-
     public static DBController getInstance(){
         DBController dbController;
         if(instance != null){
@@ -44,17 +42,9 @@ public class DBController {
      *******************************/
     private boolean success;
     Helper oasisLibHelper;
+    LifeStory lifeStory;
     private final int frameHeight = 140;
     private final int frameWidth = 140;
-
-    /***********************
-     * SequenceType ENUMS: *
-     ***********************
-     * SEQUENCE = 0        *
-     * SCHEDULE = 1        *
-     * STORY = 2           *
-     * PARROT = 3          *
-     ***********************/
 
     /******************
      * Public methods *
@@ -84,7 +74,7 @@ public class DBController {
      */
     public void loadCurrentCitizenSequences(int profileID, SequenceType sequenceType, Context con){
         oasisLibHelper = new Helper(con);
-        LifeStory lifeStory = LifeStory.getInstance();
+        lifeStory = LifeStory.getInstance();
         lifeStory.setStories(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
     }
 
@@ -97,8 +87,14 @@ public class DBController {
      */
     public void loadCurrentGuardianTemplates(int profileID, SequenceType sequenceType, Context con){
         oasisLibHelper = new Helper(con);
-        LifeStory lifeStory = LifeStory.getInstance();
+        lifeStory = LifeStory.getInstance();
         lifeStory.setTemplates(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
+    }
+
+    public void deleteSequence(Sequence seq, SequenceType sequenceType, int profileID, Context con){
+        oasisLibHelper = new Helper(con);
+        SequenceController sc = oasisLibHelper.sequenceController;
+        sc.removeSequence(morphSequenceToDBSequence(seq, sequenceType, profileID));
     }
 
     /**

@@ -375,16 +375,17 @@ public class MainActivity extends TortoiseActivity {
     }
 
     public void renderDialog(int dialogId, final int position) {
-
-
-        String storyName;
+        final dk.aau.cs.giraf.tortoise.controller.Sequence seq;
+        final LifeStory lifeStory = LifeStory.getInstance();
+        final DBController dbc = DBController.getInstance();
+        final MainActivity parentObj = this;
 
         // If isInTemplateMode is true then the guardian profile is active. If not, the child profile is active.
         if(isInTemplateMode) {
-            storyName = LifeStory.getInstance().getTemplates().get(position).getTitle();
+            seq = LifeStory.getInstance().getTemplates().get(position);
         }
         else {
-            storyName = LifeStory.getInstance().getStories().get(position).getTitle();
+            seq = LifeStory.getInstance().getStories().get(position);
         }
 
         // Dialog that prompts for deleting a story or template
@@ -393,47 +394,24 @@ public class MainActivity extends TortoiseActivity {
                 GDialogMessage gdialog = new GDialogMessage(this,
                         R.drawable.ic_launcher,
                         getString(R.string.dialog_delete_title),
-                        getResources().getString(R.string.dialog_delete_message) + " \"" + storyName + "\"",
+                        getResources().getString(R.string.dialog_delete_message) + " \"" + seq.getTitle() + "\"",
                         new View.OnClickListener()
                         {
                             @Override
                             public void onClick(View v)
                             {
-                                JSONSerializer js = new JSONSerializer();
                                 if(isInTemplateMode) {
-                                    LifeStory.getInstance().getTemplates().remove(position);
-                                    try {
-                                        js.saveSettingsToFile(getApplicationContext(),
-                                                LifeStory.getInstance().getTemplates(),
-                                                LifeStory.getInstance().getGuardian().getId());
-                                    } catch (IOException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    }
+                                    dbc.deleteSequence(seq, Sequence.SequenceType.STORY, lifeStory.getGuardian().getId(), parentObj);
+                                    lifeStory.removeTemplate(seq);
                                 }else {
-                                    LifeStory.getInstance().getStories().remove(position);
-                                    try {
-                                        js.saveSettingsToFile(getApplicationContext(),
-                                                LifeStory.getInstance().getStories(),
-                                                LifeStory.getInstance().getChild().getId());
-                                    } catch (IOException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    }
+                                    dbc.deleteSequence(seq, Sequence.SequenceType.STORY, lifeStory.getChild().getId(), parentObj);
+                                    lifeStory.removeTemplate(seq);
                                 }
                                 sequenceAdapter.setItems();
                                 sequenceAdapter.notifyDataSetChanged();
-
                             }
 
                         });
-
                 gdialog.show();
                 break;
             default:
