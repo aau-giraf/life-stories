@@ -86,9 +86,9 @@ public class MainActivity extends TortoiseActivity {
         Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
-
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
             finish();
+            return ;
         }
         // If launched from Giraf, then execute!
 
@@ -97,8 +97,7 @@ public class MainActivity extends TortoiseActivity {
         TextView profileName = (TextView) findViewById(R.id.child_name);
 
         Helper h;
-        try {
-            h = new Helper(this);
+        h = new Helper(this);
 
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
@@ -108,44 +107,6 @@ public class MainActivity extends TortoiseActivity {
 
         setProfileImages();
         profileImage.setImageBitmap(childImage);
-
-
-        // Clear existing life stories
-        LifeStory.getInstance().getStories().clear();
-        LifeStory.getInstance().getTemplates().clear();
-
-        // Set templates belonging to the chosen guardian and stories belonging to the chosen child
-        /*
-        JSONSerializer js = new JSONSerializer();
-        try {
-            LifeStory.getInstance().setTemplates(
-                js.loadSettingsFromFile(
-                    getApplicationContext(),
-                    LifeStory.getInstance().getGuardian().getId())
-            );
-
-            LifeStory.getInstance().setStories(
-                js.loadSettingsFromFile(
-                    getApplicationContext(),
-                    LifeStory.getInstance().getChild().getId())
-            );
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
-
-            DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
-            DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
-        }
-        catch (Exception e){
-            GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF");
-            finish(); //no connection to DB
-        }
 
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
@@ -209,14 +170,12 @@ public class MainActivity extends TortoiseActivity {
 
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-
+            canFinish = false;
             Intent i;
             if (isInTemplateMode) {
-                canFinish = false;
                 i = new Intent(getApplicationContext(), EditModeActivity.class);
                 i.putExtra("template", arg2);
             } else {
-                canFinish = false;
                 i = new Intent(getApplicationContext(), ViewModeActivity.class);
                 i.putExtra("story", arg2);
             }
@@ -329,6 +288,13 @@ public class MainActivity extends TortoiseActivity {
     @Override
     protected void onResume()
     {
+        // Clear existing life stories
+        LifeStory.getInstance().getStories().clear();
+        LifeStory.getInstance().getTemplates().clear();
+        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
+        DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
+
+
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         ToggleButton editMode = (ToggleButton) findViewById(R.id.edit_mode_toggle);
         ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
@@ -391,26 +357,26 @@ public class MainActivity extends TortoiseActivity {
         switch (dialogId) {
             case DIALOG_DELETE:
                 GDialogMessage gdialog = new GDialogMessage(this,
-                        R.drawable.ic_launcher,
-                        getString(R.string.dialog_delete_title),
-                        getResources().getString(R.string.dialog_delete_message) + " \"" + seq.getTitle() + "\"",
-                        new View.OnClickListener()
+                    R.drawable.ic_launcher,
+                    getString(R.string.dialog_delete_title),
+                    getResources().getString(R.string.dialog_delete_message) + " \"" + seq.getTitle() + "\"",
+                    new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
                         {
-                            @Override
-                            public void onClick(View v)
-                            {
-                                if(isInTemplateMode) {
-                                    dbc.deleteSequence(seq, Sequence.SequenceType.STORY, lifeStory.getGuardian().getId(), parentObj);
-                                    lifeStory.removeTemplate(seq);
-                                }else {
-                                    dbc.deleteSequence(seq, Sequence.SequenceType.STORY, lifeStory.getChild().getId(), parentObj);
-                                    lifeStory.removeTemplate(seq);
-                                }
-                                sequenceAdapter.setItems();
-                                sequenceAdapter.notifyDataSetChanged();
+                            if(isInTemplateMode) {
+                                dbc.deleteSequence(seq, parentObj);
+                                lifeStory.removeTemplate(seq);
+                            }else {
+                                dbc.deleteSequence(seq, parentObj);
+                                lifeStory.removeStory(seq);
                             }
+                            sequenceAdapter.setItems();
+                            sequenceAdapter.notifyDataSetChanged();
+                        }
 
-                        });
+                    });
                 gdialog.show();
                 break;
             default:

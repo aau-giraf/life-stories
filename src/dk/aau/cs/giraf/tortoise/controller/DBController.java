@@ -90,10 +90,11 @@ public class DBController {
         lifeStory.setTemplates(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
     }
 
-    public void deleteSequence(Sequence seq, SequenceType sequenceType, int profileID, Context con){
+    public void deleteSequence(Sequence seq, Context con){
         oasisLibHelper = new Helper(con);
         SequenceController sc = oasisLibHelper.sequenceController;
-        sc.removeSequence(morphSequenceToDBSequence(seq, sequenceType, profileID));
+        sc.removeSequence(seq.getId());
+
     }
 
     /**
@@ -160,6 +161,7 @@ public class DBController {
             Sequence seq, SequenceType seqType, int profileID){
         dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = new dk.aau.cs.giraf.oasis.lib.models.Sequence();
 
+        dbSeq.setId(seq.getId());
         dbSeq.setName(seq.getTitle());
         dbSeq.setPictogramId(seq.getTitlePictoId());
         dbSeq.setProfileId(profileID);
@@ -189,9 +191,6 @@ public class DBController {
         f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));
         f.setPosX(x);
         f.setPosY(y);
-
-        //f.setPosX(mf.getFrames().get(0).getPosition().x); //TODO media frames should only
-        //f.setPosY(mf.getFrames().get(0).getPosition().y); // contain one Frame in future
         return f;
     }
 
