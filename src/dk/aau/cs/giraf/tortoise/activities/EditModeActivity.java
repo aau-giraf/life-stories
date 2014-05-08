@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -911,16 +912,19 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     public void sendSequenceToEmail(Bitmap seqImage, String emailAddress, String subject, String message){
 
         FileOutputStream out;
+        // http://stackoverflow.com/questions/6952166/how-to-attach-bitmap-to-email-android
+
         try {
-            out = new FileOutputStream("tempSeq");
+            out = new FileOutputStream("temp/dk.aau.cs.giraf.tortoise/tempSeq.png");
             seqImage.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        File tempSeq = new File("data/data/dk.aau.cs.giraf.tortoise/tempSeq.png");
+        File tempSeq = new File("temp/dk.aau.cs.giraf.tortoise/tempSeq.png");
 
+        GuiHelper.ShowToast(this, tempSeq.toString());
 
         Intent email = new Intent(Intent.ACTION_SEND);
         email.setType("message/rfc822");
@@ -937,5 +941,4 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         boolean deleted = tempSeq.delete();
     }
-
 }
