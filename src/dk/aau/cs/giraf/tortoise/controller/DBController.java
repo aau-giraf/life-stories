@@ -73,8 +73,10 @@ public class DBController {
      */
     public void loadCurrentCitizenSequences(int profileID, SequenceType sequenceType, Context con){
         oasisLibHelper = new Helper(con);
-        lifeStory = LifeStory.getInstance();
-        lifeStory.setStories(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
+        LifeStory.getInstance().setStories(
+                morphDBSequenceListToSequenceList(
+                        oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(
+                                profileID, sequenceType), con));
     }
 
     /**
@@ -86,8 +88,10 @@ public class DBController {
      */
     public void loadCurrentGuardianTemplates(int profileID, SequenceType sequenceType, Context con){
         oasisLibHelper = new Helper(con);
-        lifeStory = LifeStory.getInstance();
-        lifeStory.setTemplates(morphDBSequenceListToSequenceList(oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(profileID, sequenceType), con));
+        LifeStory.getInstance().setTemplates(
+                morphDBSequenceListToSequenceList(
+                        oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(
+                                profileID, sequenceType), con));
     }
 
     public void deleteSequence(Sequence seq, Context con){
