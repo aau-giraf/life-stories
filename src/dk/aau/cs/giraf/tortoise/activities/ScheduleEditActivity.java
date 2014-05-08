@@ -7,20 +7,27 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
+import dk.aau.cs.giraf.gui.GTooltipBasic;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
@@ -41,6 +48,9 @@ public class ScheduleEditActivity extends ScheduleActivity
         {
             isInLandscape = true;
             setContentView(R.layout.schedule_edit_activity);
+            ImageButton b = (ImageButton) findViewById(R.id.schedule_image_button);
+            GTooltipBasic tooltip = new GTooltipBasic(b, "Tryk her for at tilføje et billede til ugeskemaet", R.drawable.ic_launcher);
+            tooltip.Show();
         }
         else
         {
@@ -58,6 +68,26 @@ public class ScheduleEditActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+
+        weekdaySequences = new ArrayList<Sequence>();
+
+        // add empty sequences for each week day
+        for(int i = 0; i < 7; i++)
+        {
+            weekdaySequences.add(i, new Sequence());
+        }
+
+       /* int template = this.getIntent().getExtras().getInt("template");
+
+        if(template == -1)
+        {
+            LifeStory.getInstance().setCurrentStory(new Sequence());
+        }
+        else {
+            LifeStory.getInstance().setCurrentTemplate(ScheduleEditActivity.this.getApplicationContext(), template);
+            //TODO: Render template again when fixed.
+            // renderTemplate();
+        }*/
     }
 
     public class DrawView extends View {
@@ -125,53 +155,65 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     public boolean isInLandscape;
 
-    public void addItems(Bitmap bm, LinearLayout layout)
+    public List<Pictogram> unpackSequence(MediaFrame mf)
+    {
+        return mf.getContent();
+    }
+
+    public void addItems(MediaFrame mf, LinearLayout layout)
     {
         try
         {
-            LifeStory.getInstance().setCurrentStory(new Sequence());
+            List<Pictogram> pictoList = unpackSequence(mf);
 
-            ImageView iw = new ImageView(this);
-            iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
-
-            int xy;
-
-            // use wider buttons when in portrait mode
-            if(isInLandscape)
+            // if only one pictogram is in the sequence, just display it in its respective week day
+            if(pictoList.size() == 1)
             {
-                // small buttons
-                xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
-            }else
-            {
-                // big buttons
-                xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
-            }
+                Bitmap bm = pictoList.get(0).getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
+                bm = LayoutTools.getSquareBitmap(bm);
+                bm = LayoutTools.getRoundedCornerBitmap(bm, getApplicationContext(), 20);
 
-            iw.setImageBitmap(resizeBitmap(bm, xy, xy)); // the same value is used for height and width because the pictogram should be square
+                ImageView iw = new ImageView(this);
+                iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
 
-            // set padding of each imageview containing
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 10, 0, 0); // pad pictogram at top to space them out
-            iw.setLayoutParams(lp);
+                int xy;
 
-            final LinearLayout workaroundLayout = layout;
-
-            // remove pictogram in the linear view contained in the scroll view
-            iw.setOnLongClickListener(new View.OnLongClickListener()
-            {
-                @Override
-                public boolean onLongClick(View v)
+                // use wider buttons when in portrait mode
+                if(isInLandscape)
                 {
-                    workaroundLayout.removeView(v);
-                    return true;
+                    // small buttons
+                    xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                }else
+                {
+                    // big buttons
+                    xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
                 }
-            });
 
-            // add pictogram to week day and make sure the add button is always at the bottom of the week day
-            layout.removeViewAt(layout.getChildCount() - 1); // remove add button
-            layout.addView(iw); // add new pictogram
-            layout.addView(addButton()); // add the add button again
+                iw.setImageBitmap(resizeBitmap(bm, xy, xy)); // the same value is used for height and width because the pictogram should be square
 
+                // set padding of each imageview containing
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                lp.setMargins(0, 10, 0, 0); // pad pictogram at top to space them out
+                iw.setLayoutParams(lp);
+
+                final LinearLayout workaroundLayout = layout;
+
+                // remove pictogram in the linear view contained in the scroll view
+                iw.setOnLongClickListener(new View.OnLongClickListener()
+                {
+                    @Override
+                    public boolean onLongClick(View v)
+                    {
+                        workaroundLayout.removeView(v);
+                        return true;
+                    }
+                });
+
+                // add pictogram to week day and make sure the add button is always at the bottom of the week day
+                layout.removeViewAt(layout.getChildCount() - 1); // remove add button
+                layout.addView(iw); // add new pictogram
+                layout.addView(addButton()); // add the add button again
+            }
         }
         catch (Exception ex)
         {
@@ -266,7 +308,7 @@ public class ScheduleEditActivity extends ScheduleActivity
             // this code is executed when the week scheduler requests an image from pictosearch
             try
             {
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
                 if (checkoutIds.length == 0)
                 {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
@@ -275,15 +317,16 @@ public class ScheduleEditActivity extends ScheduleActivity
                 {
                     try
                     {
-                        LifeStory.getInstance().setCurrentStory(new Sequence());
-                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
                         Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                        Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
-                        bitmap = LayoutTools.getSquareBitmap(bitmap);
-                        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+
+                        MediaFrame mf = new MediaFrame();
+                        mf.addContent(picto);
+
+                        weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
 
                         // add item to scroll view
-                        addItems(bitmap, weekdayLayout);
+                        addItems(mf, weekdayLayout);
+
                     }
                     catch (NullPointerException e)
                     {

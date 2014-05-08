@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Point;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -9,14 +10,24 @@ import android.widget.RelativeLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleActivity extends TortoiseActivity
 {
+    List<Sequence> weekdaySequences;
+    int weekdaySelected;
+
     //TODO move common methods here
+    public enum Day
+    {
+        MONDAY, TUESDAY, WEDNESDAY,
+        THURSDAY, FRIDAY, SATURDAY, SUNDAY
+    }
 
     public void startPictosearch(View v)
     {
@@ -52,30 +63,37 @@ public class ScheduleActivity extends TortoiseActivity
             case R.id.sectionMonday:
                 layout = (LinearLayout) findViewById(R.id.layoutMonday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.MONDAY.ordinal();
                 break;
             case R.id.sectionTuesday:
                 layout = (LinearLayout) findViewById(R.id.layoutTuesday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.TUESDAY.ordinal();
                 break;
             case R.id.sectionWednesday:
                 layout = (LinearLayout) findViewById(R.id.layoutWednesday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.WEDNESDAY.ordinal();
                 break;
             case R.id.sectionThursday:
                 layout = (LinearLayout) findViewById(R.id.layoutThursday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.THURSDAY.ordinal();
                 break;
             case R.id.sectionFriday:
                 layout = (LinearLayout) findViewById(R.id.layoutFriday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.FRIDAY.ordinal();
                 break;
             case R.id.sectionSaturday:
                 layout = (LinearLayout) findViewById(R.id.layoutSaturday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.SATURDAY.ordinal();
                 break;
             case R.id.sectionSunday:
                 layout = (LinearLayout) findViewById(R.id.layoutSunday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.SUNDAY.ordinal();
                 break;
             default:
                 break;
