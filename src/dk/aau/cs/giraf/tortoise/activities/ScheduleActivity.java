@@ -2,21 +2,44 @@ package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.pictogram.PictoFactory;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
+import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleActivity extends TortoiseActivity
 {
+    List<Sequence> weekdaySequences;
+    int weekdaySelected;
+    public GDialog multichoiceDialog;
+    public boolean isInLandscape;
+
     //TODO move common methods here
+    public enum Day
+    {
+        MONDAY, TUESDAY, WEDNESDAY,
+        THURSDAY, FRIDAY, SATURDAY, SUNDAY
+    }
 
     public void startPictosearch(View v)
     {
@@ -33,13 +56,237 @@ public class ScheduleActivity extends TortoiseActivity
     {
         Intent i = new Intent();
         i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch", "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
-        i.putExtra("purpose", "single");
+        i.putExtra("purpose", "multi");
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
         ScheduleEditActivity.weekdayLayout = (LinearLayout) v.getParent();
         DetermineWeekSection(v);
 
         this.startActivityForResult(i, 3);
+    }
+
+    public void dismissAddContentDialog(View v)
+    {
+        multichoiceDialog.dismiss();
+        renderSchedule();
+    }
+
+    public void showMultiChoiceDialog(int position, int day)
+    {
+        multichoiceDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content, null));
+
+        multichoiceDialog.show();
+    }
+
+    public void renderSchedule()
+    {
+        LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
+
+        int childcount = level1.getChildCount();
+
+        // find each of the individual week days
+        for (int i = 0; i < childcount; i++)
+        {
+            try
+            {
+                // TODO: fix hardcoding of 1
+                RelativeLayout v = (RelativeLayout) level1.getChildAt(i); // the +1 is to choose the element at depth 2
+                ScrollView level2 = (ScrollView) v.getChildAt(1);
+                LinearLayout level3 = (LinearLayout) level2.getChildAt(0);
+                level3.removeAllViews();
+
+                    for(MediaFrame mf : weekdaySequences.get(i).getMediaFrames())
+                    {
+                        addItems(mf, ScheduleEditActivity.weekdayLayout);
+                    }
+
+            }catch (Exception ex)
+            {
+                GuiHelper.ShowToast(this, "Der skete en fejl");
+            }
+
+        }
+        showAddButtons();
+    }
+
+    public void addItems(MediaFrame mf, LinearLayout layout)
+    {
+        if(mf == null)
+        {
+            GuiHelper.ShowToast(this, "mf null");
+        }
+
+        if(layout != ScheduleEditActivity.weekdayLayout)
+        {
+            GuiHelper.ShowToast(this, "layout problem");
+        }
+
+        try
+        {
+            List<Pictogram> pictoList = unpackSequence(mf);
+
+                        // if only one pictogram is in the sequence, just display it in its respective week day
+            if(pictoList.size() == 1)
+            {
+
+                //addPictogramToDay(pictoList.get(0).getImageData(), layout);
+            }
+            else if(pictoList.size() > 1)
+            {
+                Bitmap choiceImage;
+
+
+                if(mf.getChoicePictogram() == null)
+                {
+                    // if no default choice icon
+                    choiceImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.questionwhite);
+                }
+                else
+                {
+                    choiceImage = mf.getChoicePictogram().getImageData();
+                }
+
+                addPictogramToDay(choiceImage, layout);
+            }
+        }
+        catch (Exception ex)
+        {
+            GuiHelper.ShowToast(this, ex.toString() + " addbtn");
+        }
+
+    }
+
+    public List<Pictogram> unpackSequence(MediaFrame mf)
+    {
+        return mf.getContent();
+    }
+
+
+    // this method returns an imageview containing the add pictogram button with a plus on it
+    public ImageView addButton()
+    {
+        ImageView iv = new ImageView(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 10, 0, 0); // only pad top of pictogram to create space between them
+        iv.setLayoutParams(lp);
+        iv.setBackgroundResource(R.layout.border_selected);
+
+        // use wider buttons when in portrait mode
+        int xy;
+
+        if(isInLandscape)
+        {
+            // small buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+        }else
+        {
+            // big buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
+        }
+
+        Drawable resizedDrawable = resizeDrawable(R.drawable.add, xy, xy);
+        iv.setImageDrawable(resizedDrawable);
+
+        // set listener on the add button so it starts pictosearch when clicked
+        iv.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                startPictosearchForScheduler(view);
+            }
+        });
+
+        // return the imageview with the plus image on it
+        return iv;
+    }
+
+    public void addPictogramToDay(Bitmap bm, LinearLayout layout)
+    {
+
+
+        ImageView iw = new ImageView(this);
+        iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
+
+        int xy;
+
+        // use wider buttons when in portrait mode
+        if(isInLandscape)
+        {
+            // small buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+        }else
+        {
+            // big buttons
+            xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
+        }
+
+        iw.setImageBitmap(resizeBitmap(bm, xy, xy)); // the same value is used for height and width because the pictogram should be square
+
+        // set padding of each imageview containing
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 10, 0, 0); // pad pictogram at top to space them out
+        iw.setLayoutParams(lp);
+
+        final LinearLayout workaroundLayout = layout;
+
+        // remove pictogram in the linear view contained in the scroll view
+        iw.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                workaroundLayout.removeView(v);
+                return true;
+            }
+        });
+
+        iw.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ImageView iv = (ImageView) v;
+
+                LinearLayout l = (LinearLayout) iv.getParent();
+
+                // index of pictogram being clicked
+                int index = l.indexOfChild(v);
+
+                // show
+                showMultiChoiceDialog(index, weekdaySelected);
+            }
+        });
+
+        // add pictogram to week day and make sure the add button is always at the bottom of the week day
+        layout.removeViewAt(layout.getChildCount() - 1); // remove add button
+        layout.addView(iw); // add new pictogram
+        layout.addView(addButton()); // add the add button again
+    }
+
+    public void showAddButtons()
+    {
+        LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
+
+        int childcount = level1.getChildCount();
+
+        // find each of the individual week days
+        for (int i = 0; i < childcount; i++)
+        {
+            try
+            {
+                // TODO: fix hardcoding of 1
+                RelativeLayout v = (RelativeLayout) level1.getChildAt(i); // the +1 is to choose the element at depth 2
+                ScrollView level2 = (ScrollView) v.getChildAt(1);
+                LinearLayout level3 = (LinearLayout) level2.getChildAt(0);
+                level3.addView(addButton());
+
+            }catch (Exception ex)
+            {
+                GuiHelper.ShowToast(this, "Der skete en fejl");
+            }
+
+        }
     }
 
     public void DetermineWeekSection(View v)
@@ -52,30 +299,37 @@ public class ScheduleActivity extends TortoiseActivity
             case R.id.sectionMonday:
                 layout = (LinearLayout) findViewById(R.id.layoutMonday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.MONDAY.ordinal();
                 break;
             case R.id.sectionTuesday:
                 layout = (LinearLayout) findViewById(R.id.layoutTuesday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.TUESDAY.ordinal();
                 break;
             case R.id.sectionWednesday:
                 layout = (LinearLayout) findViewById(R.id.layoutWednesday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.WEDNESDAY.ordinal();
                 break;
             case R.id.sectionThursday:
                 layout = (LinearLayout) findViewById(R.id.layoutThursday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.THURSDAY.ordinal();
                 break;
             case R.id.sectionFriday:
                 layout = (LinearLayout) findViewById(R.id.layoutFriday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.FRIDAY.ordinal();
                 break;
             case R.id.sectionSaturday:
                 layout = (LinearLayout) findViewById(R.id.layoutSaturday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.SATURDAY.ordinal();
                 break;
             case R.id.sectionSunday:
                 layout = (LinearLayout) findViewById(R.id.layoutSunday);
                 ScheduleEditActivity.weekdayLayout = layout;
+                weekdaySelected = Day.SUNDAY.ordinal();
                 break;
             default:
                 break;
