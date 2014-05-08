@@ -132,7 +132,7 @@ public class ScheduleEditActivity extends ScheduleActivity
     }
 
     // this is just a variable for a workaround
-    public static LinearLayout weekdayLayout;
+  //  public static LinearLayout weekdayLayout;
 
     // this method handles pictograms sent back via an intent from pictosearch
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -198,8 +198,13 @@ public class ScheduleEditActivity extends ScheduleActivity
 
                         weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
 
+                        if (weekdayLayout.getChildCount() > 0){
+                            weekdayLayout.removeViewAt(weekdayLayout.getChildCount() - 1); // remove add button
+                        }
                         // add item to scroll view
                         addItems(mf, weekdayLayout);
+                        weekdayLayout.addView(addButton()); // add the add button again
+
 
                     }
                     catch (NullPointerException e)
