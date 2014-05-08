@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -30,6 +33,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -728,6 +732,16 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				}
 			}
 		});
+
+        ImageButton print = (ImageButton)findViewById(R.id.printSequence);
+        print.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //GuiHelper.ShowToast(EditModeActivity.this, "Testtest?");
+                EditModeActivity.this.printSequence();
+            }
+        });
+
 		ImageView bin = (ImageView)findViewById(R.id.bin);
 		bin.setImageResource(R.drawable.bin_closed);
 		bin.setOnDragListener(new OnDragListener() {
@@ -863,7 +877,36 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
     }
 
-    private void sendSequenceOnEmail(Bitmap seqImage, String emailAddress, String subject, String message){
+    public void printSequence(){
+        GuiHelper.ShowToast(this, "Are you still there?");
+        Bitmap combinedSequence = combineFrames();
+        Drawable csdrawable = new BitmapDrawable(getResources(), combinedSequence);
+        HorizontalScrollView derp = (HorizontalScrollView) findViewById(R.id.sequenceScrollView);
+        derp.setBackgroundDrawable(csdrawable);
+        //sendSequenceToEmail(combinedSequence, "dan.skoett.petersen@gmail.com", LifeStory.getInstance().getCurrentStory().getTitle(), "Hej Dan");
+    }
+
+    public Bitmap combineFrames(){
+
+
+        int width = (320*sequence.getMediaFrames().size())-20;
+        int height = 300;
+
+        Bitmap combinedSequence;
+        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas comboImage = new Canvas(combinedSequence);
+
+
+        float leftOffset = 0f;
+        for(MediaFrame frame : sequence.getMediaFrames()){
+            comboImage.drawBitmap(frame.getContent().get(0).getImageData(), leftOffset, 0f, null);
+            leftOffset += 320;
+        }
+
+        return combinedSequence;
+    }
+
+    public void sendSequenceToEmail(Bitmap seqImage, String emailAddress, String subject, String message){
         Intent email = new Intent(Intent.ACTION_SEND);
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
         email.putExtra(Intent.EXTRA_SUBJECT, subject);
@@ -872,4 +915,5 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         startActivity(Intent.createChooser(email, "Vælg en email-klient"));
     }
+
 }
