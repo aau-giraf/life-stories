@@ -43,6 +43,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -880,17 +882,17 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     public void printSequence(){
         GuiHelper.ShowToast(this, "Are you still there?");
         Bitmap combinedSequence = combineFrames();
-        Drawable csdrawable = new BitmapDrawable(getResources(), combinedSequence);
-        HorizontalScrollView derp = (HorizontalScrollView) findViewById(R.id.sequenceScrollView);
-        derp.setBackgroundDrawable(csdrawable);
-        //sendSequenceToEmail(combinedSequence, "dan.skoett.petersen@gmail.com", LifeStory.getInstance().getCurrentStory().getTitle(), "Hej Dan");
+        sendSequenceToEmail(combinedSequence, "dan.skoett.petersen@gmail.com", LifeStory.getInstance().getCurrentStory().getTitle(), "Hej Dan");
     }
 
     public Bitmap combineFrames(){
 
+        int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getWidth();
+        int numframes = sequence.getMediaFrames().size();
+        int spacing = 10;
 
-        int width = (320*sequence.getMediaFrames().size())-20;
-        int height = 300;
+        int width = ((frameDimens+spacing)*numframes)-spacing;
+        int height = frameDimens;
 
         Bitmap combinedSequence;
         combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -900,20 +902,40 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         float leftOffset = 0f;
         for(MediaFrame frame : sequence.getMediaFrames()){
             comboImage.drawBitmap(frame.getContent().get(0).getImageData(), leftOffset, 0f, null);
-            leftOffset += 320;
+            leftOffset += frameDimens+spacing;
         }
 
         return combinedSequence;
     }
 
     public void sendSequenceToEmail(Bitmap seqImage, String emailAddress, String subject, String message){
+
+        FileOutputStream out;
+        try {
+            out = new FileOutputStream("tempSeq");
+            seqImage.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        File tempSeq = new File("data/data/dk.aau.cs.giraf.tortoise/tempSeq.png");
+
+
         Intent email = new Intent(Intent.ACTION_SEND);
+        email.setType("message/rfc822");
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
         email.putExtra(Intent.EXTRA_SUBJECT, subject);
         email.putExtra(Intent.EXTRA_TEXT, message);
-        email.putExtra(Intent.EXTRA_STREAM, seqImage);
+        email.putExtra(Intent.EXTRA_STREAM, tempSeq);
 
+        try{
         startActivity(Intent.createChooser(email, "Vælg en email-klient"));
+        }catch (android.content.ActivityNotFoundException ex) {
+            GuiHelper.ShowToast(this, "Fuck you.");
+        }
+
+        boolean deleted = tempSeq.delete();
     }
 
 }
