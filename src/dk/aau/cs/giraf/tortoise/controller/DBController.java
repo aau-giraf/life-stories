@@ -60,7 +60,9 @@ public class DBController {
      */
     public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
         SequenceController sc = new SequenceController(con);
-        success = sc.insertSequenceAndFrames(morphSequenceToDBSequence(seq, seqType, profileID));
+        dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = morphSequenceToDBSequence(seq, seqType, profileID);
+        success = sc.insertSequenceAndFrames(dbSeq);
+        seq.setId(dbSeq.getId());
         return success;
     }
 

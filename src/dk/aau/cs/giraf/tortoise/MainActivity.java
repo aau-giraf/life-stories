@@ -291,8 +291,8 @@ public class MainActivity extends TortoiseActivity {
         // Clear existing life stories
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
-        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
-        DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
+        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+        DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
 
 
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);

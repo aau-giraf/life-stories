@@ -11,8 +11,10 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +32,7 @@ import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
@@ -79,7 +82,7 @@ public class ScheduleEditActivity extends ScheduleActivity
         {
             weekdaySequences.add(i, new Sequence());
         }
-
+        LifeStory.getInstance().setCurrentStory(new Sequence());
        /* int template = this.getIntent().getExtras().getInt("template");
 
         if(template == -1)
@@ -220,9 +223,28 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     }
     public boolean saveSchedule(View v){
-        Sequence story = LifeStory.getInstance().getCurrentStory();
-        if (story == null){ return false; }
-        story.getTitleImage();
+
+        Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();
+        Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
+        if (title != null){
+            scheduleSeq.setTitle(title.toString());
+        }
+
+        for(Sequence daySeq: super.weekdaySequences){
+            daySeq.setTitle("");       //test value
+            daySeq.setTitlePictoId(1); //test value
+            boolean s = DBController.getInstance().saveSequence(daySeq,
+                    dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                    LifeStory.getInstance().getChild().getId(),
+                    getApplicationContext());
+            MediaFrame mf = new MediaFrame();
+            mf.setNestedSequenceID(daySeq.getId());
+            scheduleSeq.getMediaFrames().add(mf);
+        }
+        DBController.getInstance().saveSequence(scheduleSeq,
+                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                LifeStory.getInstance().getChild().getId(),
+                getApplicationContext());
         return true;
     }
 
