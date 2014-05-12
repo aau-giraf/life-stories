@@ -9,13 +9,16 @@ import android.widget.ImageButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 
+import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
@@ -26,6 +29,12 @@ public class ScheduleViewActivity extends ScheduleActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view_activity);
 
+        // load sequences associated with citizen
+        //DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+
+        // display the sequences in the week schedule
+        //displaySequences();
+
         // Get intent, action and MIME type
         Intent intent = getIntent();
 
@@ -34,6 +43,24 @@ public class ScheduleViewActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+    }
+
+    private void displaySequences()
+    {
+        // get sequences from database
+        List<dk.aau.cs.giraf.tortoise.controller.Sequence> storyList = LifeStory.getInstance ().getStories();
+        dk.aau.cs.giraf.tortoise.controller.Sequence seq = storyList.get(7);
+        int x = 5;
+
+/*
+        for(dk.aau.cs.giraf.tortoise.controller.Sequence sequence : storyList)
+        {
+            String title = sequence.getTitle();
+
+        }/*
+
+
+
     }
 
     @Override
@@ -108,7 +135,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         // "disable" the toggle feature of the toggle button
         markCurrentWeekday();
     }
-
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -153,5 +180,5 @@ public class ScheduleViewActivity extends ScheduleActivity
                 GuiHelper.ShowToast(this, e.toString());
             }
         }
-    }
+    }*/
 }

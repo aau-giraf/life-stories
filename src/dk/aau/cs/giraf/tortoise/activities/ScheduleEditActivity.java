@@ -234,7 +234,7 @@ public class ScheduleEditActivity extends ScheduleActivity
             daySeq.setTitle("");       //test value
             daySeq.setTitlePictoId(1); //test value
             boolean s = DBController.getInstance().saveSequence(daySeq,
-                    dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                    dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     LifeStory.getInstance().getChild().getId(),
                     getApplicationContext());
             MediaFrame mf = new MediaFrame();
