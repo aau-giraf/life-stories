@@ -3,9 +3,11 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,11 +31,8 @@ public class ScheduleViewActivity extends ScheduleActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view_activity);
 
-        // load sequences associated with citizen
-        //DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
-
         // display the sequences in the week schedule
-        //displaySequences();
+        displaySequences();
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -47,10 +46,26 @@ public class ScheduleViewActivity extends ScheduleActivity
 
     private void displaySequences()
     {
+        // load sequences associated with citizen
+        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+
         // get sequences from database
-        List<dk.aau.cs.giraf.tortoise.controller.Sequence> storyList = LifeStory.getInstance ().getStories();
-        dk.aau.cs.giraf.tortoise.controller.Sequence seq = storyList.get(7);
-        int x = 5;
+        List<dk.aau.cs.giraf.tortoise.controller.Sequence> storyList = LifeStory.getInstance().getStories();
+        ImageView scheduleImage = (ImageView) findViewById(R.id.schedule_image_view);
+
+        try
+        {
+            Intent i = getIntent();
+            int storyIndex = i.getExtras().getInt("story");
+
+            dk.aau.cs.giraf.tortoise.controller.Sequence seq = storyList.get(storyIndex);
+            scheduleImage.setImageBitmap(seq.getTitleImage());
+
+        } catch (Exception ex)
+        {
+            GuiHelper.ShowToast(this, "Kunne ikke indlæse sekvenser.");
+        }
+
 
 /*
         for(dk.aau.cs.giraf.tortoise.controller.Sequence sequence : storyList)
@@ -135,13 +150,13 @@ public class ScheduleViewActivity extends ScheduleActivity
         // "disable" the toggle feature of the toggle button
         markCurrentWeekday();
     }
-/*
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent i) {
+        super.onActivityResult(requestCode, resultCode, i);
 
         if (resultCode == RESULT_OK && requestCode == 1) {
-            int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+            int[] checkoutIds = i.getExtras().getIntArray("checkoutIds");
 
             if (checkoutIds.length == 0)
             {
@@ -150,7 +165,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         }
         else if (resultCode == RESULT_OK && requestCode == 2) {
             try{
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+                int[] checkoutIds = i.getExtras().getIntArray("checkoutIds");
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 }
@@ -180,5 +195,5 @@ public class ScheduleViewActivity extends ScheduleActivity
                 GuiHelper.ShowToast(this, e.toString());
             }
         }
-    }*/
+    }
 }

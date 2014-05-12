@@ -11,21 +11,9 @@
     <RelativeLayout
         android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="@dimen/schedule_view_top_bar_height"
         android:background="@drawable/main_topbar_gradient_bg"
         android:orientation="horizontal" >
-
-        <ImageButton
-            android:id="@+id/schedule_image_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="30dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/no_image_big"
-            android:background="@drawable/gbutton"
-            android:onClick="startPictosearch"/>
 
         <TextView
             android:id="@+id/child_name"
@@ -48,6 +36,16 @@
             android:src="@drawable/exit"
             android:background="@drawable/gbutton"
             android:onClick="doExit"/>
+
+        <ImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:id="@+id/schedule_image_view"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="7dp" />
 
 
     </RelativeLayout>
