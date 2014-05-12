@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -46,7 +47,11 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
@@ -91,6 +96,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     SequenceViewGroup sequenceViewGroup;
     GDialog dialogAddFrames;
     GDialog gdialog;
+    File file;
 
     private boolean dialogAddFramesActive;
     private boolean isInEditMode;
@@ -155,6 +161,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
 		super.onActivityResult(requestCode, resultCode, data);
 
         // Remove the highlight from the add pictogram button
@@ -315,6 +322,14 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             }
         }
 	}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GuiHelper.ShowToast(this, "onResume called!");
+        if(file != null)
+            GuiHelper.ShowToast(this, ((Boolean)file.delete()).toString());
+    }
 
     private SequenceAdapter setupAdapter() {
         final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
@@ -881,7 +896,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
     public void printSequence(){
-        GuiHelper.ShowToast(this, "Are you still there?");
         Bitmap combinedSequence = combineFrames();
         sendSequenceToEmail(combinedSequence, "dan.skoett.petersen@gmail.com", LifeStory.getInstance().getCurrentStory().getTitle(), "Hej Dan");
     }
@@ -911,34 +925,60 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     public void sendSequenceToEmail(Bitmap seqImage, String emailAddress, String subject, String message){
 
-        FileOutputStream out;
-        // http://stackoverflow.com/questions/6952166/how-to-attach-bitmap-to-email-android
+        String filename = "tempSeq.png";
+        file = getOutputMediaFile(filename);
 
-        try {
-            out = new FileOutputStream("temp/dk.aau.cs.giraf.tortoise/tempSeq.png");
+        try{
+            FileOutputStream out = new FileOutputStream(file);
             seqImage.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        catch(Exception e){
+            GuiHelper.ShowToast(this, e.toString());
         }
 
-        File tempSeq = new File("temp/dk.aau.cs.giraf.tortoise/tempSeq.png");
-
-        GuiHelper.ShowToast(this, tempSeq.toString());
+        Uri fileUri = Uri.fromFile(file);
 
         Intent email = new Intent(Intent.ACTION_SEND);
         email.setType("message/rfc822");
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
         email.putExtra(Intent.EXTRA_SUBJECT, subject);
         email.putExtra(Intent.EXTRA_TEXT, message);
-        email.putExtra(Intent.EXTRA_STREAM, tempSeq);
+        email.putExtra(Intent.EXTRA_STREAM, fileUri);
 
         try{
         startActivity(Intent.createChooser(email, "Vælg en email-klient"));
         }catch (android.content.ActivityNotFoundException ex) {
-            GuiHelper.ShowToast(this, "Fuck you.");
+            GuiHelper.ShowToast(this, "Fejl: Email klient ikke fundet!");
         }
+    }
 
-        boolean deleted = tempSeq.delete();
+    /**
+     * Based on: http://stackoverflow.com/questions/15662258/how-to-save-a-bitmap-on-internal-storage
+     *
+     * @param fileName
+     * @return file
+     */
+    private File getOutputMediaFile(String fileName){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getApplicationContext().getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName);
+        return mediaFile;
     }
 }
