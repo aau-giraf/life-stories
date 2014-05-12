@@ -172,11 +172,11 @@ public class MainActivity extends TortoiseActivity {
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             canFinish = false;
             Intent i;
-            if (isInTemplateMode) {
-                i = new Intent(getApplicationContext(), EditModeActivity.class);
+            if (isInTemplateMode) {//TODO hardcoded to schedules
+                i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
                 i.putExtra("template", arg2);
             } else {
-                i = new Intent(getApplicationContext(), ViewModeActivity.class);
+                i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
                 i.putExtra("story", arg2);
             }
 
@@ -291,8 +291,8 @@ public class MainActivity extends TortoiseActivity {
         // Clear existing life stories
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
-        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
-        DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
+        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+        DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
 
 
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);

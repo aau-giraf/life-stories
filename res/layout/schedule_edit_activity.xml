@@ -28,7 +28,7 @@
             android:onClick="startPictosearch"/>
 
         <EditText
-            android:id="@id/storyName"
+            android:id="@+id/scheduleName"
             android:layout_width="800dp"
             android:layout_height="wrap_content"
             android:saveEnabled="true"

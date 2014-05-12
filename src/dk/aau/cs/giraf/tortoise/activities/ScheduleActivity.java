@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -33,7 +34,8 @@ public class ScheduleActivity extends TortoiseActivity
     int weekdaySelected;
     public GDialog multichoiceDialog;
     public boolean isInLandscape;
-
+    // this is just a variable for a workaround
+    public static LinearLayout weekdayLayout;
     //TODO move common methods here
     public enum Day
     {
@@ -97,29 +99,20 @@ public class ScheduleActivity extends TortoiseActivity
 
                     for(MediaFrame mf : weekdaySequences.get(i).getMediaFrames())
                     {
-                        addItems(mf, ScheduleEditActivity.weekdayLayout);
+                        addItems(mf, level3);
                     }
-
+                level3.addView(addButton());
             }catch (Exception ex)
             {
                 GuiHelper.ShowToast(this, "Der skete en fejl");
             }
 
         }
-        showAddButtons();
+        //showAddButtons();
     }
 
     public void addItems(MediaFrame mf, LinearLayout layout)
     {
-        if(mf == null)
-        {
-            GuiHelper.ShowToast(this, "mf null");
-        }
-
-        if(layout != ScheduleEditActivity.weekdayLayout)
-        {
-            GuiHelper.ShowToast(this, "layout problem");
-        }
 
         try
         {
@@ -129,7 +122,7 @@ public class ScheduleActivity extends TortoiseActivity
             if(pictoList.size() == 1)
             {
 
-                //addPictogramToDay(pictoList.get(0).getImageData(), layout);
+                addPictogramToDay(pictoList.get(0).getImageData(), layout);
             }
             else if(pictoList.size() > 1)
             {
@@ -201,8 +194,7 @@ public class ScheduleActivity extends TortoiseActivity
         return iv;
     }
 
-    public void addPictogramToDay(Bitmap bm, LinearLayout layout)
-    {
+    public void addPictogramToDay(Bitmap bm, LinearLayout layout) {
 
 
         ImageView iw = new ImageView(this);
@@ -211,12 +203,10 @@ public class ScheduleActivity extends TortoiseActivity
         int xy;
 
         // use wider buttons when in portrait mode
-        if(isInLandscape)
-        {
+        if (isInLandscape) {
             // small buttons
             xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
-        }else
-        {
+        } else {
             // big buttons
             xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
         }
@@ -231,21 +221,17 @@ public class ScheduleActivity extends TortoiseActivity
         final LinearLayout workaroundLayout = layout;
 
         // remove pictogram in the linear view contained in the scroll view
-        iw.setOnLongClickListener(new View.OnLongClickListener()
-        {
+        iw.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v)
-            {
+            public boolean onLongClick(View v) {
                 workaroundLayout.removeView(v);
                 return true;
             }
         });
 
-        iw.setOnClickListener(new View.OnClickListener()
-        {
+        iw.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 ImageView iv = (ImageView) v;
 
                 LinearLayout l = (LinearLayout) iv.getParent();
@@ -259,9 +245,7 @@ public class ScheduleActivity extends TortoiseActivity
         });
 
         // add pictogram to week day and make sure the add button is always at the bottom of the week day
-        layout.removeViewAt(layout.getChildCount() - 1); // remove add button
         layout.addView(iw); // add new pictogram
-        layout.addView(addButton()); // add the add button again
     }
 
     public void showAddButtons()
@@ -280,7 +264,6 @@ public class ScheduleActivity extends TortoiseActivity
                 ScrollView level2 = (ScrollView) v.getChildAt(1);
                 LinearLayout level3 = (LinearLayout) level2.getChildAt(0);
                 level3.addView(addButton());
-
             }catch (Exception ex)
             {
                 GuiHelper.ShowToast(this, "Der skete en fejl");
@@ -332,6 +315,7 @@ public class ScheduleActivity extends TortoiseActivity
                 weekdaySelected = Day.SUNDAY.ordinal();
                 break;
             default:
+                DetermineWeekSection((View)v.getParent());
                 break;
         }
     }

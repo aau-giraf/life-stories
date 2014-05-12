@@ -3,21 +3,29 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import org.apache.http.impl.cookie.NetscapeDraftSpec;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 
+import dk.aau.cs.giraf.tortoise.controller.DBController;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
 public class ScheduleViewActivity extends ScheduleActivity
 {
@@ -25,6 +33,9 @@ public class ScheduleViewActivity extends ScheduleActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view_activity);
+
+        // display the sequences in the week schedule
+        displaySequences();
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -34,6 +45,61 @@ public class ScheduleViewActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+    }
+
+    private void displaySequences()
+    {
+        // load sequences associated with citizen
+        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, this);
+
+        // get sequences from database
+        List<Sequence> storyList = LifeStory.getInstance().getStories();
+        ImageView scheduleImage = (ImageView) findViewById(R.id.schedule_image_view);
+
+
+        Intent i = getIntent();
+        int storyIndex = i.getIntExtra("story", -1);
+         // -1 indicates an error
+        if(storyIndex != -1)
+        {
+            // get parent sequence and set image of week schedule in layout accordingly
+            Sequence seq = storyList.get(storyIndex);
+            scheduleImage.setImageBitmap(seq.getTitleImage());
+
+            // show sequences
+            for(MediaFrame mf : seq.getMediaFrames())
+            {
+                try {
+                    List<MediaFrame> mffff = DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames();
+                }catch (Exception e)
+                {
+                    e.toString();
+                    finish();
+                    return;
+                }
+                    for(MediaFrame activityFrame : DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames())
+                {
+                    LinearLayout l = (LinearLayout) findViewById(R.id.layoutMondayView);
+                    addItems(activityFrame, l);
+                }
+            }
+
+        }
+        else
+        {
+            GuiHelper.ShowToast(this, "Kunne ikke indlæse sekvenser.");
+        }
+
+
+/*
+        for(dk.aau.cs.giraf.tortoise.controller.Sequence sequence : storyList)
+        {
+            String title = sequence.getTitle();
+
+        }/*
+
+
+
     }
 
     @Override
@@ -110,11 +176,11 @@ public class ScheduleViewActivity extends ScheduleActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent i) {
+        super.onActivityResult(requestCode, resultCode, i);
 
         if (resultCode == RESULT_OK && requestCode == 1) {
-            int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+            int[] checkoutIds = i.getExtras().getIntArray("checkoutIds");
 
             if (checkoutIds.length == 0)
             {
@@ -123,7 +189,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         }
         else if (resultCode == RESULT_OK && requestCode == 2) {
             try{
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+                int[] checkoutIds = i.getExtras().getIntArray("checkoutIds");
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 }

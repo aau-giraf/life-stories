@@ -11,8 +11,10 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +32,7 @@ import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
@@ -79,7 +82,7 @@ public class ScheduleEditActivity extends ScheduleActivity
         {
             weekdaySequences.add(i, new Sequence());
         }
-
+        LifeStory.getInstance().setCurrentStory(new Sequence());
        /* int template = this.getIntent().getExtras().getInt("template");
 
         if(template == -1)
@@ -132,7 +135,7 @@ public class ScheduleEditActivity extends ScheduleActivity
     }
 
     // this is just a variable for a workaround
-    public static LinearLayout weekdayLayout;
+  //  public static LinearLayout weekdayLayout;
 
     // this method handles pictograms sent back via an intent from pictosearch
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -198,8 +201,13 @@ public class ScheduleEditActivity extends ScheduleActivity
 
                         weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
 
+                        if (weekdayLayout.getChildCount() > 0){
+                            weekdayLayout.removeViewAt(weekdayLayout.getChildCount() - 1); // remove add button
+                        }
                         // add item to scroll view
                         addItems(mf, weekdayLayout);
+                        weekdayLayout.addView(addButton()); // add the add button again
+
 
                     }
                     catch (NullPointerException e)
@@ -215,10 +223,43 @@ public class ScheduleEditActivity extends ScheduleActivity
 
     }
     public boolean saveSchedule(View v){
-        Sequence story = LifeStory.getInstance().getCurrentStory();
-        if (story == null){ return false; }
-        story.getTitleImage();
-        return true;
+
+        Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();
+        Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
+        if (title != null){
+            scheduleSeq.setTitle(title.toString());
+        }
+
+        boolean s1 = true;
+        for(Sequence daySeq: super.weekdaySequences){
+            daySeq.setTitle("");       //test value
+            daySeq.setTitlePictoId(1); //test value
+            s1 = s1 && DBController.getInstance().saveSequence(daySeq,
+                    dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
+                    LifeStory.getInstance().getChild().getId(),
+                    getApplicationContext());
+            MediaFrame mf = new MediaFrame();
+            mf.setNestedSequenceID(daySeq.getId());
+            scheduleSeq.getMediaFrames().add(mf);
+        }
+
+        // TODO hardcoded save for both child and guardian
+        boolean s2 = DBController.getInstance().saveSequence(scheduleSeq,
+                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                LifeStory.getInstance().getChild().getId(),
+                getApplicationContext());
+
+        boolean s3 = DBController.getInstance().saveSequence(scheduleSeq,
+                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                LifeStory.getInstance().getGuardian().getId(),
+                getApplicationContext());
+
+        if (s1 && s2 && s3){
+            GuiHelper.ShowToast(this, "Skema gemt");
+            return true;
+        }
+        GuiHelper.ShowToast(this, "Skema er ikke gemt!");
+        return false;
     }
 
 

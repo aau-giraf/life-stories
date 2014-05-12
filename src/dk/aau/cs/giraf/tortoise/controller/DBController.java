@@ -58,9 +58,12 @@ public class DBController {
      * @param con
      * @return boolean
      */
+
     public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
         SequenceController sc = new SequenceController(con);
-        success = sc.insertSequenceAndFrames(morphSequenceToDBSequence(seq, seqType, profileID));
+        dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = morphSequenceToDBSequence(seq, seqType, profileID);
+        success = sc.insertSequenceAndFrames(dbSeq);
+        seq.setId(dbSeq.getId());
         return success;
     }
 
@@ -99,6 +102,12 @@ public class DBController {
         SequenceController sc = oasisLibHelper.sequenceController;
         sc.removeSequence(seq.getId());
 
+    }
+
+    public Sequence getSequenceFromID(int id, Context context)
+    {
+        SequenceController sc = new SequenceController(context);
+        return morphDBSequenceToSequence(sc.getSequenceAndFrames(id), context);
     }
 
     /**
@@ -154,9 +163,10 @@ public class DBController {
      */
     private MediaFrame morphDBFrameToMediaFrame(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame, Context con) {
         MediaFrame mediaFrame = new MediaFrame();
-        PictogramController pictoController = oasisLibHelper.pictogramHelper;
-        mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con, pictoController.getPictogramById(dbFrame.getPictogramId())));
+        PictogramController pc = new PictogramController(con);
+        mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con, pc.getPictogramById(dbFrame.getPictogramId())));
         mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
+        mediaFrame.setNestedSequenceID(dbFrame.getNestedSequence());
         mediaFrame.addFrame(new dk.aau.cs.giraf.tortoise.Frame(frameWidth, frameHeight, new Point(dbFrame.getPosX(), dbFrame.getPosY())));
         return mediaFrame;
     }
