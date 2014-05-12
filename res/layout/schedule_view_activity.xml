@@ -86,6 +86,33 @@
                     android:textColor="@color/text_color" />
             </FrameLayout>
 
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/scrollView"
+                android:layout_below="@+id/frameLayout7"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/layoutMondayView"
+                    android:dividerPadding="2dp" />
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/linearLayout"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout7" />
+
         </RelativeLayout>
 
         <RelativeLayout

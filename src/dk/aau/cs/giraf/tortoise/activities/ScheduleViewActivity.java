@@ -8,21 +8,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import org.apache.http.impl.cookie.NetscapeDraftSpec;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GToggleButton;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 
 import dk.aau.cs.giraf.tortoise.controller.DBController;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
 public class ScheduleViewActivity extends ScheduleActivity
 {
@@ -47,21 +50,42 @@ public class ScheduleViewActivity extends ScheduleActivity
     private void displaySequences()
     {
         // load sequences associated with citizen
-        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, this);
 
         // get sequences from database
-        List<dk.aau.cs.giraf.tortoise.controller.Sequence> storyList = LifeStory.getInstance().getStories();
+        List<Sequence> storyList = LifeStory.getInstance().getStories();
         ImageView scheduleImage = (ImageView) findViewById(R.id.schedule_image_view);
 
-        try
-        {
-            Intent i = getIntent();
-            int storyIndex = i.getExtras().getInt("story");
 
-            dk.aau.cs.giraf.tortoise.controller.Sequence seq = storyList.get(storyIndex);
+        Intent i = getIntent();
+        int storyIndex = i.getIntExtra("story", -1);
+         // -1 indicates an error
+        if(storyIndex != -1)
+        {
+            // get parent sequence and set image of week schedule in layout accordingly
+            Sequence seq = storyList.get(storyIndex);
             scheduleImage.setImageBitmap(seq.getTitleImage());
 
-        } catch (Exception ex)
+            // show sequences
+            for(MediaFrame mf : seq.getMediaFrames())
+            {
+                try {
+                    List<MediaFrame> mffff = DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames();
+                }catch (Exception e)
+                {
+                    e.toString();
+                    finish();
+                    return;
+                }
+                    for(MediaFrame activityFrame : DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames())
+                {
+                    LinearLayout l = (LinearLayout) findViewById(R.id.layoutMondayView);
+                    addItems(activityFrame, l);
+                }
+            }
+
+        }
+        else
         {
             GuiHelper.ShowToast(this, "Kunne ikke indlæse sekvenser.");
         }
