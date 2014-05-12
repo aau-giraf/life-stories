@@ -230,10 +230,11 @@ public class ScheduleEditActivity extends ScheduleActivity
             scheduleSeq.setTitle(title.toString());
         }
 
+        boolean s1 = true;
         for(Sequence daySeq: super.weekdaySequences){
             daySeq.setTitle("");       //test value
             daySeq.setTitlePictoId(1); //test value
-            boolean s = DBController.getInstance().saveSequence(daySeq,
+            s1 = s1 && DBController.getInstance().saveSequence(daySeq,
                     dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
                     LifeStory.getInstance().getChild().getId(),
                     getApplicationContext());
@@ -241,11 +242,24 @@ public class ScheduleEditActivity extends ScheduleActivity
             mf.setNestedSequenceID(daySeq.getId());
             scheduleSeq.getMediaFrames().add(mf);
         }
-        DBController.getInstance().saveSequence(scheduleSeq,
+
+        // TODO hardcoded save for both child and guardian
+        boolean s2 = DBController.getInstance().saveSequence(scheduleSeq,
                 dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
                 LifeStory.getInstance().getChild().getId(),
                 getApplicationContext());
-        return true;
+
+        boolean s3 = DBController.getInstance().saveSequence(scheduleSeq,
+                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                LifeStory.getInstance().getGuardian().getId(),
+                getApplicationContext());
+
+        if (s1 && s2 && s3){
+            GuiHelper.ShowToast(this, "Skema gemt");
+            return true;
+        }
+        GuiHelper.ShowToast(this, "Skema er ikke gemt!");
+        return false;
     }
 
 
