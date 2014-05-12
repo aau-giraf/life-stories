@@ -172,11 +172,11 @@ public class MainActivity extends TortoiseActivity {
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             canFinish = false;
             Intent i;
-            if (isInTemplateMode) {
-                i = new Intent(getApplicationContext(), EditModeActivity.class);
+            if (isInTemplateMode) {//TODO hardcoded to schedules
+                i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
                 i.putExtra("template", arg2);
             } else {
-                i = new Intent(getApplicationContext(), ViewModeActivity.class);
+                i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
                 i.putExtra("story", arg2);
             }
 
