@@ -77,17 +77,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
             weekdaySequences.add(i, new Sequence());
         }
         LifeStory.getInstance().setCurrentStory(new Sequence());
-       /* int template = this.getIntent().getExtras().getInt("template");
-
-        if(template == -1)
-        {
-            LifeStory.getInstance().setCurrentStory(new Sequence());
-        }
-        else {
-            LifeStory.getInstance().setCurrentTemplate(ScheduleEditActivity.this.getApplicationContext(), template);
-            //TODO: Render template again when fixed.
-            // renderTemplate();
-        }*/
     }
 
     @Override
@@ -199,6 +188,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
     public boolean saveSchedule(View v) {
 
         Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();
+
+        if (scheduleSeq.getTitlePictoId() == 0){
+            GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et title pictogram");
+            return false;
+        }
         Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
         if (title != null) {
             scheduleSeq.setTitle(title.toString());
@@ -223,12 +217,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 LifeStory.getInstance().getChild().getId(),
                 getApplicationContext());
 
-        boolean s3 = DBController.getInstance().saveSequence(scheduleSeq,
-                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
-                LifeStory.getInstance().getGuardian().getId(),
-                getApplicationContext());
-
-        if (s1 && s2 && s3) {
+        if (s1 && s2){
             GuiHelper.ShowToast(this, "Skema gemt");
             return true;
         }

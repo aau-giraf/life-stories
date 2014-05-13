@@ -1,27 +1,12 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.apache.http.impl.cookie.NetscapeDraftSpec;
-
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GTextView;
-import dk.aau.cs.giraf.pictogram.PictoFactory;
-import dk.aau.cs.giraf.pictogram.Pictogram;
-import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
 
 import dk.aau.cs.giraf.tortoise.controller.DBController;
@@ -36,18 +21,19 @@ public class ScheduleViewActivity extends ScheduleActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view_activity);
-
-        // display the sequences in the week schedule
-        displaySequences();
-
         // Get intent, action and MIME type
+
         Intent intent = getIntent();
 
         if (intent.getExtras() == null)
         {
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
+            return;
         }
+
+        // display the sequences in the week schedule
+        displaySequences();
 
         //Set schedule name
         TextView title = (TextView) findViewById(R.id.scheduleName);
@@ -88,7 +74,6 @@ public class ScheduleViewActivity extends ScheduleActivity
             int ii = 0;
             for(MediaFrame mf : seq.getMediaFrames())
             {
-
                 for(MediaFrame activityFrame : DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames())
                 {
                     LinearLayout l = (LinearLayout) findViewById(layoutArray[ii]);
@@ -97,7 +82,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 
                 ii++;
             }
-
         }
         else
         {
@@ -105,51 +89,5 @@ public class ScheduleViewActivity extends ScheduleActivity
         }
 
         markCurrentWeekday();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent i) {
-        super.onActivityResult(requestCode, resultCode, i);
-
-        if (resultCode == RESULT_OK && requestCode == 1) {
-            int[] checkoutIds = i.getExtras().getIntArray("checkoutIds");
-
-            if (checkoutIds.length == 0)
-            {
-                GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
-            }
-        }
-        else if (resultCode == RESULT_OK && requestCode == 2) {
-            try{
-                int[] checkoutIds = i.getExtras().getIntArray("checkoutIds");
-                if (checkoutIds.length == 0) {
-                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
-                }
-                else
-                {
-                    try
-                    {
-                        // TODO: should be handled: LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                        Bitmap bitmap = picto.getImageData();
-                        bitmap = LayoutTools.getSquareBitmap(bitmap);
-                        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
-                        // TODO: should be handled: LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
-                        ImageButton scheduleImage = (ImageButton) findViewById(R.id.schedule_image_button);
-                        scheduleImage.setImageBitmap(bitmap);
-                    }
-                    //We expect a null pointer exception if the pictogram is without image
-                    //TODO: Investigate if this still happens with the new DB.
-                    // It still does
-                    catch (NullPointerException e)
-                    {
-                        GuiHelper.ShowToast(this, "Der skete en uventet fejl");
-                    }
-                }
-            } catch (Exception e)
-            {
-                GuiHelper.ShowToast(this, e.toString());
-            }
-        }
     }
 }
