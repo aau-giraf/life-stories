@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import org.apache.http.impl.cookie.NetscapeDraftSpec;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -34,8 +35,22 @@ public class ScheduleViewActivity extends ScheduleActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view_activity);
 
+       /* Intent i = getIntent();
+        if(i.getExtras().getInt("app_to_start") != 10)
+        {
+            finish();
+        }*/
+
         // display the sequences in the week schedule
         displaySequences();
+        /*try
+        {
+            displaySequences();
+        }
+        catch(Exception ex)
+        {
+            GuiHelper.ShowToast(this, ex.toString());
+        }*/
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -67,21 +82,28 @@ public class ScheduleViewActivity extends ScheduleActivity
             scheduleImage.setImageBitmap(seq.getTitleImage());
 
             // show sequences
+            int layoutArray[] = new int[7];
+
+            layoutArray[0] = R.id.layoutMonday;
+            layoutArray[1] = R.id.layoutTuesday;
+            layoutArray[2] = R.id.layoutWednesday;
+            layoutArray[3] = R.id.layoutThursday;
+            layoutArray[4] = R.id.layoutFriday;
+            layoutArray[5] = R.id.layoutSaturday;
+            layoutArray[6] = R.id.layoutSunday;
+
+
+            int ii = 0;
             for(MediaFrame mf : seq.getMediaFrames())
             {
-                try {
-                    List<MediaFrame> mffff = DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames();
-                }catch (Exception e)
+
+                for(MediaFrame activityFrame : DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames())
                 {
-                    e.toString();
-                    finish();
-                    return;
-                }
-                    for(MediaFrame activityFrame : DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames())
-                {
-                    LinearLayout l = (LinearLayout) findViewById(R.id.layoutMondayView);
+                    LinearLayout l = (LinearLayout) findViewById(layoutArray[ii]);
                     addItems(activityFrame, l);
                 }
+
+                ii++;
             }
 
         }

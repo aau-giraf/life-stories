@@ -12,6 +12,7 @@ import dk.aau.cs.giraf.oasis.lib.controllers.SequenceController;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 
@@ -139,8 +140,13 @@ public class DBController {
      * @return Sequence
      */
     private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq, Context con){
-        Sequence seq = new Sequence(dbSeq.getId(), dbSeq.getPictogramId(), dbSeq.getName(), morphDBFramesToMediaFrames(dbSeq.getFramesList(), con), con);
-        return seq;
+        try{
+            Sequence seq = new Sequence(dbSeq.getId(), dbSeq.getPictogramId(), dbSeq.getName(), morphDBFramesToMediaFrames(dbSeq.getFramesList(), con), con);
+            return seq;
+        } catch (Exception ex)
+        {
+            return new Sequence();
+        }
     }
 
     /**

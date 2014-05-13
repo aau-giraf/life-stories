@@ -50,12 +50,17 @@ public class MainActivity extends TortoiseActivity {
         setContentView(R.layout.startup_activity);
 
         Intent i = getIntent();
+
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
             finish();
             return ;
-        }
+        }/*else if(i.getExtras().getInt("app_to_start") == 10)
+        {
+            Intent intent = new Intent(this, ScheduleViewActivity.class);
+            startActivity(intent);
+        }*/
         // If launched from Giraf, then execute!
 
         // Initialize image and name of profile
