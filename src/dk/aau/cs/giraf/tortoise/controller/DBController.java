@@ -98,8 +98,12 @@ public class DBController {
     }
 
     public void deleteSequence(Sequence seq, Context con){
-        oasisLibHelper = new Helper(con);
-        SequenceController sc = oasisLibHelper.sequenceController;
+        SequenceController sc = new SequenceController(con);
+        if (sc.getSequenceById(seq.getId()).getSequenceType() == SequenceType.SCHEDULE){
+            for(MediaFrame mf : seq.getMediaFrames()){
+                sc.removeSequence(mf.getNestedSequenceID());
+            }
+        }
         sc.removeSequence(seq.getId());
 
     }
