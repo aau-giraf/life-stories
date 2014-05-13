@@ -23,10 +23,6 @@ public abstract class AbstractMediaFrame {
 		return this.frames.remove(frame);
 	}
 
-    public void setFirstFrame(Frame frame){
-        frames.set(0, frame);
-    }
-
 	public List<Frame> getFrames() {
 		return frames;
 	}

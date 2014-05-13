@@ -37,12 +37,16 @@ public class LifeStory {
 	public void addTemplate() {
 		templates.add(currentStory);
 	}
-	
-	public void removeTemplate(int index) {
-		templates.remove(index);
-	}
-	
-	public void setCurrentStory(Context context, int index) {
+
+    public void removeStory(Sequence seq) {
+        stories.remove(seq);
+    }
+
+    public void removeTemplate(Sequence seq) {
+        templates.remove(seq);
+    }
+
+    public void setCurrentStory(Context context, int index) {
 		this.currentIndex = index;
 		currentStory = stories.get(index);
 	}
@@ -75,20 +79,12 @@ public class LifeStory {
         return this.templates;
     }
 */
-    public List<SerializableSequence> getStories() {
-        List<SerializableSequence> ss = new ArrayList<SerializableSequence>();
-        for(Sequence s : this.stories){
-            ss.add(s.getSerializableSequence());
-        }
-        return ss;
+    public List<Sequence> getStories() {
+        return stories;
     }
 
-    public List<SerializableSequence> getTemplates() {
-        List<SerializableSequence> ss = new ArrayList<SerializableSequence>();
-        for(Sequence s : this.templates){
-            ss.add(s.getSerializableSequence());
-        }
-        return ss;
+    public List<Sequence> getTemplates() {
+        return templates;
     }
 	
 	public Sequence getCurrentStory() {

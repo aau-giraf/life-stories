@@ -73,7 +73,7 @@
         android:visibility="invisible"/>
 
     <ImageButton
-        android:id="@+id/smallFrame"
+        android:id="@+id/printSequence"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
@@ -81,13 +81,13 @@
         android:scaleType="fitCenter"
         android:src="@drawable/add_small"
         android:background="@drawable/gbutton"
-        android:visibility="invisible"/>
+        android:visibility="visible"/>
 
     <ImageView
         android:id="@+id/bin"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_toLeftOf="@id/smallFrame"
+        android:layout_toLeftOf="@id/printSequence"
         android:layout_marginRight="20dp"
         android:layout_centerVertical="true"
         android:src="@drawable/bin_closed"

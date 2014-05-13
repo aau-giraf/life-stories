@@ -27,15 +27,38 @@
             android:background="@drawable/gbutton"
             android:onClick="startPictosearch"/>
 
-        <TextView
-            android:id="@+id/child_name"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/scheduleName"
+            android:layout_width="800dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Skemanavn"
+            android:saveEnabled="true"
+            android:maxLength="24"
+            android:lines="1"
+            android:selectAllOnFocus="true"
+            android:background="#00000000"
+            android:textColorHighlight="#00000000"
             android:textSize="60sp"
-            android:textColor="@color/text_color" />
+            android:textColor="@color/text_color"
+            android:hint="@string/schedule_name"
+            android:textAlignment="textStart"
+            android:textIsSelectable="false"
+            android:layout_alignBottom="@+id/schedule_image_button"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:singleLine="true" />
+
+        <ImageButton
+            android:id="@+id/save"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/home_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/save"
+            android:background="@drawable/gbutton"
+            android:onClick="saveSchedule"
+            />
 
         <ImageButton
             android:id="@+id/home_button"
@@ -84,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/monday"
-                    android:id="@id/child_name"
+                    android:id="@id/storyName"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -105,12 +128,20 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutMonday"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
                     android:dividerPadding="2dp">
                 </LinearLayout>
 
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_monday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout7" />
 
         </RelativeLayout>
 
@@ -161,10 +192,18 @@
                     android:id="@+id/layoutTuesday"
                     android:layout_below="@+id/frameLayout"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_tuesday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout" />
 
         </RelativeLayout>
 
@@ -204,7 +243,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/frameLayout2"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:id="@+id/scrollView7">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -214,10 +254,18 @@
                     android:id="@+id/layoutWednesday"
                     android:layout_below="@+id/frameLayout2"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingRight="20dp"
-                    android:paddingLeft="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/frameLayout2"
+                android:id="@+id/border_wednesday"
+                android:layout_alignParentBottom="true"></LinearLayout>
 
         </RelativeLayout>
 
@@ -269,10 +317,18 @@
                     android:id="@+id/layoutThursday"
                     android:layout_below="@+id/frameLayout3"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_thursday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout3" />
 
         </RelativeLayout>
 
@@ -321,10 +377,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:id="@+id/layoutFriday"
-                    android:paddingRight="20dp"
-                    android:paddingLeft="20dp" />
+                    android:id="@+id/layoutFriday" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_friday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout4" />
 
         </RelativeLayout>
 
@@ -375,10 +439,18 @@
                     android:id="@+id/layoutSaturday"
                     android:layout_below="@+id/frameLayout5"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_saturday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout5" />
 
         </RelativeLayout>
 
@@ -429,10 +501,18 @@
                     android:id="@+id/layoutSunday"
                     android:layout_below="@+id/frameLayout6"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp" />
+                    android:layout_alignParentStart="true" />
             </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_sunday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout6" />
 
         </RelativeLayout>
     </LinearLayout>

@@ -1,32 +1,39 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
-import android.view.Display;
+import android.text.Editable;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GTooltipBasic;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
-import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.controller.DBController;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
@@ -45,10 +52,15 @@ public class ScheduleEditActivity extends ScheduleActivity
         int screenOrientation = getResources().getConfiguration().orientation;
         if(screenOrientation == Configuration.ORIENTATION_LANDSCAPE)
         {
+            isInLandscape = true;
             setContentView(R.layout.schedule_edit_activity);
+            ImageButton b = (ImageButton) findViewById(R.id.schedule_image_button);
+            GTooltipBasic tooltip = new GTooltipBasic(b, "Tryk her for at tilføje et billede til ugeskemaet", R.drawable.ic_launcher);
+            tooltip.Show();
         }
         else
         {
+            isInLandscape = false;
             setContentView(R.layout.schedule_edit_activity_portrait);
         }
 
@@ -62,6 +74,48 @@ public class ScheduleEditActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+
+        weekdaySequences = new ArrayList<Sequence>();
+
+        // add empty sequences for each week day
+        for(int i = 0; i < 7; i++)
+        {
+            weekdaySequences.add(i, new Sequence());
+        }
+        LifeStory.getInstance().setCurrentStory(new Sequence());
+       /* int template = this.getIntent().getExtras().getInt("template");
+
+        if(template == -1)
+        {
+            LifeStory.getInstance().setCurrentStory(new Sequence());
+        }
+        else {
+            LifeStory.getInstance().setCurrentTemplate(ScheduleEditActivity.this.getApplicationContext(), template);
+            //TODO: Render template again when fixed.
+            // renderTemplate();
+        }*/
+    }
+
+    public class DrawView extends View {
+        Paint paint = new Paint();
+
+        public DrawView(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onDraw(Canvas canvas) {
+            paint.setColor(Color.BLACK);
+            paint.setStrokeWidth(3);
+            canvas.drawRect(30, 30, 80, 80, paint);
+            paint.setStrokeWidth(0);
+            paint.setColor(Color.CYAN);
+            canvas.drawRect(33, 60, 77, 77, paint );
+            paint.setColor(Color.YELLOW);
+            canvas.drawRect(33, 33, 77, 60, paint );
+
+        }
+
     }
 
     @Override
@@ -80,117 +134,8 @@ public class ScheduleEditActivity extends ScheduleActivity
         markCurrentWeekday();
     }
 
-    public void showAddButtons()
-    {
-        // TODO: refactor for redundancy. Left some sample code in the for loop
-        /*
-        LinearLayout weekday = (LinearLayout) findViewById(R.id.layoutMonday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutTuesday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutWednesday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutThursday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutFriday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutSaturday);
-        weekday.addView(addButton());
-        weekday = (LinearLayout) findViewById(R.id.layoutSunday);
-        weekday.addView(addButton());
-        */
-
-        LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
-
-        int childcount = level1.getChildCount();
-
-        // find each of the individual week days
-        for (int i = 0; i < childcount; i++)
-        {
-            try
-            {
-                // TODO: fix hardcoding of 1
-                RelativeLayout v = (RelativeLayout) level1.getChildAt(i); // the +1 is to choose the element at depth 2
-                ScrollView level2 = (ScrollView) v.getChildAt(1);
-                LinearLayout level3 = (LinearLayout) level2.getChildAt(0);
-                level3.addView(addButton());
-
-            }catch (Exception ex)
-            {
-                GuiHelper.ShowToast(this, "Der skete en fejl");
-            }
-
-        }
-    }
-
-    public void addItems(Bitmap bm, LinearLayout layout)
-    {
-        try
-        {
-            LifeStory.getInstance().setCurrentStory(new Sequence());
-
-            ImageView iw = new ImageView(this);
-            iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
-            iw.setImageBitmap(resizeBitmap(bm, 100, 100));
-
-            // set padding of each imageview containing
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 20, 0, 20);
-            iw.setLayoutParams(lp);
-
-            final LinearLayout workaroundLayout = layout;
-
-            // remove pictogram in the linear view contained in the scroll view
-            iw.setOnLongClickListener(new View.OnLongClickListener()
-            {
-                @Override
-                public boolean onLongClick(View v)
-                {
-                    workaroundLayout.removeView(v);
-                    return true;
-                }
-            });
-
-            // add pictogram to week day and make sure the add button is always at the bottom of the week day
-            layout.removeViewAt(layout.getChildCount() - 1); // remove add button
-            layout.addView(iw); // add new pictogram
-            layout.addView(addButton()); // add the add button again
-
-        }
-        catch (Exception ex)
-        {
-            GuiHelper.ShowToast(this, ex.toString());
-        }
-
-    }
-
-    // this method returns an imageview containing the add pictogram button with a plus on it
-    public ImageView addButton()
-    {
-        ImageView iv = new ImageView(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 20, 0, 20);
-        iv.setLayoutParams(lp);
-        iv.setBackgroundResource(R.drawable.week_schedule_bg_tile);
-        Drawable resizedDrawable = resizeDrawable(R.drawable.add, 100, 100);
-        iv.setImageDrawable(resizedDrawable);
-
-        // set listener on the add button so it starts pictosearch when clicked
-        iv.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                startPictosearchForScheduler(view);
-            }
-        });
-
-        // return the imageview with the plus image on it
-        return iv;
-    }
-
     // this is just a variable for a workaround
-    public static LinearLayout weekdayLayout;
+  //  public static LinearLayout weekdayLayout;
 
     // this method handles pictograms sent back via an intent from pictosearch
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -199,6 +144,7 @@ public class ScheduleEditActivity extends ScheduleActivity
 
         if (resultCode == RESULT_OK && requestCode == 2)
         {
+            // i think this is triggered when a profile image is chosen from pictosearch
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
@@ -216,7 +162,6 @@ public class ScheduleEditActivity extends ScheduleActivity
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
                         storyImage.setImageBitmap(bitmap);
-                        addItems(bitmap, weekdayLayout);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
@@ -228,7 +173,7 @@ public class ScheduleEditActivity extends ScheduleActivity
                 }
             } catch (Exception e)
             {
-                GuiHelper.ShowToast(this, e.toString());
+                GuiHelper.ShowToast(this, e.toString() + " - rcode 2.");
             }
         }
         else if (resultCode == RESULT_OK && requestCode == 3)
@@ -236,24 +181,34 @@ public class ScheduleEditActivity extends ScheduleActivity
             // this code is executed when the week scheduler requests an image from pictosearch
             try
             {
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
                 if (checkoutIds.length == 0)
                 {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 }
-                else
+                else // when pictograms are received
                 {
                     try
                     {
-                        LifeStory.getInstance().setCurrentStory(new Sequence());
-                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                        Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
-                        bitmap = LayoutTools.getSquareBitmap(bitmap);
-                        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+                        MediaFrame mf = new MediaFrame();
 
+                        // add all pictograms to list and add them to a sequence
+                        for(int id : checkoutIds)
+                        {
+                            Pictogram pictogram = PictoFactory.getPictogram(this, id);
+                            mf.addContent(pictogram);
+                        }
+
+                        weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
+
+                        if (weekdayLayout.getChildCount() > 0){
+                            weekdayLayout.removeViewAt(weekdayLayout.getChildCount() - 1); // remove add button
+                        }
                         // add item to scroll view
-                        addItems(bitmap, weekdayLayout);
+                        addItems(mf, weekdayLayout);
+                        weekdayLayout.addView(addButton()); // add the add button again
+
+
                     }
                     catch (NullPointerException e)
                     {
@@ -265,5 +220,48 @@ public class ScheduleEditActivity extends ScheduleActivity
                 GuiHelper.ShowToast(this, "Fejl");
             }
         }
+
     }
+    public boolean saveSchedule(View v){
+
+        Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();
+        Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
+        if (title != null){
+            scheduleSeq.setTitle(title.toString());
+        }
+
+        boolean s1 = true;
+        for(Sequence daySeq: super.weekdaySequences){
+            daySeq.setTitle("");       //test value
+            daySeq.setTitlePictoId(1); //test value
+            s1 = s1 && DBController.getInstance().saveSequence(daySeq,
+                    dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
+                    LifeStory.getInstance().getChild().getId(),
+                    getApplicationContext());
+            MediaFrame mf = new MediaFrame();
+            mf.setNestedSequenceID(daySeq.getId());
+            scheduleSeq.getMediaFrames().add(mf);
+        }
+
+        // TODO hardcoded save for both child and guardian
+        boolean s2 = DBController.getInstance().saveSequence(scheduleSeq,
+                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                LifeStory.getInstance().getChild().getId(),
+                getApplicationContext());
+
+        boolean s3 = DBController.getInstance().saveSequence(scheduleSeq,
+                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                LifeStory.getInstance().getGuardian().getId(),
+                getApplicationContext());
+
+        if (s1 && s2 && s3){
+            GuiHelper.ShowToast(this, "Skema gemt");
+            return true;
+        }
+        GuiHelper.ShowToast(this, "Skema er ikke gemt!");
+        return false;
+    }
+
+
+
 }

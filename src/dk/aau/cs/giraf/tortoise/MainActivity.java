@@ -1,29 +1,22 @@
 package dk.aau.cs.giraf.tortoise;
 
 
-import java.io.IOException;
-
-import org.json.JSONException;
-
-import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GToast;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -42,37 +35,10 @@ import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
 public class MainActivity extends TortoiseActivity {
 
     private final int DIALOG_DELETE = 1;
-    private final int PROFILE_CHANGE = 11; // constant for profile change intent
-    private int profileResult;
     private boolean isInEditMode = false;
     private boolean isInTemplateMode = false;
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
-    private Bitmap childImage;
-    private Bitmap guardianImage;
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        // Check which request we're responding to
-        if (requestCode == PROFILE_CHANGE)
-        {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK)
-            {
-                Uri contactUri = data.getData();
-                String[] projection = {"currentChildID"};
-                Cursor cursor = getContentResolver()
-                        .query(contactUri, projection, null, null, null);
-                cursor.moveToFirst();
-
-                // Retrieve the phone number from the NUMBER column
-                int column = cursor.getColumnIndex("currentChildID");
-                String number = cursor.getString(column);
-
-            }
-        }
-    }
 
     /**
      * Initializes all app elements.
@@ -86,139 +52,66 @@ public class MainActivity extends TortoiseActivity {
         Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
-
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
             finish();
+            return ;
         }
         // If launched from Giraf, then execute!
 
         // Initialize image and name of profile
-        ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
         TextView profileName = (TextView) findViewById(R.id.child_name);
 
-        Helper h;
-        try {
-            h = new Helper(this);
+        Helper h = new Helper(this);
 
         // Set guardian- and child profiles
-        LifeStory.getInstance().setGuardian(h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
-        LifeStory.getInstance().setChild(h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+        LifeStory.getInstance().setGuardian(
+                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        LifeStory.getInstance().setChild(
+                h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
 
         profileName.setText(LifeStory.getInstance().getChild().getName());
-
-        setProfileImages();
-        profileImage.setImageBitmap(childImage);
-
-
-        // Clear existing life stories
-        LifeStory.getInstance().getStories().clear();
-        LifeStory.getInstance().getTemplates().clear();
-
-        // Set templates belonging to the chosen guardian and stories belonging to the chosen child
-        /*
-        JSONSerializer js = new JSONSerializer();
-        try {
-            LifeStory.getInstance().setTemplates(
-                js.loadSettingsFromFile(
-                    getApplicationContext(),
-                    LifeStory.getInstance().getGuardian().getId())
-            );
-
-            LifeStory.getInstance().setStories(
-                js.loadSettingsFromFile(
-                    getApplicationContext(),
-                    LifeStory.getInstance().getChild().getId())
-            );
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
-
-            DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
-            DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.STORY, this);
-        }
-        catch (Exception e){
-            GuiHelper.ShowToast(this,  "Tortoise skal startes fra GIRAF");
-            finish(); //no connection to DB
-        }
 
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
         sequenceGrid.setAdapter(sequenceAdapter);
 
-        final ImageView changeProfileButton = (ImageView) findViewById(R.id.profileImage);
-
-        changeProfileButton.setOnTouchListener(new View.OnTouchListener() {
+        GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
+        //Call the method setup with a Profile guardian, no currentProfile
+        // (which means that the guardian is the current Profile) and the onCloseListener
+        gbps.setup(LifeStory.getInstance().getGuardian(),
+                null,
+                new GButtonProfileSelect.onCloseListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent motionEvent) {
-                // set the profile image button to be faded - it is changed back to a solid
-                // color (1.0) in changeProfileButton.setOnClickListener
-                changeProfileButton.setAlpha(0.3f);
-
-                // return false to indicate that the event for the profile image has not been
-                // consumed. If this is changed to true, the changeProfileButton.setOnClickListener
-                // does not work
-                return false;
-            }
-        });
-
-        changeProfileButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // change color of profile button from faded back to solid color
-                // 0f is invisible and 1f is solid
-                changeProfileButton.setAlpha(1f);
-
-                // this is the code for launching the profile selector in the launcher project
-                // the launcher then creates a new instance of the tortoise project
-
-                // create a new intent
-                Intent intent = new Intent("dk.aau.cs.giraf.launcher.action.SELECTPROFILE");
-
-                // put package name
-                intent.putExtra("appPackageName", "dk.aau.cs.giraf.tortoise");
-
-                // put Activity name
-                intent.putExtra("appActivityName", "dk.aau.cs.giraf.tortoise.MainActivity");
-
-                // put App Background Color
-                intent.putExtra("appBackgroundColor", 0xFF16A765);
-
-                // Put current guardian id
-                intent.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-
-                intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.activities.ProfileSelectActivity"));
-
-                // Verify the intent will resolve to at least one activity
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
+            public void onClose(Profile guardianProfile, Profile currentProfile) {
+                //If the guardian is the selected profile create GToast displaying the name
+                if(currentProfile == null){
+                    GToast w = new GToast(getApplicationContext(),
+                            "The Guardian " + guardianProfile.getName() + "is Selected", 2);
+                    w.show();
+                }
+                //If another current Profile is the selected profile create GToast displaying the name
+                else{
+                    GToast w = new GToast(getApplicationContext(),
+                            "The current profile " + currentProfile.getName() + "is Selected", 2);
+                    w.show();
                 }
             }
         });
+
 
         // Load Sequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-
+            canFinish = false;
             Intent i;
-
-            if (isInTemplateMode) {
-                canFinish = false;
-                i = new Intent(getApplicationContext(), EditModeActivity.class);
+            if (isInTemplateMode) {//TODO hardcoded to schedules
+                i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
                 i.putExtra("template", arg2);
             } else {
-                canFinish = false;
-                i = new Intent(getApplicationContext(), ViewModeActivity.class);
+                i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
                 i.putExtra("story", arg2);
             }
 
@@ -237,7 +130,8 @@ public class MainActivity extends TortoiseActivity {
                 isInEditMode = button.isChecked();
                 GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
 
-                // Make sure that all views currently not visible will have the correct editmode when they become visible
+                // Make sure that all views currently not visible will have the correct
+                // editmode when they become visible
                 sequenceAdapter.setEditModeEnabled(isInEditMode);
 
                 //createButton.setVisibility(isInEditMode ? View.VISIBLE : View.GONE);
@@ -261,16 +155,13 @@ public class MainActivity extends TortoiseActivity {
             @Override
             public void onClick(View v) {
                 ToggleButton button = (ToggleButton) v;
-                ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
                 TextView profileName = (TextView) findViewById(R.id.child_name);
                 if (button.isChecked()) {
                     Profile g = LifeStory.getInstance().getGuardian();
                     profileName.setText(g.getName());
-                    profileImage.setImageBitmap(guardianImage);
                 } else {
                     Profile c = LifeStory.getInstance().getChild();
                     profileName.setText(c.getName());
-                    profileImage.setImageBitmap(childImage);
                 }
                 isInTemplateMode = button.isChecked();
                 sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
@@ -330,9 +221,18 @@ public class MainActivity extends TortoiseActivity {
     @Override
     protected void onResume()
     {
+        super.onResume();
+        // Clear existing life stories
+        LifeStory.getInstance().getStories().clear();
+        LifeStory.getInstance().getTemplates().clear();
+        DBController.getInstance().loadCurrentCitizenSequences(
+                LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+        //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
+        DBController.getInstance().loadCurrentGuardianTemplates(
+                LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
+
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         ToggleButton editMode = (ToggleButton) findViewById(R.id.edit_mode_toggle);
-        ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
         TextView profileName = (TextView)findViewById(R.id.child_name);
 
         isInEditMode = false;
@@ -341,99 +241,49 @@ public class MainActivity extends TortoiseActivity {
         editMode.setChecked(false);
         Profile c = LifeStory.getInstance().getChild();
         profileName.setText(c.getName());
-        profileImage.setImageBitmap(childImage);
         sequenceAdapter.setEditModeEnabled(isInEditMode);
         sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
         sequenceAdapter.notifyDataSetChanged();
-        super.onResume();
-    }
-
-    private void setProfileImages() {
-        Bitmap bm;
-    try{
-        if(LifeStory.getInstance().getChild().getImage() != null) {
-            bm = LifeStory.getInstance().getChild().getImage();
-        }
-        else {
-            bm = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
-        }
-
-        childImage = LayoutTools.getRoundedCornerBitmap(bm, this, 10);
-
-        if(LifeStory.getInstance().getGuardian().getImage() != null) {
-            bm = LifeStory.getInstance().getGuardian().getImage();
-        }
-        else {
-            bm = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
-        }
-
-        guardianImage = LayoutTools.getRoundedCornerBitmap(bm, this, 10);
-    }catch (NullPointerException e){
-        //TODO
-        //GuiHelper.ShowToast(getApplicationContext(), " FIX ME! " + e.toString());
-    }
     }
 
     public void renderDialog(int dialogId, final int position) {
-
-
-        String storyName;
+        final dk.aau.cs.giraf.tortoise.controller.Sequence seq;
+        final LifeStory lifeStory = LifeStory.getInstance();
+        final DBController dbc = DBController.getInstance();
+        final MainActivity parentObj = this;
 
         // If isInTemplateMode is true then the guardian profile is active. If not, the child profile is active.
         if(isInTemplateMode) {
-            storyName = LifeStory.getInstance().getTemplates().get(position).getTitle();
+            seq = LifeStory.getInstance().getTemplates().get(position);
         }
         else {
-            storyName = LifeStory.getInstance().getStories().get(position).getTitle();
+            seq = LifeStory.getInstance().getStories().get(position);
         }
 
         // Dialog that prompts for deleting a story or template
         switch (dialogId) {
             case DIALOG_DELETE:
                 GDialogMessage gdialog = new GDialogMessage(this,
-                        R.drawable.ic_launcher,
-                        getString(R.string.dialog_delete_title),
-                        getResources().getString(R.string.dialog_delete_message) + " \"" + storyName + "\"",
-                        new View.OnClickListener()
+                    R.drawable.ic_launcher,
+                    getString(R.string.dialog_delete_title),
+                    getResources().getString(R.string.dialog_delete_message) + " \"" + seq.getTitle() + "\"",
+                    new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
                         {
-                            @Override
-                            public void onClick(View v)
-                            {
-                                JSONSerializer js = new JSONSerializer();
-                                if(isInTemplateMode) {
-                                    LifeStory.getInstance().getTemplates().remove(position);
-                                    try {
-                                        js.saveSettingsToFile(getApplicationContext(),
-                                                LifeStory.getInstance().getTemplates(),
-                                                LifeStory.getInstance().getGuardian().getId());
-                                    } catch (IOException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    }
-                                }else {
-                                    LifeStory.getInstance().getStories().remove(position);
-                                    try {
-                                        js.saveSettingsToFile(getApplicationContext(),
-                                                LifeStory.getInstance().getStories(),
-                                                LifeStory.getInstance().getChild().getId());
-                                    } catch (IOException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                    }
-                                }
-                                sequenceAdapter.setItems();
-                                sequenceAdapter.notifyDataSetChanged();
-
+                            if(isInTemplateMode) {
+                                dbc.deleteSequence(seq, parentObj);
+                                lifeStory.removeTemplate(seq);
+                            }else {
+                                dbc.deleteSequence(seq, parentObj);
+                                lifeStory.removeStory(seq);
                             }
+                            sequenceAdapter.setItems();
+                            sequenceAdapter.notifyDataSetChanged();
+                        }
 
-                        });
-
+                    });
                 gdialog.show();
                 break;
             default:

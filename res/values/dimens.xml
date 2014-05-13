@@ -7,6 +7,7 @@
     <dimen name="activity_main_picto_size">300dp</dimen>
     <dimen name="weekday_text_width">30dp</dimen>
     <dimen name="weekday_button_height">40dp</dimen>
+    <dimen name="schedule_view_top_bar_height">125dp</dimen>
     <color name="text_color">#5b3b22</color>
 	<color name="text_hint_color">#55624319</color>
 	<color name="text_color_light">#46624319</color>

@@ -71,7 +71,7 @@
         android:background="@drawable/gbutton"/>
 
     <ImageButton
-        android:id="@+id/smallFrame"
+        android:id="@+id/printSequence"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerVertical="true"
@@ -84,7 +84,7 @@
         android:id="@+id/bin"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:layout_toLeftOf="@id/smallFrame"
+        android:layout_toLeftOf="@id/printSequence"
         android:layout_marginRight="5dp"
         android:layout_centerVertical="true"
         android:src="@drawable/bin_closed"/>

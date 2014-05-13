@@ -1,20 +1,22 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,7 +35,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,10 +44,14 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import org.json.JSONException;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
@@ -53,15 +59,11 @@ import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
-import dk.aau.cs.giraf.tortoise.Frame;
-import dk.aau.cs.giraf.tortoise.FrameDragShadowBuilder;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
-import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
-import dk.aau.cs.giraf.tortoise.controller.MediaFrame.OnContentChangedEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnCurrentFrameEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnMainLayoutEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnMediaFrameEventListener;
@@ -70,7 +72,6 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup;
 import dk.aau.cs.giraf.tortoise.SequenceAdapter;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
-import dk.aau.cs.giraf.tortoise.SequenceAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnRearrangeListener;
 import dk.aau.cs.giraf.tortoise.PictogramView;
@@ -92,13 +93,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			new ArrayList<OnMediaFrameEventListener>();
     EditModeFrameView currentEditModeFrame;
 	RelativeLayout menuBar;
-	//RelativeLayout mainLayout;
+    SequenceViewGroup sequenceViewGroup;
     GDialog dialogAddFrames;
-    // placed here so it can be accessed from all places in switch case
     GDialog gdialog;
+    File file;
+
     private boolean dialogAddFramesActive;
     private boolean isInEditMode;
-    private SequenceViewGroup sequenceViewGroup;
     private SequenceAdapter adapter;
     private Sequence sequence;
     private int lastPosition;
@@ -121,6 +122,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
@@ -145,7 +147,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         // Set current sequence
         sequence = LifeStory.getInstance().getCurrentStory();
 
-
         // Create Adapter
         adapter = setupAdapter();
 
@@ -160,6 +161,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
 		super.onActivityResult(requestCode, resultCode, data);
 
         // Remove the highlight from the add pictogram button
@@ -253,8 +255,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
                     storyImage.setImageBitmap(bitmap);
 			    }
-                //We expect a null pointer exception if the pictogram is without image
-                //TODO: Investigate if this still happens with the new DB.
+                // We expect a null pointer exception if the pictogram is without image
+                // TODO: Investigate if this still happens with the new DB.
                 // It still does
                 catch (NullPointerException e){
                     Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
@@ -320,6 +322,14 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             }
         }
 	}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GuiHelper.ShowToast(this, "onResume called!");
+        if(file != null)
+            GuiHelper.ShowToast(this, ((Boolean)file.delete()).toString());
+    }
 
     private SequenceAdapter setupAdapter() {
         final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
@@ -437,40 +447,24 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				
 				@Override
 				public void onClick(View v) {
-					JSONSerializer js = new JSONSerializer();
 					CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
 					CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
+                    LifeStory ls = LifeStory.getInstance();
 
 					if(template.isChecked()) {
-						LifeStory.getInstance().addTemplate();
-						try {
-							js.saveSettingsToFile(getApplicationContext(), 
-									LifeStory.getInstance().getTemplates(), LifeStory.getInstance().getGuardian().getId());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+                        ls.addTemplate();
+                        saveSequence(ls.getCurrentStory(),
+                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                                ls.getGuardian().getId());
 					}
 					if(story.isChecked()) {
-						LifeStory.getInstance().addStory();
-						try {
-							js.saveSettingsToFile(getApplicationContext(),
-									LifeStory.getInstance().getStories(), LifeStory.getInstance().getChild().getId());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+                        ls.addStory();
+                        saveSequence(ls.getCurrentStory(),
+                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                                ls.getChild().getId());
 					}
 
-                    saveSequence(LifeStory.getInstance().getCurrentStory(),
-                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                            LifeStory.getInstance().getGuardian().getId());
+
 					finish();
 				}
 			});
@@ -485,34 +479,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			});
 			break;
 		case DIALOG_EXIT:
-			/*dialog.setContentView(R.layout.dialog_custom);
-			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-			TextView exitTitle = (TextView)dialog.findViewById(R.id.titleTextView);
-			exitTitle.setText(R.string.dialog_exit_title);
-			TextView exitMessage = (TextView)dialog.findViewById(R.id.messageTextView);
-			exitMessage.setText(R.string.dialog_exit_message);
-			Button exitYes = (Button)dialog.findViewById(R.id.btn_yes);
-			exitYes.setText(R.string.yes);
-			exitYes.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					dialog.dismiss();
-					finish();
-				}
-			});
-			Button exitNo = (Button)dialog.findViewById(R.id.btn_no);
-			exitNo.setText(R.string.no);
-			exitNo.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-				dialog.dismiss();
-					
-				}
-			});*/
-
-            gdialog = new GDialogMessage(this,
+			gdialog = new GDialogMessage(this,
                     R.drawable.ic_launcher,
                     getString(R.string.dialog_exit_title),
                     getResources().getString(R.string.dialog_exit_message),
@@ -529,25 +496,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             showOverlay = false;
 			break;
 		case DIALOG_PROMT_FOR_TITLE:
-            /*
-			dialog.setContentView(R.layout.dialog_custom);
-			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-			TextView promtTitle = (TextView)dialog.findViewById(R.id.titleTextView);
-			promtTitle.setText(R.string.dialog_promt_for_title_title);
-			TextView promtMessage = (TextView)dialog.findViewById(R.id.messageTextView);
-			promtMessage.setText(R.string.dialog_promt_for_title_message);
-			Button promtNo = (Button)dialog.findViewById(R.id.btn_no);
-			promtNo.setVisibility(View.GONE);
-			Button promtYes = (Button)dialog.findViewById(R.id.btn_yes);
-			promtYes.setText(R.string.ok);
-			promtYes.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					dialog.dismiss();
-				}
-			});*/
-
             GDialog gdialog;
 
             gdialog = new GDialogMessage(this,
@@ -629,83 +577,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         }
 	}
 
-    public void updateMediaFrameChoice(MediaFrame mediaFrame, boolean isChoice) {
-		if (isChoice) {
-			mediaFrame.setChoiceNumber(LifeStory.getInstance().getCurrentStory().getNumChoices() + 1);
-			LifeStory.getInstance().getCurrentStory().incrementNumChoices();
-		}
-		else if (!isChoice) {
-			mediaFrame.setChoiceNumber(0);
-			LifeStory.getInstance().getCurrentStory().decrementNumChoices();
-		}
-		renderPictograms();
-	}
-
-    /**
-     * Updates the views to show associated pictograms. This will update the choice dialog and the main view.
-     *
-     */
-	public void renderPictograms() {
-
-        List<Pictogram> pictograms = currentEditModeFrame.getMediaFrame().getContent();
-        //Pictogram choicePictogram = currentEditModeFrame.getMediaFrame().getChoicePictogram();
-        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
-        //params.setMargins(10,10,10,10);
-
-
-        currentEditModeFrame.detachPictograms();
-        currentEditModeFrame.removeAllViews();
-        newChoiceContent.removeAllViews();
-
-        if(pictograms.size() == 0)
-        {
-            //TODO: Delete pictogram if no data.
-        }
-        else{
-
-            if(pictograms.size() == 1){
-                if(dialogAddFramesActive){
-                    // If there is only one pictogram, it is shown on the big frame. Temporarily replace it with a bitmap.
-                    ImageView tempBitmap = new ImageView(this);
-                    tempBitmap.setImageBitmap(currentEditModeFrame.getMediaFrame().getContent().get(0).getImageData());
-                    currentEditModeFrame.addView(tempBitmap);
-                }
-                else{
-                    currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-                }
-            }
-            else{
-                if(pictograms.size() == 1){
-                    currentEditModeFrame.setPictogram(currentEditModeFrame.getMediaFrame().getContent().get(0));
-                }
-                else{
-                    ImageView choiceBackground = new ImageView(this);
-
-                    if(currentEditModeFrame.getMediaFrame().getChoicePictogram() == null){
-                        choiceBackground.setImageResource(R.drawable.question);
-                    }
-                    else{
-                        choiceBackground.setImageBitmap(currentEditModeFrame.getMediaFrame().getChoicePictogram().getImageData());
-                    }
-
-                    currentEditModeFrame.addView(choiceBackground);
-                }
-            }
-
-            if(dialogAddFramesActive){
-                for(Pictogram p : currentEditModeFrame.getMediaFrame().getContent()) {
-                    EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, currentEditModeFrame.getMediaFrame(), p, params);
-                    //   choiceFramView.addDeleteButton();
-                    newChoiceContent.addView(choiceFramView);
-                }
-            }
-
-
-        }
-        }
-
     public void renderContentPictograms(int position){
 
         if(sequence.getMediaFrames().get(position).getContent().size() == 0)
@@ -763,8 +634,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         }
 
         adapter.notifyDataSetChanged();
-
-        //renderPictograms();
 
         renderChoiceIcon(position);
         dialogAddFrames.show();
@@ -857,58 +726,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				return false;
 			}
 		});
-		/*ImageButton addSmallFrame = (ImageButton)findViewById(R.id.smallFrame);
-		addSmallFrame.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				EditModeFrameView frame = LayoutTools.getEditModeFrameView(EditModeActivity.this, mainLayout, 192, 192);
-				frame.getMediaFrame().setOnContentChangedListener(new OnContentChangedEventListener() {
-					
-					@Override
-					public void OnIsChoiceListener(MediaFrame mediaFrame, boolean isChoice) {
-						EditModeActivity.this.updateMediaFrameChoice(mediaFrame, isChoice);	
-					}
 
-					@Override
-					public void OnContentSizeChanged(MediaFrame mediaFrame) {
-						//TODO: Is this even used (will outcomment)
-                        EditModeActivity.this.renderPictograms();
-					}
-				});
-				ClipData data = ClipData.newPlainText("", "");
-				FrameDragShadowBuilder shadowBuilder = new FrameDragShadowBuilder(frame);
-				v.startDrag(data, shadowBuilder, frame, 0);
-				return false;
-			}
-		});
-		ImageButton addLargeFrame = (ImageButton)findViewById(R.id.largeFrame);
-		addLargeFrame.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				EditModeFrameView frame = LayoutTools.getEditModeFrameView(EditModeActivity.this, mainLayout, 304, 304);
-				frame.getMediaFrame().setOnContentChangedListener(new OnContentChangedEventListener() {
-					
-					@Override
-					public void OnIsChoiceListener(MediaFrame mediaFrame, boolean isChoice) {
-						EditModeActivity.this.updateMediaFrameChoice(mediaFrame, isChoice);
-						
-					}
-
-					@Override
-					public void OnContentSizeChanged(MediaFrame mediaFrame) {
-						//TODO: Is this used?
-                        EditModeActivity.this.renderPictograms();
-						
-					}
-				});
-				ClipData data = ClipData.newPlainText("", "");
-				FrameDragShadowBuilder shadowBuilder = new FrameDragShadowBuilder(frame);
-				v.startDrag(data, shadowBuilder, frame, 0);
-				return false;
-			}
-		});*/
 		ImageButton exit = (ImageButton)findViewById(R.id.exitEditMode);
 		exit.setOnClickListener(new OnClickListener() {
 			
@@ -932,6 +750,16 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				}
 			}
 		});
+
+        ImageButton print = (ImageButton)findViewById(R.id.printSequence);
+        print.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //GuiHelper.ShowToast(EditModeActivity.this, "Testtest?");
+                EditModeActivity.this.printSequence();
+            }
+        });
+
 		ImageView bin = (ImageView)findViewById(R.id.bin);
 		bin.setImageResource(R.drawable.bin_closed);
 		bin.setOnDragListener(new OnDragListener() {
@@ -979,83 +807,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		}
 		menuBar.addView(menu);
 	}
-
-    /*
-     * Makes sure that the View v is positioned on the mainLayout where is is dropped
-     * @param v
-     * @param event
-     * @return
-     */
-
-	/*public boolean mainLayoutDrag(View v, DragEvent event) {
-
-        // Grim, grim GRIM switch!
-		switch(event.getAction()) {
-		case DragEvent.ACTION_DROP:
-			EditModeFrameView view = (EditModeFrameView) event.getLocalState();
-			LayoutTools.placeFrame(mainLayout, view, 
-					(int) (event.getX() - (view.width / 2)), 
-					(int) (event.getY() - (view.height / 2)));
-			break;
-		default:
-			return true;
-		}
-		return true;
-	}*/
-	
-	/*public void renderTemplate() {
-		RelativeLayout.LayoutParams params;
-
-        // For every MediaFrame in the current LifeStory...
-		for (MediaFrame m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
-			m.setOnContentChangedListener(new OnContentChangedEventListener() {
-				
-				@Override
-				public void OnIsChoiceListener(MediaFrame mediaFrame, boolean isChoice) {
-                    EditModeActivity.this.updateMediaFrameChoice(mediaFrame, isChoice);
-				}
-
-				@Override
-				public void OnContentSizeChanged(MediaFrame mediaFrame) {
-					//TODO: Used?
-					//EditModeActivity.this.renderPictograms((LinearLayout)dialogAddFrames.findViewById(R.id.newChoiceContent2));
-				}
-			});
-			for(Pictogram p : m.getContent()) {
-				p.renderAll();
-			}		
-			List<Frame> frames = m.getFrames();
-			for(Frame f : frames) {
-				EditModeFrameView editModeFrameView = 
-						new EditModeFrameView(this, getApplicationContext(), 
-								mainLayout, m, f, f.getHeight(), f.getWidth());
-				params = new RelativeLayout.LayoutParams(f.getWidth(),f.getHeight());
-				params.leftMargin = f.getPosition().x;
-				params.topMargin = f.getPosition().y;
-				editModeFrameView.setLayoutParams(params);
-				if(m.getChoiceNumber() > 0) {
-					editModeFrameView.addText("Valg " + m.getChoiceNumber());
-				}
-				if (m.getContent().size() == 1)
-					editModeFrameView.setPictogram(m.getContent().get(0));
-				Log.i("mainLayout", "Choice: " + m.getChoiceNumber());
-				mainLayout.addView(editModeFrameView);
-			}
-		}
-	}*/
-	
-	/*public void removeAllViews() {
-		mainLayout.removeAllViews();
-		menuBar.removeAllViews();
-		for(MediaFrame mf : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
-			for(Pictogram p : mf.getContent()) {
-				if (p.getParent() instanceof FrameLayout)
-					((FrameLayout)p.getParent()).removeView(p);
-				else if(p.getParent() instanceof EditModeFrameView)
-					((EditModeFrameView)p.getParent()).removeView(p);
-			}
-		}
-	}*/
 
     public void dismissAddContentDialog(View v){
         dialogAddFrames.dismiss();
@@ -1144,4 +895,90 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
     }
 
+    public void printSequence(){
+        Bitmap combinedSequence = combineFrames();
+        sendSequenceToEmail(combinedSequence, "dan.skoett.petersen@gmail.com", LifeStory.getInstance().getCurrentStory().getTitle(), "Hej Dan");
+    }
+
+    public Bitmap combineFrames(){
+
+        int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getWidth();
+        int numframes = sequence.getMediaFrames().size();
+        int spacing = 10;
+
+        int width = ((frameDimens+spacing)*numframes)-spacing;
+        int height = frameDimens;
+
+        Bitmap combinedSequence;
+        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas comboImage = new Canvas(combinedSequence);
+
+
+        float leftOffset = 0f;
+        for(MediaFrame frame : sequence.getMediaFrames()){
+            comboImage.drawBitmap(frame.getContent().get(0).getImageData(), leftOffset, 0f, null);
+            leftOffset += frameDimens+spacing;
+        }
+
+        return combinedSequence;
+    }
+
+    public void sendSequenceToEmail(Bitmap seqImage, String emailAddress, String subject, String message){
+
+        String filename = "tempSeq.png";
+        file = getOutputMediaFile(filename);
+
+        try{
+            FileOutputStream out = new FileOutputStream(file);
+            seqImage.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.close();
+        }
+        catch(Exception e){
+            GuiHelper.ShowToast(this, e.toString());
+        }
+
+        Uri fileUri = Uri.fromFile(file);
+
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.setType("message/rfc822");
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
+        email.putExtra(Intent.EXTRA_SUBJECT, subject);
+        email.putExtra(Intent.EXTRA_TEXT, message);
+        email.putExtra(Intent.EXTRA_STREAM, fileUri);
+
+        try{
+        startActivity(Intent.createChooser(email, "Vælg en email-klient"));
+        }catch (android.content.ActivityNotFoundException ex) {
+            GuiHelper.ShowToast(this, "Fejl: Email klient ikke fundet!");
+        }
+    }
+
+    /**
+     * Based on: http://stackoverflow.com/questions/15662258/how-to-save-a-bitmap-on-internal-storage
+     *
+     * @param fileName
+     * @return file
+     */
+    private File getOutputMediaFile(String fileName){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getApplicationContext().getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName);
+        return mediaFile;
+    }
 }
