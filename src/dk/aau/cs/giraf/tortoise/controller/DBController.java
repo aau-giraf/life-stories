@@ -39,9 +39,6 @@ public class DBController {
     /*******************************
      * Class variable declarations *
      *******************************/
-    private boolean success;
-    Helper oasisLibHelper;
-    LifeStory lifeStory;
     private final int frameHeight = 140;
     private final int frameWidth = 140;
 
@@ -60,6 +57,7 @@ public class DBController {
      */
 
     public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
+        boolean success;
         SequenceController sc = new SequenceController(con);
         dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = morphSequenceToDBSequence(seq, seqType, profileID);
         success = sc.insertSequenceAndFrames(dbSeq);
@@ -75,10 +73,10 @@ public class DBController {
      * @param con
      */
     public void loadCurrentCitizenSequences(int profileID, SequenceType sequenceType, Context con){
-        oasisLibHelper = new Helper(con);
+        SequenceController sc = new SequenceController(con);
         LifeStory.getInstance().setStories(
                 morphDBSequenceListToSequenceList(
-                        oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(
+                        sc.getSequencesAndFramesByProfileIdAndType(
                                 profileID, sequenceType), con));
     }
 
@@ -90,10 +88,10 @@ public class DBController {
      * @param con
      */
     public void loadCurrentGuardianTemplates(int profileID, SequenceType sequenceType, Context con){
-        oasisLibHelper = new Helper(con);
+        SequenceController sc = new SequenceController(con);
         LifeStory.getInstance().setTemplates(
                 morphDBSequenceListToSequenceList(
-                        oasisLibHelper.sequenceController.getSequenceByProfileIdAndType(
+                        sc.getSequencesAndFramesByProfileIdAndType(
                                 profileID, sequenceType), con));
     }
 
@@ -139,8 +137,11 @@ public class DBController {
      * @return Sequence
      */
     private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq, Context con){
-        Sequence seq = new Sequence(dbSeq.getId(), dbSeq.getPictogramId(), dbSeq.getName(), morphDBFramesToMediaFrames(dbSeq.getFramesList(), con), con);
-        return seq;
+        return new Sequence(dbSeq.getId(),
+                dbSeq.getPictogramId(),
+                dbSeq.getName(),
+                morphDBFramesToMediaFrames(dbSeq.getFramesList(), con),
+                con);
     }
 
     /**
@@ -150,7 +151,8 @@ public class DBController {
      * @param con
      * @return a list of MediaFrames
      */
-    private ArrayList<MediaFrame> morphDBFramesToMediaFrames(List<dk.aau.cs.giraf.oasis.lib.models.Frame> dbFrames, Context con){
+    private ArrayList<MediaFrame> morphDBFramesToMediaFrames(
+            List<dk.aau.cs.giraf.oasis.lib.models.Frame> dbFrames, Context con){
         ArrayList<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
         for(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame : dbFrames){
             mediaFrames.add(morphDBFrameToMediaFrame(dbFrame, con));
@@ -168,10 +170,13 @@ public class DBController {
     private MediaFrame morphDBFrameToMediaFrame(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame, Context con) {
         MediaFrame mediaFrame = new MediaFrame();
         PictogramController pc = new PictogramController(con);
-        mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con, pc.getPictogramById(dbFrame.getPictogramId())));
+        mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con,
+                pc.getPictogramById(dbFrame.getPictogramId())));
         mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
         mediaFrame.setNestedSequenceID(dbFrame.getNestedSequence());
-        mediaFrame.addFrame(new dk.aau.cs.giraf.tortoise.Frame(frameWidth, frameHeight, new Point(dbFrame.getPosX(), dbFrame.getPosY())));
+        mediaFrame.addFrame(new dk.aau.cs.giraf.tortoise.Frame(frameWidth,
+                frameHeight,
+                new Point(dbFrame.getPosX(), dbFrame.getPosY())));
         return mediaFrame;
     }
 
