@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -203,7 +204,7 @@ public class ScheduleActivity extends TortoiseActivity
         int xy;
 
         // use wider buttons when in portrait mode
-        if (isInLandscape) {
+        if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
             // small buttons
             xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
         } else {

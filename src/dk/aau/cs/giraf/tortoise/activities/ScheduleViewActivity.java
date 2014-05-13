@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.apache.http.impl.cookie.NetscapeDraftSpec;
 
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import dk.aau.cs.giraf.gui.GTextView;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -35,22 +37,8 @@ public class ScheduleViewActivity extends ScheduleActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view_activity);
 
-       /* Intent i = getIntent();
-        if(i.getExtras().getInt("app_to_start") != 10)
-        {
-            finish();
-        }*/
-
         // display the sequences in the week schedule
         displaySequences();
-        /*try
-        {
-            displaySequences();
-        }
-        catch(Exception ex)
-        {
-            GuiHelper.ShowToast(this, ex.toString());
-        }*/
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -60,6 +48,10 @@ public class ScheduleViewActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+
+        //Set schedule name
+        TextView title = (TextView) findViewById(R.id.scheduleName);
+        title.setText(LifeStory.getInstance().getCurrentStory().getTitle());
     }
 
     private void displaySequences()
@@ -80,7 +72,7 @@ public class ScheduleViewActivity extends ScheduleActivity
             // get parent sequence and set image of week schedule in layout accordingly
             Sequence seq = storyList.get(storyIndex);
             scheduleImage.setImageBitmap(seq.getTitleImage());
-
+            LifeStory.getInstance().setCurrentStory(seq);
             // show sequences
             int layoutArray[] = new int[7];
 
@@ -112,88 +104,6 @@ public class ScheduleViewActivity extends ScheduleActivity
             GuiHelper.ShowToast(this, "Kunne ikke indlæse sekvenser.");
         }
 
-
-/*
-        for(dk.aau.cs.giraf.tortoise.controller.Sequence sequence : storyList)
-        {
-            String title = sequence.getTitle();
-
-        }/*
-
-
-
-    }
-
-    @Override
-    public void onResume()
-    {
-        // this method is also called after oncreate()
-        // makes sure that current weekday is also marked after resume of the app
-        super.onResume();
-
-        // mark the current weekday in the scheduler
-        markCurrentWeekday();
-    }
-
-
-    public void weekdaySelected(View v)
-    {/*
-        int btnId = v.getId();
-
-        GToggleButton btn = (GToggleButton) findViewById(btnId);
-
-        // "push" week day button immediately to "disable" toggle feature.
-        // The week day buttons should not act as normal buttons
-        btn.setToggled(true);
-
-        switch(btnId)
-        {
-            case R.id.monday:
-                if(getWeekday().equals("Mandag"))
-                {
-                    btn.setToggled(false);
-                }
-                break;
-            case R.id.tuesday:
-                if(getWeekday().equals("Tirsdag"))
-                {
-                    btn.setToggled(false);
-                }
-                break;
-            case R.id.wednesday:
-                if(getWeekday().equals("Onsdag"))
-                {
-                    btn.setToggled(false);
-                }
-                break;
-            case R.id.thursday:
-                if(getWeekday().equals("Torsdag"))
-                {
-                    btn.setToggled(false);
-                };
-                break;
-            case R.id.friday:
-                if(getWeekday().equals("Fredag"))
-                {
-                    btn.setToggled(false);
-                }
-                break;
-            case R.id.saturday:
-                if(getWeekday().equals("Lørdag"))
-                {
-                    btn.setToggled(false);
-                }
-                break;
-            case R.id.sunday:
-                if(getWeekday().equals("Søndag"))
-                {
-                    btn.setToggled(false);
-                }
-                break;
-        }*/
-
-        // in this case we "misuse" the markCurrentWeekday method to
-        // "disable" the toggle feature of the toggle button
         markCurrentWeekday();
     }
 
