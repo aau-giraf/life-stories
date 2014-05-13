@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Tortoise</string>
+    <string name="app_name">Livshistorier</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_tortoise_startup_screen">Tortoise</string>
+    <string name="title_activity_tortoise_startup_screen">Livshistorier</string>
     <string name="new_lifestory">Create a new life story</string>
     <string name="bin">Papirkurv</string>
     <string name="test_data">Test Data</string>
