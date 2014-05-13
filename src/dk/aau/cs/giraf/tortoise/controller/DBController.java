@@ -121,10 +121,8 @@ public class DBController {
      */
     private ArrayList<Sequence> morphDBSequenceListToSequenceList(List<dk.aau.cs.giraf.oasis.lib.models.Sequence> dbSeqs, Context con){
         ArrayList<Sequence> seqs = new ArrayList<Sequence>();
-        SequenceController sc = new SequenceController(con);
         for(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq : dbSeqs){
-            dk.aau.cs.giraf.oasis.lib.models.Sequence dbs = sc.getSequenceAndFrames(dbSeq.getId());
-            seqs.add(morphDBSequenceToSequence(dbs, con));
+            seqs.add(morphDBSequenceToSequence(dbSeq, con));
         }
         return seqs;
     }
