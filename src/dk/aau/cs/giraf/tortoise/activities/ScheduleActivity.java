@@ -2,13 +2,12 @@ package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -20,8 +19,8 @@ import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
-import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -30,18 +29,13 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleActivity extends TortoiseActivity
 {
-    List<Sequence> weekdaySequences;
-    int weekdaySelected;
-    public GDialog multichoiceDialog;
-    public boolean isInLandscape;
     // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
-    //TODO move common methods here
-    public enum Day
-    {
-        MONDAY, TUESDAY, WEDNESDAY,
-        THURSDAY, FRIDAY, SATURDAY, SUNDAY
-    }
+    public GDialog multichoiceDialog;
+    public boolean isInLandscape;
+    List<Sequence> weekdaySequences;
+    int weekdaySelected;
+    int lastPosition;
 
     public void startPictosearch(View v)
     {
@@ -75,9 +69,72 @@ public class ScheduleActivity extends TortoiseActivity
 
     public void showMultiChoiceDialog(int position, int day)
     {
-        multichoiceDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content, null));
+            lastPosition = position;
+            multichoiceDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content, null));
 
-        multichoiceDialog.show();
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
+            LinearLayout newChoiceContent = (LinearLayout) multichoiceDialog.findViewById(R.id.newChoiceContent2);
+            newChoiceContent.removeAllViews();
+
+            for(Pictogram p : weekdaySequences.get(day).getMediaFrames().get(position).getContent()) {
+                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, weekdaySequences.get(day).getMediaFrames().get(position), p, params);
+                choiceFramView.addDeleteButton(position);
+                newChoiceContent.addView(choiceFramView);
+            }
+
+            renderChoiceIcon(position);
+            multichoiceDialog.show();
+
+        renderSchedule();
+    }
+
+    public void renderChoiceIcon(int position)
+    {
+        ImageView choiceIcon = (ImageView) multichoiceDialog.findViewById(R.id.choiceIcon);
+        ImageView deleteBtn = (ImageView) multichoiceDialog.findViewById(R.id.removeChoiceIcon);
+
+        Pictogram currentChoiceIcon = weekdaySequences.get(weekdaySelected).getMediaFrames().get(position).getChoicePictogram();
+
+        if (currentChoiceIcon == null){
+
+            Bitmap defaultBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.question);
+
+            choiceIcon.setImageBitmap(defaultBitmap);
+            deleteBtn.setVisibility(View.GONE);
+        }
+        else{
+            choiceIcon.setImageBitmap(currentChoiceIcon.getImageData());
+            deleteBtn.setVisibility(View.VISIBLE);
+
+        }
+        renderSchedule();
+    }
+
+    public void updateMultiChoiceDialog(int position)
+    {
+        int day = weekdaySelected;
+
+        if(weekdaySequences.get(day).getMediaFrames().get(position).getContent().size() == 0)
+        {
+            weekdaySequences.get(day).getMediaFrames().remove(position);
+            dismissAddContentDialog(getCurrentFocus());
+        }
+        else
+        {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
+            LinearLayout newChoiceContent = (LinearLayout) multichoiceDialog.findViewById(R.id.newChoiceContent2);
+            newChoiceContent.removeAllViews();
+
+            for(Pictogram p : weekdaySequences.get(day).getMediaFrames().get(position).getContent()) {
+                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, weekdaySequences.get(day).getMediaFrames().get(position), p, params);
+                choiceFramView.addDeleteButton(position);
+                newChoiceContent.addView(choiceFramView);
+            }
+
+            renderChoiceIcon(position);
+
+        }
+        renderSchedule();
     }
 
     public void renderSchedule()
@@ -154,7 +211,6 @@ public class ScheduleActivity extends TortoiseActivity
         return mf.getContent();
     }
 
-
     // this method returns an imageview containing the add pictogram button with a plus on it
     public ImageView addButton()
     {
@@ -203,7 +259,7 @@ public class ScheduleActivity extends TortoiseActivity
         int xy;
 
         // use wider buttons when in portrait mode
-        if (isInLandscape) {
+        if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
             // small buttons
             xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
         } else {
@@ -224,7 +280,9 @@ public class ScheduleActivity extends TortoiseActivity
         iw.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                int position = getViewIndex(v);
                 workaroundLayout.removeView(v);
+                weekdaySequences.get(weekdaySelected).getMediaFrames().remove(position);
                 return true;
             }
         });
@@ -232,12 +290,15 @@ public class ScheduleActivity extends TortoiseActivity
         iw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageView iv = (ImageView) v;
+/*                ImageView iv = (ImageView) v;
 
                 LinearLayout l = (LinearLayout) iv.getParent();
 
                 // index of pictogram being clicked
-                int index = l.indexOfChild(v);
+                int index = l.indexOfChild(v);*/
+
+                // index of pictogram being clicked
+                int index = getViewIndex(v);
 
                 // show
                 showMultiChoiceDialog(index, weekdaySelected);
@@ -246,6 +307,22 @@ public class ScheduleActivity extends TortoiseActivity
 
         // add pictogram to week day and make sure the add button is always at the bottom of the week day
         layout.addView(iw); // add new pictogram
+    }
+
+    public int getViewIndex(View v)
+    {
+        int index;
+
+        if(((LinearLayout) v.getParent()).getChildCount() > 0)
+        {
+            index = ((LinearLayout) v.getParent()).indexOfChild(v);
+        }
+        else
+        {
+            index = -1;
+        }
+
+        return index;
     }
 
     public void showAddButtons()
@@ -438,5 +515,12 @@ public class ScheduleActivity extends TortoiseActivity
             // the exception is ignored because it is thrown when using portrait mode
             // the exception is a work-around
         }
+    }
+
+    //TODO move common methods here
+    public enum Day
+    {
+        MONDAY, TUESDAY, WEDNESDAY,
+        THURSDAY, FRIDAY, SATURDAY, SUNDAY
     }
 }

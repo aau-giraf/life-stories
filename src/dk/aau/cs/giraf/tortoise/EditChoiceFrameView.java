@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import android.graphics.Bitmap;
 
@@ -22,10 +24,10 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 	ImageView btn;
 	private MediaFrame mediaFrame;
     Pictogram pictogram;
-	EditModeActivity mainActivity;
+	Activity mainActivity;
     int position;
 	
-	public EditChoiceFrameView(EditModeActivity mainActivity, MediaFrame mediaFrame, Pictogram pictogram, LinearLayout.LayoutParams params) {
+	public EditChoiceFrameView(Activity mainActivity, MediaFrame mediaFrame, Pictogram pictogram, LinearLayout.LayoutParams params) {
 		super(mainActivity.getApplicationContext());
 		this.mainActivity = mainActivity;
 		this.setMediaFrame(mediaFrame);
@@ -77,7 +79,14 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
 
 
         this.getMediaFrame().removeContent(this.pictogram);
-        mainActivity.renderContentPictograms(position);
+        if(mainActivity instanceof EditModeActivity)
+        {
+            ((EditModeActivity) mainActivity).renderContentPictograms(position);
+        }
+        else if(mainActivity instanceof  ScheduleActivity)
+        {
+            ((ScheduleActivity) mainActivity).updateMultiChoiceDialog(position);
+        }
 	}
 
 	public MediaFrame getMediaFrame() {

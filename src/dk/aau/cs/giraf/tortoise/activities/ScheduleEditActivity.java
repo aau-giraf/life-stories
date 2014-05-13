@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -38,28 +40,23 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
-public class ScheduleEditActivity extends ScheduleActivity
-{
+public class ScheduleEditActivity extends ScheduleActivity {
     public List<List<ImageView>> weekdayLists;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // check whether tablet is in portrait or landscape mode and set the layout accordingly
         // landscape mode shows mode days than portrait mode
         int screenOrientation = getResources().getConfiguration().orientation;
-        if(screenOrientation == Configuration.ORIENTATION_LANDSCAPE)
-        {
+        if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             isInLandscape = true;
             setContentView(R.layout.schedule_edit_activity);
             ImageButton b = (ImageButton) findViewById(R.id.schedule_image_button);
             GTooltipBasic tooltip = new GTooltipBasic(b, "Tryk her for at tilføje et billede til ugeskemaet", R.drawable.ic_launcher);
             tooltip.Show();
-        }
-        else
-        {
+        } else {
             isInLandscape = false;
             setContentView(R.layout.schedule_edit_activity_portrait);
         }
@@ -69,8 +66,7 @@ public class ScheduleEditActivity extends ScheduleActivity
         // Get intent, action and MIME type
         Intent intent = getIntent();
 
-        if (intent.getExtras() == null)
-        {
+        if (intent.getExtras() == null) {
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
@@ -78,49 +74,14 @@ public class ScheduleEditActivity extends ScheduleActivity
         weekdaySequences = new ArrayList<Sequence>();
 
         // add empty sequences for each week day
-        for(int i = 0; i < 7; i++)
-        {
+        for (int i = 0; i < 7; i++) {
             weekdaySequences.add(i, new Sequence());
         }
         LifeStory.getInstance().setCurrentStory(new Sequence());
-       /* int template = this.getIntent().getExtras().getInt("template");
-
-        if(template == -1)
-        {
-            LifeStory.getInstance().setCurrentStory(new Sequence());
-        }
-        else {
-            LifeStory.getInstance().setCurrentTemplate(ScheduleEditActivity.this.getApplicationContext(), template);
-            //TODO: Render template again when fixed.
-            // renderTemplate();
-        }*/
-    }
-
-    public class DrawView extends View {
-        Paint paint = new Paint();
-
-        public DrawView(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void onDraw(Canvas canvas) {
-            paint.setColor(Color.BLACK);
-            paint.setStrokeWidth(3);
-            canvas.drawRect(30, 30, 80, 80, paint);
-            paint.setStrokeWidth(0);
-            paint.setColor(Color.CYAN);
-            canvas.drawRect(33, 60, 77, 77, paint );
-            paint.setColor(Color.YELLOW);
-            canvas.drawRect(33, 33, 77, 60, paint );
-
-        }
-
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         // this method is also called after oncreate()
         // makes sure that current weekday is also marked after resume of the app
         super.onResume();
@@ -129,30 +90,22 @@ public class ScheduleEditActivity extends ScheduleActivity
         markCurrentWeekday();
     }
 
-    public void weekdaySelected(View v)
-    {
+    public void weekdaySelected(View v) {
         markCurrentWeekday();
     }
 
-    // this is just a variable for a workaround
-  //  public static LinearLayout weekdayLayout;
-
     // this method handles pictograms sent back via an intent from pictosearch
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == 2)
-        {
+        if (resultCode == RESULT_OK && requestCode == 2) {
             // i think this is triggered when a profile image is chosen from pictosearch
-            try{
+            try {
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
-                }
-                else
-                {
-                    try{
+                } else {
+                    try {
                         LifeStory.getInstance().setCurrentStory(new Sequence());
                         LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
                         Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
@@ -166,42 +119,33 @@ public class ScheduleEditActivity extends ScheduleActivity
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
                     // It still does
-                    catch (NullPointerException e)
-                    {
+                    catch (NullPointerException e) {
                         GuiHelper.ShowToast(this, "Der skete en uventet fejl");
                     }
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 GuiHelper.ShowToast(this, e.toString() + " - rcode 2.");
             }
-        }
-        else if (resultCode == RESULT_OK && requestCode == 3)
-        {
+        } else if (resultCode == RESULT_OK && requestCode == 3) {
             // this code is executed when the week scheduler requests an image from pictosearch
-            try
-            {
+            try {
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
-                if (checkoutIds.length == 0)
-                {
+                if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
-                }
-                else // when pictograms are received
+                } else // when pictograms are received
                 {
-                    try
-                    {
+                    try {
                         MediaFrame mf = new MediaFrame();
 
                         // add all pictograms to list and add them to a sequence
-                        for(int id : checkoutIds)
-                        {
+                        for (int id : checkoutIds) {
                             Pictogram pictogram = PictoFactory.getPictogram(this, id);
                             mf.addContent(pictogram);
                         }
 
                         weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
 
-                        if (weekdayLayout.getChildCount() > 0){
+                        if (weekdayLayout.getChildCount() > 0) {
                             weekdayLayout.removeViewAt(weekdayLayout.getChildCount() - 1); // remove add button
                         }
                         // add item to scroll view
@@ -209,29 +153,81 @@ public class ScheduleEditActivity extends ScheduleActivity
                         weekdayLayout.addView(addButton()); // add the add button again
 
 
-                    }
-                    catch (NullPointerException e)
-                    {
+                    } catch (NullPointerException e) {
                         GuiHelper.ShowToast(this, "Der skete en uventet fejl");
                     }
                 }
-            } catch (NullPointerException e)
-            {
+            } catch (NullPointerException e) {
                 GuiHelper.ShowToast(this, "Fejl");
             }
-        }
+        } else if (resultCode == RESULT_OK && requestCode == 4) {
+            try {
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
+                if (checkoutIds.length == 0) {
+                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt.");
+                } else {
+                    MediaFrame mediaFrame = weekdaySequences.get(weekdaySelected).getMediaFrame(lastPosition);
+
+                    for (int id : checkoutIds) {
+                        Pictogram pictogram = PictoFactory.getPictogram(this, id);
+                        mediaFrame.addContent(pictogram);
+                    }
+
+                    renderSchedule();
+                    updateMultiChoiceDialog(lastPosition);
+                }
+            } catch (Exception e) {
+                GuiHelper.ShowToast(this, e.toString());
+            }
+        }
+        //Change choice icon
+        else if (resultCode == RESULT_OK && requestCode == 5){
+            try{
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                if (checkoutIds.length == 0) {
+                    Toast t = Toast.makeText(this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
+                    t.show();
+                }
+                else
+                {
+                    try{
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(picto);
+                        renderChoiceIcon(lastPosition);
+                    }
+                    //We expect a null pointer exception if the pictogram is without image
+                    //TODO: Investigate if this still happens with the new DB.
+                    // It still does
+                    catch (NullPointerException e){
+                        Toast t = Toast.makeText(this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
+                        t.show();
+                    }
+                }
+            } catch (Exception e){
+                GuiHelper.ShowToast(this, e.toString());
+            }
+        }
     }
-    public boolean saveSchedule(View v){
+
+    // this is just a variable for a workaround
+    //  public static LinearLayout weekdayLayout;
+
+    public boolean saveSchedule(View v) {
 
         Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();
+
+        if (scheduleSeq.getTitlePictoId() == 0){
+            GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et title pictogram");
+            return false;
+        }
         Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
-        if (title != null){
+        if (title != null) {
             scheduleSeq.setTitle(title.toString());
         }
 
         boolean s1 = true;
-        for(Sequence daySeq: super.weekdaySequences){
+        for (Sequence daySeq : super.weekdaySequences) {
             daySeq.setTitle("");       //test value
             daySeq.setTitlePictoId(1); //test value
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
@@ -249,12 +245,7 @@ public class ScheduleEditActivity extends ScheduleActivity
                 LifeStory.getInstance().getChild().getId(),
                 getApplicationContext());
 
-        boolean s3 = DBController.getInstance().saveSequence(scheduleSeq,
-                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
-                LifeStory.getInstance().getGuardian().getId(),
-                getApplicationContext());
-
-        if (s1 && s2 && s3){
+        if (s1 && s2){
             GuiHelper.ShowToast(this, "Skema gemt");
             return true;
         }
@@ -262,6 +253,54 @@ public class ScheduleEditActivity extends ScheduleActivity
         return false;
     }
 
+    public void addPictograms(View v)
+    {
+        Intent i = new Intent();
+        i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
+                "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        i.putExtra("purpose", "multi");
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        ScheduleEditActivity.this.startActivityForResult(i, 4);
+    }
+
+    public void chooseChoicePictogram(View v)
+    {
+        Intent i = new Intent();
+        i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
+                "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        i.putExtra("purpose", "single");
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        ScheduleEditActivity.this.startActivityForResult(i, 5);
+    }
+
+    public void removeChoiceIcon(View v){
+        weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(null);
+        renderChoiceIcon(lastPosition);
+    }
+
+    public class DrawView extends View {
+        Paint paint = new Paint();
+
+        public DrawView(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onDraw(Canvas canvas) {
+            paint.setColor(Color.BLACK);
+            paint.setStrokeWidth(3);
+            canvas.drawRect(30, 30, 80, 80, paint);
+            paint.setStrokeWidth(0);
+            paint.setColor(Color.CYAN);
+            canvas.drawRect(33, 60, 77, 77, paint);
+            paint.setColor(Color.YELLOW);
+            canvas.drawRect(33, 33, 77, 60, paint);
+
+        }
+
+    }
 
 
 }
