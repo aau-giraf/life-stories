@@ -607,15 +607,18 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 	public void renderAddContentMenu(int position) {
 
+        //Delete the mediaframe at position if there is no content left.
         if(sequence.getMediaFrames().get(position).getContent().size() == 0)
         {
             sequence.getMediaFrames().remove(position);
             adapter.notifyDataSetChanged();
         }
+        //Otherwise, render the menu.
         else
         {
         dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content,null));
 
+        //If the dialog is already showing, dismiss it.
         if(dialogAddFrames.isShowing())
         {
             dialogAddFrames.dismiss();
