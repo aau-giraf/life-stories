@@ -23,7 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GToast;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -93,7 +95,6 @@ public class MainActivity extends TortoiseActivity {
         // If launched from Giraf, then execute!
 
         // Initialize image and name of profile
-        ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
         TextView profileName = (TextView) findViewById(R.id.child_name);
 
         Helper h;
@@ -105,65 +106,30 @@ public class MainActivity extends TortoiseActivity {
 
         profileName.setText(LifeStory.getInstance().getChild().getName());
 
-        setProfileImages();
-        profileImage.setImageBitmap(childImage);
-
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
         sequenceGrid.setAdapter(sequenceAdapter);
 
-        final ImageView changeProfileButton = (ImageView) findViewById(R.id.profileImage);
-
-        changeProfileButton.setOnTouchListener(new View.OnTouchListener() {
+        //Find the GButton in your View
+        GButtonProfileSelect gButtonProfileSelect = (GButtonProfileSelect) findViewById(R.id.profileSelect);
+        //Call the method setup with a Profile guardian, no currentProfile (which means that the guardian is the current Profile) and the onCloseListener
+        gButtonProfileSelect.setup(LifeStory.getInstance().getGuardian(), null, new GButtonProfileSelect.onCloseListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent motionEvent) {
-                // set the profile image button to be faded - it is changed back to a solid
-                // color (1.0) in changeProfileButton.setOnClickListener
-                changeProfileButton.setAlpha(0.3f);
-
-                // return false to indicate that the event for the profile image has not been
-                // consumed. If this is changed to true, the changeProfileButton.setOnClickListener
-                // does not work
-                return false;
-            }
-        });
-
-        changeProfileButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // change color of profile button from faded back to solid color
-                // 0f is invisible and 1f is solid
-                changeProfileButton.setAlpha(1f);
-
-                // this is the code for launching the profile selector in the launcher project
-                // the launcher then creates a new instance of the tortoise project
-
-                // create a new intent
-                Intent intent = new Intent("dk.aau.cs.giraf.launcher.action.SELECTPROFILE");
-
-                // put package name
-                intent.putExtra("appPackageName", "dk.aau.cs.giraf.tortoise");
-
-                // put Activity name
-                intent.putExtra("appActivityName", "dk.aau.cs.giraf.tortoise.MainActivity");
-
-                // put App Background Color
-                intent.putExtra("appBackgroundColor", 0xFF16A765);
-
-                // Put current guardian id
-                intent.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-
-                intent.setComponent(new ComponentName("dk.aau.cs.giraf.launcher", "dk.aau.cs.giraf.launcher.activities.ProfileSelectActivity"));
-
-                // Verify the intent will resolve to at least one activity
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte profilvælger");
+            public void onClose(Profile guardianProfile, Profile currentProfile) {
+                //If the guardian is the selected profile create GToast displaying the name
+                if(currentProfile == null){
+                    GToast w = new GToast(getApplicationContext(), "The Guardian " + guardianProfile.getName() + "is Selected", 2);
+                    w.show();
+                }
+                //If another current Profile is the selected profile create GToast displaying the name
+                else{
+                    GToast w = new GToast(getApplicationContext(), "The current profile " + guardianProfile.getName().toString() + "is Selected", 2);
+                    w.show();
                 }
             }
         });
+
 
         // Load Sequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -219,16 +185,13 @@ public class MainActivity extends TortoiseActivity {
             @Override
             public void onClick(View v) {
                 ToggleButton button = (ToggleButton) v;
-                ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
                 TextView profileName = (TextView) findViewById(R.id.child_name);
                 if (button.isChecked()) {
                     Profile g = LifeStory.getInstance().getGuardian();
                     profileName.setText(g.getName());
-                    profileImage.setImageBitmap(guardianImage);
                 } else {
                     Profile c = LifeStory.getInstance().getChild();
                     profileName.setText(c.getName());
-                    profileImage.setImageBitmap(childImage);
                 }
                 isInTemplateMode = button.isChecked();
                 sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
@@ -288,6 +251,7 @@ public class MainActivity extends TortoiseActivity {
     @Override
     protected void onResume()
     {
+        super.onResume();
         // Clear existing life stories
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
@@ -297,7 +261,6 @@ public class MainActivity extends TortoiseActivity {
 
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         ToggleButton editMode = (ToggleButton) findViewById(R.id.edit_mode_toggle);
-        ImageView profileImage = (ImageView)findViewById(R.id.profileImage);
         TextView profileName = (TextView)findViewById(R.id.child_name);
 
         isInEditMode = false;
@@ -306,37 +269,9 @@ public class MainActivity extends TortoiseActivity {
         editMode.setChecked(false);
         Profile c = LifeStory.getInstance().getChild();
         profileName.setText(c.getName());
-        profileImage.setImageBitmap(childImage);
         sequenceAdapter.setEditModeEnabled(isInEditMode);
         sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
         sequenceAdapter.notifyDataSetChanged();
-        super.onResume();
-    }
-
-    private void setProfileImages() {
-        Bitmap bm;
-    try{
-        if(LifeStory.getInstance().getChild().getImage() != null) {
-            bm = LifeStory.getInstance().getChild().getImage();
-        }
-        else {
-            bm = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
-        }
-
-        childImage = LayoutTools.getRoundedCornerBitmap(bm, this, 10);
-
-        if(LifeStory.getInstance().getGuardian().getImage() != null) {
-            bm = LifeStory.getInstance().getGuardian().getImage();
-        }
-        else {
-            bm = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder);
-        }
-
-        guardianImage = LayoutTools.getRoundedCornerBitmap(bm, this, 10);
-    }catch (NullPointerException e){
-        //TODO
-        //GuiHelper.ShowToast(getApplicationContext(), " FIX ME! " + e.toString());
-    }
     }
 
     public void renderDialog(int dialogId, final int position) {
