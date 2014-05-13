@@ -8,9 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,7 +33,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,15 +44,12 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GRadioButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
@@ -96,13 +90,15 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     SequenceViewGroup sequenceViewGroup;
     GDialog dialogAddFrames;
     GDialog gdialog;
-    File file;
+    GDialog printAlignmentDialog;
 
     private boolean dialogAddFramesActive;
     private boolean isInEditMode;
     private SequenceAdapter adapter;
     private Sequence sequence;
     private int lastPosition;
+    private File file;
+    private String debugEmail = null; // Set this to debug the print sequence function!
 	
 	public void addOnMainLayoutEventListener(OnMainLayoutEventListener mainLayoutListener) {
 		this.mainLayoutListeners.add(mainLayoutListener);
@@ -152,6 +148,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         // Create Sequence Group
         sequenceViewGroup = setupSequenceViewGroup(adapter);
+
+        // Init print alignment dialog
+        printAlignmentDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_print_alignment, null));
 	}
 
 	@Override
@@ -326,9 +325,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     @Override
     protected void onResume() {
         super.onResume();
-        GuiHelper.ShowToast(this, "onResume called!");
         if(file != null)
-            GuiHelper.ShowToast(this, ((Boolean)file.delete()).toString());
+            file.delete();
     }
 
     private SequenceAdapter setupAdapter() {
@@ -756,7 +754,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             @Override
             public void onClick(View view) {
                 //GuiHelper.ShowToast(EditModeActivity.this, "Testtest?");
-                EditModeActivity.this.printSequence();
+                EditModeActivity.this.openPrintAlignmentDialogBox();
             }
         });
 
@@ -895,12 +893,35 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
     }
 
-    public void printSequence(){
-        Bitmap combinedSequence = combineFrames();
-        sendSequenceToEmail(combinedSequence, "dan.skoett.petersen@gmail.com", LifeStory.getInstance().getCurrentStory().getTitle(), "Hej Dan");
+    public void openPrintAlignmentDialogBox(){
+        printAlignmentDialog.show();
     }
 
-    public Bitmap combineFrames(){
+    public void printSequence(View v) {
+        GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
+        Bitmap combinedSequence;
+
+        if (verticalButton.isChecked())
+            combinedSequence = combineFramesVertical();
+        else
+            combinedSequence = combineFramesHorizontal();
+
+        // Set debug-email in class variable "debugEmail" when debugging!
+        String email;
+        if (debugEmail == null)
+            email = LifeStory.getInstance().getGuardian().getEmail();
+        else
+            email = debugEmail;
+
+        sendSequenceToEmail(combinedSequence, email, "Lifestory: " + LifeStory.getInstance().getCurrentStory().getTitle(), "");
+    }
+
+    /**
+     * Create Bitmap of the current Sequence horizontally
+     *
+     * @return Bitmap
+     */
+    private Bitmap combineFramesHorizontal(){
 
         int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getWidth();
         int numframes = sequence.getMediaFrames().size();
@@ -913,11 +934,37 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas comboImage = new Canvas(combinedSequence);
 
-
         float leftOffset = 0f;
         for(MediaFrame frame : sequence.getMediaFrames()){
             comboImage.drawBitmap(frame.getContent().get(0).getImageData(), leftOffset, 0f, null);
-            leftOffset += frameDimens+spacing;
+            leftOffset += frameDimens + spacing;
+        }
+
+        return combinedSequence;
+    }
+
+    /**
+     * Create Bitmap of the current Sequence vertically
+     *
+     * @return Bitmap
+     */
+    private Bitmap combineFramesVertical(){
+
+        int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getHeight();
+        int numframes = sequence.getMediaFrames().size();
+        int spacing = 10;
+
+        int width = frameDimens;
+        int height = ((frameDimens+spacing)*numframes)-spacing;
+
+        Bitmap combinedSequence;
+        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas comboImage = new Canvas(combinedSequence);
+
+        float topOffset = 0f;
+        for(MediaFrame frame : sequence.getMediaFrames()){
+            comboImage.drawBitmap(frame.getContent().get(0).getImageData(), 0f, topOffset, null);
+            topOffset += frameDimens + spacing;
         }
 
         return combinedSequence;
@@ -980,5 +1027,15 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName);
         return mediaFile;
+    }
+
+    public void verticalRButtonClicked(View v){
+        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.horizontal);
+        radioButton.setChecked(false);
+    }
+
+    public void horizontalRButtonClicked(View v){
+        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
+        radioButton.setChecked(false);
     }
 }
