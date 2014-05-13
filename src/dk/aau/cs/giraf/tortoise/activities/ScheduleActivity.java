@@ -82,8 +82,31 @@ public class ScheduleActivity extends TortoiseActivity
                 newChoiceContent.addView(choiceFramView);
             }
 
+            renderChoiceIcon(position);
             multichoiceDialog.show();
 
+        renderSchedule();
+    }
+
+    public void renderChoiceIcon(int position)
+    {
+        ImageView choiceIcon = (ImageView) multichoiceDialog.findViewById(R.id.choiceIcon);
+        ImageView deleteBtn = (ImageView) multichoiceDialog.findViewById(R.id.removeChoiceIcon);
+
+        Pictogram currentChoiceIcon = weekdaySequences.get(weekdaySelected).getMediaFrames().get(position).getChoicePictogram();
+
+        if (currentChoiceIcon == null){
+
+            Bitmap defaultBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.question);
+
+            choiceIcon.setImageBitmap(defaultBitmap);
+            deleteBtn.setVisibility(View.GONE);
+        }
+        else{
+            choiceIcon.setImageBitmap(currentChoiceIcon.getImageData());
+            deleteBtn.setVisibility(View.VISIBLE);
+
+        }
         renderSchedule();
     }
 
@@ -108,7 +131,7 @@ public class ScheduleActivity extends TortoiseActivity
                 newChoiceContent.addView(choiceFramView);
             }
 
-            //renderChoiceIcon(position);
+            renderChoiceIcon(position);
 
         }
         renderSchedule();

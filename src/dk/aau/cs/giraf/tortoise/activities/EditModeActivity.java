@@ -868,7 +868,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         }
         adapter.notifyDataSetChanged();
-//TODO:        renderPictograms();
     }
 
     public void removeChoiceIcon(View v){

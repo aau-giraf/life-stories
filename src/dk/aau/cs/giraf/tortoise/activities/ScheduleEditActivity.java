@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -180,6 +181,33 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 GuiHelper.ShowToast(this, e.toString());
             }
         }
+        //Change choice icon
+        else if (resultCode == RESULT_OK && requestCode == 5){
+            try{
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                if (checkoutIds.length == 0) {
+                    Toast t = Toast.makeText(this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
+                    t.show();
+                }
+                else
+                {
+                    try{
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(picto);
+                        renderChoiceIcon(lastPosition);
+                    }
+                    //We expect a null pointer exception if the pictogram is without image
+                    //TODO: Investigate if this still happens with the new DB.
+                    // It still does
+                    catch (NullPointerException e){
+                        Toast t = Toast.makeText(this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
+                        t.show();
+                    }
+                }
+            } catch (Exception e){
+                GuiHelper.ShowToast(this, e.toString());
+            }
+        }
     }
 
     // this is just a variable for a workaround
@@ -225,7 +253,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
         return false;
     }
 
-    public void addPictograms(View v) {
+    public void addPictograms(View v)
+    {
         Intent i = new Intent();
         i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
                 "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
@@ -233,6 +262,22 @@ public class ScheduleEditActivity extends ScheduleActivity {
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
         ScheduleEditActivity.this.startActivityForResult(i, 4);
+    }
+
+    public void chooseChoicePictogram(View v)
+    {
+        Intent i = new Intent();
+        i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
+                "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
+        i.putExtra("purpose", "single");
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        ScheduleEditActivity.this.startActivityForResult(i, 5);
+    }
+
+    public void removeChoiceIcon(View v){
+        weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(null);
+        renderChoiceIcon(lastPosition);
     }
 
     public class DrawView extends View {
