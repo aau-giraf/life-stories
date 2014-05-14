@@ -35,7 +35,8 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         for(int i = 0; i < 7; i++)
         {
-            addTopArrow(borderIds[i]);
+            addUpArrow(borderIds[i]);
+            addDownArrow(borderIds[i]);
         }
 
         Intent intent = getIntent();
@@ -71,7 +72,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         return ids;
     }
 
-    public void addTopArrow(int layoutId)
+    public void addUpArrow(int layoutId)
     {
         LinearLayout l = (LinearLayout) findViewById(layoutId);
 
@@ -89,7 +90,8 @@ public class ScheduleViewActivity extends ScheduleActivity
             @Override
             public void onClick(View view)
             {
-                try{
+                try
+                {
                 LinearLayout arrowViewParent;
                     arrowViewParent = (LinearLayout) view.getParent();
 
@@ -97,9 +99,57 @@ public class ScheduleViewActivity extends ScheduleActivity
 
                 ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
 
-                if (arrowScrollView != null) {
+                if (arrowScrollView != null)
+                {
                     arrowScrollView.smoothScrollBy(0, -30);
                 }
+                }
+                catch (Exception ex)
+                {
+                    GuiHelper.ShowToast(getApplicationContext(), ex.toString());
+                }
+            }
+        });
+    }
+
+    public void addDownArrow(int layoutId)
+    {
+        LinearLayout l = (LinearLayout) findViewById(layoutId);
+
+        LinearLayout arrow = new LinearLayout(this);
+        LinearLayout.LayoutParams linLayoutParam = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        linLayoutParam.height = 60;
+        linLayoutParam.setMargins(0, 440, 0, 0);
+
+        LinearLayout ll = new LinearLayout(this);
+        ll.setOrientation(LinearLayout.VERTICAL);
+
+
+        linLayoutParam.width = LayoutParams.MATCH_PARENT;
+        arrow.setLayoutParams(linLayoutParam);
+
+        arrow.setBackgroundResource(R.drawable.scroll_down);
+        l.addView(arrow);
+
+        arrow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                try{
+                    LinearLayout arrowViewParent;
+                    arrowViewParent = (LinearLayout) view.getParent();
+
+                    RelativeLayout scrollViewParent = null;
+                    if (arrowViewParent != null) {
+                        scrollViewParent = (RelativeLayout) arrowViewParent.getParent();
+                    }
+
+                    ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
+
+                    if (arrowScrollView != null) {
+                        arrowScrollView.smoothScrollBy(0, 30);
+                    }
                 } catch (Exception ex)
                 {
                     GuiHelper.ShowToast(getApplicationContext(), ex.toString());
