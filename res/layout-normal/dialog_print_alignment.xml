@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_print_alignment_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true">
+
+    <dk.aau.cs.giraf.gui.GTextView
+        android:id="@+id/print_alignment_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_print_alignment"
+        android:textSize="30sp" />
+
+    <dk.aau.cs.giraf.gui.GRadioButton
+        android:id="@+id/vertical"
+        android:text="@string/dialog_print_alignment_vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/print_alignment_text"
+        android:checked="true"
+        android:onClick="verticalRButtonClicked" />
+
+    <dk.aau.cs.giraf.gui.GRadioButton
+        android:id="@+id/horizontal"
+        android:text="@string/dialog_print_alignment_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/vertical"
+        android:onClick="horizontalRButtonClicked" />
+
+    <dk.aau.cs.giraf.gui.GVerifyButton
+        android:id="@+id/print_alignment_ok"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/horizontal"
+        android:onClick="printSequence" />
+
+    <dk.aau.cs.giraf.gui.GCancelButton
+        android:id="@+id/print_alignment_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/horizontal"
+        android:layout_alignRight="@id/print_alignment_text"
+        android:onClick="dialogPrintAlignmentCancel" />
+</RelativeLayout>
