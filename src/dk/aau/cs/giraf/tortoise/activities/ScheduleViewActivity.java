@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -38,7 +39,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setUpViewMode();
 
-        
         // display the sequences in the week schedule
         displaySequences();
 
@@ -84,13 +84,13 @@ public class ScheduleViewActivity extends ScheduleActivity
     {
         int ids[] =
         {
-            R.id.borderMonday,
-            R.id.borderTuesday,
-            R.id.borderWednesday,
-            R.id.borderThursday,
-            R.id.borderFriday,
-            R.id.borderSaturday,
-            R.id.borderSunday,
+            R.id.border_monday,
+            R.id.border_tuesday,
+            R.id.border_wednesday,
+            R.id.border_thursday,
+            R.id.border_friday,
+            R.id.border_saturday,
+            R.id.border_sunday,
         };
 
         return ids;
@@ -217,7 +217,7 @@ public class ScheduleViewActivity extends ScheduleActivity
     }
 
     // TODO: not currently used. Not sure if working. Not tested!
-    int getScrollViewPosition(ScrollView scrollView)
+/*    int getScrollViewPosition(ScrollView scrollView)
     {
         // 1 for top, 0 for between top and bottom and -1 for bottom
         LinearLayout linearLayout = (LinearLayout) scrollView.getChildAt(0);
@@ -232,8 +232,7 @@ public class ScheduleViewActivity extends ScheduleActivity
                 return 0;
             }
         }
->>>>>>> refs/remotes/origin/dev
-    }
+    }*/
 
     private void displaySequences()
     {
