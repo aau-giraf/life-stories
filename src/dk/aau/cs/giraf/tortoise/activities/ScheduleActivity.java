@@ -301,7 +301,7 @@ public class ScheduleActivity extends TortoiseActivity
                 int index = getViewIndex(v);
 
                 // show
-                //showMultiChoiceDialog(index, weekdaySelected);
+                showMultiChoiceDialog(index, weekdaySelected);
             }
         });
 

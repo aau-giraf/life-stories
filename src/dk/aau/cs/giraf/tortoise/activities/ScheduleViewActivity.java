@@ -31,12 +31,19 @@ public class ScheduleViewActivity extends ScheduleActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view_activity);
 
+        // display the sequences in the week schedule
+        displaySequences();
+
         int[] borderIds = getBorderIds();
 
         for(int i = 0; i < 7; i++)
         {
-            addUpArrow(borderIds[i]);
-            addDownArrow(borderIds[i]);
+            // do not show arrows unless there are too many elements in the view
+            if(shouldShowArrow(borderIds[i]))
+            {
+                addUpArrow(borderIds[i]);
+                addDownArrow(borderIds[i]);
+            }
         }
 
         Intent intent = getIntent();
@@ -47,9 +54,6 @@ public class ScheduleViewActivity extends ScheduleActivity
             finish();
             return;
         }
-
-        // display the sequences in the week schedule
-        displaySequences();
 
         //Set schedule name
         TextView title = (TextView) findViewById(R.id.scheduleName);
@@ -156,6 +160,40 @@ public class ScheduleViewActivity extends ScheduleActivity
                 }
             }
         });
+    }
+
+    public Boolean shouldShowArrow(int borderID)
+    {
+        // method to determine whether arrows should be shown
+        LinearLayout borderLayout = (LinearLayout) findViewById(borderID);
+        try
+        {
+            RelativeLayout parentLayout = (RelativeLayout) borderLayout.getParent();
+
+            if (parentLayout != null) {
+                ScrollView sv = (ScrollView) parentLayout.getChildAt(1);
+
+                if (sv != null)
+                {
+                    // this is the view in the scroll view which contains pictograms in each week day
+                    LinearLayout scrollViewChild = (LinearLayout) sv.getChildAt(0); // TODO: fix hard coding of 0
+
+                    // if more than 4 pictograms in scroll view, show arrows
+                    if(scrollViewChild.getChildCount() >= 4)
+                    {
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            GuiHelper.ShowToast(this, ex.toString());
+        }
+
+        return false;
     }
 
     private void displaySequences()
