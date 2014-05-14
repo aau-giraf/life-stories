@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import java.util.List;
@@ -58,13 +59,13 @@ public class ScheduleViewActivity extends ScheduleActivity
     {
         int ids[] =
         {
-            R.id.border_monday,
-            R.id.border_tuesday,
-            R.id.border_wednesday,
-            R.id.border_thursday,
-            R.id.border_friday,
-            R.id.border_saturday,
-            R.id.border_sunday,
+            R.id.borderMonday,
+            R.id.borderTuesday,
+            R.id.borderWednesday,
+            R.id.borderThursday,
+            R.id.borderFriday,
+            R.id.borderSaturday,
+            R.id.borderSunday,
         };
 
         return ids;
@@ -88,8 +89,21 @@ public class ScheduleViewActivity extends ScheduleActivity
             @Override
             public void onClick(View view)
             {
-                ScrollView sv = (ScrollView) findViewById(R.id.scrollViewMonday);
-                sv.smoothScrollBy(0, -30);
+                try{
+                LinearLayout arrowViewParent;
+                    arrowViewParent = (LinearLayout) view.getParent();
+
+                RelativeLayout scrollViewParent = (RelativeLayout) arrowViewParent.getParent();
+
+                ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
+
+                if (arrowScrollView != null) {
+                    arrowScrollView.smoothScrollBy(0, -30);
+                }
+                } catch (Exception ex)
+                {
+                    GuiHelper.ShowToast(getApplicationContext(), ex.toString());
+                }
             }
         });
     }
