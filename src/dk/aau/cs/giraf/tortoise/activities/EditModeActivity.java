@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +34,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -47,6 +47,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GRadioButton;
@@ -251,8 +252,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     bitmap = LayoutTools.getSquareBitmap(bitmap);
                     bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
                     LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
-                    ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
-                    storyImage.setImageBitmap(bitmap);
+                    GButton storyImage = (GButton) findViewById(R.id.storyImage);
+                    storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
 			    }
                 // We expect a null pointer exception if the pictogram is without image
                 // TODO: Investigate if this still happens with the new DB.
@@ -648,7 +649,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	public void renderEditMenu()
     {
 		renderMenuBar(R.layout.edit_menu);
-		ImageView storyImage = (ImageView) findViewById(R.id.storyImage);
+		GButton storyImage = (GButton) findViewById(R.id.storyImage);
 		storyImage.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -664,7 +665,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 		if(LifeStory.getInstance().getCurrentStory().getTitleImage() != null) {
-			storyImage.setImageBitmap(LifeStory.getInstance().getCurrentStory().getTitleImage());
+			storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), LifeStory.getInstance().getCurrentStory().getTitleImage()));
 		}
 		EditText storyName = (EditText) findViewById(R.id.storyName);
         storyName.setHighlightColor(00000000);
@@ -728,7 +729,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 
-		ImageButton exit = (ImageButton)findViewById(R.id.exitEditMode);
+		GButton exit = (GButton)findViewById(R.id.exitEditMode);
 		exit.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -736,8 +737,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				EditModeActivity.this.renderDialog(DIALOG_EXIT);
 			}
 		});
-		
-		ImageButton save = (ImageButton)findViewById(R.id.save);
+
+        GButton save = (GButton)findViewById(R.id.save);
 		save.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -752,7 +753,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 
-        ImageButton print = (ImageButton)findViewById(R.id.printSequence);
+        GButton print = (GButton)findViewById(R.id.printSequence);
         print.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

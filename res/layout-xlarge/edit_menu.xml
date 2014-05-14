@@ -3,16 +3,18 @@
   	android:id="@+id/editMenu"
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
-    <ImageView 
+
+    <dk.aau.cs.giraf.gui.GButton
         android:id="@+id/storyImage"
         android:layout_width="100dp"
-       	android:layout_height="100dp"
+        android:layout_height="100dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:background="@drawable/gbutton"
-       	android:src="@drawable/no_image"
-       	android:scaleType="centerCrop"
-        android:layout_alignParentLeft="true"/>
+        android:drawableBottom="@drawable/no_image"
+        android:scaleType="centerCrop"
+        android:layout_alignParentLeft="true"
+        />
+
 	<EditText 
 	    android:id="@+id/storyName"
 	    android:layout_width="500dp"
@@ -33,22 +35,19 @@
         android:textAlignment="textStart"
         android:textIsSelectable="false" />
 
+    <dk.aau.cs.giraf.gui.GButton
+        android:id="@+id/exitEditMode"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitCenter"
+        android:drawableBottom="@drawable/exit"
+        />
 
-
-
-	    <ImageButton 
-	        android:id="@+id/exitEditMode"
-	        android:layout_width="80dp"
-	    	android:layout_height="80dp"
-            android:layout_centerVertical="true"
-	    	android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentRight="true"
-            android:scaleType="fitCenter"
-	    	android:src="@drawable/exit"
-	    	android:background="@drawable/gbutton" />
-
-    <ImageButton
+    <dk.aau.cs.giraf.gui.GButton
         android:id="@+id/save"
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -56,9 +55,9 @@
         android:layout_marginLeft="10dp"
         android:layout_toLeftOf="@id/exitEditMode"
         android:scaleType="fitCenter"
-        android:src="@drawable/save"
-        android:background="@drawable/gbutton"
+        android:drawableBottom="@drawable/save"
         />
+
 
     <ImageButton
         android:id="@+id/largeFrame"
@@ -72,16 +71,18 @@
         android:background="@drawable/gbutton"
         android:visibility="invisible"/>
 
-    <ImageButton
+
+
+    <dk.aau.cs.giraf.gui.GButton
         android:id="@+id/printSequence"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/largeFrame"
         android:scaleType="fitCenter"
-        android:src="@drawable/add_small"
-        android:background="@drawable/gbutton"
-        android:visibility="visible"/>
+        android:drawableBottom="@drawable/add_small"
+        android:visibility="visible"
+        />
 
     <ImageView
         android:id="@+id/bin"
