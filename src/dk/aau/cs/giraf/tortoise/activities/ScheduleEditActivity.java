@@ -218,18 +218,22 @@ public class ScheduleEditActivity extends ScheduleActivity {
         Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();
 
         if (scheduleSeq.getTitlePictoId() == 0){
-            GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et title pictogram");
+            GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et titel-pictogram");
             return false;
         }
         Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
         if (title != null) {
             scheduleSeq.setTitle(title.toString());
+        }else if(title.equals(""))
+        {
+            // if no title, set a default one
+            scheduleSeq.setTitle(getString(R.string.unnamed_sequence));
         }
 
         boolean s1 = true;
         for (Sequence daySeq : super.weekdaySequences) {
-            daySeq.setTitle("");       //test value
-            daySeq.setTitlePictoId(1); //test value
+            daySeq.setTitle("");
+            daySeq.setTitlePictoId(1);
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
                     dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     LifeStory.getInstance().getChild().getId(),
