@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +58,7 @@ public class ScheduleActivity extends TortoiseActivity
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
         ScheduleEditActivity.weekdayLayout = (LinearLayout) v.getParent();
-        DetermineWeekSection(v);
+        determineWeekSection(v);
 
         this.startActivityForResult(i, 3);
     }
@@ -64,50 +66,90 @@ public class ScheduleActivity extends TortoiseActivity
     public void dismissAddContentDialog(View v)
     {
         multichoiceDialog.dismiss();
-        renderSchedule();
+        renderSchedule(true);
     }
 
-    public void showMultiChoiceDialog(int position, int day)
+    public void showMultiChoiceDialog(int position, int day, Activity activity)
     {
             lastPosition = position;
             multichoiceDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content, null));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
-            LinearLayout newChoiceContent = (LinearLayout) multichoiceDialog.findViewById(R.id.newChoiceContent2);
+            final LinearLayout newChoiceContent = (LinearLayout) multichoiceDialog.findViewById(R.id.newChoiceContent2);
             newChoiceContent.removeAllViews();
 
             for(Pictogram p : weekdaySequences.get(day).getMediaFrames().get(position).getContent()) {
-                EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, weekdaySequences.get(day).getMediaFrames().get(position), p, params);
-                choiceFramView.addDeleteButton(position);
+                final EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, weekdaySequences.get(day).getMediaFrames().get(position), p, params);
+                if(activity instanceof ScheduleEditActivity)
+                {
+                    choiceFramView.addDeleteButton(position);
+                }
+                else if(activity instanceof ScheduleViewActivity)
+                {
+                    choiceFramView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            updateContent(view);
+                            renderSchedule(false);
+                            dismissAddContentDialog(view);
+                        }
+                    });
+                }
                 newChoiceContent.addView(choiceFramView);
             }
 
-            renderChoiceIcon(position);
-            multichoiceDialog.show();
+            // If we in view mode, hide edit buttons and text.
+            if(activity instanceof ScheduleViewActivity)
+            {
+                multichoiceDialog.findViewById(R.id.addChoice2).setVisibility(View.GONE);
+                multichoiceDialog.findViewById(R.id.choiceIcon).setClickable(false);
+                multichoiceDialog.findViewById(R.id.title).setVisibility(View.GONE);
+                multichoiceDialog.findViewById(R.id.choicesText).setVisibility(View.GONE);
+            }
 
-        renderSchedule();
+
+            renderChoiceIcon(position, this);
+            multichoiceDialog.show();
     }
 
-    public void renderChoiceIcon(int position)
+    private void updateContent(View view) {
+        Pictogram selectedPictogram = weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).getContent().get(getViewIndex(view));
+        List<Pictogram> newContent = new ArrayList<Pictogram>();
+        newContent.add(selectedPictogram);
+        weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setContent(newContent);
+    }
+
+    public void renderChoiceIcon(int position, Activity activity)
     {
         ImageView choiceIcon = (ImageView) multichoiceDialog.findViewById(R.id.choiceIcon);
         ImageView deleteBtn = (ImageView) multichoiceDialog.findViewById(R.id.removeChoiceIcon);
 
         Pictogram currentChoiceIcon = weekdaySequences.get(weekdaySelected).getMediaFrames().get(position).getChoicePictogram();
 
-        if (currentChoiceIcon == null){
-
+        if (currentChoiceIcon == null)
+        {
             Bitmap defaultBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.question);
 
             choiceIcon.setImageBitmap(defaultBitmap);
             deleteBtn.setVisibility(View.GONE);
         }
-        else{
+        else
+        {
             choiceIcon.setImageBitmap(currentChoiceIcon.getImageData());
-            deleteBtn.setVisibility(View.VISIBLE);
-
+            if(activity instanceof ScheduleEditActivity)
+            {
+                deleteBtn.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                deleteBtn.setVisibility(View.GONE);
+            }
         }
-        renderSchedule();
+
+        if(activity instanceof ScheduleEditActivity)
+        {
+            renderSchedule(true);
+        }
     }
 
     public void updateMultiChoiceDialog(int position)
@@ -131,13 +173,17 @@ public class ScheduleActivity extends TortoiseActivity
                 newChoiceContent.addView(choiceFramView);
             }
 
-            renderChoiceIcon(position);
+            renderChoiceIcon(position, this);
 
         }
-        renderSchedule();
+        renderSchedule(true);
     }
 
-    public void renderSchedule()
+    /**
+     * Updates the frames shown on the schedule. Set addButtonVisible to true in edit mode, false in view mode.
+     * @param addButtonVisible
+     */
+    public void renderSchedule(Boolean addButtonVisible)
     {
         LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
 
@@ -158,7 +204,13 @@ public class ScheduleActivity extends TortoiseActivity
                     {
                         addItems(mf, level3);
                     }
-                level3.addView(addButton());
+
+                if(addButtonVisible)
+                {
+                    level3.addView(addButton());
+                }
+
+
             }catch (Exception ex)
             {
                 GuiHelper.ShowToast(this, "Der skete en fejl");
@@ -300,8 +352,15 @@ public class ScheduleActivity extends TortoiseActivity
                 // index of pictogram being clicked
                 int index = getViewIndex(v);
 
-                // show
-                showMultiChoiceDialog(index, weekdaySelected);
+                // update weekdaySelected
+                determineWeekSection(v);
+
+                // show if in edit mode or there is more than one choice in view mode
+                if(ScheduleActivity.this instanceof ScheduleEditActivity || (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1))
+                {
+                    showMultiChoiceDialog(index, weekdaySelected, ScheduleActivity.this);
+                }
+
             }
         });
 
@@ -349,7 +408,7 @@ public class ScheduleActivity extends TortoiseActivity
         }
     }
 
-    public void DetermineWeekSection(View v)
+    public void determineWeekSection(View v)
     {
         int weekdayId = v.getId();
         LinearLayout layout;
@@ -392,7 +451,7 @@ public class ScheduleActivity extends TortoiseActivity
                 weekdaySelected = Day.SUNDAY.ordinal();
                 break;
             default:
-                DetermineWeekSection((View)v.getParent());
+                determineWeekSection((View) v.getParent());
                 break;
         }
     }

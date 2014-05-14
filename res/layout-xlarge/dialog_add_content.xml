@@ -21,8 +21,7 @@
         android:id="@+id/choiceContainer"
         android:layout_width="165dp"
         android:layout_height="165dp"
-        android:layout_toRightOf="@id/title"
-        android:layout_marginLeft="50dp">
+        android:layout_centerHorizontal="true">
         <ImageView
             android:id="@+id/choiceIcon"
             android:layout_width="150dp"
