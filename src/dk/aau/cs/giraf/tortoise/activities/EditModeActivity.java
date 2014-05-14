@@ -1000,6 +1000,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         }catch (android.content.ActivityNotFoundException ex) {
             GuiHelper.ShowToast(this, "Fejl: Email klient ikke fundet!");
         }
+        printAlignmentDialog.dismiss();
     }
 
     /**
