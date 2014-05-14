@@ -66,19 +66,17 @@
             android:scaleType="fitCenter"
             android:drawableBottom="@drawable/exit"
             android:onClick="doExit"/>
-        
-        <ToggleButton
+
+        <dk.aau.cs.giraf.gui.GToggleButton
             android:id="@+id/edit_mode_toggle"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_toLeftOf="@+id/template_mode_toggle"
             android:layout_centerVertical="true"
-            android:background="@drawable/btn_edit"
-            android:src="@null"
+            android:drawableBottom="@drawable/wrench"
             android:textOn=""
             android:textOff=""
-            android:layout_marginRight="15dp"
-            />
+            android:layout_marginRight="15dp" />
         
         <ToggleButton
             android:id="@+id/template_mode_toggle"

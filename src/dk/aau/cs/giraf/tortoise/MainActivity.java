@@ -17,6 +17,7 @@ import android.widget.ToggleButton;
 import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GToast;
+import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -125,14 +126,14 @@ public class MainActivity extends TortoiseActivity {
         });
 
         // Edit mode switcher button
-        ToggleButton button = (ToggleButton) findViewById(R.id.edit_mode_toggle);
+        GToggleButton button = (GToggleButton) findViewById(R.id.edit_mode_toggle);
 
         button.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                ToggleButton button = (ToggleButton) v;
-                isInEditMode = button.isChecked();
+                GToggleButton button = (GToggleButton) v;
+                isInEditMode = button.isToggled();
                 GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
 
                 // Make sure that all views currently not visible will have the correct
@@ -237,13 +238,13 @@ public class MainActivity extends TortoiseActivity {
                 LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
 
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
-        ToggleButton editMode = (ToggleButton) findViewById(R.id.edit_mode_toggle);
+        GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
         TextView profileName = (TextView)findViewById(R.id.child_name);
 
         isInEditMode = false;
         isInTemplateMode = false;
         templateMode.setChecked(false);
-        editMode.setChecked(false);
+        editMode.setToggled(false);
         Profile c = LifeStory.getInstance().getChild();
         profileName.setText(c.getName());
         sequenceAdapter.setEditModeEnabled(isInEditMode);
