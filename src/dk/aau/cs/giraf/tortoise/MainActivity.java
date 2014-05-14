@@ -57,11 +57,7 @@ public class MainActivity extends TortoiseActivity {
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
             finish();
             return ;
-        }/*else if(i.getExtras().getInt("app_to_start") == 10)
-        {
-            Intent intent = new Intent(this, ScheduleViewActivity.class);
-            startActivity(intent);
-        }*/
+        }
         // If launched from Giraf, then execute!
 
         // Initialize image and name of profile
@@ -74,6 +70,11 @@ public class MainActivity extends TortoiseActivity {
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
         LifeStory.getInstance().setChild(
                 h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+
+        //TODO temp fix for no child ID
+        if (LifeStory.getInstance().getChild() == null){
+            LifeStory.getInstance().setChild(h.profilesHelper.getProfileById(11));
+        }
 
         profileName.setText(LifeStory.getInstance().getChild().getName());
 
@@ -153,27 +154,7 @@ public class MainActivity extends TortoiseActivity {
             }
         });
 
-        // Template mode switcher button
-        ToggleButton templateToggle = (ToggleButton) findViewById(R.id.template_mode_toggle);
 
-        templateToggle.setOnClickListener(new ImageButton.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                ToggleButton button = (ToggleButton) v;
-                TextView profileName = (TextView) findViewById(R.id.child_name);
-                if (button.isChecked()) {
-                    Profile g = LifeStory.getInstance().getGuardian();
-                    profileName.setText(g.getName());
-                } else {
-                    Profile c = LifeStory.getInstance().getChild();
-                    profileName.setText(c.getName());
-                }
-                isInTemplateMode = button.isChecked();
-                sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
-                sequenceAdapter.notifyDataSetChanged();
-            }
-        });
     }
 
     public SequenceListAdapter initAdapter() {

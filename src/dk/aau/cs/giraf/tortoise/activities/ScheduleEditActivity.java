@@ -232,6 +232,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
 
         boolean s1 = true;
+        //Loops trough the days sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
             daySeq.setTitle("");
             daySeq.setTitlePictoId(1);
@@ -244,7 +245,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             scheduleSeq.getMediaFrames().add(mf);
         }
 
-        // TODO hardcoded save for both child and guardian
+        //Saves the week sequence with reference to the days
         boolean s2 = DBController.getInstance().saveSequence(scheduleSeq,
                 dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
                 LifeStory.getInstance().getChild().getId(),
