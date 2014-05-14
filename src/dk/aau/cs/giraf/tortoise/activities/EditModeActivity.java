@@ -1040,4 +1040,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
         radioButton.setChecked(false);
     }
+
+    public void dialogPrintAlignmentCancel(View v){
+        printAlignmentDialog.dismiss();
+    }
 }

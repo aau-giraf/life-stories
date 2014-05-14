@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_below="@id/print_alignment_text"
         android:checked="true"
-        android:onClick="verticalRButtonClicked"/>
+        android:onClick="verticalRButtonClicked" />
 
     <dk.aau.cs.giraf.gui.GRadioButton
         android:id="@+id/horizontal"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_below="@id/vertical"
-        android:onClick="horizontalRButtonClicked"/>
+        android:onClick="horizontalRButtonClicked" />
 
     <dk.aau.cs.giraf.gui.GVerifyButton
         android:id="@+id/print_alignment_ok"
@@ -36,4 +36,12 @@
         android:layout_width="wrap_content"
         android:layout_below="@+id/horizontal"
         android:onClick="printSequence" />
+
+    <dk.aau.cs.giraf.gui.GCancelButton
+        android:id="@+id/print_alignment_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/horizontal"
+        android:layout_alignRight="@id/print_alignment_text"
+        android:onClick="dialogPrintAlignmentCancel" />
 </RelativeLayout>
