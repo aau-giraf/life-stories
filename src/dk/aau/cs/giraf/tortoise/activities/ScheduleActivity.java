@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,7 @@ public class ScheduleActivity extends TortoiseActivity
     List<Sequence> weekdaySequences;
     int weekdaySelected;
     int lastPosition;
+    int currentActivity = 0;
 
     public void startPictosearch(View v)
     {
@@ -222,9 +224,9 @@ public class ScheduleActivity extends TortoiseActivity
 
     public void addItems(MediaFrame mf, LinearLayout layout)
     {
-
         try
         {
+
             List<Pictogram> pictoList = unpackSequence(mf);
 
                         // if only one pictogram is in the sequence, just display it in its respective week day
@@ -355,14 +357,24 @@ public class ScheduleActivity extends TortoiseActivity
                 // update weekdaySelected
                 determineWeekSection(v);
 
+                // Set this view as currentActivity when pressed if in viewmode
+                if(ScheduleActivity.this instanceof ScheduleViewActivity){
+                    currentActivity = index;
+                }
+
                 // show if in edit mode or there is more than one choice in view mode
                 if(ScheduleActivity.this instanceof ScheduleEditActivity || (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1))
                 {
                     showMultiChoiceDialog(index, weekdaySelected, ScheduleActivity.this);
                 }
-
             }
         });
+
+        // Marks this particular view to be the currant activity
+        if(getViewIndex(iw) == currentActivity){
+            iw.setPadding(3, 3, 3, 3);
+            iw.setBackgroundColor(Color.CYAN);
+        }
 
         // add pictogram to week day and make sure the add button is always at the bottom of the week day
         layout.addView(iw); // add new pictogram
