@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -28,6 +29,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GTooltipBasic;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
@@ -53,9 +55,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             isInLandscape = true;
             setContentView(R.layout.schedule_edit_activity);
-            ImageButton b = (ImageButton) findViewById(R.id.schedule_image_button);
-            GTooltipBasic tooltip = new GTooltipBasic(b, "Tryk her for at tilføje et billede til ugeskemaet", R.drawable.ic_launcher);
-            tooltip.Show();
+            GButton b = (GButton) findViewById(R.id.schedule_image_button);
         } else {
             isInLandscape = false;
             setContentView(R.layout.schedule_edit_activity_portrait);
@@ -113,8 +113,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         bitmap = LayoutTools.getSquareBitmap(bitmap);
                         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
-                        ImageView storyImage = (ImageView) findViewById(R.id.schedule_image_button);
-                        storyImage.setImageBitmap(bitmap);
+                        // TODO: fix this to not just write on top of image
+                        GButton storyImage = (GButton) findViewById(R.id.schedule_image_button);
+                        storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.

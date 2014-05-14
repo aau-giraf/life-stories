@@ -15,7 +15,7 @@
         android:background="@drawable/main_topbar_gradient_bg"
         android:orientation="horizontal" >
 
-        <ImageButton
+        <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/schedule_image_button"
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -23,9 +23,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/no_image_big"
-            android:background="@drawable/gbutton"
-            android:onClick="startPictosearch"/>
+            android:drawableBottom="@drawable/no_image_big"
+            android:onClick="startPictosearch" />
 
         <EditText
             android:id="@+id/scheduleName"
@@ -47,31 +46,27 @@
             android:gravity="center"
             android:singleLine="true" />
 
-        <ImageButton
+        <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/save"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
             android:layout_toLeftOf="@id/home_button"
             android:scaleType="fitCenter"
-            android:src="@drawable/save"
-            android:background="@drawable/gbutton"
+            android:drawableBottom="@drawable/save"
             android:onClick="saveSchedule"
-            />
+            android:layout_marginRight="15dp" />
 
-        <ImageButton
+        <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/home_button"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/exit"
-            android:background="@drawable/gbutton"
-            android:onClick="doExit"/>
-
+            android:drawableBottom="@drawable/exit"
+            android:onClick="doExit"
+            android:layout_marginRight="15dp" />
 
     </RelativeLayout>
 

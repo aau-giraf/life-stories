@@ -74,8 +74,6 @@
             android:layout_toLeftOf="@+id/template_mode_toggle"
             android:layout_centerVertical="true"
             android:drawableBottom="@drawable/wrench"
-            android:textOn=""
-            android:textOff=""
             android:layout_marginRight="15dp" />
         
         <ToggleButton
