@@ -3,35 +3,24 @@ package dk.aau.cs.giraf.tortoise.activities;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
-import dk.aau.cs.giraf.gui.GDialog;
-import dk.aau.cs.giraf.gui.GTooltipBasic;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -48,6 +37,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         // check whether tablet is in portrait or landscape mode and set the layout accordingly
         // landscape mode shows mode days than portrait mode
@@ -175,7 +165,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         mediaFrame.addContent(pictogram);
                     }
 
-                    renderSchedule();
+                    renderSchedule(true);
                     updateMultiChoiceDialog(lastPosition);
                 }
             } catch (Exception e) {
@@ -195,7 +185,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                     try{
                         Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
                         weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(picto);
-                        renderChoiceIcon(lastPosition);
+                        renderChoiceIcon(lastPosition, this);
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.
@@ -283,7 +273,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     public void removeChoiceIcon(View v){
         weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(null);
-        renderChoiceIcon(lastPosition);
+        renderChoiceIcon(lastPosition, this);
     }
 
     public class DrawView extends View {

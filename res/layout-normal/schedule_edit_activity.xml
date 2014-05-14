@@ -11,55 +11,78 @@
     <RelativeLayout
         android:id="@+id/sequence_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/schedule_view_top_bar_height"
+        android:layout_height="45dp"
         android:background="@drawable/main_topbar_gradient_bg"
         android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/scheduleName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/schedule_image_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:text="Skemanavn"
-            android:textSize="60sp"
-            android:textColor="@color/text_color" />
+            android:layout_marginLeft="30dp"
+            android:scaleType="centerCrop"
+            android:drawableBottom="@drawable/no_image_big"
+            android:onClick="startPictosearch" />
+
+        <EditText
+            android:id="@+id/scheduleName"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:saveEnabled="true"
+            android:maxLength="24"
+            android:lines="1"
+            android:selectAllOnFocus="true"
+            android:background="#00000000"
+            android:textColorHighlight="#00000000"
+            android:textSize="30sp"
+            android:textColor="@color/text_color"
+            android:hint="@string/schedule_name"
+            android:textAlignment="textStart"
+            android:textIsSelectable="false"
+            android:layout_alignBottom="@+id/schedule_image_button"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:singleLine="true" />
+
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/save"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/home_button"
+            android:scaleType="fitCenter"
+            android:drawableBottom="@drawable/save"
+            android:onClick="saveSchedule"
+            android:layout_marginRight="15dp" />
 
         <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/home_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
             android:scaleType="fitCenter"
             android:drawableBottom="@drawable/exit"
             android:onClick="doExit"
+            android:layout_marginRight="15dp"
             />
-
-        <ImageView
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:id="@+id/schedule_image_view"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="30dp"
-            android:layout_marginBottom="7dp" />
-
 
     </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/completeWeekLayout">
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@color/green"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:id="@+id/sectionMonday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -80,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/monday"
-                    android:id="@id/child_name"
+                    android:id="@id/storyName"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
@@ -89,10 +112,11 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollViewMonday"
+                android:id="@+id/scrollView"
                 android:layout_below="@+id/frameLayout7"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" >
+                android:layout_alignParentStart="true"
+                >
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -100,7 +124,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutMonday"
-                    android:dividerPadding="2dp" />
+                    android:dividerPadding="2dp">
+                </LinearLayout>
+
             </ScrollView>
 
             <LinearLayout
@@ -109,9 +135,9 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:id="@+id/border_monday"
                 android:layout_alignParentBottom="true"
-                android:layout_below="@+id/frameLayout7"
-                android:id="@+id/borderMonday" />
+                android:layout_below="@+id/frameLayout7" />
 
         </RelativeLayout>
 
@@ -119,7 +145,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/purple" >
+            android:background="@color/purple"
+            android:id="@+id/sectionTuesday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -143,15 +170,15 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
-
             </FrameLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/scrollView3"
+                android:layout_below="@+id/frameLayout"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/frameLayout">
+                android:layout_alignParentStart="true">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -159,7 +186,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutTuesday"
-                    android:dividerPadding="2dp" />
+                    android:layout_below="@+id/frameLayout"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
             <LinearLayout
@@ -168,8 +197,8 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:id="@+id/border_tuesday"
                 android:layout_alignParentBottom="true"
-                android:id="@+id/borderTuesday"
                 android:layout_below="@+id/frameLayout" />
 
         </RelativeLayout>
@@ -178,7 +207,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/orange" >
+            android:background="@color/orange"
+            android:id="@+id/sectionWednesday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -202,16 +232,15 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
-
             </FrameLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView3"
                 android:layout_below="@+id/frameLayout2"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:id="@+id/scrollView7">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -219,7 +248,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutWednesday"
-                    android:dividerPadding="2dp" />
+                    android:layout_below="@+id/frameLayout2"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
             <LinearLayout
@@ -228,16 +259,18 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentBottom="true"
-                android:id="@+id/borderWednesday"
-                android:layout_below="@+id/frameLayout2" />
+                android:layout_below="@+id/frameLayout2"
+                android:id="@+id/border_wednesday"
+                android:layout_alignParentBottom="true"></LinearLayout>
+
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/blue" >
+            android:background="@color/blue"
+            android:id="@+id/sectionThursday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -262,16 +295,15 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
-
             </FrameLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView8"
+                android:id="@+id/scrollView4"
+                android:layout_below="@+id/frameLayout3"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/frameLayout3">
+                android:layout_alignParentStart="true">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -279,7 +311,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutThursday"
-                    android:dividerPadding="2dp" />
+                    android:layout_below="@+id/frameLayout3"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
             <LinearLayout
@@ -288,8 +322,8 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:id="@+id/border_thursday"
                 android:layout_alignParentBottom="true"
-                android:id="@+id/borderThursday"
                 android:layout_below="@+id/frameLayout3" />
 
         </RelativeLayout>
@@ -298,7 +332,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/yellow" >
+            android:background="@color/yellow"
+            android:id="@+id/sectionFriday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -328,18 +363,17 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView9"
+                android:id="@+id/scrollView2"
+                android:layout_below="@+id/frameLayout4"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/frameLayout4">
+                android:layout_alignParentStart="true">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:id="@+id/layoutFriday"
-                    android:dividerPadding="2dp" />
+                    android:id="@+id/layoutFriday" />
             </ScrollView>
 
             <LinearLayout
@@ -348,8 +382,8 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:id="@+id/border_friday"
                 android:layout_alignParentBottom="true"
-                android:id="@+id/borderFriday"
                 android:layout_below="@+id/frameLayout4" />
 
         </RelativeLayout>
@@ -358,7 +392,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/red" >
+            android:background="@color/red"
+            android:id="@+id/sectionSaturday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -382,16 +417,15 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
-
             </FrameLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView6"
+                android:id="@+id/scrollView5"
+                android:layout_below="@+id/frameLayout5"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/frameLayout5">
+                android:layout_alignParentStart="true">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -399,7 +433,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/layoutSaturday"
-                    android:dividerPadding="2dp" />
+                    android:layout_below="@+id/frameLayout5"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
             <LinearLayout
@@ -408,8 +444,8 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:id="@+id/border_saturday"
                 android:layout_alignParentBottom="true"
-                android:id="@+id/borderSaturday"
                 android:layout_below="@+id/frameLayout5" />
 
         </RelativeLayout>
@@ -419,7 +455,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/white"
-            android:id="@+id/relativeLayout" >
+            android:id="@+id/sectionSunday">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -443,24 +479,25 @@
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
-
             </FrameLayout>
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollviewSunday"
+                android:id="@+id/scrollView6"
+                android:layout_below="@+id/frameLayout6"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/frameLayout6">
+                android:layout_alignParentStart="true">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:id="@+id/layoutSaturday"
-                    android:dividerPadding="2dp" />
+                    android:id="@+id/layoutSunday"
+                    android:layout_below="@+id/frameLayout6"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
             </ScrollView>
 
             <LinearLayout
@@ -469,8 +506,8 @@
                 android:layout_height="fill_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:id="@+id/border_sunday"
                 android:layout_alignParentBottom="true"
-                android:id="@+id/borderSunday"
                 android:layout_below="@+id/frameLayout6" />
 
         </RelativeLayout>
