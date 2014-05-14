@@ -65,7 +65,8 @@
         android:layout_toLeftOf="@id/save"
         android:scaleType="centerCrop"
         android:src="@drawable/add_large"
-        android:background="@drawable/gbutton" />
+        android:background="@drawable/gbutton"
+        android:visibility="gone"/>
 
     <dk.aau.cs.giraf.gui.GButton
         android:id="@+id/printSequence"
