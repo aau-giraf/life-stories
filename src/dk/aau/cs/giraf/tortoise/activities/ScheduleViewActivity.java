@@ -9,6 +9,7 @@ import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -35,12 +36,23 @@ public class ScheduleViewActivity extends ScheduleActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+
+        if (intent.getExtras() == null)
+        {
+            GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
+            finish();
+            return;
+        }
+
         setContentView(R.layout.schedule_edit_activity);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        setUpViewMode();
 
         // display the sequences in the week schedule
         displaySequences();
+
+        // Set title, remove buttons that should not be there. Set orientation to landscape.
+        setUpViewMode();
 
         int[] borderIds = getBorderIds();
 
@@ -54,30 +66,24 @@ public class ScheduleViewActivity extends ScheduleActivity
             }
         }
 
-        Intent intent = getIntent();
-
-        if (intent.getExtras() == null)
-        {
-            GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
-            finish();
-            return;
-        }
-
-        //Set schedule name
-        TextView title = (TextView) findViewById(R.id.scheduleName);
-        title.setText(LifeStory.getInstance().getCurrentStory().getTitle());
     }
 
 
     /**
-     * Removes the part of the layout that should not be visible in view mode.
+     * Adds title name and removes the part of the layout that should not be visible in view mode.
      */
     private void setUpViewMode() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         View saveButton = findViewById(R.id.save);
         saveButton.setVisibility(View.INVISIBLE);
 
         GButton scheduleImageButton = (GButton)findViewById(R.id.schedule_image_button);
         scheduleImageButton.setClickable(false);
+
+        EditText title = (EditText) findViewById(R.id.scheduleName);
+        title.setText(LifeStory.getInstance().getCurrentStory().getTitle());
+        title.setEnabled(false);
     }
 
     public int[] getBorderIds()
