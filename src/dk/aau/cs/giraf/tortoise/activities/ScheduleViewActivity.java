@@ -177,7 +177,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 
                 if (arrowScrollView != null)
                 {
-                    arrowScrollView.smoothScrollBy(0, -110);
+                    arrowScrollView.smoothScrollBy(0, -118);
                 }
                 }
                 catch (Exception ex)
@@ -224,7 +224,7 @@ public class ScheduleViewActivity extends ScheduleActivity
                     ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
 
                     if (arrowScrollView != null) {
-                        arrowScrollView.smoothScrollBy(0, 110);
+                        arrowScrollView.smoothScrollBy(0, 118);
                     }
                 } catch (Exception ex)
                 {
