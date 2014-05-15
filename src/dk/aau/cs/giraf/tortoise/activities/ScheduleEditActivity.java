@@ -123,14 +123,15 @@ public class ScheduleEditActivity extends ScheduleActivity {
             } catch (Exception e) {
                 GuiHelper.ShowToast(this, e.toString() + " - rcode 2.");
             }
-        } else if (resultCode == RESULT_OK && requestCode == 3) {
-            // this code is executed when the week scheduler requests an image from pictosearch
+        }
+        //Add content to NEW frame.
+        else if (resultCode == RESULT_OK && requestCode == 3) {
             try {
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
                 //TODO Tortoise doesn't care about pictoSearch anymore
                 if (checkoutIds.length == 0) {
-                    checkoutIds = new int[]{1,3,4};
+                    checkoutIds = new int[]{1,3,4,4};
                 }
 
                 if (checkoutIds.length == 0) {
@@ -138,13 +139,16 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 } else // when pictograms are received
                 {
                     try {
+                        //TODO: Make sure this works.
                         MediaFrame mf = new MediaFrame();
 
                         // add all pictograms to list and add them to a sequence
-                        for (int id : checkoutIds) {
+                        /*for (int id : checkoutIds) {
                             Pictogram pictogram = PictoFactory.getPictogram(this, id);
                             mf.addContent(pictogram);
-                        }
+                        }*/
+
+                        addContentToMediaFrame(mf, checkoutIds);
 
                         weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
 
@@ -163,19 +167,22 @@ public class ScheduleEditActivity extends ScheduleActivity {
             } catch (NullPointerException e) {
                 GuiHelper.ShowToast(this, "Fejl");
             }
-        } else if (resultCode == RESULT_OK && requestCode == 4) {
+        }
+        //Edit content of frame.
+        else if (resultCode == RESULT_OK && requestCode == 4) {
             try {
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt.");
                 } else {
-                    MediaFrame mediaFrame = weekdaySequences.get(weekdaySelected).getMediaFrame(lastPosition);
+                    MediaFrame mf = weekdaySequences.get(weekdaySelected).getMediaFrame(lastPosition);
 
-                    for (int id : checkoutIds) {
+                    addContentToMediaFrame(mf, checkoutIds);
+                    /*for (int id : checkoutIds) {
                         Pictogram pictogram = PictoFactory.getPictogram(this, id);
                         mediaFrame.addContent(pictogram);
-                    }
+                    }*/
 
                     renderSchedule(true);
                     updateMultiChoiceDialog(lastPosition);
@@ -215,7 +222,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     // this is just a variable for a workaround
     //  public static LinearLayout weekdayLayout;
-
     public boolean saveSchedule(View v) {
 
         Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();

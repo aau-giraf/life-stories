@@ -187,11 +187,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			{
                 MediaFrame newMediaFrame = new MediaFrame();
 
-                for(int id : checkoutIds)
+                addContentToMediaFrame(newMediaFrame, checkoutIds);
+
+                /*for(int id : checkoutIds)
                 {
                     Pictogram pictogram = PictoFactory.getPictogram(this, id);
                     newMediaFrame.addContent(pictogram);
-                }
+                }*/
 
                 List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
                 mediaFrames = sequence.getMediaFrames();
@@ -320,11 +322,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 {
                     MediaFrame mediaFrame = sequence.getMediaFrame(lastPosition);
 
-                    for(int id : checkoutIds)
+                    addContentToMediaFrame(mediaFrame, checkoutIds);
+
+                    /*for(int id : checkoutIds)
                     {
                         Pictogram pictogram = PictoFactory.getPictogram(this, id);
                         mediaFrame.addContent(pictogram);
-                    }
+                    }*/
 
                     adapter.notifyDataSetChanged();
                     renderContentPictograms(lastPosition);
