@@ -2,9 +2,6 @@ package dk.aau.cs.giraf.tortoise;
 
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -40,6 +37,7 @@ public class MainActivity extends TortoiseActivity {
     private boolean isInTemplateMode = false;
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
+    private boolean isInScheduleMode = true;
 
     /**
      * Initializes all app elements.
@@ -51,30 +49,21 @@ public class MainActivity extends TortoiseActivity {
         setContentView(R.layout.startup_activity);
 
         Intent i = getIntent();
-
+        isInScheduleMode = true;
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
-            int de = 1;
-            if (de == 0) {
-                finish();
-                return ;
-            }
-            //TODO Tortoise doesn't care about launcher anymore
-            Helper helper = new Helper(this.getApplicationContext());
-            int size = helper.profilesHelper.getProfiles().size();
-            if (size <= 0) {
-                helper.CreateDummyData();
-            }
 
-        }
+            finish();
+            return ;
+ }
         // If launched from Giraf, then execute!
         Helper h = new Helper(this);
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", 1))); //TODO -1 should be used
+                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1))); //TODO -1 should be used
         LifeStory.getInstance().setChild(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 11)));
+                h.profilesHelper.getProfileById(11));//i.getIntExtra("currentChildID", 11)));
 
         // Initialize name of profile
         TextView profileName = (TextView) findViewById(R.id.child_name);
@@ -123,14 +112,23 @@ public class MainActivity extends TortoiseActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 canFinish = false;
                 Intent i;
-                if (isInTemplateMode) {//TODO hardcoded to schedules
-                    i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-                    i.putExtra("template", arg2);
+                if (isInScheduleMode){
+                    if (isInEditMode) {
+                        i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
+                        i.putExtra("template", arg2);
+                    } else {
+                        i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
+                        i.putExtra("story", arg2);
+                    }
                 } else {
-                    i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
-                    i.putExtra("story", arg2);
+                    if (isInEditMode) {
+                        i = new Intent(getApplicationContext(), EditModeActivity.class);
+                        i.putExtra("template", arg2);
+                    } else {
+                        i = new Intent(getApplicationContext(), ViewModeActivity.class); //TODO should be common seq viewer
+                        i.putExtra("story", arg2);
+                    }
                 }
-
                 startActivity(i);
             }
         });
@@ -207,8 +205,7 @@ public class MainActivity extends TortoiseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater()
-                .inflate(R.menu.activity_tortoise_startup_screen, menu);
+        getMenuInflater().inflate(R.menu.activity_tortoise_startup_screen, menu);
         return true;
     }
 
@@ -220,6 +217,7 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
         try{
+            //TODO database debug
             DBController.getInstance().loadCurrentCitizenSequences(
                     LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
