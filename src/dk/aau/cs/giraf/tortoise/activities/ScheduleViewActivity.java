@@ -40,6 +40,7 @@ public class ScheduleViewActivity extends ScheduleActivity
             return;
         }
 
+        // the view activity uses a modified version of the edit activity layout
         setContentView(R.layout.schedule_edit_activity);
 
         // disable non-programmatic scrolling
@@ -53,22 +54,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         // Set title, remove buttons that should not be there. Set orientation to landscape
         setUpViewMode();
-    }
-
-    public int[] getScrollItemViewIds() // TODO: check if this can be deleted
-    {
-        int ids[] =
-                {
-                    R.id.layoutMonday,
-                    R.id.layoutTuesday,
-                    R.id.layoutWednesday,
-                    R.id.layoutThursday,
-                    R.id.layoutFriday,
-                    R.id.layoutSaturday,
-                    R.id.layoutSunday,
-                };
-
-        return ids;
     }
 
     public void disableScrolling()

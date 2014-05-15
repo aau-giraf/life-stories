@@ -57,6 +57,11 @@ public class DBController {
      * @return boolean
      */
 
+    public boolean modifySequence(Sequence seq, SequenceType seqType, int profileID, Context con){
+        SequenceController sc = new SequenceController(con);
+        return -1 != sc.modifySequence(morphSequenceToDBSequence(seq, seqType, profileID));
+    }
+
     public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
         boolean success;
         SequenceController sc = new SequenceController(con);
