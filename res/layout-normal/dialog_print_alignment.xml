@@ -30,18 +30,24 @@
         android:layout_below="@id/vertical"
         android:onClick="horizontalRButtonClicked" />
 
-    <dk.aau.cs.giraf.gui.GVerifyButton
-        android:id="@+id/print_alignment_ok"
-        android:layout_height="wrap_content"
+    <RelativeLayout
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/horizontal"
-        android:onClick="printSequence" />
+        android:layout_centerHorizontal="true">
 
-    <dk.aau.cs.giraf.gui.GCancelButton
-        android:id="@+id/print_alignment_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/horizontal"
-        android:layout_alignRight="@id/print_alignment_text"
-        android:onClick="dialogPrintAlignmentCancel" />
+        <dk.aau.cs.giraf.gui.GVerifyButton
+            android:id="@+id/print_alignment_ok"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:onClick="printSequence" />
+
+        <dk.aau.cs.giraf.gui.GCancelButton
+            android:id="@+id/print_alignment_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/print_alignment_ok"
+            android:layout_marginLeft="10dp"
+            android:onClick="dialogPrintAlignmentCancel" />
+    </RelativeLayout>
 </RelativeLayout>

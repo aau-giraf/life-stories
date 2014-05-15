@@ -44,7 +44,7 @@ public class ScheduleActivity extends TortoiseActivity
     int weekdaySelected;
     int lastPosition;
     int currentActivity = 0;
-    int currentWeekday = 3;
+    int currentWeekday = 0;
 
     public void startPictosearch(View v)
     {

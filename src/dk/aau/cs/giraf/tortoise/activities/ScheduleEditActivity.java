@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -34,6 +35,7 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleEditActivity extends ScheduleActivity {
     public List<List<ImageView>> weekdayLists;
+    GDialog exitDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
 
         setContentView(R.layout.schedule_edit_activity);
+
+        exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
 
         //TODO:This was never implemented.
         // check whether tablet is in portrait or landscape mode and set the layout accordingly
@@ -362,5 +366,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     }
 
+    public void showExitDialog(View v){
+        exitDialog.show();
+    }
 
+    public void exitDialogCancel(View v){
+        exitDialog.dismiss();
+    }
 }
