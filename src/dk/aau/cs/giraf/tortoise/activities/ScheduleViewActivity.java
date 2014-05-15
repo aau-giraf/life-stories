@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,20 +41,16 @@ public class ScheduleViewActivity extends ScheduleActivity
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setUpViewMode();
 
+        // disable regular scrolling
+        disableScrolling();
+
         // display the sequences in the week schedule
         displaySequences();
 
-        int[] borderIds = getBorderIds();
+        // add arrows to week days with more than four pictograms
+        addArrows();
 
-        for(int i = 0; i < 7; i++)
-        {
-            // do not show arrows unless there are too many elements in the view
-            if(shouldShowArrow(borderIds[i]))
-            {
-                addUpArrow(borderIds[i]);
-                addDownArrow(borderIds[i]);
-            }
-        }
+        int[] borderIds = getBorderIds();
 
         Intent intent = getIntent();
 
@@ -66,6 +64,57 @@ public class ScheduleViewActivity extends ScheduleActivity
         //Set schedule name
         TextView title = (TextView) findViewById(R.id.scheduleName);
         title.setText(LifeStory.getInstance().getCurrentStory().getTitle());
+    }
+
+    public void disableScrolling()
+    {
+        // this method uses the border ids to get to the scroll views to disable regular scrolling
+        int[] ids = getBorderIds();
+
+        for(int i = 0; i < 7; i++)
+        {
+            // this is the scroll views parent
+            RelativeLayout parentLayout = (RelativeLayout) findViewById(ids[i]).getParent();
+
+            // we now get the second child which is the scroll view
+            if (parentLayout != null)
+            {
+                ScrollView sv = (ScrollView) parentLayout.getChildAt(1);
+
+                // hide scroll bars in the side of scroll views
+                sv.setHorizontalScrollBarEnabled(false);
+                sv.setVerticalScrollBarEnabled(false);
+
+                if (sv != null) {
+                    sv.setOnTouchListener(new View.OnTouchListener()
+                    {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent)
+                        {
+                            // return false when the scrollview is scrolled
+                            // this disables touch scrolling but programmatic scrolling is still enabled
+                            return true;
+                        }
+                    });
+                }
+            }
+
+        }
+    }
+
+    public void addArrows()
+    {
+        int[] borderIds = getBorderIds();
+
+        for(int i = 0; i < 7; i++)
+        {
+            // do not show arrows unless there are too many elements in the view
+            if(shouldShowArrow(borderIds[i]))
+            {
+                addUpArrow(borderIds[i]);
+                addDownArrow(borderIds[i]);
+            }
+        }
     }
 
     /**
