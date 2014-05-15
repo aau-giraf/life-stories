@@ -63,8 +63,8 @@ public class MainActivity extends TortoiseActivity {
         Helper h = new Helper(this);
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1))); //TODO -1 should be used
-        if (i.getIntExtra("currentChildID", 11) == -1){
+                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        if (i.getIntExtra("currentChildID", 11) == -1){//TODO -1 should be used
             LifeStory.getInstance().setCurrentProfile(LifeStory.getInstance().getGuardian());
         }else {
             Profile p = h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 11));
@@ -91,6 +91,8 @@ public class MainActivity extends TortoiseActivity {
                 new GButtonProfileSelect.onCloseListener() {
                     @Override
                     public void onClose(Profile guardianProfile, Profile selectedProfile) {
+
+                        TextView profileName = (TextView) findViewById(R.id.child_name);
                         //If the guardian is the selected profile create GToast displaying the name
                         if(selectedProfile == null){
                             GToast w = new GToast(getApplicationContext(),
@@ -105,6 +107,7 @@ public class MainActivity extends TortoiseActivity {
                             w.show();
                             LifeStory.getInstance().setCurrentProfile(selectedProfile);
                         }
+                        profileName.setText(LifeStory.getInstance().getCurrentProfile().getName());
                     }
                 });
 
@@ -228,10 +231,10 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().getTemplates().clear();
         if (isInScheduleMode)
             DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getCurrentProfile().getId(), Sequence.SequenceType.SCHEDULE, this);
+                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
         else
             DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getCurrentProfile().getId(), Sequence.SequenceType.STORY, this);
+                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(
         //        LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
