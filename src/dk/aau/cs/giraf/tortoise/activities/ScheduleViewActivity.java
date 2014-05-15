@@ -281,7 +281,7 @@ public class ScheduleViewActivity extends ScheduleActivity
     private void displaySequences()
     {
         // load sequences associated with citizen
-        DBController.getInstance().loadCurrentCitizenSequences(LifeStory.getInstance().getChild().getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, this);
+        DBController.getInstance().loadCurrentProfileSequences(LifeStory.getInstance().getChild().getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, this);
 
         // get sequences from database
         List<Sequence> storyList = LifeStory.getInstance().getStories();

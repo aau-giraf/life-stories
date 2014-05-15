@@ -6,7 +6,6 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.PictogramController;
 import dk.aau.cs.giraf.oasis.lib.controllers.SequenceController;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType;
@@ -25,14 +24,15 @@ public class DBController {
      * Singleton pattern *
      *********************/
     private static DBController instance;
-    private DBController(){};
+    private DBController(){}
     public static DBController getInstance(){
         DBController dbController;
         if(instance != null){
             dbController = instance;
         }
         else{
-            dbController = new DBController();
+            instance = new DBController();
+            dbController = instance;
         }
         return dbController;
     }
@@ -73,7 +73,7 @@ public class DBController {
      * @param sequenceType
      * @param con
      */
-    public void loadCurrentCitizenSequences(int profileID, SequenceType sequenceType, Context con){
+    public void loadCurrentProfileSequences(int profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
         try{
             LifeStory.getInstance().setStories(
