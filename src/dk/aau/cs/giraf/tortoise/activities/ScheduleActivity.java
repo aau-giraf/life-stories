@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,7 +41,7 @@ public class ScheduleActivity extends TortoiseActivity
     int weekdaySelected;
     int lastPosition;
     int currentActivity = 0;
-    int currentWeekday = 0;
+    int currentWeekday = 3;
 
     public void startPictosearch(View v)
     {
@@ -357,16 +358,19 @@ public class ScheduleActivity extends TortoiseActivity
                 if (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySelected == currentWeekday) {
                     currentActivity = index;
                     clearPictogramBorders(v);
-                    v.setPadding(5, 5, 5, 5);
-                    v.setBackgroundColor(Color.BLACK);
+                    //v.setPadding(10, 0, 0, 0);
+                    //Drawable progressArrow = getResources().getDrawable(R.drawable.gdialogcolorselect_arrow_right);
+                    Drawable blackTile = ScheduleActivity.this.getResources().getDrawable(R.drawable.week_schedule_bg_tile_big);
+                    blackTile.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+                    v.setBackgroundDrawable(blackTile);
+                    //GuiHelper.ShowToast(ScheduleActivity.this, "Current activity set!");
                 }
 
                 // show if in edit mode or there is more than one choice in view mode
                 if (ScheduleActivity.this instanceof ScheduleEditActivity || (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1)) {
                     showMultiChoiceDialog(index, weekdaySelected, ScheduleActivity.this);
                 }
-                GuiHelper.ShowToast(ScheduleActivity.this, "currentActivity = " + currentActivity);
-                GuiHelper.ShowToast(ScheduleActivity.this, "weekdayselected = " + weekdaySelected + " currentWeekday = " + currentWeekday);
+                //GuiHelper.ShowToast(ScheduleActivity.this, "weekdaySelected = " + weekdaySelected + "currentWeekday = " + currentWeekday);
             }
         });
 
@@ -379,7 +383,7 @@ public class ScheduleActivity extends TortoiseActivity
         int pictoCount = dayLayout.getChildCount();
         for (int i = 0; i < pictoCount; i++) {
             ImageView iv = (ImageView) dayLayout.getChildAt(i);
-            iv.setPadding(0, 0, 0, 0);
+            iv.setBackgroundResource(R.drawable.week_schedule_bg_tile);
         }
     }
 
