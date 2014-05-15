@@ -321,7 +321,7 @@ public class ScheduleActivity extends TortoiseActivity
 
         // set padding of each imageview containing
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 10, 0, 0); // pad pictogram at top to space them out
+        lp.setMargins(0, 5, 0, 5); // pad pictogram at top to space them out
         iw.setLayoutParams(lp);
 
         final LinearLayout workaroundLayout = layout;
