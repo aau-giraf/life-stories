@@ -28,16 +28,15 @@ import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.tortoise.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
 import dk.aau.cs.giraf.tortoise.activities.ViewModeActivity;
-import dk.aau.cs.giraf.tortoise.controller.JSONSerializer;
 
 public class MainActivity extends TortoiseActivity {
 
     private final int DIALOG_DELETE = 1;
     private boolean isInEditMode = false;
     private boolean isInTemplateMode = false;
+    private boolean isInScheduleMode = false;
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
-    private boolean isInScheduleMode = true;
 
     /**
      * Initializes all app elements.
@@ -48,15 +47,19 @@ public class MainActivity extends TortoiseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.startup_activity);
 
+
         Intent i = getIntent();
-        isInScheduleMode = true;
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
 
             finish();
             return ;
- }
+        }
+        //Decide to load lifestories or schedules
+        if (i.getIntExtra("app_to_start", -1) == 10)
+            isInScheduleMode = true;
+
         // If launched from Giraf, then execute!
         Helper h = new Helper(this);
         // Set guardian- and child profiles
@@ -65,11 +68,12 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().setChild(
                 h.profilesHelper.getProfileById(11));//i.getIntExtra("currentChildID", 11)));
 
+        overrideViews();
+
         // Initialize name of profile
         TextView profileName = (TextView) findViewById(R.id.child_name);
         profileName.setText(LifeStory.getInstance().getChild().getName());
 
-        overrideViews();
     }
 
     private void overrideViews() {
@@ -216,20 +220,16 @@ public class MainActivity extends TortoiseActivity {
         // Clear existing life stories
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
-        try{
-            //TODO database debug
+        if (isInScheduleMode)
             DBController.getInstance().loadCurrentCitizenSequences(
                     LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+        else
+            DBController.getInstance().loadCurrentCitizenSequences(
+                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
-            DBController.getInstance().loadCurrentGuardianTemplates(
-                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
+        DBController.getInstance().loadCurrentGuardianTemplates(
+                LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
 
-        }catch (Exception e){
-            String mes = e.toString();
-            GuiHelper.ShowToast(this, mes);
-            finish();
-            return;
-        }
 
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
