@@ -276,6 +276,8 @@ public class ScheduleActivity extends TortoiseActivity
         iv.setBackgroundResource(R.layout.border_selected);
 
         // use wider buttons when in portrait mode
+        // LANDSCAPE MODE DOES NOT WORK!!!
+        /*
         int xy;
 
         if(isInLandscape)
@@ -286,7 +288,9 @@ public class ScheduleActivity extends TortoiseActivity
         {
             // big buttons
             xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
-        }
+        }*/
+
+        int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
 
         Drawable resizedDrawable = resizeDrawable(R.drawable.add, xy, xy);
         iv.setImageDrawable(resizedDrawable);
