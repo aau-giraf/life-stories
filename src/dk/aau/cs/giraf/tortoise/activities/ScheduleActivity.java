@@ -22,6 +22,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.gui.GTooltip;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.R;
@@ -359,6 +360,7 @@ public class ScheduleActivity extends TortoiseActivity
                     clearPictogramBorders(v);
                     v.setPadding(5, 5, 5, 5);
                     v.setBackgroundColor(Color.BLACK);
+
                 }
 
                 // show if in edit mode or there is more than one choice in view mode
