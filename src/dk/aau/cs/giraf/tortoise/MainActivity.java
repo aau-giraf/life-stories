@@ -306,8 +306,14 @@ public class MainActivity extends TortoiseActivity {
     public void addStory(View v)
     {
         canFinish = false;
-        Intent i = new Intent(getApplicationContext(), EditModeActivity.class);
-        i.putExtra("template", -1);
+        Intent i;
+        if(isInScheduleMode){
+            i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
+            i.putExtra("template", -1);
+        }else {
+            i = new Intent(getApplicationContext(), EditModeActivity.class);
+            i.putExtra("template", -1);
+        }
 
         startActivity(i);
     }
