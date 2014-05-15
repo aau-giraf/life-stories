@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -62,6 +63,22 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         // Set title, remove buttons that should not be there. Set orientation to landscape
         setUpViewMode();
+    }
+
+    public int[] getScrollItemViewIds() // TODO: check if this can be deleted
+    {
+        int ids[] =
+                {
+                    R.id.layoutMonday,
+                    R.id.layoutTuesday,
+                    R.id.layoutWednesday,
+                    R.id.layoutThursday,
+                    R.id.layoutFriday,
+                    R.id.layoutSaturday,
+                    R.id.layoutSunday,
+                };
+
+        return ids;
     }
 
     public void disableScrolling()
@@ -177,7 +194,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 
                 if (arrowScrollView != null)
                 {
-                    arrowScrollView.smoothScrollBy(0, -118);
+                    arrowScrollView.smoothScrollBy(0, -110);
                 }
                 }
                 catch (Exception ex)
@@ -224,7 +241,7 @@ public class ScheduleViewActivity extends ScheduleActivity
                     ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
 
                     if (arrowScrollView != null) {
-                        arrowScrollView.smoothScrollBy(0, 118);
+                        arrowScrollView.smoothScrollBy(0, 110);
                     }
                 } catch (Exception ex)
                 {
