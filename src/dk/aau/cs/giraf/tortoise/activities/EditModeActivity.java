@@ -127,23 +127,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		menuBar = (RelativeLayout) findViewById(R.id.menuBar);
 		//mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
 
-		int template = this.getIntent().getExtras().getInt("template");
-		if(template == -1) {
-			LifeStory.getInstance().setCurrentStory(new Sequence());
-		}
-		else {
-			LifeStory.getInstance().setCurrentTemplate(EditModeActivity.this.getApplicationContext(), template); // TODO: kan EditModeActivity. slettes?!?
-			//TODO: Render template again when fixed.
-			// renderTemplate();
-		}
+        // If called with template, initialize it. Otherwise reate new sequence.
+		initSequence(getIntent());
 
 		renderEditMenu();
 
         // TODO: Always true.. for now (Dan)
         isInEditMode = true;
-
-        // Set current sequence
-        sequence = LifeStory.getInstance().getCurrentStory();
 
         // Create Adapter
         adapter = setupAdapter();
@@ -155,7 +145,30 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         printAlignmentDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_print_alignment, null));
 	}
 
-	@Override
+    /**
+     * Initializes the edit-mode if a template is passed with the intent.
+     * Otherwise it creates a new sequence.
+     * @param intent
+     */
+    private void initSequence(Intent intent) {
+        int template = intent.getIntExtra("template", -1);
+
+
+        if(template == -1)
+        {
+            LifeStory.getInstance().setCurrentStory(new Sequence());
+        }
+        else
+        {
+            Sequence passedSequence = LifeStory.getInstance().getStories().get(template);
+            LifeStory.getInstance().setCurrentStory(passedSequence);
+        }
+
+        // Set current sequence
+        sequence = LifeStory.getInstance().getCurrentStory();
+    }
+
+    @Override
 	public void onBackPressed() {
 		renderDialog(DIALOG_EXIT);
 	}
