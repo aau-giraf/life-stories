@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.tortoise;
 
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -143,11 +144,15 @@ public class MainActivity extends TortoiseActivity {
                         i = new Intent(getApplicationContext(), EditModeActivity.class);
                         i.putExtra("template", arg2);
                     } else {
-                        i = new Intent(getApplicationContext(), ViewModeActivity.class); //TODO should be common seq viewer
-                        i.putExtra("story", arg2);
+                        i = new Intent();
+                        i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                        i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
+                        i.putExtra("landscapeMode", true);
+                        i.putExtra("visiblePictogramCount", 4);
+                        i.putExtra("callerType", "Tortoise");
+                        startActivityForResult(i, 0);
                     }
                 }
-                startActivity(i);
             }
         });
 
