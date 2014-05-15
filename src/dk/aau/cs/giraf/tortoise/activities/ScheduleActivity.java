@@ -333,31 +333,87 @@ public class ScheduleActivity extends TortoiseActivity
         // remove pictogram in the linear view contained in the scroll view
         iw.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public boolean onLongClick(View v)
+            {
+                boolean cancelled = false;
+
+                // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
                     try
                     {
+                        // TODO: refactor this *very* ugly workaround
+
+                        ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
+                        if (iv != null)
+                        {
+
+                            // this will fail the first time because there is no layer drawable on the pictogram
+                            // in the try catch the pictogram is turned into layered drawable
+                            LayerDrawable l = (LayerDrawable) iv.getDrawable();
+
+                            /*
+                            Resources r = getResources();
+                            Drawable[] dlayers = new Drawable[2];
+                            dlayers[0] = iv.getDrawable();
+                            dlayers[1] = r.getDrawable(R.drawable.cancel_button);
+                            LayerDrawable layerDrawable = new LayerDrawable(dlayers);
+                            iv.setImageDrawable(layerDrawable);*/
+
+                            /*try
+                            {
+
+                                LayerDrawable layers = (LayerDrawable) iv.getDrawable();
+
+
+                                if(layers.getDrawable(1).equals(getResources().getDrawable(R.drawable.cancel_button)))
+                                {
+                                    layers.setDrawableByLayerId(1, layers.getDrawable(0));
+                                }
+                                else
+                                {
+
+                                    Resources r = getResources();
+                                    Drawable[] dlayers = new Drawable[2];
+                                    dlayers[0] = iv.getDrawable();
+                                    dlayers[1] = r.getDrawable(R.drawable.cancel_button);
+                                    LayerDrawable layerDrawable = new LayerDrawable(dlayers);
+                                    iv.setImageDrawable(layerDrawable);
+                                }
+                            }catch (Exception ex)
+                            {
+                                Resources r = getResources();
+                                Drawable[] dlayers = new Drawable[2];
+                                dlayers[0] = iv.getDrawable();
+                                dlayers[1] = r.getDrawable(R.drawable.cancel_button);
+                                LayerDrawable layerDrawable = new LayerDrawable(dlayers);
+                                iv.setImageDrawable(layerDrawable);
+                            }*/
+                        }else
+                        {
+                            GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
+                        }
+                    } catch(Exception ex)
+                    {
+                        // this code is triggered when a pictogram has no layered drawable
+                        // this adds the cancel image on top of the original drawable of the pictogram
                         ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
 
                         if (iv != null)
                         {
                             Resources r = getResources();
-                            Drawable[] layers = new Drawable[2];
-                            layers[0] = iv.getDrawable();
-                            layers[1] = r.getDrawable(R.drawable.cancel_button);
-                            LayerDrawable layerDrawable = new LayerDrawable(layers);
+                            Drawable[] dlayers = new Drawable[2];
+                            dlayers[0] = iv.getDrawable();
+                            dlayers[1] = r.getDrawable(R.drawable.cancel_button);
+                            LayerDrawable layerDrawable = new LayerDrawable(dlayers);
                             iv.setImageDrawable(layerDrawable);
-
-                            iv.setBackgroundResource(R.drawable.cancel_button);
+                        }else
+                        {
+                            GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
                         }
 
-                        GuiHelper.ShowToast(getApplicationContext(), getViewIndex(v)+"");
-
-                    }catch(Exception ex)
-                    {
-                        GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
                     }
+                // longclick has the functionality to remove a selected pictogram if in edit mode
                 }else
                 {
                     int position = getViewIndex(v);
