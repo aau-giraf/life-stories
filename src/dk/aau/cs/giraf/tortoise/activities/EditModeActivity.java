@@ -932,7 +932,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     public void printSequence(View v) {
         GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
-        Bitmap combinedSequence;
+        Bitmap[] combinedSequence;
 
         if (verticalButton.isChecked())
             combinedSequence = combineFramesVertical();
@@ -954,7 +954,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      *
      * @return Bitmap
      */
-    private Bitmap combineFramesHorizontal(){
+    private Bitmap[] combineFramesHorizontal(){
 
         int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getWidth();
         int numframes = sequence.getMediaFrames().size();
@@ -963,9 +963,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         int width = ((frameDimens+spacing)*numframes)-spacing;
         int height = frameDimens;
 
-        Bitmap combinedSequence;
-        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas comboImage = new Canvas(combinedSequence);
+        Bitmap[] combinedSequence = new Bitmap[1];
+        combinedSequence[0] = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas comboImage = new Canvas(combinedSequence[0]);
 
         float leftOffset = 0f;
         for(MediaFrame frame : sequence.getMediaFrames()){
@@ -981,36 +981,55 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      *
      * @return Bitmap
      */
-    private Bitmap combineFramesVertical(){
+    private Bitmap[] combineFramesVertical(){
 
         int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getHeight();
         int numframes = sequence.getMediaFrames().size();
-        int spacing = 10;
+        int spacing = 20;
+        float topOffset = 40f;
+
 
         int width = frameDimens;
-        int height = ((frameDimens+spacing)*numframes)-spacing;
+        int height = ((frameDimens+spacing)*numframes);
 
-        Bitmap combinedSequence;
-        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas comboImage = new Canvas(combinedSequence);
+        int a4height = (int)(297*2.5);
+        int a4width = (int)(210*2.5);
 
-        float topOffset = 0f;
-        for(MediaFrame frame : sequence.getMediaFrames()){
-            comboImage.drawBitmap(frame.getContent().get(0).getImageData(), 0f, topOffset, null);
-            topOffset += frameDimens + spacing;
+        float center = (float)(a4width/2-width/2);
+
+        int numberOfCanvases = (int)Math.ceil(height/(a4height-topOffset));
+        int numberPicsPerCanvas = (int)Math.floor((a4height-topOffset)/(height/numframes));
+        int numberOfPicsAdded = 0;
+
+        List<Canvas> comboImage = new ArrayList<Canvas>();
+
+        Bitmap[] combinedSequence = new Bitmap[numberOfCanvases];
+
+        for(int i = 0; i < numberOfCanvases; i++)
+        {
+            combinedSequence[i] = Bitmap.createBitmap(a4width, a4height, Bitmap.Config.ARGB_8888);
+            comboImage.add(i, new Canvas(combinedSequence[i]));
+
+            for(int ii = 0; ii < numberPicsPerCanvas && numberOfPicsAdded < numframes; ii++)
+            {
+                Bitmap bm = sequence.getMediaFrames().get(ii).getContent().get(0).getImageData();
+                comboImage.get(i).drawBitmap(bm, center, topOffset, null);
+                topOffset += frameDimens + spacing;
+                numberOfPicsAdded++;
+            }
         }
 
         return combinedSequence;
     }
 
-    public void sendSequenceToEmail(Bitmap seqImage, String emailAddress, String subject, String message){
+    public void sendSequenceToEmail(Bitmap[] seqImage, String emailAddress, String subject, String message){
 
         String filename = "tempSeq.png";
         file = getOutputMediaFile(filename);
 
         try{
             FileOutputStream out = new FileOutputStream(file);
-            seqImage.compress(Bitmap.CompressFormat.PNG, 90, out);
+            seqImage[0].compress(Bitmap.CompressFormat.PNG, 90, out);
             out.close();
         }
         catch(Exception e){
