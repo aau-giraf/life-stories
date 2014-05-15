@@ -75,10 +75,15 @@ public class DBController {
      */
     public void loadCurrentCitizenSequences(int profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
-        LifeStory.getInstance().setStories(
-                morphDBSequenceListToSequenceList(
-                        sc.getSequencesAndFramesByProfileIdAndType(
-                                profileID, sequenceType), con));
+        try{
+            LifeStory.getInstance().setStories(
+                    morphDBSequenceListToSequenceList(
+                            sc.getSequencesAndFramesByProfileIdAndType(
+                                    profileID, sequenceType), con));
+        }catch (NullPointerException e){
+            GuiHelper.ShowToast(con, "no seq found");
+        }
+
     }
 
     /**

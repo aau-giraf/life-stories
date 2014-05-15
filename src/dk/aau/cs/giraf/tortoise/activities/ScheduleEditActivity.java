@@ -91,7 +91,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
         if (resultCode == RESULT_OK && requestCode == 2) {
             // i think this is triggered when a profile image is chosen from pictosearch
             try {
+
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                //TODO Tortoise doesn't care about pictoSearch anymore
+                if (checkoutIds.length == 0) {
+                    checkoutIds = new int[]{1,3,4};
+                }
+
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 } else {
@@ -121,6 +127,12 @@ public class ScheduleEditActivity extends ScheduleActivity {
             // this code is executed when the week scheduler requests an image from pictosearch
             try {
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+
+                //TODO Tortoise doesn't care about pictoSearch anymore
+                if (checkoutIds.length == 0) {
+                    checkoutIds = new int[]{1,3,4};
+                }
+
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 } else // when pictograms are received

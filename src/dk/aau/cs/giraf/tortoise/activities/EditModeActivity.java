@@ -51,6 +51,7 @@ import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GRadioButton;
+import dk.aau.cs.giraf.oasis.lib.controllers.PictogramController;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
@@ -172,9 +173,15 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		if (resultCode == RESULT_OK && requestCode == 1) {
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
+            //TODO Tortoise doesn't care about pictoSearch anymore
+            if (checkoutIds.length == 0) {
+                checkoutIds = new int[]{1,3,4};
+            }
+
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
 				t.show();
+
 			}
 			else
 			{
@@ -239,6 +246,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		else if (resultCode == RESULT_OK && requestCode == 2) {
           try{
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+
+              //TODO Tortoise doesn't care about pictoSearch anymore
+              if (checkoutIds.length == 0) {
+                  checkoutIds = new int[]{1,3,4};
+              }
+
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
 				t.show();

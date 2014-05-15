@@ -55,74 +55,83 @@ public class MainActivity extends TortoiseActivity {
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
             GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
-            finish();
-            return ;
+            int de = 1;
+            if (de == 0) {
+                finish();
+                return ;
+            }
+            //TODO Tortoise doesn't care about launcher anymore
+            Helper helper = new Helper(this.getApplicationContext());
+            int size = helper.profilesHelper.getProfiles().size();
+            if (size <= 0) {
+                helper.CreateDummyData();
+            }
+
         }
         // If launched from Giraf, then execute!
-
-        // Initialize image and name of profile
-        TextView profileName = (TextView) findViewById(R.id.child_name);
-
         Helper h = new Helper(this);
-
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", 1))); //TODO -1 should be used
         LifeStory.getInstance().setChild(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+                h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 11)));
 
-        //TODO temp fix for no child ID
-        if (LifeStory.getInstance().getChild() == null){
-            LifeStory.getInstance().setChild(h.profilesHelper.getProfileById(11));
-        }
-
+        // Initialize name of profile
+        TextView profileName = (TextView) findViewById(R.id.child_name);
         profileName.setText(LifeStory.getInstance().getChild().getName());
 
-        // Initialize grid view
-        GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
-        sequenceAdapter = initAdapter();
-        sequenceGrid.setAdapter(sequenceAdapter);
+        overrideViews();
+    }
 
+    private void overrideViews() {
+
+        // Setup Profile Selector button
         GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
         //Call the method setup with a Profile guardian, no currentProfile
         // (which means that the guardian is the current Profile) and the onCloseListener
         gbps.setup(LifeStory.getInstance().getGuardian(),
                 null,
                 new GButtonProfileSelect.onCloseListener() {
-            @Override
-            public void onClose(Profile guardianProfile, Profile currentProfile) {
-                //If the guardian is the selected profile create GToast displaying the name
-                if(currentProfile == null){
-                    GToast w = new GToast(getApplicationContext(),
-                            "The Guardian " + guardianProfile.getName() + "is Selected", 2);
-                    w.show();
-                }
-                //If another current Profile is the selected profile create GToast displaying the name
-                else{
-                    GToast w = new GToast(getApplicationContext(),
-                            "The current profile " + currentProfile.getName() + "is Selected", 2);
-                    w.show();
-                }
-            }
-        });
+                    @Override
+                    public void onClose(Profile guardianProfile, Profile currentProfile) {
+                        //If the guardian is the selected profile create GToast displaying the name
+                        if(currentProfile == null){
+                            GToast w = new GToast(getApplicationContext(),
+                                    "The Guardian " + guardianProfile.getName() + "is Selected", 2);
+                            w.show();
+                        }
+                        //If another current Profile is the selected profile create GToast displaying the name
+                        else{
+                            GToast w = new GToast(getApplicationContext(),
+                                    "The current profile " + currentProfile.getName() + "is Selected", 2);
+                            w.show();
+                        }
+                    }
+                });
+
+
+        // Initialize grid view
+        GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceAdapter = initAdapter();
+        sequenceGrid.setAdapter(sequenceAdapter);
 
 
         // Load Sequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-        @Override
-        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-            canFinish = false;
-            Intent i;
-            if (isInTemplateMode) {//TODO hardcoded to schedules
-                i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-                i.putExtra("template", arg2);
-            } else {
-                i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
-                i.putExtra("story", arg2);
-            }
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                canFinish = false;
+                Intent i;
+                if (isInTemplateMode) {//TODO hardcoded to schedules
+                    i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
+                    i.putExtra("template", arg2);
+                } else {
+                    i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
+                    i.putExtra("story", arg2);
+                }
 
-            startActivity(i);
+                startActivity(i);
             }
         });
 
@@ -153,8 +162,6 @@ public class MainActivity extends TortoiseActivity {
                 }
             }
         });
-
-
     }
 
     public SequenceListAdapter initAdapter() {
@@ -212,11 +219,19 @@ public class MainActivity extends TortoiseActivity {
         // Clear existing life stories
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
-        DBController.getInstance().loadCurrentCitizenSequences(
-                LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+        try{
+            DBController.getInstance().loadCurrentCitizenSequences(
+                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
-        DBController.getInstance().loadCurrentGuardianTemplates(
-                LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
+            DBController.getInstance().loadCurrentGuardianTemplates(
+                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
+
+        }catch (Exception e){
+            String mes = e.toString();
+            GuiHelper.ShowToast(this, mes);
+            finish();
+            return;
+        }
 
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
