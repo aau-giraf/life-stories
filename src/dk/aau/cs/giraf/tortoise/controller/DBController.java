@@ -57,17 +57,17 @@ public class DBController {
      * @return boolean
      */
 
-    public boolean modifySequence(Sequence seq, SequenceType seqType, int profileID, Context con){
-        SequenceController sc = new SequenceController(con);
-        return -1 != sc.modifySequence(morphSequenceToDBSequence(seq, seqType, profileID));
-    }
 
     public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
         boolean success;
         SequenceController sc = new SequenceController(con);
         dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = morphSequenceToDBSequence(seq, seqType, profileID);
-        success = sc.insertSequenceAndFrames(dbSeq);
-        seq.setId(dbSeq.getId());
+        if (seq.getId() == 0) {
+            success = sc.insertSequenceAndFrames(dbSeq);
+            seq.setId(dbSeq.getId());
+        }else {
+            success = -1 != sc.modifySequence(dbSeq);
+        }
         return success;
     }
 
@@ -243,5 +243,4 @@ public class DBController {
         DBPicto.setId(picto.getPictogramID());
         return DBPicto;
     }
-
 }
