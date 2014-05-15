@@ -64,10 +64,10 @@ public class MainActivity extends TortoiseActivity {
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1))); //TODO -1 should be used
-        if (i.getIntExtra("currentChildID", -1) == -1){
+        if (i.getIntExtra("currentChildID", 11) == -1){
             LifeStory.getInstance().setCurrentProfile(LifeStory.getInstance().getGuardian());
         }else {
-            Profile p = h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1));
+            Profile p = h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 11));
             LifeStory.getInstance().setCurrentProfile(p);
             LifeStory.getInstance().setChild(p);
         }
