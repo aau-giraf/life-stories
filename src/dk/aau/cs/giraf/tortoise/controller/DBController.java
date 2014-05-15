@@ -174,9 +174,13 @@ public class DBController {
     private MediaFrame morphDBFrameToMediaFrame(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame, Context con) {
         MediaFrame mediaFrame = new MediaFrame();
         PictogramController pc = new PictogramController(con);
-        mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con,
-                pc.getPictogramById(dbFrame.getPictogramId())));
-        mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
+        if (dbFrame.getPictogramId() > 0) {
+            mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con,
+                    pc.getPictogramById(dbFrame.getPictogramId())));
+        }
+        if (!dbFrame.getPictogramList().isEmpty()){
+            mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
+        }
         mediaFrame.setNestedSequenceID(dbFrame.getNestedSequence());
         mediaFrame.addFrame(new dk.aau.cs.giraf.tortoise.Frame(frameWidth,
                 frameHeight,
