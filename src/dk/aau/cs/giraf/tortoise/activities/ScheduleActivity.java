@@ -40,6 +40,7 @@ public class ScheduleActivity extends TortoiseActivity
     int weekdaySelected;
     int lastPosition;
     int currentActivity = 0;
+    int currentWeekday = 0;
 
     public void startPictosearch(View v)
     {
@@ -226,19 +227,15 @@ public class ScheduleActivity extends TortoiseActivity
     {
         try
         {
-
             List<Pictogram> pictoList = unpackSequence(mf);
-
                         // if only one pictogram is in the sequence, just display it in its respective week day
             if(pictoList.size() == 1)
             {
-
                 addPictogramToDay(pictoList.get(0).getImageData(), layout);
             }
             else if(pictoList.size() > 1)
             {
                 Bitmap choiceImage;
-
 
                 if(mf.getChoicePictogram() == null)
                 {
@@ -306,7 +303,6 @@ public class ScheduleActivity extends TortoiseActivity
 
     public void addPictogramToDay(Bitmap bm, LinearLayout layout) {
 
-
         ImageView iw = new ImageView(this);
         iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
 
@@ -357,27 +353,34 @@ public class ScheduleActivity extends TortoiseActivity
                 // update weekdaySelected
                 determineWeekSection(v);
 
-                // Set this view as currentActivity when pressed if in viewmode
-                if(ScheduleActivity.this instanceof ScheduleViewActivity){
+                // Sets this particular view to be the currant activity
+                if (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySelected == currentWeekday) {
                     currentActivity = index;
+                    clearPictogramBorders(v);
+                    v.setPadding(5, 5, 5, 5);
+                    v.setBackgroundColor(Color.BLACK);
                 }
 
                 // show if in edit mode or there is more than one choice in view mode
-                if(ScheduleActivity.this instanceof ScheduleEditActivity || (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1))
-                {
+                if (ScheduleActivity.this instanceof ScheduleEditActivity || (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1)) {
                     showMultiChoiceDialog(index, weekdaySelected, ScheduleActivity.this);
                 }
+                GuiHelper.ShowToast(ScheduleActivity.this, "currentActivity = " + currentActivity);
+                GuiHelper.ShowToast(ScheduleActivity.this, "weekdayselected = " + weekdaySelected + " currentWeekday = " + currentWeekday);
             }
         });
 
-        // Marks this particular view to be the currant activity
-        if(getViewIndex(iw) == currentActivity){
-            iw.setPadding(3, 3, 3, 3);
-            iw.setBackgroundColor(Color.CYAN);
-        }
-
         // add pictogram to week day and make sure the add button is always at the bottom of the week day
         layout.addView(iw); // add new pictogram
+    }
+
+    private void clearPictogramBorders(View v) {
+        LinearLayout dayLayout = (LinearLayout) v.getParent();
+        int pictoCount = dayLayout.getChildCount();
+        for (int i = 0; i < pictoCount; i++) {
+            ImageView iv = (ImageView) dayLayout.getChildAt(i);
+            iv.setPadding(0, 0, 0, 0);
+        }
     }
 
     public int getViewIndex(View v)
@@ -487,6 +490,7 @@ public class ScheduleActivity extends TortoiseActivity
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
                 LinearLayout rl = (LinearLayout) findViewById(R.id.border_monday);
                 rl.setBackgroundResource(R.layout.weekday_selected);
+                currentWeekday = 0;
             }else if(weekday.equals(getResources().getString(R.string.tuesday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
@@ -496,6 +500,7 @@ public class ScheduleActivity extends TortoiseActivity
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
                 LinearLayout rl = (LinearLayout) findViewById(R.id.border_tuesday);
                 rl.setBackgroundResource(R.layout.weekday_selected);
+                currentWeekday = 1;
             }else if(weekday.equals(getResources().getString(R.string.wednesday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
@@ -508,6 +513,7 @@ public class ScheduleActivity extends TortoiseActivity
                 // TODO: put this in method
                 LinearLayout rl = (LinearLayout) findViewById(R.id.border_wednesday);
                 rl.setBackgroundResource(R.layout.weekday_selected);
+                currentWeekday = 2;
             }else if(weekday.equals(getResources().getString(R.string.thursday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
@@ -517,6 +523,7 @@ public class ScheduleActivity extends TortoiseActivity
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
                 LinearLayout rl = (LinearLayout) findViewById(R.id.border_thursday);
                 rl.setBackgroundResource(R.layout.weekday_selected);
+                currentWeekday = 3;
             }else if(weekday.equals(getResources().getString(R.string.friday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
@@ -526,6 +533,7 @@ public class ScheduleActivity extends TortoiseActivity
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
                 LinearLayout rl = (LinearLayout) findViewById(R.id.border_friday);
                 rl.setBackgroundResource(R.layout.weekday_selected);
+                currentWeekday = 4;
             }else if(weekday.equals(getResources().getString(R.string.saturday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
@@ -535,6 +543,7 @@ public class ScheduleActivity extends TortoiseActivity
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
                 LinearLayout rl = (LinearLayout) findViewById(R.id.border_saturday);
                 rl.setBackgroundResource(R.layout.weekday_selected);
+                currentWeekday = 5;
             }else if(weekday.equals(getResources().getString(R.string.sunday)))
             {
                 GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
@@ -544,6 +553,7 @@ public class ScheduleActivity extends TortoiseActivity
                 ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
                 LinearLayout rl = (LinearLayout) findViewById(R.id.border_sunday);
                 rl.setBackgroundResource(R.layout.weekday_selected);
+                currentWeekday = 6;
             }
         } catch (Exception ex)
         {
