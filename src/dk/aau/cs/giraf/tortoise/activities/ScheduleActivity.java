@@ -306,16 +306,16 @@ public class ScheduleActivity extends TortoiseActivity
         ImageView iw = new ImageView(this);
         iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
 
-        int xy;
+        int xy = 0;
 
         // use wider buttons when in portrait mode
         if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
             // small buttons
             xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
-        } else {
+        }/* else {
             // big buttons
             xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_portrait);
-        }
+        }*/
 
         iw.setImageBitmap(resizeBitmap(bm, xy, xy)); // the same value is used for height and width because the pictogram should be square
 
