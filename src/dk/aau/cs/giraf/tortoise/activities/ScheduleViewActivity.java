@@ -45,12 +45,13 @@ public class ScheduleViewActivity extends ScheduleActivity
         {
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
+
             return;
         }
 
         setContentView(R.layout.schedule_edit_activity);
 
-        // disable regular scrolling
+        // disable non-programmatic scrolling
         disableScrolling();
 
         // display the sequences in the week schedule
@@ -58,11 +59,9 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         // add arrows to week days with more than four pictograms
         addArrows();
-        // Set title, remove buttons that should not be there. Set orientation to landscape.
+
+        // Set title, remove buttons that should not be there. Set orientation to landscape
         setUpViewMode();
-
-        int[] borderIds = getBorderIds();
-
     }
 
     public void disableScrolling()
