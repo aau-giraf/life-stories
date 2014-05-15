@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -332,9 +334,37 @@ public class ScheduleActivity extends TortoiseActivity
         iw.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                int position = getViewIndex(v);
-                workaroundLayout.removeView(v);
-                weekdaySequences.get(weekdaySelected).getMediaFrames().remove(position);
+                if(ScheduleActivity.this instanceof ScheduleViewActivity)
+                {
+                    try
+                    {
+                        ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
+
+                        if (iv != null)
+                        {
+                            Resources r = getResources();
+                            Drawable[] layers = new Drawable[2];
+                            layers[0] = iv.getDrawable();
+                            layers[1] = r.getDrawable(R.drawable.cancel_button);
+                            LayerDrawable layerDrawable = new LayerDrawable(layers);
+                            iv.setImageDrawable(layerDrawable);
+
+                            iv.setBackgroundResource(R.drawable.cancel_button);
+                        }
+
+                        GuiHelper.ShowToast(getApplicationContext(), getViewIndex(v)+"");
+
+                    }catch(Exception ex)
+                    {
+                        GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
+                    }
+                }else
+                {
+                    int position = getViewIndex(v);
+                    workaroundLayout.removeView(v);
+                    weekdaySequences.get(weekdaySelected).getMediaFrames().remove(position);
+                }
+
                 return true;
             }
         });
