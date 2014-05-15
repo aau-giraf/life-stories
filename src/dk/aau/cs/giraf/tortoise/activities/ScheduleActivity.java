@@ -339,15 +339,12 @@ public class ScheduleActivity extends TortoiseActivity
             @Override
             public boolean onLongClick(View v)
             {
-                boolean cancelled = false;
-
                 // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
                     try
                     {
                         // TODO: refactor this *very* ugly workaround
-
                         ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
                         if (iv != null)
                         {
