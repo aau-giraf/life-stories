@@ -852,7 +852,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
                 "dk.aau.cs.giraf.pictosearch.PictoAdminMain"));
         i.putExtra("purpose", "multi");
-        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentChildID", LifeStory.getInstance().getCurrentProfile().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
 
         switch(v.getId()){

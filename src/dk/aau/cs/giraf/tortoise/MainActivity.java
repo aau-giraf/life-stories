@@ -64,12 +64,17 @@ public class MainActivity extends TortoiseActivity {
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
-        if (i.getIntExtra("currentChildID", 11) == -1){//TODO -1 should be used
+        if (i.getIntExtra("currentChildID", -1) == 0){//TODO -1 should be used
             LifeStory.getInstance().setCurrentProfile(LifeStory.getInstance().getGuardian());
         }else {
-            Profile p = h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 11));
-            LifeStory.getInstance().setCurrentProfile(p);
-            LifeStory.getInstance().setChild(p);
+            Profile p;
+            try {
+                p = h.profilesHelper.getProfileById( 11);
+                LifeStory.getInstance().setCurrentProfile(p);
+                LifeStory.getInstance().setChild(p);
+            }catch (Exception e){
+                GuiHelper.ShowToast(this, e.toString());
+            }
         }
 
         overrideViews();
@@ -231,10 +236,10 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().getTemplates().clear();
         if (isInScheduleMode)
             DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
+                    LifeStory.getInstance().getCurrentProfile().getId(), Sequence.SequenceType.SCHEDULE, this);
         else
             DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
+                    LifeStory.getInstance().getCurrentProfile().getId(), Sequence.SequenceType.STORY, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(
         //        LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
@@ -247,8 +252,7 @@ public class MainActivity extends TortoiseActivity {
         isInEditMode = false;
         templateMode.setChecked(false);
         editMode.setToggled(false);
-        Profile c = LifeStory.getInstance().getChild();
-        profileName.setText(c.getName());
+        profileName.setText(LifeStory.getInstance().getCurrentProfile().getName());
         sequenceAdapter.setEditModeEnabled(isInEditMode);
         sequenceAdapter.notifyDataSetChanged();
     }
