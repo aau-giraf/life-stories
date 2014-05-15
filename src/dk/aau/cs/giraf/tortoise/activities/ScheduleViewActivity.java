@@ -65,22 +65,6 @@ public class ScheduleViewActivity extends ScheduleActivity
         setUpViewMode();
     }
 
-    public int[] getScrollItemViewIds() // TODO: check if this can be deleted
-    {
-        int ids[] =
-                {
-                    R.id.layoutMonday,
-                    R.id.layoutTuesday,
-                    R.id.layoutWednesday,
-                    R.id.layoutThursday,
-                    R.id.layoutFriday,
-                    R.id.layoutSaturday,
-                    R.id.layoutSunday,
-                };
-
-        return ids;
-    }
-
     public void disableScrolling()
     {
         // this method uses the border ids to get to the scroll views to disable regular scrolling
