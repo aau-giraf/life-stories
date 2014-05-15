@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
@@ -39,20 +40,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        // check whether tablet is in portrait or landscape mode and set the layout accordingly
-        // landscape mode shows mode days than portrait mode
-        int screenOrientation = getResources().getConfiguration().orientation;
-        if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            isInLandscape = true;
-            setContentView(R.layout.schedule_edit_activity);
-            GButton b = (GButton) findViewById(R.id.schedule_image_button);
-        } else {
-            isInLandscape = false;
-            setContentView(R.layout.schedule_edit_activity_portrait);
-        }
-
-        showAddButtons();
-
         // Get intent, action and MIME type
         Intent intent = getIntent();
 
@@ -61,13 +48,72 @@ public class ScheduleEditActivity extends ScheduleActivity {
             finish();
         }
 
+        setContentView(R.layout.schedule_edit_activity);
+
+        //TODO:This was never implemented.
+        // check whether tablet is in portrait or landscape mode and set the layout accordingly
+        // landscape mode shows mode days than portrait mode
+       /* int screenOrientation = getResources().getConfiguration().orientation;
+        if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            isInLandscape = true;
+            setContentView(R.layout.schedule_edit_activity);
+        } else {
+            isInLandscape = false;
+            setContentView(R.layout.schedule_edit_activity_portrait);
+        }*/
+
+        //Create empty sequences if no existing sequence is received. Otherwise load this sequence.
+        initSequences(intent);
+    }
+
+    private void initSequences(Intent intent) {
+
+        // Create new array of sequences.
         weekdaySequences = new ArrayList<Sequence>();
 
-        // add empty sequences for each week day
-        for (int i = 0; i < 7; i++) {
-            weekdaySequences.add(i, new Sequence());
+        // Test if we get a template. Create new (empty) sequences if not.
+        int template = intent.getIntExtra("template", -1);
+
+        if(template == -1)
+        {
+            LifeStory.getInstance().setCurrentStory(new Sequence());
+
+            // add empty sequences for each week day
+            for (int i = 0; i < 7; i++)
+            {
+                weekdaySequences.add(i, new Sequence());
+            }
+
+            showAddButtons();
         }
-        LifeStory.getInstance().setCurrentStory(new Sequence());
+        else
+        {
+            Sequence weekSequence = LifeStory.getInstance().getStories().get(template);
+            LifeStory.getInstance().setCurrentStory(weekSequence);
+
+            for (int i = 0; i < 7; i++)
+            {
+                //Get id for the day corresponding to each sequence
+                int dayID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(i).getNestedSequenceID();
+                Sequence daySeq = DBController.getInstance().getSequenceFromID(dayID, this);
+                weekdaySequences.add(i, daySeq);
+            }
+
+            //Set title image.
+            Bitmap titleBitmap = weekSequence.getTitleImage();
+            Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
+            GButton titleImage = (GButton) findViewById(R.id.schedule_image_button);
+            titleImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, titleDrawable);
+
+            //Set title text
+            EditText title = (EditText) findViewById(R.id.scheduleName);
+            title.setText(weekSequence.getTitle());
+
+            //After loading the sequences, render the schedule and show add buttons.
+            renderSchedule(true);
+        }
+
+
     }
 
     @Override
@@ -111,7 +157,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         // TODO: fix this to not just write on top of image
                         GButton storyImage = (GButton) findViewById(R.id.schedule_image_button);
-                        storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                        storyImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(getResources(), bitmap));
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     //TODO: Investigate if this still happens with the new DB.

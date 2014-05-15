@@ -17,8 +17,8 @@
 
         <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/schedule_image_button"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
