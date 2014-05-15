@@ -33,7 +33,6 @@ public class MainActivity extends TortoiseActivity {
 
     private final int DIALOG_DELETE = 1;
     private boolean isInEditMode = false;
-    private boolean isInTemplateMode = false;
     private boolean isInScheduleMode = false;
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
@@ -221,14 +220,14 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().getStories().clear();
         LifeStory.getInstance().getTemplates().clear();
         if (isInScheduleMode)
-            DBController.getInstance().loadCurrentCitizenSequences(
+            DBController.getInstance().loadCurrentProfileSequences(
                     LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, this);
         else
-            DBController.getInstance().loadCurrentCitizenSequences(
+            DBController.getInstance().loadCurrentProfileSequences(
                     LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, this);
         //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
-        DBController.getInstance().loadCurrentGuardianTemplates(
-                LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
+        //DBController.getInstance().loadCurrentGuardianTemplates(
+        //        LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
 
 
         ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
@@ -236,13 +235,11 @@ public class MainActivity extends TortoiseActivity {
         TextView profileName = (TextView)findViewById(R.id.child_name);
 
         isInEditMode = false;
-        isInTemplateMode = false;
         templateMode.setChecked(false);
         editMode.setToggled(false);
         Profile c = LifeStory.getInstance().getChild();
         profileName.setText(c.getName());
         sequenceAdapter.setEditModeEnabled(isInEditMode);
-        sequenceAdapter.setTemplateModeEnabled(isInTemplateMode);
         sequenceAdapter.notifyDataSetChanged();
     }
 
@@ -253,12 +250,8 @@ public class MainActivity extends TortoiseActivity {
         final MainActivity parentObj = this;
 
         // If isInTemplateMode is true then the guardian profile is active. If not, the child profile is active.
-        if(isInTemplateMode) {
-            seq = LifeStory.getInstance().getTemplates().get(position);
-        }
-        else {
-            seq = LifeStory.getInstance().getStories().get(position);
-        }
+
+        seq = LifeStory.getInstance().getStories().get(position);
 
         // Dialog that prompts for deleting a story or template
         switch (dialogId) {
@@ -272,13 +265,9 @@ public class MainActivity extends TortoiseActivity {
                         @Override
                         public void onClick(View v)
                         {
-                            if(isInTemplateMode) {
-                                dbc.deleteSequence(seq, parentObj);
-                                lifeStory.removeTemplate(seq);
-                            }else {
-                                dbc.deleteSequence(seq, parentObj);
-                                lifeStory.removeStory(seq);
-                            }
+                            dbc.deleteSequence(seq, parentObj);
+                            lifeStory.removeStory(seq);
+
                             sequenceAdapter.setItems();
                             sequenceAdapter.notifyDataSetChanged();
                         }
