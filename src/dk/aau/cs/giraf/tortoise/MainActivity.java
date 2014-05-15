@@ -63,15 +63,20 @@ public class MainActivity extends TortoiseActivity {
         Helper h = new Helper(this);
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1))); //TODO -1 should be used
-        LifeStory.getInstance().setChild(
-                h.profilesHelper.getProfileById(11));//i.getIntExtra("currentChildID", 11)));
+                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        if (i.getIntExtra("currentChildID", 11) == -1){//TODO -1 should be used
+            LifeStory.getInstance().setCurrentProfile(LifeStory.getInstance().getGuardian());
+        }else {
+            Profile p = h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", 11));
+            LifeStory.getInstance().setCurrentProfile(p);
+            LifeStory.getInstance().setChild(p);
+        }
 
         overrideViews();
 
         // Initialize name of profile
         TextView profileName = (TextView) findViewById(R.id.child_name);
-        profileName.setText(LifeStory.getInstance().getChild().getName());
+        profileName.setText(LifeStory.getInstance().getCurrentProfile().getName());
 
     }
 
@@ -85,19 +90,24 @@ public class MainActivity extends TortoiseActivity {
                 null,
                 new GButtonProfileSelect.onCloseListener() {
                     @Override
-                    public void onClose(Profile guardianProfile, Profile currentProfile) {
+                    public void onClose(Profile guardianProfile, Profile selectedProfile) {
+
+                        TextView profileName = (TextView) findViewById(R.id.child_name);
                         //If the guardian is the selected profile create GToast displaying the name
-                        if(currentProfile == null){
+                        if(selectedProfile == null){
                             GToast w = new GToast(getApplicationContext(),
                                     "The Guardian " + guardianProfile.getName() + "is Selected", 2);
                             w.show();
+                            LifeStory.getInstance().setCurrentProfile(guardianProfile);
                         }
                         //If another current Profile is the selected profile create GToast displaying the name
                         else{
                             GToast w = new GToast(getApplicationContext(),
-                                    "The current profile " + currentProfile.getName() + "is Selected", 2);
+                                    "The current profile " + selectedProfile.getName() + "is Selected", 2);
                             w.show();
+                            LifeStory.getInstance().setCurrentProfile(selectedProfile);
                         }
+                        profileName.setText(LifeStory.getInstance().getCurrentProfile().getName());
                     }
                 });
 
