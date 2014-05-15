@@ -41,8 +41,8 @@
             android:hint="@string/schedule_name"
             android:textAlignment="textStart"
             android:textIsSelectable="false"
-            android:layout_alignBottom="@+id/schedule_image_button"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:gravity="center"
             android:singleLine="true" />
 
