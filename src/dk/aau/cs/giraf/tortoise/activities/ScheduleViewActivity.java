@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,17 +45,63 @@ public class ScheduleViewActivity extends ScheduleActivity
         {
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
+
             return;
         }
 
         setContentView(R.layout.schedule_edit_activity);
 
+        // disable non-programmatic scrolling
+        disableScrolling();
+
         // display the sequences in the week schedule
         displaySequences();
 
-        // Set title, remove buttons that should not be there. Set orientation to landscape.
-        setUpViewMode();
+        // add arrows to week days with more than four pictograms
+        addArrows();
 
+        // Set title, remove buttons that should not be there. Set orientation to landscape
+        setUpViewMode();
+    }
+
+    public void disableScrolling()
+    {
+        // this method uses the border ids to get to the scroll views to disable regular scrolling
+        int[] ids = getBorderIds();
+
+        for(int i = 0; i < 7; i++)
+        {
+            // this is the scroll views parent
+            RelativeLayout parentLayout = (RelativeLayout) findViewById(ids[i]).getParent();
+
+            // we now get the second child which is the scroll view
+            if (parentLayout != null)
+            {
+                ScrollView sv = (ScrollView) parentLayout.getChildAt(1);
+
+                // hide scroll bars in the side of scroll views
+                sv.setHorizontalScrollBarEnabled(false);
+                sv.setVerticalScrollBarEnabled(false);
+
+                if (sv != null) {
+                    sv.setOnTouchListener(new View.OnTouchListener()
+                    {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent)
+                        {
+                            // return false when the scrollview is scrolled
+                            // this disables touch scrolling but programmatic scrolling is still enabled
+                            return true;
+                        }
+                    });
+                }
+            }
+
+        }
+    }
+
+    public void addArrows()
+    {
         int[] borderIds = getBorderIds();
 
         for(int i = 0; i < 7; i++)
@@ -65,9 +113,7 @@ public class ScheduleViewActivity extends ScheduleActivity
                 addDownArrow(borderIds[i]);
             }
         }
-
     }
-
 
     /**
      * Adds title name and removes the part of the layout that should not be visible in view mode.
@@ -131,7 +177,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 
                 if (arrowScrollView != null)
                 {
-                    arrowScrollView.smoothScrollBy(0, -30);
+                    arrowScrollView.smoothScrollBy(0, -118);
                 }
                 }
                 catch (Exception ex)
@@ -178,7 +224,7 @@ public class ScheduleViewActivity extends ScheduleActivity
                     ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
 
                     if (arrowScrollView != null) {
-                        arrowScrollView.smoothScrollBy(0, 30);
+                        arrowScrollView.smoothScrollBy(0, 118);
                     }
                 } catch (Exception ex)
                 {
