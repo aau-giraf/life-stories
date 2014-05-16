@@ -347,4 +347,8 @@ public class ScheduleViewActivity extends ScheduleActivity
         multichoiceDialog.dismiss();
         renderSchedule(false);
     }
+    public void showExitDialog(View v){
+        finish();
+    }
+
 }
