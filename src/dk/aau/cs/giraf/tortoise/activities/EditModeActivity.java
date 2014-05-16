@@ -127,12 +127,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		menuBar = (RelativeLayout) findViewById(R.id.menuBar);
 		//mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
 
-		int template = this.getIntent().getExtras().getInt("template");
+		int template = this.getIntent().getIntExtra("template", -1);
 		if(template == -1) {
 			LifeStory.getInstance().setCurrentStory(new Sequence());
 		}
 		else {
-			LifeStory.getInstance().setCurrentTemplate(EditModeActivity.this.getApplicationContext(), template); // TODO: kan EditModeActivity. slettes?!?
+			LifeStory.getInstance().setCurrentStory(getApplicationContext(), template); // TODO: kan EditModeActivity. slettes?!?
 			//TODO: Render template again when fixed.
 			// renderTemplate();
 		}
