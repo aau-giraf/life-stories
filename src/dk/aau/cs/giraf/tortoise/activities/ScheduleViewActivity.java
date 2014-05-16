@@ -36,7 +36,6 @@ public class ScheduleViewActivity extends ScheduleActivity
         {
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
-
             return;
         }
 

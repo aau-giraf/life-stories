@@ -14,7 +14,7 @@ import android.widget.ToggleButton;
 
 import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
-import dk.aau.cs.giraf.gui.GToast;
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -66,7 +66,7 @@ public class MainActivity extends TortoiseActivity {
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
 
         overrideViews();
-        if (i.getIntExtra("currentChildID", -1) == -1) {//TODO -1 should be used
+        if (i.getIntExtra("currentChildID", -1) == -1) {
             findViewById(R.id.profileSelect).performClick();
         }else {
             LifeStory.getInstance().setChild(
@@ -78,38 +78,36 @@ public class MainActivity extends TortoiseActivity {
     }
 
     private void overrideViews() {
-
-        // Setup Profile Selector button
         GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
-        //Call the method setup with a Profile guardian, no currentProfile
-        // (which means that the guardian is the current Profile) and the onCloseListener
-        gbps.setup(LifeStory.getInstance().getGuardian(),
-                null,
-                new GButtonProfileSelect.onCloseListener() {
+        gbps.setOnClickListener(new View.OnClickListener() {
+            //Open Child Selector when pressing the Child Select Button
+            @Override
+            public void onClick(View v) {
+                final GProfileSelector childSelector = new GProfileSelector(v.getContext(),
+                        LifeStory.getInstance().getGuardian(),
+                        null,
+                        false);
+                childSelector.show();
+
+                childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onClose(Profile guardianProfile, Profile selectedProfile) {
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
+                        LifeStory.getInstance().setChild(
+                                new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
 
                         TextView profileName = (TextView) findViewById(R.id.child_name);
-                        //If the guardian is the selected profile create GToast displaying the name
-                        if (selectedProfile == null) {
-                            GToast w = new GToast(getApplicationContext(),
-                                    "The Guardian " + guardianProfile.getName() + "is Selected", 2);
-                            w.show();
-                            LifeStory.getInstance().setGuardian(guardianProfile);
-                            profileName.setText(guardianProfile.getName());
-                        }
-                        //If another current Profile is the selected profile create GToast displaying the name
-                        else {
-                            GToast w = new GToast(getApplicationContext(),
-                                    "The current profile " + selectedProfile.getName() + "is Selected", 2);
-                            w.show();
-                            LifeStory.getInstance().setChild(selectedProfile);
-                            profileName.setText(selectedProfile.getName());
-                        }
+                        profileName.setText(LifeStory.getInstance().getChild().getName());
 
-                        loadSeqGrid();
+                        loadSeqGrid(LifeStory.getInstance().getChild());
+
+                        childSelector.dismiss();
                     }
                 });
+                try{childSelector.backgroundCancelsDialog(false);}
+                catch (Exception ignored){}
+            }
+        });
 
 
         // Edit mode switcher button
@@ -140,21 +138,15 @@ public class MainActivity extends TortoiseActivity {
             }
         });
     }
-    private void loadSeqGrid(){
+    private void loadSeqGrid(Profile profile){
         // Clear existing life stories
         LifeStory.getInstance().getStories().clear();
-        LifeStory.getInstance().getTemplates().clear();
         if (isInScheduleMode)
             DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULE, getApplicationContext());
+                    profile.getId(), Sequence.SequenceType.SCHEDULE, getApplicationContext());
         else
             DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.STORY, getApplicationContext());
-        //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
-        //DBController.getInstance().loadCurrentGuardianTemplates(
-        //        LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
-
-
+                    profile.getId(), Sequence.SequenceType.STORY, getApplicationContext());
 
         // Initialize grid view
         GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
@@ -256,8 +248,11 @@ public class MainActivity extends TortoiseActivity {
         isInEditMode = false;
         templateMode.setChecked(false);
         editMode.setToggled(false);
-        if(LifeStory.getInstance().getChild() != null)
-            profileName.setText(LifeStory.getInstance().getChild().getName());
+        Profile child = LifeStory.getInstance().getChild();
+        if(child != null) {
+            profileName.setText(child.getName());
+            loadSeqGrid(child);
+        }
         if(sequenceAdapter != null) {
             sequenceAdapter.setEditModeEnabled(isInEditMode);
             sequenceAdapter.notifyDataSetChanged();
