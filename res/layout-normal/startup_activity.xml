@@ -33,17 +33,6 @@
             android:text=""
             android:textSize="60sp"
             android:textColor="@color/text_color" />
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/add_schedule_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_toLeftOf="@+id/add_button"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/add_large"
-            android:onClick="addSchedule"/>
         
         <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/add_button"
@@ -71,22 +60,11 @@
             android:id="@+id/edit_mode_toggle"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_toLeftOf="@+id/template_mode_toggle"
+            android:layout_toLeftOf="@+id/home_button"
             android:layout_centerVertical="true"
             android:drawableBottom="@drawable/wrench"
             android:layout_marginRight="15dp" />
-        
-        <ToggleButton
-            android:id="@+id/template_mode_toggle"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/home_button"
-            android:src="@null"
-            android:background="@drawable/btn_switch_mode"
-            android:layout_marginRight="15dp"
-            android:textOn=""
-            android:textOff="" />
+
 
     </RelativeLayout>
 

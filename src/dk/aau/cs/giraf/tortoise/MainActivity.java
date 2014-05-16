@@ -74,7 +74,15 @@ public class MainActivity extends TortoiseActivity {
             // Initialize name of profile
             TextView profileName = (TextView) findViewById(R.id.child_name);
             profileName.setText(LifeStory.getInstance().getChild().getName());
+            HideButtons();
         }
+    }
+
+    private void HideButtons() {
+        findViewById(R.id.profileSelect).setVisibility(View.INVISIBLE);
+        findViewById(R.id.add_button).setVisibility(View.INVISIBLE);
+        findViewById(R.id.edit_mode_toggle).setVisibility(View.INVISIBLE);
+
     }
 
     private void overrideViews() {
@@ -241,12 +249,10 @@ public class MainActivity extends TortoiseActivity {
     protected void onResume()
     {
         super.onResume();
-        ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
         TextView profileName = (TextView)findViewById(R.id.child_name);
 
         isInEditMode = false;
-        templateMode.setChecked(false);
         editMode.setToggled(false);
         Profile child = LifeStory.getInstance().getChild();
         if(child != null) {
