@@ -66,7 +66,7 @@ public class DBController {
             success = sc.insertSequenceAndFrames(dbSeq);
             seq.setId(dbSeq.getId());
         }else {
-            success = -1 != sc.modifySequence(dbSeq);
+            success = sc.modifySequenceAndFrames(dbSeq);
         }
         return success;
     }

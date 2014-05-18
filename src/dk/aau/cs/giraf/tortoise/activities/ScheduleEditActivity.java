@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,7 +12,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -34,6 +38,7 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleEditActivity extends ScheduleActivity {
     public List<List<ImageView>> weekdayLists;
+    GDialog exitDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
 
         setContentView(R.layout.schedule_edit_activity);
+
+        exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
 
         //TODO:This was never implemented.
         // check whether tablet is in portrait or landscape mode and set the layout accordingly
@@ -108,6 +115,31 @@ public class ScheduleEditActivity extends ScheduleActivity {
             //Set title text
             EditText title = (EditText) findViewById(R.id.scheduleName);
             title.setText(weekSequence.getTitle());
+            title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus) {
+                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.SHOW_FORCED);
+                    }
+                    else {
+                        ((EditText) v).setInputType(InputType.TYPE_NULL);
+                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                }
+            });
+            title.setOnKeyListener(new View.OnKeyListener() {
+
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if(keyCode == KeyEvent.KEYCODE_ENTER) {
+                        v.clearFocus();
+                    }
+                    return false;
+                }
+            });
 
             //After loading the sequences, render the schedule and show add buttons.
             renderSchedule(true);
@@ -362,5 +394,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     }
 
+    public void showExitDialog(View v){
+        exitDialog.show();
+    }
 
+    public void exitDialogCancel(View v){
+        exitDialog.dismiss();
+    }
 }

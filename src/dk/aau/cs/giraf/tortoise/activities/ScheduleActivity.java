@@ -39,12 +39,11 @@ public class ScheduleActivity extends TortoiseActivity
     // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
     public GDialog multichoiceDialog;
-    public boolean isInLandscape;
     List<Sequence> weekdaySequences;
     int weekdaySelected;
     int lastPosition;
     int currentActivity = 0;
-    int currentWeekday = 3;
+    int currentWeekday = 0;
 
     public void startPictosearch(View v)
     {

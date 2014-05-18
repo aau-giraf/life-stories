@@ -15,7 +15,7 @@ import android.widget.ToggleButton;
 
 import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
-import dk.aau.cs.giraf.gui.GToast;
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -29,7 +29,6 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.tortoise.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
-import dk.aau.cs.giraf.tortoise.activities.ViewModeActivity;
 
 public class MainActivity extends TortoiseActivity {
 
@@ -66,97 +65,59 @@ public class MainActivity extends TortoiseActivity {
         // Set guardian- and child profiles
         LifeStory.getInstance().setGuardian(
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
-        if (i.getIntExtra("currentChildID", -1) == 0){//TODO -1 should be used
-            LifeStory.getInstance().setCurrentProfile(LifeStory.getInstance().getGuardian());
-        }else {
-            Profile p;
-            try {
-                p = h.profilesHelper.getProfileById( 11);
-                LifeStory.getInstance().setCurrentProfile(p);
-                LifeStory.getInstance().setChild(p);
-            }catch (Exception e){
-                GuiHelper.ShowToast(this, e.toString());
-            }
-        }
 
         overrideViews();
+        if (i.getIntExtra("currentChildID", -1) == -1) {
+            findViewById(R.id.profileSelect).performClick();
+        }else {
+            LifeStory.getInstance().setChild(
+                    h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+            // Initialize name of profile
+            TextView profileName = (TextView) findViewById(R.id.child_name);
+            profileName.setText(LifeStory.getInstance().getChild().getName());
+            HideButtons();
+        }
+    }
 
-        // Initialize name of profile
-        TextView profileName = (TextView) findViewById(R.id.child_name);
-        profileName.setText(LifeStory.getInstance().getCurrentProfile().getName());
+    private void HideButtons() {
+        findViewById(R.id.profileSelect).setVisibility(View.INVISIBLE);
+        findViewById(R.id.add_button).setVisibility(View.INVISIBLE);
+        findViewById(R.id.edit_mode_toggle).setVisibility(View.INVISIBLE);
 
     }
 
     private void overrideViews() {
-
-        // Setup Profile Selector button
         GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
-        //Call the method setup with a Profile guardian, no currentProfile
-        // (which means that the guardian is the current Profile) and the onCloseListener
-        gbps.setup(LifeStory.getInstance().getGuardian(),
-                null,
-                new GButtonProfileSelect.onCloseListener() {
+        gbps.setOnClickListener(new View.OnClickListener() {
+            //Open Child Selector when pressing the Child Select Button
+            @Override
+            public void onClick(View v) {
+                final GProfileSelector childSelector = new GProfileSelector(v.getContext(),
+                        LifeStory.getInstance().getGuardian(),
+                        null,
+                        false);
+                childSelector.show();
+
+                childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onClose(Profile guardianProfile, Profile selectedProfile) {
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
+                        LifeStory.getInstance().setChild(
+                                new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
 
                         TextView profileName = (TextView) findViewById(R.id.child_name);
-                        //If the guardian is the selected profile create GToast displaying the name
-                        if(selectedProfile == null){
-                            GToast w = new GToast(getApplicationContext(),
-                                    "The Guardian " + guardianProfile.getName() + "is Selected", 2);
-                            w.show();
-                            LifeStory.getInstance().setCurrentProfile(guardianProfile);
-                        }
-                        //If another current Profile is the selected profile create GToast displaying the name
-                        else{
-                            GToast w = new GToast(getApplicationContext(),
-                                    "The current profile " + selectedProfile.getName() + "is Selected", 2);
-                            w.show();
-                            LifeStory.getInstance().setCurrentProfile(selectedProfile);
-                        }
-                        profileName.setText(LifeStory.getInstance().getCurrentProfile().getName());
+                        profileName.setText(LifeStory.getInstance().getChild().getName());
+
+                        loadSeqGrid(LifeStory.getInstance().getChild());
+
+                        childSelector.dismiss();
                     }
                 });
-
-
-        // Initialize grid view
-        GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
-        sequenceAdapter = initAdapter();
-        sequenceGrid.setAdapter(sequenceAdapter);
-
-
-        // Load Sequence
-        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                canFinish = false;
-                Intent i;
-                if (isInScheduleMode){
-                    if (isInEditMode) {
-                        i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-                        i.putExtra("template", arg2);
-                    } else {
-                        i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
-                        i.putExtra("story", arg2);
-                    }
-                } else {
-                    if (isInEditMode) {
-                        i = new Intent(getApplicationContext(), EditModeActivity.class);
-                        i.putExtra("template", arg2);
-                    } else {
-                        i = new Intent();
-                        i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
-                        i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
-                        Log.e("Tag", Integer.toString(LifeStory.getInstance().getStories().get(arg2).getMediaFrames().get(0).getContent().get(0).getPictogramID()));
-                        i.putExtra("landscapeMode", true);
-                        i.putExtra("visiblePictogramCount", 4);
-                        i.putExtra("callerType", "Tortoise");
-                        startActivityForResult(i, 0);
-                    }
-                }
+                try{childSelector.backgroundCancelsDialog(false);}
+                catch (Exception ignored){}
             }
         });
+
 
         // Edit mode switcher button
         GToggleButton button = (GToggleButton) findViewById(R.id.edit_mode_toggle);
@@ -181,6 +142,58 @@ public class MainActivity extends TortoiseActivity {
 
                     if (view instanceof PictogramView) {
                         ((PictogramView) view).setEditModeEnabled(isInEditMode);
+                    }
+                }
+            }
+        });
+    }
+    private void loadSeqGrid(Profile profile){
+        // Clear existing life stories
+        LifeStory.getInstance().getStories().clear();
+        if (isInScheduleMode)
+            DBController.getInstance().loadCurrentProfileSequences(
+                    profile.getId(), Sequence.SequenceType.SCHEDULE, getApplicationContext());
+        else
+            DBController.getInstance().loadCurrentProfileSequences(
+                    profile.getId(), Sequence.SequenceType.STORY, getApplicationContext());
+
+        // Initialize grid view
+        GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceAdapter = initAdapter();
+        sequenceGrid.setAdapter(sequenceAdapter);
+
+
+        // Load Sequence
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                canFinish = false;
+                Intent i;
+                if (isInScheduleMode){
+                    if (isInEditMode) {
+                        i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
+                        i.putExtra("template", arg2);
+                        startActivity(i);
+                    } else {
+                        i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
+                        i.putExtra("story", arg2);
+                        startActivity(i);
+                    }
+                } else {
+                    if (isInEditMode) {
+                        i = new Intent(getApplicationContext(), EditModeActivity.class);
+                        i.putExtra("template", arg2);
+                        startActivity(i);
+                    } else {
+                        i = new Intent();
+                        i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                        i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
+                        Log.e("Tag", Integer.toString(LifeStory.getInstance().getStories().get(arg2).getMediaFrames().get(0).getContent().get(0).getPictogramID()));
+                        i.putExtra("landscapeMode", true);
+                        i.putExtra("visiblePictogramCount", 4);
+                        i.putExtra("callerType", "Tortoise");
+                        startActivityForResult(i, 0);
                     }
                 }
             }
@@ -238,30 +251,20 @@ public class MainActivity extends TortoiseActivity {
     protected void onResume()
     {
         super.onResume();
-        // Clear existing life stories
-        LifeStory.getInstance().getStories().clear();
-        LifeStory.getInstance().getTemplates().clear();
-        if (isInScheduleMode)
-            DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getCurrentProfile().getId(), Sequence.SequenceType.SCHEDULE, this);
-        else
-            DBController.getInstance().loadCurrentProfileSequences(
-                    LifeStory.getInstance().getCurrentProfile().getId(), Sequence.SequenceType.STORY, this);
-        //DBController.getInstance().loadCurrentGuardianTemplates(LifeStory.getInstance().getGuardian().getId(), Sequence.SequenceType.SCHEDULE, this);
-        //DBController.getInstance().loadCurrentGuardianTemplates(
-        //        LifeStory.getInstance().getChild().getId(), Sequence.SequenceType.SCHEDULEDDAY, this);
-
-
-        ToggleButton templateMode = (ToggleButton)findViewById(R.id.template_mode_toggle);
         GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
         TextView profileName = (TextView)findViewById(R.id.child_name);
 
         isInEditMode = false;
-        templateMode.setChecked(false);
         editMode.setToggled(false);
-        profileName.setText(LifeStory.getInstance().getCurrentProfile().getName());
-        sequenceAdapter.setEditModeEnabled(isInEditMode);
-        sequenceAdapter.notifyDataSetChanged();
+        Profile child = LifeStory.getInstance().getChild();
+        if(child != null) {
+            profileName.setText(child.getName());
+            loadSeqGrid(child);
+        }
+        if(sequenceAdapter != null) {
+            sequenceAdapter.setEditModeEnabled(isInEditMode);
+            sequenceAdapter.notifyDataSetChanged();
+        }
     }
 
     public void renderDialog(int dialogId, final int position) {

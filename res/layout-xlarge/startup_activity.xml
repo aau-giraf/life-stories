@@ -60,22 +60,11 @@
             android:id="@+id/edit_mode_toggle"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_toLeftOf="@+id/template_mode_toggle"
+            android:layout_toLeftOf="@+id/home_button"
             android:layout_centerVertical="true"
             android:drawableBottom="@drawable/wrench"
             android:layout_marginRight="15dp" />
-        
-        <ToggleButton
-            android:id="@+id/template_mode_toggle"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/home_button"
-            android:src="@null"
-            android:background="@drawable/btn_switch_mode"
-            android:layout_marginRight="15dp"
-            android:textOn=""
-            android:textOff="" />
+
 
     </RelativeLayout>
 

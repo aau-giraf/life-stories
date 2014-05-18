@@ -16,7 +16,6 @@ public class LifeStory {
 	private int currentIndex;
 	private Profile guardian;
 	private Profile child;
-    private Profile currentProfile;
 
     // Singleton pattern
 	public static LifeStory getInstance() {
@@ -117,12 +116,4 @@ public class LifeStory {
 	public void setChild(Profile child) {
 		this.child = child;
 	}
-
-    public Profile getCurrentProfile() {
-        return currentProfile;
-    }
-
-    public void setCurrentProfile(Profile currentProfile) {
-        this.currentProfile = currentProfile;
-    }
 }

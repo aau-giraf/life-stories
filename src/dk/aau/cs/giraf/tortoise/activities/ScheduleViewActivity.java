@@ -36,7 +36,6 @@ public class ScheduleViewActivity extends ScheduleActivity
         {
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
-
             return;
         }
 
@@ -348,4 +347,8 @@ public class ScheduleViewActivity extends ScheduleActivity
         multichoiceDialog.dismiss();
         renderSchedule(false);
     }
+    public void showExitDialog(View v){
+        finish();
+    }
+
 }
