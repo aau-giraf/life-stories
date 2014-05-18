@@ -75,7 +75,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/largeFrame"
         android:scaleType="fitCenter"
-        android:drawableBottom="@drawable/add_small"
+        android:drawableBottom="@drawable/email"
         android:visibility="visible" />
 
     <ImageView
