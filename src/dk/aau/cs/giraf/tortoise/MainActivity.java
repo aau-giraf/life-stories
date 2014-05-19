@@ -4,6 +4,7 @@ package dk.aau.cs.giraf.tortoise;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -188,6 +189,7 @@ public class MainActivity extends TortoiseActivity {
                         i = new Intent();
                         i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                         i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
+                        Log.e("Tag", Integer.toString(LifeStory.getInstance().getStories().get(arg2).getMediaFrames().get(0).getContent().get(0).getPictogramID()));
                         i.putExtra("landscapeMode", true);
                         i.putExtra("visiblePictogramCount", 4);
                         i.putExtra("callerType", "Tortoise");

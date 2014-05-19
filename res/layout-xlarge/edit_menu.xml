@@ -59,20 +59,6 @@
         />
 
 
-    <ImageButton
-        android:id="@+id/largeFrame"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toLeftOf="@id/save"
-        android:scaleType="fitCenter"
-        android:src="@drawable/add_large"
-        android:background="@drawable/gbutton"
-        android:visibility="gone"/>
-
-
-
     <dk.aau.cs.giraf.gui.GButton
         android:id="@+id/printSequence"
         android:layout_width="80dp"
@@ -80,7 +66,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/largeFrame"
         android:scaleType="fitCenter"
-        android:drawableBottom="@drawable/add_small"
+        android:drawableBottom="@drawable/email"
         android:visibility="visible"
         />
 

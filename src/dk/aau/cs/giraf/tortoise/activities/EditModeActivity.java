@@ -51,7 +51,6 @@ import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GRadioButton;
-import dk.aau.cs.giraf.oasis.lib.controllers.PictogramController;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
@@ -99,7 +98,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     private SequenceAdapter adapter;
     private Sequence sequence;
     private int lastPosition;
-    private File file;
+    private File[] file;
     private String debugEmail = null; // Set this to debug the print sequence function!
 	
 	public void addOnMainLayoutEventListener(OnMainLayoutEventListener mainLayoutListener) {
@@ -127,23 +126,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		menuBar = (RelativeLayout) findViewById(R.id.menuBar);
 		//mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
 
-		int template = this.getIntent().getIntExtra("template", -1);
-		if(template == -1) {
-			LifeStory.getInstance().setCurrentStory(new Sequence());
-		}
-		else {
-			LifeStory.getInstance().setCurrentStory(getApplicationContext(), template); // TODO: kan EditModeActivity. slettes?!?
-			//TODO: Render template again when fixed.
-			// renderTemplate();
-		}
+        // If called with template, initialize it. Otherwise reate new sequence.
+		initSequence(getIntent());
 
 		renderEditMenu();
 
         // TODO: Always true.. for now (Dan)
         isInEditMode = true;
-
-        // Set current sequence
-        sequence = LifeStory.getInstance().getCurrentStory();
 
         // Create Adapter
         adapter = setupAdapter();
@@ -155,7 +144,30 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         printAlignmentDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_print_alignment, null));
 	}
 
-	@Override
+    /**
+     * Initializes the edit-mode if a template is passed with the intent.
+     * Otherwise it creates a new sequence.
+     * @param intent
+     */
+    private void initSequence(Intent intent) {
+        int template = intent.getIntExtra("template", -1);
+
+
+        if(template == -1)
+        {
+            LifeStory.getInstance().setCurrentStory(new Sequence());
+        }
+        else
+        {
+            Sequence passedSequence = LifeStory.getInstance().getStories().get(template);
+            LifeStory.getInstance().setCurrentStory(passedSequence);
+        }
+
+        // Set current sequence
+        sequence = LifeStory.getInstance().getCurrentStory();
+    }
+
+    @Override
 	public void onBackPressed() {
 		renderDialog(DIALOG_EXIT);
 	}
@@ -344,7 +356,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     protected void onResume() {
         super.onResume();
         if(file != null)
-            file.delete();
+        {
+            for(File f : file)
+            {
+                f.delete();
+            }
+        }
     }
 
     private SequenceAdapter setupAdapter() {
@@ -873,12 +890,21 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
     public void printSequence(View v) {
         GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
-        Bitmap combinedSequence;
+        Bitmap[] combinedSequence;
+
+        //Warn the user and stop if trying to print empty sequence.
+        if(sequence.getMediaFrames().size() == 0)
+        {
+            GuiHelper.ShowToast(this, "Du forsøgte at sende en tom sekvens.");
+            printAlignmentDialog.dismiss();
+            return;
+        }
+
 
         if (verticalButton.isChecked())
-            combinedSequence = combineFramesVertical();
+            combinedSequence = combineFrames("vertical");
         else
-            combinedSequence = combineFramesHorizontal();
+            combinedSequence = combineFrames("horizontal");
 
         // Set debug-email in class variable "debugEmail" when debugging!
         String email;
@@ -887,85 +913,132 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         else
             email = debugEmail;
 
-        sendSequenceToEmail(combinedSequence, email, "Lifestory: " + LifeStory.getInstance().getCurrentStory().getTitle(), "");
-    }
-
-    /**
-     * Create Bitmap of the current Sequence horizontally
-     *
-     * @return Bitmap
-     */
-    private Bitmap combineFramesHorizontal(){
-
-        int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getWidth();
-        int numframes = sequence.getMediaFrames().size();
-        int spacing = 10;
-
-        int width = ((frameDimens+spacing)*numframes)-spacing;
-        int height = frameDimens;
-
-        Bitmap combinedSequence;
-        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas comboImage = new Canvas(combinedSequence);
-
-        float leftOffset = 0f;
-        for(MediaFrame frame : sequence.getMediaFrames()){
-            comboImage.drawBitmap(frame.getContent().get(0).getImageData(), leftOffset, 0f, null);
-            leftOffset += frameDimens + spacing;
+        String message;
+        if(combinedSequence.length == 1)
+        {
+            message = "Print det vedhæftede billede som helsidet billede på A4-størrelse papir for 3x3 cm piktogrammer.";
+        }else
+        {
+            message = "Print de vedhæftede billeder som helsidede billeder på A4-størrelse papir for 3x3 cm piktogrammer.";
         }
 
-        return combinedSequence;
+
+        sendSequenceToEmail(combinedSequence, email, "Livshistorie: " + LifeStory.getInstance().getCurrentStory().getTitle(), message);
     }
 
+
     /**
-     * Create Bitmap of the current Sequence vertically
-     *
-     * @return Bitmap
+     * Combines all pictograms in a number of bitmaps either horizontally or vertically.
+     * @param direction Can be either "horizontal" or "vertical". Determines the direction in which the pictograms will be added.
+     * @return An array of bitmaps containing pictograms.
      */
-    private Bitmap combineFramesVertical(){
+    private Bitmap[] combineFrames(String direction){
 
         int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getHeight();
         int numframes = sequence.getMediaFrames().size();
-        int spacing = 10;
 
-        int width = frameDimens;
-        int height = ((frameDimens+spacing)*numframes)-spacing;
+        // Adjust spacing and offSet to have optimal number of pics / page.
+        int spacing = 18;
+        float offSet = 35f;
 
-        Bitmap combinedSequence;
-        combinedSequence = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas comboImage = new Canvas(combinedSequence);
+        int totalSeqLengthInPixels = ((frameDimens+spacing)*numframes);
 
-        float topOffset = 0f;
-        for(MediaFrame frame : sequence.getMediaFrames()){
-            comboImage.drawBitmap(frame.getContent().get(0).getImageData(), 0f, topOffset, null);
-            topOffset += frameDimens + spacing;
+        // Dimensions of pictograms in mm when printed.
+        int printedDimens = 30;
+
+        int a4height = (int) ((297.0/printedDimens)*frameDimens);
+        int a4width = (int) ((210.0/printedDimens)*frameDimens);
+
+        float center = (float)(a4width/2-frameDimens/2);
+
+        int numberOfCanvases = (int) Math.ceil(totalSeqLengthInPixels/(a4height-offSet));
+        int numberPicsPerLine = (int)Math.floor((a4height-offSet)/(totalSeqLengthInPixels/numframes));
+        int numberOfPicsAdded = 0;
+
+        List<Canvas> comboImage = new ArrayList<Canvas>();
+
+        Bitmap[] combinedSequence = new Bitmap[numberOfCanvases];
+
+        for(int i = 0; i < numberOfCanvases; i++)
+        {
+
+            if(direction == "vertical")
+            {
+                combinedSequence[i] = Bitmap.createBitmap(a4width, a4height, Bitmap.Config.ARGB_8888);
+                comboImage.add(i, new Canvas(combinedSequence[i]));
+
+                float offSetTemp = offSet;
+                for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
+                    Bitmap bm = sequence.getMediaFrames().get(ii).getContent().get(0).getImageData();
+                    comboImage.get(i).drawBitmap(bm, center, offSetTemp, null);
+                    offSetTemp += frameDimens + spacing;
+                    numberOfPicsAdded++;
+                }
+            }
+            else if(direction == "horizontal")
+            {
+                // Swapped height and width to "turn the paper".
+                combinedSequence[i] = Bitmap.createBitmap(a4height, a4width, Bitmap.Config.ARGB_8888);
+                comboImage.add(i, new Canvas(combinedSequence[i]));
+
+                float offSetTemp = offSet;
+                for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
+                    Bitmap bm = sequence.getMediaFrames().get(ii).getContent().get(0).getImageData();
+                    comboImage.get(i).drawBitmap(bm, offSetTemp, center, null);
+                    offSetTemp += frameDimens + spacing;
+                    numberOfPicsAdded++;
+                }
+            }
+            else
+            {
+                // This should never be reachable, unless there is an error in the code
+                // (if method is called with other than horizontal / vertical).
+                GuiHelper.ShowToast(this, "Der skete en uventet fejl, prøv igen.");
+            }
         }
 
         return combinedSequence;
     }
 
-    public void sendSequenceToEmail(Bitmap seqImage, String emailAddress, String subject, String message){
+    public void sendSequenceToEmail(Bitmap[] seqImage, String emailAddress, String subject, String message){
 
-        String filename = "tempSeq.png";
-        file = getOutputMediaFile(filename);
+        int numOfImages = seqImage.length;
+        String[] filename = new String[numOfImages];
+
+
+        for(int i = 0; i < numOfImages; i++)
+        {
+            filename[i] = "Sekvens del " + (i+1) + " af " + numOfImages + ".png";
+        }
+
+        file = getOutputMediaFile(filename, numOfImages);
 
         try{
-            FileOutputStream out = new FileOutputStream(file);
-            seqImage.compress(Bitmap.CompressFormat.PNG, 90, out);
-            out.close();
+            for(int i = 0; i < numOfImages; i++)
+            {
+                FileOutputStream out = new FileOutputStream(file[i]);
+                seqImage[i].compress(Bitmap.CompressFormat.PNG, 90, out);
+                out.close();
+            }
         }
         catch(Exception e){
             GuiHelper.ShowToast(this, e.toString());
         }
 
-        Uri fileUri = Uri.fromFile(file);
+        ArrayList<Uri> fileUris = new ArrayList<Uri>();
 
-        Intent email = new Intent(Intent.ACTION_SEND);
-        email.setType("message/rfc822");
+        for(int i = 0; i < numOfImages; i++)
+        {
+            fileUris.add(Uri.fromFile(file[i]));
+        }
+
+        Intent email = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        email.setType("message/rfc822");//("image/jpeg");
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{emailAddress});
         email.putExtra(Intent.EXTRA_SUBJECT, subject);
         email.putExtra(Intent.EXTRA_TEXT, message);
-        email.putExtra(Intent.EXTRA_STREAM, fileUri);
+        email.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris);
+        int stop = 0;
 
         try{
         startActivity(Intent.createChooser(email, "Vælg en email-klient"));
@@ -981,7 +1054,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      * @param fileName
      * @return file
      */
-    private File getOutputMediaFile(String fileName){
+    private File[] getOutputMediaFile(String[] fileName, int numOfImages){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
@@ -999,8 +1072,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             }
         }
         // Create a media file name
-        File mediaFile;
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + fileName);
+        File mediaFile[] = new File[numOfImages];
+
+        for(int i = 0; i < numOfImages; i++)
+        {
+            mediaFile[i] = new File(mediaStorageDir.getPath() + File.separator + fileName[i]);
+        }
+
         return mediaFile;
     }
 
