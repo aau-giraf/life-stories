@@ -351,44 +351,6 @@ public class ScheduleActivity extends TortoiseActivity
                             // this will fail the first time because there is no layer drawable on the pictogram
                             // in the try catch the pictogram is turned into layered drawable
                             LayerDrawable l = (LayerDrawable) iv.getDrawable();
-
-                            /*
-                            Resources r = getResources();
-                            Drawable[] dlayers = new Drawable[2];
-                            dlayers[0] = iv.getDrawable();
-                            dlayers[1] = r.getDrawable(R.drawable.cancel_button);
-                            LayerDrawable layerDrawable = new LayerDrawable(dlayers);
-                            iv.setImageDrawable(layerDrawable);*/
-
-                            /*try
-                            {
-
-                                LayerDrawable layers = (LayerDrawable) iv.getDrawable();
-
-
-                                if(layers.getDrawable(1).equals(getResources().getDrawable(R.drawable.cancel_button)))
-                                {
-                                    layers.setDrawableByLayerId(1, layers.getDrawable(0));
-                                }
-                                else
-                                {
-
-                                    Resources r = getResources();
-                                    Drawable[] dlayers = new Drawable[2];
-                                    dlayers[0] = iv.getDrawable();
-                                    dlayers[1] = r.getDrawable(R.drawable.cancel_button);
-                                    LayerDrawable layerDrawable = new LayerDrawable(dlayers);
-                                    iv.setImageDrawable(layerDrawable);
-                                }
-                            }catch (Exception ex)
-                            {
-                                Resources r = getResources();
-                                Drawable[] dlayers = new Drawable[2];
-                                dlayers[0] = iv.getDrawable();
-                                dlayers[1] = r.getDrawable(R.drawable.cancel_button);
-                                LayerDrawable layerDrawable = new LayerDrawable(dlayers);
-                                iv.setImageDrawable(layerDrawable);
-                            }*/
                         }else
                         {
                             GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
@@ -568,87 +530,81 @@ public class ScheduleActivity extends TortoiseActivity
 
         String weekday = getWeekday();
 
-        try
+        if(weekday.equals(getResources().getString(R.string.monday)))
         {
-            if(weekday.equals(getResources().getString(R.string.monday)))
-            {
-                GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
-                btn.setToggled(false);
+            GToggleButton btn = (GToggleButton) findViewById(R.id.monday);
+            btn.setToggled(false);
 
-                // this variable is for knowing which linear layout in the scroll view in ScheduleEditActivity
-                // to put pictogram in
-                // TODO: ugly workaround.. should be fixed
-                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
-                LinearLayout rl = (LinearLayout) findViewById(R.id.border_monday);
-                rl.setBackgroundResource(R.layout.weekday_selected);
-                currentWeekday = 0;
-            }else if(weekday.equals(getResources().getString(R.string.tuesday)))
-            {
-                GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
-                btn.setToggled(false);
-
-                // TODO: ugly workaround.. should be fixed
-                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
-                LinearLayout rl = (LinearLayout) findViewById(R.id.border_tuesday);
-                rl.setBackgroundResource(R.layout.weekday_selected);
-                currentWeekday = 1;
-            }else if(weekday.equals(getResources().getString(R.string.wednesday)))
-            {
-                GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
-                btn.setToggled(false);
-
-                // TODO: ugly workaround.. should be fixed
-                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
-
-                // highlights current day with a border
-                // TODO: put this in method
-                LinearLayout rl = (LinearLayout) findViewById(R.id.border_wednesday);
-                rl.setBackgroundResource(R.layout.weekday_selected);
-                currentWeekday = 2;
-            }else if(weekday.equals(getResources().getString(R.string.thursday)))
-            {
-                GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
-                btn.setToggled(false);
-
-                // TODO: ugly workaround.. should be fixed
-                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
-                LinearLayout rl = (LinearLayout) findViewById(R.id.border_thursday);
-                rl.setBackgroundResource(R.layout.weekday_selected);
-                currentWeekday = 3;
-            }else if(weekday.equals(getResources().getString(R.string.friday)))
-            {
-                GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
-                btn.setToggled(false);
-
-                // TODO: ugly workaround.. should be fixed
-                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
-                LinearLayout rl = (LinearLayout) findViewById(R.id.border_friday);
-                rl.setBackgroundResource(R.layout.weekday_selected);
-                currentWeekday = 4;
-            }else if(weekday.equals(getResources().getString(R.string.saturday)))
-            {
-                GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
-                btn.setToggled(false);
-
-                // TODO: ugly workaround.. should be fixed
-                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
-                LinearLayout rl = (LinearLayout) findViewById(R.id.border_saturday);
-                rl.setBackgroundResource(R.layout.weekday_selected);
-                currentWeekday = 5;
-            }else if(weekday.equals(getResources().getString(R.string.sunday)))
-            {
-                GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
-                btn.setToggled(false);
-
-                // TODO: ugly workaround.. should be fixed
-                ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
-                LinearLayout rl = (LinearLayout) findViewById(R.id.border_sunday);
-                rl.setBackgroundResource(R.layout.weekday_selected);
-                currentWeekday = 6;
-            }
-        } catch (Exception ex)
+            // this variable is for knowing which linear layout in the scroll view in ScheduleEditActivity
+            // to put pictogram in
+            // TODO: ugly workaround.. should be fixed
+            ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
+            LinearLayout rl = (LinearLayout) findViewById(R.id.border_monday);
+            rl.setBackgroundResource(R.layout.weekday_selected);
+            currentWeekday = 0;
+        }else if(weekday.equals(getResources().getString(R.string.tuesday)))
         {
-            // TODO: handling of exception should be made by making dynamic week days?
+            GToggleButton btn = (GToggleButton) findViewById(R.id.tuesday);
+            btn.setToggled(false);
+
+            // TODO: ugly workaround.. should be fixed
+            ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
+            LinearLayout rl = (LinearLayout) findViewById(R.id.border_tuesday);
+            rl.setBackgroundResource(R.layout.weekday_selected);
+            currentWeekday = 1;
+        }else if(weekday.equals(getResources().getString(R.string.wednesday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.wednesday);
+            btn.setToggled(false);
+
+            // TODO: ugly workaround.. should be fixed
+            ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
+
+            // highlights current day with a border
+            // TODO: put this in method
+            LinearLayout rl = (LinearLayout) findViewById(R.id.border_wednesday);
+            rl.setBackgroundResource(R.layout.weekday_selected);
+            currentWeekday = 2;
+        }else if(weekday.equals(getResources().getString(R.string.thursday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.thursday);
+            btn.setToggled(false);
+
+            // TODO: ugly workaround.. should be fixed
+            ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
+            LinearLayout rl = (LinearLayout) findViewById(R.id.border_thursday);
+            rl.setBackgroundResource(R.layout.weekday_selected);
+            currentWeekday = 3;
+        }else if(weekday.equals(getResources().getString(R.string.friday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.friday);
+            btn.setToggled(false);
+
+            // TODO: ugly workaround.. should be fixed
+            ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
+            LinearLayout rl = (LinearLayout) findViewById(R.id.border_friday);
+            rl.setBackgroundResource(R.layout.weekday_selected);
+            currentWeekday = 4;
+        }else if(weekday.equals(getResources().getString(R.string.saturday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.saturday);
+            btn.setToggled(false);
+
+            // TODO: ugly workaround.. should be fixed
+            ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
+            LinearLayout rl = (LinearLayout) findViewById(R.id.border_saturday);
+            rl.setBackgroundResource(R.layout.weekday_selected);
+            currentWeekday = 5;
+        }else if(weekday.equals(getResources().getString(R.string.sunday)))
+        {
+            GToggleButton btn = (GToggleButton) findViewById(R.id.sunday);
+            btn.setToggled(false);
+
+            // TODO: ugly workaround.. should be fixed
+            ScheduleEditActivity.weekdayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
+            LinearLayout rl = (LinearLayout) findViewById(R.id.border_sunday);
+            rl.setBackgroundResource(R.layout.weekday_selected);
+            currentWeekday = 6;
         }
     }
 

@@ -49,15 +49,12 @@ public class DBController {
 
     /**
      * Save a sequence on a specific profile.
-     *
      * @param seq
      * @param seqType
      * @param profileID
      * @param con
      * @return boolean
      */
-
-
     public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
         boolean success;
         SequenceController sc = new SequenceController(con);
@@ -73,7 +70,6 @@ public class DBController {
 
     /**
      * Sets the lifestories of the current citizen
-     *
      * @param profileID
      * @param sequenceType
      * @param con
@@ -86,14 +82,13 @@ public class DBController {
                             sc.getSequencesAndFramesByProfileIdAndType(
                                     profileID, sequenceType), con));
         }catch (NullPointerException e){
-            GuiHelper.ShowToast(con, "no seq found");
+            GuiHelper.ShowToast(con, "No sequences found!");
         }
 
     }
 
     /**
      * Sets the templates of the current guardian
-     *
      * @param profileID
      * @param sequenceType
      * @param con
@@ -106,6 +101,11 @@ public class DBController {
                                 profileID, sequenceType), con));
     }
 
+    /**
+     * Delete a sequence from the supplied context
+     * @param seq
+     * @param con
+     */
     public void deleteSequence(Sequence seq, Context con){
         SequenceController sc = new SequenceController(con);
         if (sc.getSequenceById(seq.getId()).getSequenceType() == SequenceType.SCHEDULE){
@@ -117,6 +117,12 @@ public class DBController {
 
     }
 
+    /**
+     * Get a sequence with frames by ID
+     * @param id
+     * @param context
+     * @return Sequence
+     */
     public Sequence getSequenceFromID(int id, Context context)
     {
         SequenceController sc = new SequenceController(context);
@@ -124,8 +130,7 @@ public class DBController {
     }
 
     /**
-     * Morphs a list of DB sequences to OUR kind of list of sequences
-     *
+     * Morphs a list of DB Sequences to a list of Giraf Sequences
      * @param dbSeqs
      * @param con
      * @return a list of Pictogram Sequences
@@ -139,8 +144,7 @@ public class DBController {
     }
 
     /**
-     * Morphs a DB sequence to OUR kind of sequence
-     *
+     * Morphs a DB sequence to a Giraf Sequence
      * @param dbSeq
      * @param con
      * @return Sequence
@@ -155,7 +159,6 @@ public class DBController {
 
     /**
      * Morphs a list of DB frames to OUR kind of list of frames (MediaFrame-list)
-     *
      * @param dbFrames
      * @param con
      * @return a list of MediaFrames
@@ -171,7 +174,6 @@ public class DBController {
 
     /**
      * Morphs a DB frame to OUR kind of frame (MediaFrame)
-     *
      * @param dbFrame
      * @param con
      * @return MediaFrame
@@ -193,6 +195,13 @@ public class DBController {
         return mediaFrame;
     }
 
+    /**
+     * Morphs a Giraf Sequence to a DB Sequence
+     * @param seq
+     * @param seqType
+     * @param profileID
+     * @return DBSequence
+     */
     private dk.aau.cs.giraf.oasis.lib.models.Sequence morphSequenceToDBSequence(
             Sequence seq, SequenceType seqType, int profileID){
         dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = new dk.aau.cs.giraf.oasis.lib.models.Sequence();
@@ -207,6 +216,11 @@ public class DBController {
         return dbSeq;
     }
 
+    /**
+     * Morphs a list of Giraf mediaframes to a list of DB medieframes
+     * @param mediaFrames
+     * @return
+     */
     private List<dk.aau.cs.giraf.oasis.lib.models.Frame> morphMediaFramesToDBFrames(List<MediaFrame> mediaFrames) {
         List<dk.aau.cs.giraf.oasis.lib.models.Frame> DBframes = new ArrayList<dk.aau.cs.giraf.oasis.lib.models.Frame>();
         int x = 0;

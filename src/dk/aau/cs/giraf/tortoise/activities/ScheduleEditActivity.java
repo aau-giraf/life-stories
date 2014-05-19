@@ -171,10 +171,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
             try {
 
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
-                //TODO Tortoise doesn't care about pictoSearch anymore
-                if (checkoutIds.length == 0) {
-                    checkoutIds = new int[]{1,3,4};
-                }
 
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
@@ -192,8 +188,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         storyImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(getResources(), bitmap));
                     }
                     //We expect a null pointer exception if the pictogram is without image
-                    //TODO: Investigate if this still happens with the new DB.
-                    // It still does
                     catch (NullPointerException e) {
                         GuiHelper.ShowToast(this, "Der skete en uventet fejl");
                     }
@@ -207,24 +201,12 @@ public class ScheduleEditActivity extends ScheduleActivity {
             try {
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
-                //TODO Tortoise doesn't care about pictoSearch anymore
-                if (checkoutIds.length == 0) {
-                    checkoutIds = new int[]{1,3,4,4};
-                }
-
                 if (checkoutIds.length == 0) {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 } else // when pictograms are received
                 {
                     try {
-                        //TODO: Make sure this works.
                         MediaFrame mf = new MediaFrame();
-
-                        // add all pictograms to list and add them to a sequence
-                        /*for (int id : checkoutIds) {
-                            Pictogram pictogram = PictoFactory.getPictogram(this, id);
-                            mf.addContent(pictogram);
-                        }*/
 
                         addContentToMediaFrame(mf, checkoutIds);
 
@@ -285,8 +267,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         renderChoiceIcon(lastPosition, this);
                     }
                     //We expect a null pointer exception if the pictogram is without image
-                    //TODO: Investigate if this still happens with the new DB.
-                    // It still does
                     catch (NullPointerException e){
                         Toast t = Toast.makeText(this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
                         t.show();
@@ -321,7 +301,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         //Loops trough the days sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
             daySeq.setTitle("");
-            daySeq.setTitlePictoId(1);
+            daySeq.setTitlePictoId(scheduleSeq.getTitlePictoId());
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
                     dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     LifeStory.getInstance().getChild().getId(),

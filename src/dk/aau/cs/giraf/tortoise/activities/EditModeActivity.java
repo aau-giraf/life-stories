@@ -132,7 +132,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 		renderEditMenu();
 
-        // TODO: Always true.. for now (Dan)
+        // TODO: Always true.. for now
         isInEditMode = true;
 
         // Create Adapter
@@ -186,11 +186,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		if (resultCode == RESULT_OK && requestCode == 1) {
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
-            //TODO Tortoise doesn't care about pictoSearch anymore
-            if (checkoutIds.length == 0) {
-                checkoutIds = new int[]{1,3,4};
-            }
-
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
 				t.show();
@@ -202,12 +197,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
                 addContentToMediaFrame(newMediaFrame, checkoutIds);
 
-                /*for(int id : checkoutIds)
-                {
-                    Pictogram pictogram = PictoFactory.getPictogram(this, id);
-                    newMediaFrame.addContent(pictogram);
-                }*/
-
                 List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
                 mediaFrames = sequence.getMediaFrames();
                 mediaFrames.add(newMediaFrame);
@@ -215,57 +204,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 sequence.setMediaFrames(mediaFrames);
 
                 adapter.notifyDataSetChanged();
-
-
-                /*List<Integer> pictoIDList = new ArrayList<Integer>();
-
-                // get the pictograms that are currently being shown
-                List<Pictogram> pictoList = currentEditModeFrame.getMediaFrame().getContent();
-
-                // put all their IDs in a list
-                for(Pictogram p : pictoList)
-                {
-                    pictoIDList.add(p.getPictogramID());
-                }
-
-				for (int i = 0; i < checkoutIds.length; i++)
-                {
-					Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[i]);
-					picto.renderAll();
-
-                    boolean shouldAddToList = true;
-
-                    // if pictogram already exists, don't add it. We don't want duplicates
-                    for (Integer element : pictoIDList)
-                    {
-                        if(element == picto.getPictogramID())
-                        {
-                            shouldAddToList = false;
-                        }
-                    }
-
-                    if(shouldAddToList)
-                    {
-                        // add pictogram
-                        pictoIDList.add(picto.getPictogramID());
-                        currentEditModeFrame.getMediaFrame().addContent(picto);
-                    }
-				}
-                renderPictograms();*/
-
-
-
 			}
 		}
         //Change story image
 		else if (resultCode == RESULT_OK && requestCode == 2) {
           try{
-			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
-
-              //TODO Tortoise doesn't care about pictoSearch anymore
-              if (checkoutIds.length == 0) {
-                  checkoutIds = new int[]{1,3,4};
-              }
+			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -284,8 +228,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
 			    }
                 // We expect a null pointer exception if the pictogram is without image
-                // TODO: Investigate if this still happens with the new DB.
-                // It still does
                 catch (NullPointerException e){
                     Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
                     t.show();
@@ -299,7 +241,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         //Change choice icon
         else if (resultCode == RESULT_OK && requestCode == 3){
             try{
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
                 if (checkoutIds.length == 0) {
                     Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
                     t.show();
@@ -312,8 +254,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                         renderChoiceIcon(lastPosition);
                     }
                     //We expect a null pointer exception if the pictogram is without image
-                    //TODO: Investigate if this still happens with the new DB.
-                    // It still does
                     catch (NullPointerException e){
                         Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
                         t.show();
@@ -337,11 +277,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
                     addContentToMediaFrame(mediaFrame, checkoutIds);
 
-                    /*for(int id : checkoutIds)
-                    {
-                        Pictogram pictogram = PictoFactory.getPictogram(this, id);
-                        mediaFrame.addContent(pictogram);
-                    }*/
 
                     adapter.notifyDataSetChanged();
                     renderContentPictograms(lastPosition);
@@ -430,8 +365,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
 	public void renderDialog(int dialogId) {
-        // TODO: Start herfra mandag d. 24
-        boolean showOverlay = true; // TODO: remove this and replace all dialogs with Gdialogs!
+        boolean showOverlay = true;
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 

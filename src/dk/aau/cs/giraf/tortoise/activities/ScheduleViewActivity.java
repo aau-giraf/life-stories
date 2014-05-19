@@ -259,24 +259,6 @@ public class ScheduleViewActivity extends ScheduleActivity
         return false;
     }
 
-    // TODO: not currently used. Not sure if working. Not tested!
-/*    int getScrollViewPosition(ScrollView scrollView)
-    {
-        // 1 for top, 0 for between top and bottom and -1 for bottom
-        LinearLayout linearLayout = (LinearLayout) scrollView.getChildAt(0);
-        if (linearLayout != null)
-        {
-            if(linearLayout.getMeasuredHeight() <= (scrollView.getScrollY() +
-                    scrollView.getHeight()))
-            {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
-    }*/
-
     private void displaySequences()
     {
         // load sequences associated with citizen
