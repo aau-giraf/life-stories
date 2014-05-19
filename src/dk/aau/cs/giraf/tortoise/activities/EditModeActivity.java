@@ -131,7 +131,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 		renderEditMenu();
 
-        // TODO: Always true.. for now (Dan)
+        // TODO: Always true.. for now
         isInEditMode = true;
 
         // Create Adapter
@@ -184,11 +184,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         //Add pictograms to NEW MediaFrame
 		if (resultCode == RESULT_OK && requestCode == 1) {
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
-
-            //TODO Tortoise doesn't care about pictoSearch anymore
-            if (checkoutIds.length == 0) {
-                checkoutIds = new int[]{1,3,4};
-            }
 
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -261,11 +256,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
           try{
 			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
 
-              //TODO Tortoise doesn't care about pictoSearch anymore
-              if (checkoutIds.length == 0) {
-                  checkoutIds = new int[]{1,3,4};
-              }
-
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
 				t.show();
@@ -283,8 +273,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
 			    }
                 // We expect a null pointer exception if the pictogram is without image
-                // TODO: Investigate if this still happens with the new DB.
-                // It still does
                 catch (NullPointerException e){
                     Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
                     t.show();
@@ -298,7 +286,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         //Change choice icon
         else if (resultCode == RESULT_OK && requestCode == 3){
             try{
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
                 if (checkoutIds.length == 0) {
                     Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
                     t.show();
@@ -311,8 +299,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                         renderChoiceIcon(lastPosition);
                     }
                     //We expect a null pointer exception if the pictogram is without image
-                    //TODO: Investigate if this still happens with the new DB.
-                    // It still does
                     catch (NullPointerException e){
                         Toast t = Toast.makeText(EditModeActivity.this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
                         t.show();
@@ -429,8 +415,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
 	public void renderDialog(int dialogId) {
-        // TODO: Start herfra mandag d. 24
-        boolean showOverlay = true; // TODO: remove this and replace all dialogs with Gdialogs!
+        boolean showOverlay = true;
 		final Dialog dialog = new Dialog(this);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 

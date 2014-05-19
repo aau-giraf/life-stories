@@ -159,7 +159,6 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 				this.touchPointY = (int) event.getY();
 				this.bringToFront();
 				mainActivity.currentEditModeFrame = this;
-				//TODO: mainActivity.renderAddContentMenu();
 				for(OnCurrentFrameEventListener e : mainActivity.currentFrameListeners) {
 					e.OnCurrentFrameChanged(this, this.getMediaFrame().getChoiceNumber());
 				}
