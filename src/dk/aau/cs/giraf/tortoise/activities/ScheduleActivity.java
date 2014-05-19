@@ -295,11 +295,9 @@ public class ScheduleActivity extends TortoiseActivity
         iv.setImageDrawable(resizedDrawable);
 
         // set listener on the add button so it starts pictosearch when clicked
-        iv.setOnClickListener(new View.OnClickListener()
-        {
+        iv.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 startPictosearchForScheduler(view);
             }
         });
@@ -366,7 +364,8 @@ public class ScheduleActivity extends TortoiseActivity
                             Resources r = getResources();
                             Drawable[] dlayers = new Drawable[2];
                             dlayers[0] = iv.getDrawable();
-                            dlayers[1] = r.getDrawable(R.drawable.cancel_button);
+                            int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                            dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
                             LayerDrawable layerDrawable = new LayerDrawable(dlayers);
                             iv.setImageDrawable(layerDrawable);
                         }else

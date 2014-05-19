@@ -48,6 +48,15 @@ public class TortoiseActivity extends Activity
     }
 
     // TODO: should be moved
+    public Drawable resizeDrawable(Drawable srcDrawable, int width, int height)
+    {
+        Bitmap b = ((BitmapDrawable) srcDrawable).getBitmap();
+        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(b, width, height, false));
+
+        return finalDrawable;
+    }
+
+    // TODO: should be moved
     public Bitmap resizeBitmap(Bitmap srcBitmap, int width, int height)
     {
         Bitmap originalBitmap = srcBitmap;
