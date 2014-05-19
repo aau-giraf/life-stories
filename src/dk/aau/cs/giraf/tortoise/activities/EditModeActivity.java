@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -652,9 +653,20 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				EditModeActivity.this.startActivityForResult(i, 2);
 			}
 		});
+
 		if(LifeStory.getInstance().getCurrentStory().getTitleImage() != null) {
-			storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), LifeStory.getInstance().getCurrentStory().getTitleImage()));
+            // set the picture in the upper left hand to the right title image
+            try
+            {
+                Drawable d = new BitmapDrawable(getResources(), LifeStory.getInstance().getCurrentStory().getTitleImage());
+                storyImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
+            }
+            catch (Exception ex)
+            {
+                GuiHelper.ShowToast(this, ex.toString());
+            }
 		}
+
 		EditText storyName = (EditText) findViewById(R.id.storyName);
         storyName.setHighlightColor(00000000);
 
