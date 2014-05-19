@@ -301,7 +301,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         //Loops trough the days sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
             daySeq.setTitle("");
-            daySeq.setTitlePictoId(1);
+            daySeq.setTitlePictoId(scheduleSeq.getTitlePictoId());
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
                     dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     LifeStory.getInstance().getChild().getId(),

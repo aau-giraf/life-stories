@@ -196,12 +196,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
                 addContentToMediaFrame(newMediaFrame, checkoutIds);
 
-                /*for(int id : checkoutIds)
-                {
-                    Pictogram pictogram = PictoFactory.getPictogram(this, id);
-                    newMediaFrame.addContent(pictogram);
-                }*/
-
                 List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
                 mediaFrames = sequence.getMediaFrames();
                 mediaFrames.add(newMediaFrame);
@@ -209,52 +203,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 sequence.setMediaFrames(mediaFrames);
 
                 adapter.notifyDataSetChanged();
-
-
-                /*List<Integer> pictoIDList = new ArrayList<Integer>();
-
-                // get the pictograms that are currently being shown
-                List<Pictogram> pictoList = currentEditModeFrame.getMediaFrame().getContent();
-
-                // put all their IDs in a list
-                for(Pictogram p : pictoList)
-                {
-                    pictoIDList.add(p.getPictogramID());
-                }
-
-				for (int i = 0; i < checkoutIds.length; i++)
-                {
-					Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[i]);
-					picto.renderAll();
-
-                    boolean shouldAddToList = true;
-
-                    // if pictogram already exists, don't add it. We don't want duplicates
-                    for (Integer element : pictoIDList)
-                    {
-                        if(element == picto.getPictogramID())
-                        {
-                            shouldAddToList = false;
-                        }
-                    }
-
-                    if(shouldAddToList)
-                    {
-                        // add pictogram
-                        pictoIDList.add(picto.getPictogramID());
-                        currentEditModeFrame.getMediaFrame().addContent(picto);
-                    }
-				}
-                renderPictograms();*/
-
-
-
 			}
 		}
         //Change story image
 		else if (resultCode == RESULT_OK && requestCode == 2) {
           try{
-			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -322,11 +276,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
                     addContentToMediaFrame(mediaFrame, checkoutIds);
 
-                    /*for(int id : checkoutIds)
-                    {
-                        Pictogram pictogram = PictoFactory.getPictogram(this, id);
-                        mediaFrame.addContent(pictogram);
-                    }*/
 
                     adapter.notifyDataSetChanged();
                     renderContentPictograms(lastPosition);
