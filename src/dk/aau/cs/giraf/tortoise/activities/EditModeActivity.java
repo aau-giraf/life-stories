@@ -421,65 +421,19 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         {
 		case DIALOG_SAVE:
 			dialog.setContentView(R.layout.dialog_save);
-			CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
-			template.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					Button saveYes = (Button)dialog.findViewById(R.id.btn_yes);
-					if(isChecked) {
-						saveYes.setAlpha(1f);
-						saveYes.setEnabled(true);
-					}
-					else {
-						saveYes.setAlpha(0.3f);
-						saveYes.setEnabled(false);
-					}
-					
-				}
-			});
-			CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
-			story.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					Button saveYes = (Button)dialog.findViewById(R.id.btn_yes);
-					if(isChecked) {
-						saveYes.setAlpha(1f);
-						saveYes.setEnabled(true);
-					}
-					else {
-						saveYes.setAlpha(0.3f);
-						saveYes.setEnabled(false);
-					}
-					
-				}
-			});
+
 			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 			Button saveYes = (Button)dialog.findViewById(R.id.btn_yes);
-			saveYes.setAlpha(0.3f);
-			saveYes.setEnabled(false);
 			saveYes.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					CheckBox template = (CheckBox)dialog.findViewById(R.id.templateCheckbox);
-					CheckBox story = (CheckBox)dialog.findViewById(R.id.storyCheckbox);
                     LifeStory ls = LifeStory.getInstance();
 
-					if(template.isChecked()) {
-                        ls.addTemplate();
-                        saveSequence(ls.getCurrentStory(),
-                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                                ls.getGuardian().getId());
-					}
-					if(story.isChecked()) {
-                        ls.addStory();
-                        saveSequence(ls.getCurrentStory(),
-                                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
-                                ls.getChild().getId());
-					}
-
+                    ls.addStory();
+                    saveSequence(ls.getCurrentStory(),
+                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                            ls.getChild().getId());
 
 					finish();
 				}

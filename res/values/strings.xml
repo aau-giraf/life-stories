@@ -13,7 +13,7 @@
     <string name="schedule_name">Navn på ugeplan</string>
     <string name="dialog_exit_title">Er du sikker på du vil afslutte?</string>
     <string name="dialog_exit_message">Dit arbejde vil blive slettet!</string>
-    <string name="dialog_save_title">Hvordan vil du gemme sekvensen?</string>
+    <string name="dialog_save_title">Vil du gemme Livshistorien?</string>
     <string name="dialog_save_template">Skabelon</string>
     <string name="dialog_save_story">Historie</string>
     <string name="dialog_promt_for_title_title">Historie ikke navngivet eller intet billede valgt</string>
