@@ -36,7 +36,7 @@
     <string name="friday">Fredag</string>
     <string name="saturday">Lørdag</string>
     <string name="sunday">Søndag</string>
-    <string name="dialog_print_alignment">Hvordan skal historien printes?</string>
+    <string name="dialog_print_alignment">Hvordan skal historien vende?</string>
     <string name="dialog_print_alignment_vertical">Lodret</string>
     <string name="dialog_print_alignment_horizontal">Vandret</string>
     <string name="unnamed_sequence">Unavngivet skema</string>
