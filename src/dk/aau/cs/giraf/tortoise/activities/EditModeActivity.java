@@ -1054,7 +1054,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         for(int i = 0; i < numOfImages; i++)
         {
-            filename[i] = "Sekvens del " + i + " af " + numOfImages + ".png";
+            filename[i] = "Sekvens del " + (i+1) + " af " + numOfImages + ".png";
         }
 
         file = getOutputMediaFile(filename, numOfImages);
