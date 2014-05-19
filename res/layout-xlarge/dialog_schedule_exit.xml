@@ -32,13 +32,13 @@
         android:id="@+id/dialog_schedule_exit_ok"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_toRightOf="@+id/dialog_schedule_exit_cancel"
         android:onClick="doExit" />
 
     <dk.aau.cs.giraf.gui.GCancelButton
         android:id="@+id/dialog_schedule_exit_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/dialog_schedule_exit_ok"
         android:onClick="exitDialogCancel" />
     </RelativeLayout>
 
