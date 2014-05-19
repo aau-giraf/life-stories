@@ -911,7 +911,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
             if(direction == "vertical")
             {
-                combinedSequence[i] = Bitmap.createBitmap(a4width, a4height, Bitmap.Config.ARGB_8888);
+                // combinedSequence[i] = Bitmap.createBitmap(a4width, a4height, Bitmap.Config.ARGB_8888);
+                combinedSequence[i] = Bitmap.createBitmap(a4width, a4height, Bitmap.Config.RGB_565);
                 comboImage.add(i, new Canvas(combinedSequence[i]));
 
                 float offSetTemp = offSet;
