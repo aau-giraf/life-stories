@@ -386,8 +386,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     saveSequence(ls.getCurrentStory(),
                             dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
                             ls.getChild().getId());
-
-					finish();
 				}
 			});
 			Button saveNo = (Button)dialog.findViewById(R.id.btn_no);
