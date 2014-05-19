@@ -846,7 +846,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             return;
         }
 
-
         if (verticalButton.isChecked())
             combinedSequence = combineFrames("vertical");
         else
@@ -868,8 +867,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             message = "Print de vedhæftede billeder som helsidede billeder på A4-størrelse papir for 3x3 cm piktogrammer.";
         }
 
-
-        sendSequenceToEmail(combinedSequence, email, "Livshistorie: " + LifeStory.getInstance().getCurrentStory().getTitle(), message);
+        try {
+            sendSequenceToEmail(combinedSequence, email, "Livshistorie: " + LifeStory.getInstance().getCurrentStory().getTitle(), message);
+        }catch (Exception e)
+        {
+            GuiHelper.ShowToast(this, "Der skete en uventet fejl. Prøv igen.");
+        }
     }
 
 

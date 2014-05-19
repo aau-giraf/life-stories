@@ -51,7 +51,7 @@ public class MainActivity extends TortoiseActivity {
         Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
-            GuiHelper.ShowToast(this, "Tortoise skal startes fra GIRAF");
+            GuiHelper.ShowToast(this, "Livshistorier skal startes fra GIRAF");
 
             finish();
             return ;
