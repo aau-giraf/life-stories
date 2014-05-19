@@ -49,7 +49,7 @@ public class ViewModeActivity extends TortoiseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		menuBar = (RelativeLayout) findViewById(R.id.menuBar);
-		mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
+		//mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
 		renderViewMenu();
 		choices = (LinearLayout)findViewById(R.id.choiceContent);
 		int index = this.getIntent().getExtras().getInt("story");

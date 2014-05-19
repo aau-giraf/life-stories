@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_schedule_exit"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true">
+
+    <dk.aau.cs.giraf.gui.GTextView
+        android:id="@+id/dialog_schedule_text_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_exit_message"
+        android:textSize="30dp" />
+
+    <dk.aau.cs.giraf.gui.GTextView
+        android:id="@+id/dialog_schedule_text_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/dialog_schedule_text_1"
+        android:text="@string/dialog_exit_title"
+        android:textSize="20dp" />
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/dialog_schedule_text_2"
+    android:layout_centerHorizontal="true">
+
+    <dk.aau.cs.giraf.gui.GVerifyButton
+        android:id="@+id/dialog_schedule_exit_ok"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:onClick="doExit" />
+
+    <dk.aau.cs.giraf.gui.GCancelButton
+        android:id="@+id/dialog_schedule_exit_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/dialog_schedule_exit_ok"
+        android:onClick="exitDialogCancel" />
+    </RelativeLayout>
+
+</RelativeLayout>
