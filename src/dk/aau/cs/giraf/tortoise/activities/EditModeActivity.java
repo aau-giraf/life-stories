@@ -883,7 +883,10 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      */
     private Bitmap[] combineFrames(String direction){
 
-        int frameDimens = sequence.getMediaFrames().get(0).getContent().get(0).getImageData().getHeight();
+        // Number of pixels the frames should be.
+        int frameDimens = 200;
+
+        // Total amount of frames
         int numframes = sequence.getMediaFrames().size();
 
         // Adjust spacing and offSet to have optimal number of pics / page.
@@ -920,6 +923,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 float offSetTemp = offSet;
                 for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
                     Bitmap bm = sequence.getMediaFrames().get(ii).getContent().get(0).getImageData();
+                    bm = Bitmap.createScaledBitmap(bm, frameDimens, frameDimens, false);
                     comboImage.get(i).drawBitmap(bm, center, offSetTemp, null);
                     offSetTemp += frameDimens + spacing;
                     numberOfPicsAdded++;
@@ -934,6 +938,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 float offSetTemp = offSet;
                 for (int ii = 0; ii < numberPicsPerLine && numberOfPicsAdded < numframes; ii++) {
                     Bitmap bm = sequence.getMediaFrames().get(ii).getContent().get(0).getImageData();
+                    bm = Bitmap.createScaledBitmap(bm, frameDimens, frameDimens, false);
                     comboImage.get(i).drawBitmap(bm, offSetTemp, center, null);
                     offSetTemp += frameDimens + spacing;
                     numberOfPicsAdded++;
