@@ -64,7 +64,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/exit"
+            android:drawableBottom="@drawable/quit"
             android:onClick="showExitDialog"
             android:layout_marginRight="15dp" />
 

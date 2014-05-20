@@ -45,7 +45,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="30dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/exit"
+            android:drawableBottom="@drawable/quit"
             android:background="@drawable/gbutton"
             android:onClick="doExit"/>
 
