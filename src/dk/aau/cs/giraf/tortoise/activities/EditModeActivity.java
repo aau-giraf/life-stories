@@ -225,7 +225,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
                     LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                     GButton storyImage = (GButton) findViewById(R.id.storyImage);
-                    storyImage.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                    Drawable d = new BitmapDrawable(getResources(), bitmap);
+                    storyImage.setCompoundDrawablesWithIntrinsicBounds(null,null,null,d);
 			    }
                 // We expect a null pointer exception if the pictogram is without image
                 catch (NullPointerException e){
@@ -386,6 +387,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     saveSequence(ls.getCurrentStory(),
                             dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
                             ls.getChild().getId());
+                    dialog.dismiss();
 				}
 			});
 			Button saveNo = (Button)dialog.findViewById(R.id.btn_no);
