@@ -926,7 +926,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             else if(direction == "horizontal")
             {
                 // Swapped height and width to "turn the paper".
-                combinedSequence[i] = Bitmap.createBitmap(a4height, a4width, Bitmap.Config.ARGB_8888);
+                combinedSequence[i] = Bitmap.createBitmap(a4height, a4width, Bitmap.Config.RGB_565);
                 comboImage.add(i, new Canvas(combinedSequence[i]));
 
                 float offSetTemp = offSet;
