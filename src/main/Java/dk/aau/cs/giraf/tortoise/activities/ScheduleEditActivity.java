@@ -124,7 +124,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.SHOW_FORCED);
                     }
                     else {
-                        ((EditText) v).setInputType(InputType.TYPE_NULL);
                         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     }
@@ -289,16 +288,27 @@ public class ScheduleEditActivity extends ScheduleActivity {
             return false;
         }
         Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
-        if (title != null) {
-            scheduleSeq.setTitle(title.toString());
-        }else if(title.equals(""))
+        String strTitle = title.toString();
+        if(strTitle.equals(""))
         {
             // if no title, set a default one
             scheduleSeq.setTitle(getString(R.string.unnamed_sequence));
         }
+        else
+        {
+            scheduleSeq.setTitle(strTitle);
+        }
+        //Check whether the title has already been used
+        List<Sequence> seqs = DBController.getInstance().getAllSequences(getApplicationContext());
 
+        for(Sequence s : seqs) {
+            if(scheduleSeq.getTitle().equals(s.getTitle())) {
+                GuiHelper.ShowToast(this, "The name has already been used! Choose another");
+                return false;
+            }
+        }
         boolean s1 = true;
-        //Loops trough the days sequences and saves them to the database
+        //Loops through the day's sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
             daySeq.setTitle("");
             daySeq.setTitlePictoId(scheduleSeq.getTitlePictoId());
@@ -321,8 +331,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
             GuiHelper.ShowToast(this, "Skema gemt");
             return true;
         }
-        GuiHelper.ShowToast(this, "Skema er ikke gemt!");
-        return false;
+        else{
+            GuiHelper.ShowToast(this, "Skema er ikke gemt!");
+            return false;
+        }
     }
 
     public void addPictograms(View v)
