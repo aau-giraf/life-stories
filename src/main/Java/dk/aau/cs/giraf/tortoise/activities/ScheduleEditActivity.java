@@ -159,7 +159,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         markCurrentWeekday();
     }
 
-    public void weekdaySelected(View v) {
+    public void weekdaySelected(View view) {
         markCurrentWeekday();
     }
 

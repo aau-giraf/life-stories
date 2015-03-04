@@ -43,13 +43,13 @@ public class ScheduleViewActivity extends ScheduleActivity
         setContentView(R.layout.schedule_edit_activity);
 
         // disable non-programmatic scrolling
-        disableScrolling();
+        //disableScrolling();
 
         // display the sequences in the week schedule
         displaySequences();
 
         // add arrows to week days with more than four pictograms
-        addArrows();
+        // addArrows();
 
         // Set title, remove buttons that should not be there. Set orientation to landscape
         setUpViewMode();
