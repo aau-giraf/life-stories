@@ -174,6 +174,7 @@ public class MainActivity extends TortoiseActivity {
                     if (isInEditMode) {
                         i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
                         i.putExtra("template", arg2);
+                        i.putExtra("EditMode", isInEditMode);
                         startActivity(i);
                     } else {
                         i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
