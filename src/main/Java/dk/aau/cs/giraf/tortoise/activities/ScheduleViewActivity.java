@@ -55,6 +55,11 @@ public class ScheduleViewActivity extends ScheduleActivity
         setUpViewMode();
     }
 
+    public void weekdaySelected(View view)
+    {
+        /*Do nothing for now*/
+    }
+
     public void disableScrolling()
     {
         // this method uses the border ids to get to the scroll views to disable regular scrolling
@@ -258,6 +263,8 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         return false;
     }
+
+
 
     private void displaySequences()
     {
