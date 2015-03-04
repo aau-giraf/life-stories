@@ -69,6 +69,11 @@ public class ScheduleActivity extends TortoiseActivity
         this.startActivityForResult(i, 3);
     }
 
+    public void selectedWeekday()
+    {
+        /*Do nothing*/
+    }
+
     public void dismissAddContentDialog(View v)
     {
         multichoiceDialog.dismiss();
