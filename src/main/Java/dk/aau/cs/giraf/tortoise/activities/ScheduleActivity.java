@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
@@ -68,6 +69,7 @@ public class ScheduleActivity extends TortoiseActivity
 
         this.startActivityForResult(i, 3);
     }
+
 
     public void dismissAddContentDialog(View v)
     {

@@ -129,6 +129,14 @@ public class DBController {
         return morphDBSequenceToSequence(sc.getSequenceAndFrames(id), context);
     }
 
+    public List<Sequence> getAllSequences(Context context)
+    {
+        SequenceController sc = new SequenceController(context);
+
+        return morphDBSequenceListToSequenceList(sc.getSequences(), context);
+    }
+
+
     /**
      * Morphs a list of DB Sequences to a list of Giraf Sequences
      * @param dbSeqs

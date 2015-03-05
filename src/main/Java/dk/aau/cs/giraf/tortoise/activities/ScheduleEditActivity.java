@@ -29,6 +29,7 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
@@ -52,6 +53,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
             finish();
         }
+
 
         setContentView(R.layout.schedule_edit_activity);
 
@@ -124,7 +126,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.SHOW_FORCED);
                     }
                     else {
-                        ((EditText) v).setInputType(InputType.TYPE_NULL);
                         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     }
@@ -158,7 +159,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         markCurrentWeekday();
     }
 
-    public void weekdaySelected(View v) {
+    public void weekdaySelected(View view) {
         markCurrentWeekday();
     }
 
@@ -281,24 +282,31 @@ public class ScheduleEditActivity extends ScheduleActivity {
     // this is just a variable for a workaround
     //  public static LinearLayout weekdayLayout;
     public boolean saveSchedule(View v) {
-
         Sequence scheduleSeq = LifeStory.getInstance().getCurrentStory();
 
-        if (scheduleSeq.getTitlePictoId() == 0){
+        if (scheduleSeq.getTitlePictoId() == 0) {
             GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et titel-pictogram");
             return false;
         }
         Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
-        if (title != null) {
-            scheduleSeq.setTitle(title.toString());
-        }else if(title.equals(""))
-        {
+        String strTitle = title.toString();
+        if (strTitle.equals("")) {
             // if no title, set a default one
             scheduleSeq.setTitle(getString(R.string.unnamed_sequence));
+        } else {
+            scheduleSeq.setTitle(strTitle);
         }
+        //Check whether the title has already been used
+        List<Sequence> seqs = DBController.getInstance().getAllSequences(getApplicationContext());
 
+        for (Sequence s : seqs) {
+            if (scheduleSeq.getTitle().equals(s.getTitle())) {
+                GuiHelper.ShowToast(this, "The name has already been used! Choose another");
+                return false;
+            }
+        }
         boolean s1 = true;
-        //Loops trough the days sequences and saves them to the database
+        //Loops through the day's sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
             daySeq.setTitle("");
             daySeq.setTitlePictoId(scheduleSeq.getTitlePictoId());
@@ -317,12 +325,43 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 LifeStory.getInstance().getChild().getId(),
                 getApplicationContext());
 
-        if (s1 && s2){
+        if (s1 && s2) {
             GuiHelper.ShowToast(this, "Skema gemt");
             return true;
+        } else {
+            GuiHelper.ShowToast(this, "Skema er ikke gemt!");
+            return false;
         }
-        GuiHelper.ShowToast(this, "Skema er ikke gemt!");
-        return false;
+    }
+
+    private boolean overrideSchedule(View v, Sequence scheduleSeq) {
+        Sequence seq = DBController.getInstance().getSequenceFromID(scheduleSeq.getId(), getApplicationContext());
+
+        boolean hasChanged = false;
+        //Checks whether the title of the new schedule is different from the one in the database
+        if(!scheduleSeq.getTitle().equals(seq.getTitle())) {
+            seq.setTitle(scheduleSeq.getTitle());
+            hasChanged = true;
+        }
+        //Checks whether the title pictogram of the new schedule is different from the one in the database
+        if(!(scheduleSeq.getTitlePictoId() == seq.getTitlePictoId())) {
+            seq.setTitlePictoId(scheduleSeq.getTitlePictoId());
+            hasChanged = true;
+        }
+        List<MediaFrame> newFrames = scheduleSeq.getMediaFrames();
+        List<MediaFrame> oldFrames = seq.getMediaFrames();
+
+        //Loops through all the days and checks whether there are any changes
+
+
+        if (hasChanged) {
+            GuiHelper.ShowToast(this, "Ændringer er gemt");
+            return true;
+        }
+        else {
+            GuiHelper.ShowToast(this, "Der var ikke nogle ændringer");
+            return false;
+        }
     }
 
     public void addPictograms(View v)
