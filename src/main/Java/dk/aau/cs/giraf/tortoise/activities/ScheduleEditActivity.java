@@ -317,7 +317,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             GuiHelper.ShowToast(this, "Skema gemt");
             return true;
         } else {
-            GuiHelper.ShowToast(this, "Skema er ikke gemt!");
+            GuiHelper.ShowToast(this, "Skema er ikke gemt!"); 
             return false;
         }
     }
