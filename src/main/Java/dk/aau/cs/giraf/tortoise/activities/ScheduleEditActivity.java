@@ -121,14 +121,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if(hasFocus) {
-                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.SHOW_FORCED);
-                    }
-                    else {
-                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        in.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    }
+                        InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             });
             title.setOnKeyListener(new View.OnKeyListener() {
@@ -299,12 +293,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
         //Check whether the title has already been used
         List<Sequence> seqs = DBController.getInstance().getAllSequences(getApplicationContext());
 
-        for (Sequence s : seqs) {
-            if (scheduleSeq.getTitle().equals(s.getTitle())) {
-                GuiHelper.ShowToast(this, "The name has already been used! Choose another");
-                return false;
-            }
-        }
         boolean s1 = true;
         //Loops through the day's sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
