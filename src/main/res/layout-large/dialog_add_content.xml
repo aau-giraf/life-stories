@@ -43,7 +43,7 @@
 
     <dk.aau.cs.giraf.gui.GDividerHorizontal
         android:id="@+id/seperatorLine"
-        android:layout_width="750dp"
+        android:layout_width="700dp"
         android:layout_height="4dp"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
@@ -63,7 +63,7 @@
     <HorizontalScrollView
         android:id="@+id/addedChoicesScrollView"
         android:layout_height="150dp"
-        android:layout_width="750dp"
+        android:layout_width="700dp"
         android:layout_below="@id/choicesText"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
