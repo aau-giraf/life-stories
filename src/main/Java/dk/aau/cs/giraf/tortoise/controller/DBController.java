@@ -62,10 +62,20 @@ public class DBController {
         if (seq.getId() == 0) {
             success = sc.insertSequenceAndFrames(dbSeq);
             seq.setId(dbSeq.getId());
-        }else {
-            success = sc.modifySequenceAndFrames(dbSeq);
+        } else {
+            success = sc.insertSequenceAndFrames(dbSeq);
+            seq.setId(dbSeq.getId());
+            //success = sc.modifySequenceAndFrames(dbSeq);
         }
         return success;
+    }
+
+    public boolean existScheduleSequence(Sequence seq, Context con) {
+        SequenceController sc = new SequenceController(con);
+        if(sc.getSequenceById(seq.getId()) != null){
+            return true;
+        }
+        return false;
     }
 
     /**

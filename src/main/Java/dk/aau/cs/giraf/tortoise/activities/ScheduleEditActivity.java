@@ -171,7 +171,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                     GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
                 } else {
                     try {
-                        LifeStory.getInstance().setCurrentStory(new Sequence());
+                        //LifeStory.getInstance().setCurrentStory(new Sequence());
                         LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
                         Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
                         Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
@@ -292,12 +292,17 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
         //Check whether the title has already been used
         List<Sequence> seqs = DBController.getInstance().getAllSequences(getApplicationContext());
-
+        if(DBController.getInstance().existScheduleSequence(scheduleSeq, getApplicationContext())){
+            DBController.getInstance().deleteSequence(scheduleSeq, getApplicationContext());
+            scheduleSeq.deleteAllMediaFrames();
+            scheduleSeq.setId(0);
+        }
         boolean s1 = true;
         //Loops through the day's sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
             daySeq.setTitle("");
             daySeq.setTitlePictoId(scheduleSeq.getTitlePictoId());
+            daySeq.setId(0);
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
                     dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     LifeStory.getInstance().getChild().getId(),

@@ -104,4 +104,5 @@ public class Sequence extends AbstractSequence {
     public void deleteMediaFrame(int position) {
         mediaFrames.remove(position);
     }
+    public void deleteAllMediaFrames(){ mediaFrames.clear();}
 }
