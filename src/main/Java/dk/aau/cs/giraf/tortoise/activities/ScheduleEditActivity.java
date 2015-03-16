@@ -290,13 +290,23 @@ public class ScheduleEditActivity extends ScheduleActivity {
         } else {
             scheduleSeq.setTitle(strTitle);
         }
-        //Check whether the title has already been used
-        List<Sequence> seqs = DBController.getInstance().getAllSequences(getApplicationContext());
+
+
         if(DBController.getInstance().existScheduleSequence(scheduleSeq, getApplicationContext())){
             DBController.getInstance().deleteSequence(scheduleSeq, getApplicationContext());
             scheduleSeq.deleteAllMediaFrames();
             scheduleSeq.setId(0);
         }
+        //Check whether the title has already been used
+        List<Sequence> seqs = DBController.getInstance().getAllSequences(getApplicationContext());
+        for (Sequence s : seqs) {
+            if (scheduleSeq.getTitle().equals(s.getTitle())) {
+                GuiHelper.ShowToast(this, "Navnet er allerede blevet brugt! Vælg et andet.");
+                return false;
+            }
+        }
+
+
         boolean s1 = true;
         //Loops through the day's sequences and saves them to the database
         for (Sequence daySeq : super.weekdaySequences) {
