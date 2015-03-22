@@ -16,6 +16,7 @@ import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.HorizontalScrollView;
+import android.widget.ScrollView;
 
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
@@ -32,21 +33,22 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	private final int DRAG_DISTANCE = 8;
 
 	//Layout
-	private int horizontalSpacing;
-	private int itemWidth;
+	private int verticalSpacing;
+	private int itemWidth;//remember me
 	private int itemHeight;
 
-	private int offsetY = 0;
+	private int offsetX = 0;
+    private int offsetYY = 0; // remember me as well
 
 	//Dragging data
 	private View draggingView = null;
 	private boolean isDragging = false;
 	private int startDragIndex = -1;
 	private int curDragIndexPos = -1;
-	private int dragStartX;
+	private int dragStartY;//Make this a Y coordinate
 	private int centerOffset;
-	private int touchX = -1;
-	private int touchDeltaX = 0;
+	private int touchY = -1;
+	private int touchDeltaY = 0;
 	private boolean animatingDragReposition = false;
 	private int[] newPositions;
 	
@@ -70,8 +72,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.SequenceViewGroup);
 		try {
-			horizontalSpacing = a.getDimensionPixelSize(
-					R.styleable.SequenceViewGroup_horizontalSpacing,
+			verticalSpacing = a.getDimensionPixelSize(
+					R.styleable.SequenceViewGroup_verticalSpacing,
 					DEFAULT_HORIZONTAL_SPACING);
 			itemWidth = a.getDimensionPixelSize(
 					R.styleable.SequenceViewGroup_itemWidth, DEFAULT_ITEM_WIDTH);
@@ -97,26 +99,26 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		});
 	}
 
-	private int calcChildLeftPosition(int childIndex) {
-		int prevAccumulatedSpacing = childIndex * horizontalSpacing;
-		int prevAccumulatedWidth = childIndex * itemWidth;
-		return prevAccumulatedSpacing + prevAccumulatedWidth + getPaddingLeft();
+	private int calcChildTopPosition(int childIndex) {
+		int prevAccumulatedSpacing = childIndex * verticalSpacing;
+		int prevAccumulatedHeight = childIndex * itemHeight;
+		return prevAccumulatedSpacing + prevAccumulatedHeight + getPaddingTop();
 	}
 
-	private int calcChildTopPosition() {
-		return getPaddingTop() + offsetY;
+	private int calcChildLeftPosition() {
+		return getPaddingLeft() + offsetX;
 	}
 
 	private void checkForSwap() {
 
-		int dragCenterX = touchX - centerOffset;
+		int dragCenterY = touchY - centerOffset;
 
-		boolean isDraggingRight = dragCenterX - getCenterX(curDragIndexPos) > 0;
+		boolean isDraggingRight = dragCenterY - getCenterY(curDragIndexPos) > 0;
 
 		if (isDraggingRight) {
 			int checkIndex = curDragIndexPos + 1;
 			//Don't swap with  new sequence diagram view.
-			while (checkIndex < getCurrentSequenceViewCount() && dragCenterX > ((getCenterX(curDragIndexPos) + getCenterX(checkIndex)) / 2)) {
+			while (checkIndex < getCurrentSequenceViewCount() && dragCenterY > ((getCenterY(curDragIndexPos) + getCenterY(checkIndex)) / 2)) {
 				//Animate before swapping indices
 				doAnimateTranslation(checkIndex, curDragIndexPos);
 				swapIndexPositions(checkIndex, curDragIndexPos);
@@ -125,7 +127,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			}
 		} else {
 			int checkIndex = curDragIndexPos - 1;
-			while (checkIndex >= 0 && dragCenterX < ((getCenterX(curDragIndexPos) + (getCenterX(checkIndex))) / 2)) {
+			while (checkIndex >= 0 && dragCenterY < ((getCenterY(curDragIndexPos) + (getCenterY(checkIndex))) / 2)) {
 				//Animate before swapping indices
 				doAnimateTranslation(checkIndex, curDragIndexPos);
 				swapIndexPositions(checkIndex, curDragIndexPos);
@@ -157,24 +159,24 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		//This is where the current view occupying indexFrom originally came from.
 		int realFrom = newPositions[indexFrom];
 
-		int destOffset = calcChildLeftPosition(indexTo) - calcChildLeftPosition(realFrom);
+		int destOffset = calcChildTopPosition(realFrom) - calcChildTopPosition(indexTo);
 
 		//This is the view currently occuping indexFrom
 		View view = getChildAt(realFrom);
 		//Before deleting current animation, get old translation
-		int currentTranslatedX = 0;
+		int currentTranslatedY = 0;
 		Animation animation = view.getAnimation();
 		if (animation != null) {
-			currentTranslatedX = getAnimationTranslatedX(animation);
+			currentTranslatedY = getAnimationTranslatedY(animation);
 		}
 		view.clearAnimation();
 
 		//Move from current offset to new offset based on it original location before dragging.
 		TranslateAnimation anim = new TranslateAnimation(
-				Animation.ABSOLUTE, currentTranslatedX,
-				Animation.ABSOLUTE, destOffset,
 				Animation.ABSOLUTE, 0,
-				Animation.ABSOLUTE, 0);
+				Animation.ABSOLUTE, 0,
+				Animation.ABSOLUTE, currentTranslatedY,
+				Animation.ABSOLUTE, destOffset);
 
 		anim.setDuration(ANIMATION_TIME);
 		anim.setFillEnabled(true);
@@ -198,21 +200,21 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		return new LayoutParams(p.width, p.height);
 	}
 	
-	private int getAnimationTranslatedX(Animation animation)    {
-		if (animation == null) throw new NullPointerException("No translation x for null animation");
+	private int getAnimationTranslatedY(Animation animation)    {
+		if (animation == null) throw new NullPointerException("No translation y for null animation");
 		Transformation transformation = new Transformation();
 		animation.getTransformation(AnimationUtils.currentAnimationTimeMillis(), transformation);
 		float[] matrix = new float[9];
 		transformation.getMatrix().getValues(matrix);
-		return (int) matrix[Matrix.MTRANS_X];
+		return (int) matrix[Matrix.MTRANS_Y];
 	}
 	
-	private int getCenterX(int index) {
-		return calcChildLeftPosition(index) + itemWidth / 2;
+	private int getCenterY(int index) {
+		return calcChildTopPosition(index) - itemHeight / 2;
 	}
 	
-	public int getHorizontalSpacing() {
-		return horizontalSpacing;
+	public int getVerticalSpacing() {
+		return verticalSpacing;
 	}
 
 	private int getIndexAtPoint(int x, int y) {
@@ -225,7 +227,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	
 	@SuppressWarnings("unused")
 	private int getIndexAtX(int x) {
-		return getIndexAtPoint(x, calcChildTopPosition() + itemHeight / 2);
+		return getIndexAtPoint(x, calcChildLeftPosition() - itemWidth / 2);
 	}
 	
 	public int getItemHeight() {
@@ -237,8 +239,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	}
 
 	@SuppressWarnings("unused")
-	private int getLeftX(int index) {
-		return calcChildLeftPosition(index);
+	private int getTopY(int index) {
+		return calcChildTopPosition(index);
 	}
 
 	/**
@@ -251,8 +253,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	}
 	
 	@SuppressWarnings("unused")
-	private int getRightX(int index) {
-		return calcChildLeftPosition(index) + itemWidth;
+	private int getBottomY(int index) {
+		return calcChildTopPosition(index) - itemHeight;
 	}
 
 	private void layoutChild(int i) {
@@ -262,8 +264,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	}
 
 	private void layoutChild(View child, int i) {
-		int x = calcChildLeftPosition(i);
-		int y = calcChildTopPosition();
+		int x = calcChildLeftPosition();
+		int y = calcChildTopPosition(i);
 		
 		child.layout(x, y, x + child.getMeasuredWidth(), y + child.getMeasuredHeight());
 	}
@@ -315,35 +317,35 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		 * The ViewGroup requires all children to have the same size, itemWidth and itemHeight as the parent.
 		 */
 
-		int minHeight = itemHeight + getPaddingTop() + getPaddingBottom();
-		int height = getHeight();
+		int minWidth = itemWidth + getPaddingLeft() + getPaddingRight();
+		int width = getWidth();
 
-		if (height < minHeight)
-			height = minHeight;
+		if (width < minWidth)
+			width = minWidth;
 
-		int surplusHeight = height - minHeight;
+		int surplusWidth = width - minWidth;
 
-		offsetY = surplusHeight / 2;
-		if (offsetY < 0)
-        offsetY = 0;
+		offsetX = surplusWidth / 2;
+		if (offsetX < 0)
+        offsetX = 0;
 
 		int adapterCount = 0;
 		if (adapter != null)
 			adapterCount = adapter.getCount();
 
-		int width = getPaddingLeft() + getPaddingRight();
-
-		width += adapterCount * itemWidth;
+		int height = getPaddingTop() + getPaddingBottom();
+        //Possible negative y value error
+		height += adapterCount * itemHeight;
 		if (adapterCount > 1) {
-			width += (adapterCount - 1) * horizontalSpacing;
+			height += (adapterCount - 1) * verticalSpacing;
 		}
 
         // If we are in edit sequence, we add room for the add pictogram button
-
+        //Possible negative y value error
 		if (isInEditMode) {
-			width += itemWidth;
+			height += itemWidth;
 			if (adapterCount > 0) {
-				width += horizontalSpacing;
+				height += verticalSpacing;
 			}
 		}
 		
@@ -360,10 +362,10 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		if (getParent().getParent() instanceof ViewGroup) {
 			ViewGroup parent = (ViewGroup)getParent().getParent();
 			MarginLayoutParams params = (MarginLayoutParams)getLayoutParams();
-			
-			int parentSizeNoPadding = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight() - params.rightMargin - params.leftMargin;
-			if (parentSizeNoPadding > width)
-				width = parentSizeNoPadding;
+			//Possible negative y value error
+			int parentSizeNoPadding = parent.getHeight() - parent.getPaddingTop() - parent.getPaddingBottom() - params.topMargin - params.bottomMargin;
+			if (parentSizeNoPadding > height)
+				height = parentSizeNoPadding;
 		}
 
 		setMeasuredDimension(resolveSize(width, widthMeasureSpec),
@@ -393,8 +395,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		if (event.getActionMasked() == MotionEvent.ACTION_UP || 
 				event.getActionMasked() == MotionEvent.ACTION_CANCEL || 
 				event.getPointerCount() != 1 ||
-				x >= getWidth() || x <= 0) {
-			
+				y <= getHeight() || y >= 0) {//Possible negative y value error
+
 			//Be careful with coordinates from the event if getPointerCount != 1
 			if (draggingView != null) {
 				if (isDragging) {
@@ -407,12 +409,12 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 					
 					//Disallow movement when repositioning dragged view.
 					animatingDragReposition = true;
-					
+                    //Possible negative y value error
 					TranslateAnimation move = new TranslateAnimation(
 							0,
-							calcChildLeftPosition(curDragIndexPos) - draggingView.getLeft(), 
-							0, 
-							0);
+							0,
+							0,
+                            draggingView.getTop() - calcChildTopPosition(curDragIndexPos));
 					move.setDuration(ANIMATION_TIME);
 					
 					move.setAnimationListener(new AnimationListener() {
@@ -496,9 +498,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 					//Everything is in the right place at the start.
 					resetViewPositions();
 					
-					touchX = (int) x;			
-					dragStartX = touchX;
-					centerOffset = touchX - getCenterX(startDragIndex);
+					touchY = (int) y;
+					dragStartY = touchY;
+					centerOffset = touchY + getCenterY(startDragIndex);//Possible negative y value error
 					
 					draggingView.invalidate();
 				} else {
@@ -516,13 +518,13 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			
 			else {  // The user is touching a pictogram
 				
-				if (!isDragging && Math.abs(dragStartX - x) >= DRAG_DISTANCE) {  // The user is starting to move a pictogram
+				if (!isDragging && Math.abs(dragStartY + y) >= DRAG_DISTANCE) {  // The user is starting to move a pictogram
 					isDragging = true;
 					startAutoScroll();
 				}
 				
 				handled = true;
-				handleTouchMove(x);
+				handleTouchMove(y);
 			}
 			break;
 		}
@@ -566,21 +568,21 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		removeCallbacks(autoScroller);
 	}
 
-	private void handleTouchMove(float newTouchX) {
+	private void handleTouchMove(float newTouchY) {
 		if (!isDragging) return;
 		
-		touchX = (int) newTouchX;
-		touchDeltaX = (int) (newTouchX - dragStartX);
+		touchY = (int) newTouchY;
+		touchDeltaY = (int) (dragStartY - newTouchY);//Possible negative y value error
 		//Layout the dragging element. Is excluded from normal layout			
-		int newLeft = calcChildLeftPosition(startDragIndex) + touchDeltaX;
-		draggingView.layout(newLeft, draggingView.getTop(), newLeft + draggingView.getMeasuredWidth(), draggingView.getTop() + draggingView.getMeasuredHeight());
+		int newTop = calcChildTopPosition(startDragIndex) + touchDeltaY;
+		draggingView.layout(draggingView.getLeft(), newTop, draggingView.getLeft() + draggingView.getMeasuredWidth(), newTop + draggingView.getMeasuredHeight());
 		
 		checkForSwap();
 	}
 
-	public void setHorizontalSpacing(int spacing) {
-		if (spacing >= 0 && spacing != horizontalSpacing) {
-			horizontalSpacing = spacing;
+	public void setVerticalSpacing(int spacing) {
+		if (spacing >= 0 && spacing != verticalSpacing) {
+			verticalSpacing = spacing;
 			requestLayout();
 		}
 	}
@@ -693,7 +695,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	private class AutoScroller implements Runnable {
 		
 		private final float MAX_SCROLL_SPEED_PER_MS = 0.52f;
-		private final int BORDER_DIST_TO_SCROLL = 340;
+		private final int BORDER_DIST_TO_SCROLL = 240;
 		
 		private int currentScrollX = 0;
 		private int currentScrollY = 0;
@@ -708,8 +710,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		
 		public AutoScroller() {
 			this.scroller = getScroller(SequenceViewGroup.this);;
-			if (! (this.scroller instanceof HorizontalScrollView))
-				throw new IllegalStateException("Parent of SequenceViewGroup must be HorizontalScrollView");
+			if (! (this.scroller instanceof ScrollView))
+				throw new IllegalStateException("Parent of SequenceViewGroup must be ScrollView");
 			timeBefore = AnimationUtils.currentAnimationTimeMillis();
 			reset();
 		}
@@ -737,10 +739,10 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 				return;
 			
 			//Find the closest border
-			int borderRightDist = scroller.getWidth() - getRelativePosInSeqViewGrp(touchX);
-			int borderLeftDist = getRelativePosInSeqViewGrp(touchX);
+			int borderBottomDist = scroller.getHeight() - getRelativePosInSeqViewGrp(touchY);//Possible negative y value error
+			int borderTopDist = getRelativePosInSeqViewGrp(touchY);
 			
-			int borderDist = Math.min(borderRightDist, borderLeftDist);
+			int borderDist = Math.min(borderBottomDist, borderTopDist);
 			
 			//Not year border. Maybe next time
 			if (borderDist > BORDER_DIST_TO_SCROLL) {
@@ -751,16 +753,16 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			int scrollAmount = (int) calculateMovement(timeDifference, borderDist);
 			
 			//Scrolling left?
-			if (borderLeftDist < borderRightDist)
+			if (borderTopDist > borderBottomDist)
 				scrollAmount = -scrollAmount;
 			
-			final int prevScrollX = currentScrollX;
+			final int prevScrollY = currentScrollY;
 			
 			//scrollTo, unlike scrollBy, clamps within the child bounds.
-			scroller.scrollTo(currentScrollX + scrollAmount, currentScrollY);
-			currentScrollX = scroller.getScrollX();
+			scroller.scrollTo(currentScrollX, currentScrollY - scrollAmount);//Possible negative y value error
+			currentScrollY = scroller.getScrollY();
 			
-			SequenceViewGroup.this.handleTouchMove(touchX + (currentScrollX - prevScrollX));
+			SequenceViewGroup.this.handleTouchMove(touchY + (prevScrollY - currentScrollY));
 			
 			post(this);
 			
@@ -768,13 +770,13 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		
 		private float calculateMovement(final long timeDifference, int borderDist) {	
 			//Interpolation is: 1 - (1 - x)^2
-			final float x = (float) (BORDER_DIST_TO_SCROLL - borderDist) / BORDER_DIST_TO_SCROLL;
-			final float inv = 1 - x;
+			final float y = (float) (borderDist - BORDER_DIST_TO_SCROLL) / BORDER_DIST_TO_SCROLL;//Possible negative y value error
+			final float inv = 1 - y;
 			return (1 - inv * inv) * MAX_SCROLL_SPEED_PER_MS * timeDifference;
 		}
 		
-		private int getRelativePosInSeqViewGrp(int touchX) {
-			return touchX - scroller.getScrollX();
+		private int getRelativePosInSeqViewGrp(int touchY) {
+			return scroller.getScrollY() - touchY;//Possible negative y value error
 		}
 		
 		private boolean isDoneScrolling() {

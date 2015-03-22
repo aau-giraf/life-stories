@@ -1,17 +1,22 @@
 package dk.aau.cs.giraf.tortoise.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
+
+import dk.aau.cs.giraf.oasis.lib.models.EqualsUtil;
+import dk.aau.cs.giraf.oasis.lib.models.OasisObserver;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 
-public class MediaFrame extends AbstractMediaFrame {
+public class MediaFrame extends AbstractMediaFrame implements Comparator<MediaFrame> {
 
     private Pictogram choicePictogram;
 	private List<Pictogram> content;
 	private OnContentChangedEventListener mListener;
+    private int posY;
     private int nestedSequenceID;
     private int pictogramId;
 	
@@ -71,6 +76,9 @@ public class MediaFrame extends AbstractMediaFrame {
         choicePictogram = picto;
     }
 
+    public int getPosY(){return this.posY;}
+    public void setPosY(int value){ this.posY = value;}
+
     public int getPictogramId(){
         return this.pictogramId;
     }
@@ -90,4 +98,28 @@ public class MediaFrame extends AbstractMediaFrame {
 	public SerializableMediaFrame getSerializableMediaFrame() {
 		return new SerializableMediaFrame(this);
 	}
+
+    @Override
+    public String toString() {
+        String localOutput =  getPosY() + ","  + getPictogramId() + ","  + getNestedSequenceID() ;
+        return localOutput;
+    }
+
+    @Override
+    public boolean equals(Object aCategory) {
+        if ( this == aCategory ) return true;
+
+        if ( !(aCategory instanceof MediaFrame) ) return false;
+
+        MediaFrame profileCategory = (MediaFrame)aCategory;
+
+        return EqualsUtil.areEqual(this.getPosY(), profileCategory.getPosY()) &&
+                EqualsUtil.areEqual(this.getPictogramId(), profileCategory.getPictogramId())&&
+                EqualsUtil.areEqual(this.getNestedSequenceID(), profileCategory.getNestedSequenceID())&&
+                EqualsUtil.areEqual(this.getContent(), profileCategory.getContent());
+    }
+    @Override
+    public int compare(MediaFrame a, MediaFrame b) {
+        return 1;
+    }
 }

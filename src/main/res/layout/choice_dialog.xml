@@ -37,20 +37,20 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-            <dk.aau.cs.giraf.zebra.SequenceViewGroup
+            <dk.aau.cs.giraf.tortoise.SequenceViewGroup
                 android:id="@+id/choice_view_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="30dp"
-                svg:horizontalSpacing="20dp"
+                svg:verticalSpacing="20dp"
                 svg:itemHeight="@dimen/activity_main_picto_size"
                 svg:itemWidth="@dimen/activity_main_picto_size"
                 android:background="@layout/main_picto_container_bg"
                 android:layout_gravity="center_vertical">
 
-            </dk.aau.cs.giraf.zebra.SequenceViewGroup>
+            </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
         </FrameLayout>
 
     </HorizontalScrollView>

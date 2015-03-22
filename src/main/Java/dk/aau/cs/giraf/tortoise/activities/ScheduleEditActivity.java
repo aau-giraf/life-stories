@@ -20,11 +20,14 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
@@ -60,7 +63,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private int childId;
     private int sequenceId;
     private int pictogramEditPos = -1;
-    public static dk.aau.cs.giraf.tortoise.controller.Sequence sequence;
+    public static dk.aau.cs.giraf.tortoise.controller.Sequence weekSequence;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence choice = new dk.aau.cs.giraf.tortoise.controller.Sequence();
     public static SequenceAdapter adapter;
     public static SequenceAdapter choiceAdapter;
@@ -101,7 +104,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         setContentView(R.layout.schedule_edit_activity);
         loadIntents();
+        initSequences(intent);
         setupFramesGrid();
+        setupButtons();
         exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
 
         //TODO:This was never implemented.
@@ -117,13 +122,15 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }*/
 
         //Create empty sequences if no existing sequence is received. Otherwise load this sequence.
-        initSequences(intent);
+
     }
 
     private void initSequences(Intent intent) {
 
         // Create new array of sequences.
         weekdaySequences = new ArrayList<Sequence>();
+
+        helper = new Helper(this);
 
         // Test if we get a template. Create new (empty) sequences if not.
         int template = intent.getIntExtra("template", -1);
@@ -138,13 +145,19 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 weekdaySequences.add(i, new Sequence());
             }
 
-            showAddButtons();
+            weekSequence = new Sequence();
+            //showAddButtons();
         }
         else
         {
-            Sequence weekSequence = LifeStory.getInstance().getStories().get(template);
+            weekSequence = LifeStory.getInstance().getStories().get(template);
             LifeStory.getInstance().setCurrentStory(weekSequence);
 
+            /*Collections.sort(weekSequence.getMediaFrames(), new Comparator<MediaFrame>() {
+                public int compare(Frame x, Frame y) {
+                    return Integer.valueOf(x.getPosX()).compareTo(y.getPosX());
+                }
+            });*/
             for (int i = 0; i < 7; i++)
             {
                 //Get id for the day corresponding to each sequence
@@ -200,6 +213,49 @@ public class ScheduleEditActivity extends ScheduleActivity {
         adapter = setupAdapter();
         setupSequenceViewGroup(adapter);
     }
+    private void setupButtons() {
+        //Creates all buttons in Activity and their listeners
+        GButton saveButton = (GButton) findViewById(R.id.save_button);
+        backButton = (GButton) findViewById(R.id.back_button);
+        //If sticking with this way of doing xml, implement find title pictogram
+        sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
+
+        saveButton.setOnClickListener(new ImageButton.OnClickListener() {
+            //Show Dialog to save Sequence when clicking the Save Button
+            @Override
+            public void onClick(View v) {
+                createAndShowSaveDialog(v);
+            }
+        });
+
+        backButton.setOnClickListener(new ImageButton.OnClickListener() {
+            //Show Back Dialog when clicking the Cancel Button
+            @Override
+            public void onClick(View v) {
+                createAndShowBackDialog(v);
+            }
+        });
+
+        sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
+            //If Sequence Image Button is clicked, call PictoAdmin to select an Image for the Sequence
+            @Override
+            public void onClick(View v) {
+                if (isInEditMode) {
+                    callPictoAdmin(PICTO_SEQUENCE_IMAGE_CALL);
+                }
+            }
+        });
+
+        //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
+        if (weekSequence.getTitlePictoId() == 0) {
+            Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+        } else {
+            helper = new Helper(this);
+            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(weekSequence.getTitlePictoId()).getImage());
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+        }
+    }
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
         //The SequenceViewGroup class takes care of most of the required functionality, including size properties, dragging and rearranging
@@ -226,7 +282,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 //Save Frame and Position
                 pictogramEditPos = position;
-                MediaFrame frame = sequence.getMediaFrames().get(position);
+                MediaFrame frame = weekSequence.getMediaFrames().get(position);
 
                 //Perform action depending on the type of pictogram clicked.
                 checkFrameMode(frame, view);
@@ -246,7 +302,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     private SequenceAdapter setupAdapter() {
         //Sets up the adapter for the Sequence to display
-        final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
+        final SequenceAdapter adapter = new SequenceAdapter(this, weekSequence);
 
         //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
         adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
@@ -259,7 +315,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         @Override
                         public void onDeleteClick() {
                             //Remove frame and update Adapter
-                            sequence.getMediaFrames().remove(position);
+                            weekSequence.getMediaFrames().remove(position);
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -441,7 +497,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         if (choiceMode) {
 
             for (int id : checkoutIds) {
-                Pictogram pictogram = new Pictogram(con);
+                Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
                 pictogram.setId(id);
                 tempPictogramList.add(pictogram);
 
@@ -461,13 +517,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
             for (int id : checkoutIds) {
                 MediaFrame frame = new MediaFrame();
                 frame.setPictogramId(id);
-                sequence.addFrame(frame);
+                weekSequence.addFrame(frame);
             }
 
-            if (sequence.getId() == 0 && checkoutIds.length > 0) {
-                sequence.setId(checkoutIds[0]);
+            if (weekSequence.getId() == 0 && checkoutIds.length > 0) {
+                weekSequence.setId(checkoutIds[0]);
                 helper = new Helper(this);
-                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getId()).getImage());
+                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(weekSequence.getId()).getImage());
                 sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
                 sequenceImageButton.setVisibility(View.GONE);
                 sequenceImageButton.setVisibility(View.VISIBLE);
@@ -755,7 +811,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 @Override
                 public void onClick(View v) {
-                    tempFrameList = sequence.getMediaFrames();
+                    tempFrameList = weekSequence.getMediaFrames();
                     MediaFrame frame = new MediaFrame();
                     if(tempPictogramList == null) {
                         //TODO: Display message that user can not save empty choice.
@@ -766,10 +822,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
                     if (pictogramEditPos == -1){
-                        sequence.addFrame(frame);
+                        weekSequence.addFrame(frame);
                         pictogramEditPos = tempFrameList.size()-1;
                     } else {
-                        sequence.getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
+                        weekSequence.getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
                     }
                     adapter.notifyDataSetChanged();
                     choiceMode = false;

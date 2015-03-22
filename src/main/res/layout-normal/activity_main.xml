@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                svg:horizontalSpacing="20dp"
+                svg:verticalSpacing="20dp"
                 svg:itemHeight="150dp"
                 svg:itemWidth="150dp"
                 android:layout_gravity="center_vertical"
