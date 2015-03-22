@@ -13,6 +13,7 @@ public class MediaFrame extends AbstractMediaFrame {
 	private List<Pictogram> content;
 	private OnContentChangedEventListener mListener;
     private int nestedSequenceID;
+    private int pictogramId;
 	
 	public MediaFrame(){
 		super();
@@ -70,7 +71,12 @@ public class MediaFrame extends AbstractMediaFrame {
         choicePictogram = picto;
     }
 
-
+    public int getPictogramId(){
+        return this.pictogramId;
+    }
+    public void setPictogramId(int value){
+        this.pictogramId = value;
+    }
 
 	
 	public void removeContent(Pictogram content){

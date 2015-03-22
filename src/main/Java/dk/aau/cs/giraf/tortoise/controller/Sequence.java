@@ -14,6 +14,7 @@ public class Sequence extends AbstractSequence {
 	private List<MediaFrame> mediaFrames;
 	private Bitmap titleImage;
 	private OnNumChoicesEventListener mListener;
+    private boolean frameListChanged;
 
 	public Sequence(){
 		super();
@@ -45,7 +46,11 @@ public class Sequence extends AbstractSequence {
         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
         this.titleImage = bitmap;
     }
-	
+
+    public void addFrame(MediaFrame frame) {
+        mediaFrames.add(frame);
+        this.frameListChanged = true;
+    }
 
     public void rearrange(int oldIndex, int newIndex) {
         if (oldIndex < 0 || oldIndex >= mediaFrames.size()) throw new IllegalArgumentException("oldIndex out of range");
@@ -88,7 +93,15 @@ public class Sequence extends AbstractSequence {
 			mListener.onNumChoicesChanged(this.getNumChoices());
 		this.numChoices++;
 	}
-	
+
+    public boolean getFrameListChanged() {
+        return frameListChanged;
+    }
+
+    public void setFrameListChanged(boolean frameListChanged) {
+        this.frameListChanged = frameListChanged;
+    }
+
 	public Bitmap getTitleImage() {
 		return titleImage;
 	}

@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/main_gradient_bg"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true"
+    xmlns:svg="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/sequence_bar"
@@ -16,15 +17,25 @@
         android:orientation="horizontal" >
 
         <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/home_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:drawableBottom="@drawable/quit"
+            android:onClick="showExitDialog"
+            android:layout_marginLeft="15dp"/>
+
+        <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/schedule_image_button"
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="30dp"
             android:scaleType="centerCrop"
             android:drawableBottom="@drawable/no_image_big"
-            android:onClick="startPictosearch" />
+            android:onClick="startPictosearch"
+            android:layout_marginLeft="200dp"/>
 
         <EditText
             android:id="@+id/scheduleName"
@@ -50,23 +61,15 @@
             android:id="@+id/save"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/home_button"
             android:scaleType="fitCenter"
             android:drawableBottom="@drawable/save"
             android:onClick="saveSchedule"
-            android:layout_marginRight="15dp" />
+            android:layout_marginRight="30dp"/>
 
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/home_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/quit"
-            android:onClick="showExitDialog"
-            android:layout_marginRight="15dp" />
+
 
     </RelativeLayout>
 
@@ -494,26 +497,36 @@
             </FrameLayout>
 
             <ScrollView
+                android:id="@+id/scrollView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView6"
                 android:layout_below="@+id/frameLayout6"
+                android:layout_margin="0dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp">
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutSunday"
-                    android:layout_below="@+id/frameLayout6"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-            </ScrollView>
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
 
+                    <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                        android:id="@+id/sequenceViewGroup6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        svg:horizontalSpacing="20dp"
+                        svg:itemHeight="@dimen/weekday_button_height"
+                        svg:itemWidth="@dimen/weekday_button_height"
+                        android:layout_gravity="center_horizontal"
+                        android:background="@layout/main_picto_container_bg">
+                    </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </LinearLayout>
+
+            </ScrollView>
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
@@ -523,6 +536,7 @@
                 android:id="@+id/border_sunday"
                 android:layout_alignParentBottom="true"
                 android:layout_below="@+id/frameLayout6" />
+
 
         </RelativeLayout>
     </LinearLayout>

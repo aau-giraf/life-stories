@@ -21,7 +21,7 @@ public class PictogramView extends LinearLayout {
     public final static float NORMAL_SCALE = 0.8f;
     public final static float HIGHLIGHT_SCALE = 0.9f;
     public final static float LOWLIGHT_SCALE = 0.7f;
-	private final static float DEFAULT_TEXT_SIZE = 18f;
+	private final static float DEFAULT_TEXT_SIZE = 9f;
 	
 	private RoundedImageView pictogram;
 	private TextView title;
@@ -77,7 +77,7 @@ public class PictogramView extends LinearLayout {
 	private View createTextView() {
 		title = new TextView(getContext());
 		title.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
-		title.setGravity(Gravity.CENTER_HORIZONTAL);
+		title.setGravity(Gravity.CENTER_VERTICAL);
 		title.setTextSize(DEFAULT_TEXT_SIZE);
 		
 		return title;

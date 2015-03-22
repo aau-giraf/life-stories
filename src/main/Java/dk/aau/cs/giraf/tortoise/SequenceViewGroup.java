@@ -24,9 +24,9 @@ import android.widget.HorizontalScrollView;
  */
 public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
-	private final int DEFAULT_ITEM_WIDTH = 250;
-	private final int DEFAULT_ITEM_HEIGHT = 250;
-	private final int DEFAULT_HORIZONTAL_SPACING = 100;
+	private final int DEFAULT_ITEM_WIDTH = 40;
+	private final int DEFAULT_ITEM_HEIGHT = 40;
+	private final int DEFAULT_HORIZONTAL_SPACING = 10;
 	
 	private final int ANIMATION_TIME = 350;
 	private final int DRAG_DISTANCE = 8;

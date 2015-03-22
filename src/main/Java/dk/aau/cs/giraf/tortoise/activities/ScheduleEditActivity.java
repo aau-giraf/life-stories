@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,20 +18,30 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GDialogAlert;
+import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.models.Frame;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
+import dk.aau.cs.giraf.tortoise.MainActivity;
 import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.SequenceAdapter;
+import dk.aau.cs.giraf.tortoise.SequenceViewGroup;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -38,6 +49,39 @@ import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleEditActivity extends ScheduleActivity {
+
+    private Profile guardian;
+    private Profile selectedChild;
+    private boolean isInEditMode;
+    private boolean isNew;
+    private boolean assumeMinimize = true;
+    public static boolean choiceMode = false;
+    private int guardianId;
+    private int childId;
+    private int sequenceId;
+    private int pictogramEditPos = -1;
+    public static dk.aau.cs.giraf.tortoise.controller.Sequence sequence;
+    public static dk.aau.cs.giraf.tortoise.controller.Sequence choice = new dk.aau.cs.giraf.tortoise.controller.Sequence();
+    public static SequenceAdapter adapter;
+    public static SequenceAdapter choiceAdapter;
+    private List<MediaFrame> tempFrameList;
+    private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
+    private GButton backButton;
+    private GButton sequenceImageButton;
+    private EditText sequenceTitleView;
+    private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
+    private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
+    private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
+    private final int PICTO_SEQUENCE_IMAGE_CALL = 345;
+    private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
+    private final int PICTO_NEW_PICTOGRAM_CALL = 567;
+    private final int SEQUENCE_VIEWER_CALL = 1337;
+    private final int NESTED_SEQUENCE_CALL = 40;
+    public static Activity activityToKill;
+    private Helper helper;
+    private GDialog printAlignmentDialog;
+    private File[] file;
+
     public List<List<ImageView>> weekdayLists;
     GDialog exitDialog;
 
@@ -56,7 +100,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
         setContentView(R.layout.schedule_edit_activity);
-
+        loadIntents();
+        setupFramesGrid();
         exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
 
         //TODO:This was never implemented.
@@ -142,6 +187,112 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
     }
+    private void loadIntents() {
+        Bundle extras = getIntent().getExtras();
+        childId = extras.getInt("childId");
+        sequenceId = extras.getInt("sequenceId");
+        guardianId = extras.getInt("guardianId");
+        isInEditMode = extras.getBoolean("editMode");
+    }
+
+    private void setupFramesGrid() {
+        // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
+        adapter = setupAdapter();
+        setupSequenceViewGroup(adapter);
+    }
+
+    private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
+        //The SequenceViewGroup class takes care of most of the required functionality, including size properties, dragging and rearranging
+
+        //Set up adapter to display the Sequence
+        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup6);
+        sequenceGroup.setEditModeEnabled(isInEditMode);
+        sequenceGroup.setAdapter(adapter);
+
+        //When clicking the big "+", lift up the view and show the Add Dialog
+        sequenceGroup.setOnNewButtonClickedListener(new SequenceViewGroup.OnNewButtonClickedListener() {
+            @Override
+            public void onNewButtonClicked() {
+                final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup6);
+                sequenceGroup.liftUpAddNewButton();
+                createAndShowAddDialog(sequenceGroup);
+            }
+        });
+
+        //If clicking an item, save the position, save the Frame, and find out what kind of Frame it is. Then perform relevant action
+        sequenceGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+
+                //Save Frame and Position
+                pictogramEditPos = position;
+                MediaFrame frame = sequence.getMediaFrames().get(position);
+
+                //Perform action depending on the type of pictogram clicked.
+                checkFrameMode(frame, view);
+            }
+        });
+
+        //Handle Rearrange
+        sequenceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
+            @Override
+            public void onRearrange(int indexFrom, int indexTo) {
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        return sequenceGroup;
+    }
+
+    private SequenceAdapter setupAdapter() {
+        //Sets up the adapter for the Sequence to display
+        final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
+
+        //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
+        adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
+            @Override
+            public void onAdapterGetView(final int position, final View view) {
+                if (view instanceof PictogramView) {
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new PictogramView.OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            sequence.getMediaFrames().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
+        return adapter;
+    }
+    private SequenceAdapter setupChoiceAdapter() {
+        //Sets up the adapter for the Choice Frames
+        final SequenceAdapter adapter = new SequenceAdapter(this, choice);
+
+        //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
+        adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
+            @Override
+            public void onAdapterGetView(final int position, final View view) {
+                if (view instanceof PictogramView) {
+                    //Cast view to PictogramView so the onDeleteClickListener can be set
+                    PictogramView v = (PictogramView) view;
+                    v.setOnDeleteClickListener(new PictogramView.OnDeleteClickListener() {
+                        @Override
+                        public void onDeleteClick() {
+                            //Remove frame and update Adapter
+                            choice.getMediaFrames().remove(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        });
+        return adapter;
+    }
+
 
     @Override
     public void onResume() {
@@ -201,6 +352,12 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 } else // when pictograms are received
                 {
                     try {
+
+                        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+                        sequenceGroup.placeDownAddNewButton();
+
+                        OnNewPictogramResult(data, getApplicationContext());
+
                         MediaFrame mf = new MediaFrame();
 
                         addContentToMediaFrame(mf, checkoutIds);
@@ -273,6 +430,51 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
     }
 
+    private void OnNewPictogramResult(Intent data, Context con) {
+        int[] checkoutIds = data.getExtras().getIntArray(
+                PICTO_INTENT_CHECKOUT_ID);
+
+        //If no pictures are returned, assume user canceled and nothing is supposed to change.
+        if (checkoutIds.length == 0 || checkoutIds == null) {
+            return;
+        }
+        if (choiceMode) {
+
+            for (int id : checkoutIds) {
+                Pictogram pictogram = new Pictogram(con);
+                pictogram.setId(id);
+                tempPictogramList.add(pictogram);
+
+
+                MediaFrame frame = new MediaFrame();
+                frame.setPictogramId(id);
+                choice.addFrame(frame);
+
+                if (choice.getId() == 0) {
+                    choice.setId(checkoutIds[0]);
+                }
+            }
+
+            choiceAdapter.notifyDataSetChanged();
+        } else {
+
+            for (int id : checkoutIds) {
+                MediaFrame frame = new MediaFrame();
+                frame.setPictogramId(id);
+                sequence.addFrame(frame);
+            }
+
+            if (sequence.getId() == 0 && checkoutIds.length > 0) {
+                sequence.setId(checkoutIds[0]);
+                helper = new Helper(this);
+                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(sequence.getId()).getImage());
+                sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+                sequenceImageButton.setVisibility(View.GONE);
+                sequenceImageButton.setVisibility(View.VISIBLE);
+            }
+            adapter.notifyDataSetChanged();
+        }
+    }
     // this is just a variable for a workaround
     //  public static LinearLayout weekdayLayout;
     public boolean saveSchedule(View v) {
@@ -329,10 +531,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 getApplicationContext());
 
         if (s1 && s2) {
-            GuiHelper.ShowToast(this, "Skema gemt");
             return true;
         } else {
-            GuiHelper.ShowToast(this, "Skema er ikke gemt!"); 
             return false;
         }
     }
@@ -414,6 +614,292 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         }
 
+    }
+    private void finishActivity(){
+        assumeMinimize = false;
+        finish();
+    }
+    private void callPictoAdmin(int modeId) {
+        assumeMinimize = false;
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
+        intent.putExtra("currentChildID", selectedChild.getId());
+        intent.putExtra("currentGuardianID", guardian.getId());
+
+        if (modeId == PICTO_NEW_PICTOGRAM_CALL)
+            intent.putExtra("purpose", "multi");
+        else
+            intent.putExtra("purpose", "single");
+
+        startActivityForResult(intent, modeId);
+    }
+
+    private void checkFrameMode(MediaFrame frame, View v) {
+
+        if (frame.getNestedSequenceID() != 0) {
+            createAndShowNestedDialog(v);
+
+        } else if (frame.getContent().size() > 0) {
+            createAndShowChoiceDialog(v);
+        } else {
+            callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+        }
+    }
+
+
+        private class AddDialog extends GDialog {
+
+        private AddDialog(Context context) {
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog,null));
+
+            GButton getSequence = (GButton) findViewById(R.id.get_sequence);
+            GButton getPictogram = (GButton) findViewById(R.id.get_pictogram);
+            GButton getChoice = (GButton) findViewById(R.id.get_choice);
+
+            getSequence.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    createAndShowNestedDialog(v);
+                    dismiss();
+                }
+            });
+            getPictogram.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                    dismiss();
+                }
+            });
+            getChoice.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    choiceMode = true;
+                    dismiss();
+                    createAndShowChoiceDialog(v);
+                }
+            });
+        }
+    }
+    private class BackDialog extends GDialog {
+
+        public BackDialog(Context context) {
+
+            super(context);
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null));
+
+            GButton saveChanges = (GButton) findViewById(R.id.save_changes);
+            GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
+            GButton cancel = (GButton) findViewById(R.id.return_to_editting);
+
+            saveChanges.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    boolean sequenceOk;
+                    sequenceOk = saveSchedule(v);
+                    dismiss();
+                    if (sequenceOk) {
+                        finishActivity();
+                    }
+                }
+            });
+
+            discardChanges.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                    finishActivity();
+                }
+            });
+
+            cancel.setOnClickListener(new GButton.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }
+    }
+    private class ChoiceDialog extends GDialog {
+
+        private ChoiceDialog(Context context) {
+            super(context);
+
+            choice.getMediaFrames().clear();
+            if ( pictogramEditPos != -1 ) {
+                for (int i = 0; i < adapter.getItem(pictogramEditPos).getContent().size(); i++)
+                {
+                    MediaFrame frame = new MediaFrame();
+                    frame.setPictogramId(adapter.getItem(pictogramEditPos).getContent().get(i).getId());
+                    choice.addFrame(frame);
+                }
+            }
+
+            this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.choice_dialog,null));
+
+            GButton saveChoice = (GButton) findViewById(R.id.save_choice);
+            GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
+
+            //Adapter to display a list of pictograms in the choice dialog
+            choiceAdapter = setupChoiceAdapter();
+
+            saveChoice.setOnClickListener(new GButton.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    tempFrameList = sequence.getMediaFrames();
+                    MediaFrame frame = new MediaFrame();
+                    if(tempPictogramList == null) {
+                        //TODO: Display message that user can not save empty choice.
+                        return;
+                    }
+                    frame.setContent(tempPictogramList);
+                    frame.setPictogramId(tempPictogramList.get(0).getId());
+
+
+                    if (pictogramEditPos == -1){
+                        sequence.addFrame(frame);
+                        pictogramEditPos = tempFrameList.size()-1;
+                    } else {
+                        sequence.getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
+                    }
+                    adapter.notifyDataSetChanged();
+                    choiceMode = false;
+                    pictogramEditPos = -1;
+                    dismiss();
+                }
+            });
+            discardChoice.setOnClickListener(new GButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    choiceMode = false;
+                    dismiss();
+                }
+            });
+            setupChoiceGroup(choiceAdapter);
+        }
+
+        private SequenceViewGroup setupChoiceGroup(
+                final SequenceAdapter adapter) {
+            final SequenceViewGroup choiceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+            choiceGroup.setEditModeEnabled(isInEditMode);
+            choiceGroup.setAdapter(adapter);
+
+            // Handle rearrange
+            choiceGroup
+                    .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
+                        @Override
+                        public void onRearrange(int indexFrom, int indexTo) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+
+
+            // Handle new view
+            choiceGroup
+                    .setOnNewButtonClickedListener(new SequenceViewGroup.OnNewButtonClickedListener() {
+                        @Override
+                        public void onNewButtonClicked() {
+                            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+                            sequenceGroup.liftUpAddNewButton();
+
+                            callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                        }
+                    });
+
+            choiceGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapter, View view,
+                                        int position, long id) {
+                    pictogramEditPos = position;
+                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+                }
+            });
+
+
+            return choiceGroup;
+        }
+    }
+
+    private void createAndShowSaveDialog(View v) {
+        //Creates a dialog for saving Sequence. If Sequence is saved succesfully, exit Activity
+        GDialogMessage saveDialog = new GDialogMessage(v.getContext(), R.drawable.save,
+                "Gem Sekvens",
+                "Du er ved at gemme sekvensen",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean sequenceOk;
+                        sequenceOk = saveSchedule(v);
+                        if (sequenceOk) {
+                            finishActivity();
+                        }
+                    }
+                });
+        saveDialog.show();
+    }
+
+    private void createAndShowBackDialog(View v) {
+        //Create instance of BackDialog class and display it
+        BackDialog backDialog = new BackDialog(v.getContext());
+        backDialog.show();
+    }
+
+    private void createAndShowAddDialog(View v) {
+        //Create instance of AddDialog and display it
+        AddDialog addFrame = new AddDialog(v.getContext());
+        addFrame.show();
+    }
+
+    private void createAndShowChoiceDialog(View v) {
+        //Create instance of ChoiceDialog and display it
+        ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext());
+        choiceDialog.show();
+    }
+
+    private void createAndShowNestedDialog(View v) {
+        //Creates a Dialog for information. Clicking OK starts MainActivity in nestedMode
+        GDialogMessage nestedDialog = new GDialogMessage(v.getContext(),
+                //TODO: Find a better icon than the ic_launcher icon
+                R.drawable.ic_launcher,
+                "Åbner sekvensvalg",
+                "Et nyt vindue åbnes, hvor du kan vælge en anden sekvens at indsætte",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        assumeMinimize = false;
+
+                        //Put required Intents to set up Nested Mode
+                        Intent intent = new Intent(getApplication(), MainActivity.class);
+                        intent.putExtra("insertSequence", true);
+                        intent.putExtra("currentGuardianID", guardian.getId());
+                        intent.putExtra("currentChildID", childId);
+                        startActivityForResult(intent, NESTED_SEQUENCE_CALL);
+                    }
+                });
+
+        nestedDialog.show();
+    }
+
+    private void createAndShowErrorDialog(View v) {
+        //Creates alertDialog to display error. Clicking Ok dismisses the Dialog
+        GDialogAlert alertDialog = new GDialogAlert(v.getContext(), R.drawable.delete,
+                "Fejl",
+                "Du kan ikke gemme en tom Sekvens",
+                new View.OnClickListener(){
+                    @Override public void onClick(View v) {
+                    }
+                });
+        alertDialog.show();
     }
 
     public void showExitDialog(View v){
