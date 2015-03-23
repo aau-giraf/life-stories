@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.tortoise;
 
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
@@ -38,6 +40,20 @@ public class MainActivity extends TortoiseActivity {
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
 
+
+
+    private Profile guardian;
+    private Profile selectedChild;
+
+    private boolean nestedMode;
+    private boolean assumeMinimize = true;
+    private boolean childIsSet = false;
+
+    public static Activity activityToKill;
+
+    private int childId;
+
+    private Helper helper;
     /**
      * Initializes all app elements.
      * @param savedInstanceState
@@ -66,7 +82,7 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().setGuardian(
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
 
-        overrideViews();
+        setupButtons();
         if (i.getIntExtra("currentChildID", -1) == -1) {
             findViewById(R.id.profileSelect).performClick();
         }else {
@@ -86,42 +102,41 @@ public class MainActivity extends TortoiseActivity {
 
     }
 
-    private void overrideViews() {
+    private void setupButtons() {
         GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
+        GToggleButton button = (GToggleButton) findViewById(R.id.edit_mode_toggle);
+        GButton addButton = (GButton) findViewById(R.id.add_button);
+
         gbps.setOnClickListener(new View.OnClickListener() {
             //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
-                final GProfileSelector childSelector = new GProfileSelector(v.getContext(),
-                        LifeStory.getInstance().getGuardian(),
-                        null,
-                        false);
-                childSelector.show();
+            final GProfileSelector childSelector = new GProfileSelector(v.getContext(),
+                    LifeStory.getInstance().getGuardian(),
+                    null,
+                    false);
+            childSelector.show();
 
-                childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
-                        LifeStory.getInstance().setChild(
-                                new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
+            childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
+                    LifeStory.getInstance().setChild(
+                            new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
 
-                        TextView profileName = (TextView) findViewById(R.id.child_name);
-                        profileName.setText(LifeStory.getInstance().getChild().getName());
+                    TextView profileName = (TextView) findViewById(R.id.child_name);
+                    profileName.setText(LifeStory.getInstance().getChild().getName());
 
-                        loadSeqGrid(LifeStory.getInstance().getChild());
+                    loadSeqGrid(LifeStory.getInstance().getChild());
 
-                        childSelector.dismiss();
-                    }
-                });
-                try{childSelector.backgroundCancelsDialog(false);}
-                catch (Exception ignored){}
+                    childSelector.dismiss();
+                }
+            });
+            try{childSelector.backgroundCancelsDialog(false);}
+            catch (Exception ignored){}
             }
         });
-
-
         // Edit mode switcher button
-        GToggleButton button = (GToggleButton) findViewById(R.id.edit_mode_toggle);
-
         button.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
@@ -146,6 +161,54 @@ public class MainActivity extends TortoiseActivity {
                 }
             }
         });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            //Enter SequenceActivity when clicking the Add Button
+            @Override
+            public void onClick(View v) {
+                dk.aau.cs.giraf.tortoise.controller.Sequence sequence = new dk.aau.cs.giraf.tortoise.controller.Sequence();
+                addStory(sequence, true);
+            }
+        });
+
+    }
+
+    private void setupModeFromIntents() {
+        //Create helper to fetch data from database
+        helper = new Helper(this);
+
+        //Fetches intents (from Launcher or SequenceActivity)
+        Bundle extras = getIntent().getExtras();
+
+        //Makes the Activity killable from SequenceActivity and (Nested) MainActivity
+        if (extras.getBoolean("insertSequence") == false) {
+            activityToKill = this;
+        }
+
+        //Get GuardianId and ChildId from extras
+        int guardianId = extras.getInt("currentGuardianID");
+        childId = extras.getInt("currentChildID");
+
+        //Save guardian locally (Fetch from Database by Id)
+        guardian = helper.profilesHelper.getProfileById(guardianId);
+
+        //Setup nestedMode if insertSequence extra is present
+        /*if (extras.getBoolean("insertSequence")) {
+            nestedMode = true;
+            setupNestedMode();
+            setChild();
+        }
+        //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
+        else if (childId == -1) {
+            pickAndSetChild();
+            setupGuardianMode();
+        }
+        //Else setup application for a Child
+        else {
+            setupChildMode();
+            setChild();
+            childIsSet = true;
+        }*/
     }
     private void loadSeqGrid(Profile profile){
         // Clear existing life stories
@@ -328,12 +391,17 @@ public class MainActivity extends TortoiseActivity {
         }
     }
 
-    public void addStory(View v)
+    public void addStory(dk.aau.cs.giraf.tortoise.controller.Sequence s, Boolean isNew)
     {
         canFinish = false;
         Intent i;
         if(isInScheduleMode){
             i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
+            i.putExtra("childId", selectedChild.getId());
+            i.putExtra("guardianId", guardian.getId());
+            i.putExtra("EditMode", true);
+            i.putExtra("isNew", isNew);
+            i.putExtra("sequenceId", s.getId());
             i.putExtra("template", -1);
         }else {
             i = new Intent(getApplicationContext(), EditModeActivity.class);
