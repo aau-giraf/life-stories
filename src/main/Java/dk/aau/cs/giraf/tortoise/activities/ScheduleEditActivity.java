@@ -63,7 +63,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private int childId;
     private int sequenceId;
     private int pictogramEditPos = -1;
-    public static dk.aau.cs.giraf.tortoise.controller.Sequence weekSequence;
+    public static dk.aau.cs.giraf.tortoise.controller.Sequence schedule;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence choice = new dk.aau.cs.giraf.tortoise.controller.Sequence();
     public static SequenceAdapter adapter;
     public static SequenceAdapter choiceAdapter;
@@ -125,6 +125,14 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     }
 
+    private void loadIntents() {
+        Bundle extras = getIntent().getExtras();
+        childId = extras.getInt("childId");
+        sequenceId = extras.getInt("sequenceId");
+        guardianId = extras.getInt("guardianId");
+        isInEditMode = extras.getBoolean("editMode");
+    }
+
     private void initSequences(Intent intent) {
 
         // Create new array of sequences.
@@ -144,37 +152,32 @@ public class ScheduleEditActivity extends ScheduleActivity {
             {
                 weekdaySequences.add(i, new Sequence());
             }
-
-            weekSequence = new Sequence();
+            schedule = new Sequence();
             //showAddButtons();
         }
         else
         {
-            weekSequence = LifeStory.getInstance().getStories().get(template);
-            LifeStory.getInstance().setCurrentStory(weekSequence);
+            schedule = LifeStory.getInstance().getStories().get(template);
+            LifeStory.getInstance().setCurrentStory(schedule);
 
-            /*Collections.sort(weekSequence.getMediaFrames(), new Comparator<MediaFrame>() {
-                public int compare(Frame x, Frame y) {
-                    return Integer.valueOf(x.getPosX()).compareTo(y.getPosX());
-                }
-            });*/
             for (int i = 0; i < 7; i++)
             {
                 //Get id for the day corresponding to each sequence
                 int dayID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(i).getNestedSequenceID();
                 Sequence daySeq = DBController.getInstance().getSequenceFromID(dayID, this);
+                Collections.sort(daySeq.getMediaFrames(), new Comparator<MediaFrame>() {
+                    public int compare(MediaFrame x, MediaFrame y) {
+                        return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
+                    }
+                });
                 weekdaySequences.add(i, daySeq);
             }
 
             //Set title image.
-            Bitmap titleBitmap = weekSequence.getTitleImage();
-            Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
-            GButton titleImage = (GButton) findViewById(R.id.schedule_image_button);
-            titleImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, titleDrawable);
 
             //Set title text
             EditText title = (EditText) findViewById(R.id.scheduleName);
-            title.setText(weekSequence.getTitle());
+            title.setText(schedule.getTitle());
             title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
                 @Override
@@ -195,17 +198,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
             });
 
             //After loading the sequences, render the schedule and show add buttons.
-            renderSchedule(true);
+            //renderSchedule(true);
         }
 
 
-    }
-    private void loadIntents() {
-        Bundle extras = getIntent().getExtras();
-        childId = extras.getInt("childId");
-        sequenceId = extras.getInt("sequenceId");
-        guardianId = extras.getInt("guardianId");
-        isInEditMode = extras.getBoolean("editMode");
     }
 
     private void setupFramesGrid() {
@@ -247,13 +243,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
         });
 
         //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
-        if (weekSequence.getTitlePictoId() == 0) {
+        if (schedule.getTitlePictoId() == 0) {
             Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
         } else {
             helper = new Helper(this);
-            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(weekSequence.getTitlePictoId()).getImage());
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(schedule.getTitlePictoId()).getImage());
+            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
         }
     }
 
@@ -282,7 +278,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 //Save Frame and Position
                 pictogramEditPos = position;
-                MediaFrame frame = weekSequence.getMediaFrames().get(position);
+                MediaFrame frame = schedule.getMediaFrames().get(position);
 
                 //Perform action depending on the type of pictogram clicked.
                 checkFrameMode(frame, view);
@@ -302,7 +298,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     private SequenceAdapter setupAdapter() {
         //Sets up the adapter for the Sequence to display
-        final SequenceAdapter adapter = new SequenceAdapter(this, weekSequence);
+        final SequenceAdapter adapter = new SequenceAdapter(this, schedule);
 
         //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
         adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
@@ -315,7 +311,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         @Override
                         public void onDeleteClick() {
                             //Remove frame and update Adapter
-                            weekSequence.getMediaFrames().remove(position);
+                            schedule.getMediaFrames().remove(position);
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -517,13 +513,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
             for (int id : checkoutIds) {
                 MediaFrame frame = new MediaFrame();
                 frame.setPictogramId(id);
-                weekSequence.addFrame(frame);
+                schedule.addFrame(frame);
             }
 
-            if (weekSequence.getId() == 0 && checkoutIds.length > 0) {
-                weekSequence.setId(checkoutIds[0]);
+            if (schedule.getId() == 0 && checkoutIds.length > 0) {
+                schedule.setId(checkoutIds[0]);
                 helper = new Helper(this);
-                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(weekSequence.getId()).getImage());
+                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(schedule.getId()).getImage());
                 sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
                 sequenceImageButton.setVisibility(View.GONE);
                 sequenceImageButton.setVisibility(View.VISIBLE);
@@ -811,7 +807,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 @Override
                 public void onClick(View v) {
-                    tempFrameList = weekSequence.getMediaFrames();
+                    tempFrameList = schedule.getMediaFrames();
                     MediaFrame frame = new MediaFrame();
                     if(tempPictogramList == null) {
                         //TODO: Display message that user can not save empty choice.
@@ -822,10 +818,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
                     if (pictogramEditPos == -1){
-                        weekSequence.addFrame(frame);
+                        schedule.addFrame(frame);
                         pictogramEditPos = tempFrameList.size()-1;
                     } else {
-                        weekSequence.getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
+                        schedule.getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
                     }
                     adapter.notifyDataSetChanged();
                     choiceMode = false;

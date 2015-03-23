@@ -38,7 +38,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	private int itemHeight;
 
 	private int offsetX = 0;
-    private int offsetYY = 0; // remember me as well
+    private int offsetY = 0; // remember me as well
 
 	//Dragging data
 	private View draggingView = null;
@@ -226,8 +226,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	}
 	
 	@SuppressWarnings("unused")
-	private int getIndexAtX(int x) {
-		return getIndexAtPoint(x, calcChildLeftPosition() - itemWidth / 2);
+	private int getIndexAtY(int y) {
+		return getIndexAtPoint(y, calcChildLeftPosition() + itemWidth / 2);
 	}
 	
 	public int getItemHeight() {
@@ -254,7 +254,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	
 	@SuppressWarnings("unused")
 	private int getBottomY(int index) {
-		return calcChildTopPosition(index) - itemHeight;
+		return calcChildTopPosition(index) + itemHeight;
 	}
 
 	private void layoutChild(int i) {
@@ -395,7 +395,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		if (event.getActionMasked() == MotionEvent.ACTION_UP || 
 				event.getActionMasked() == MotionEvent.ACTION_CANCEL || 
 				event.getPointerCount() != 1 ||
-				y <= getHeight() || y >= 0) {//Possible negative y value error
+				y >= getHeight() || y <= 0) {//Possible negative y value error
 
 			//Be careful with coordinates from the event if getPointerCount != 1
 			if (draggingView != null) {
@@ -414,7 +414,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 							0,
 							0,
 							0,
-                            draggingView.getTop() - calcChildTopPosition(curDragIndexPos));
+                            calcChildTopPosition(curDragIndexPos) - draggingView.getTop());
 					move.setDuration(ANIMATION_TIME);
 					
 					move.setAnimationListener(new AnimationListener() {
@@ -500,7 +500,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 					
 					touchY = (int) y;
 					dragStartY = touchY;
-					centerOffset = touchY + getCenterY(startDragIndex);//Possible negative y value error
+					centerOffset = touchY - getCenterY(startDragIndex);//Possible negative y value error
 					
 					draggingView.invalidate();
 				} else {
@@ -518,7 +518,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			
 			else {  // The user is touching a pictogram
 				
-				if (!isDragging && Math.abs(dragStartY + y) >= DRAG_DISTANCE) {  // The user is starting to move a pictogram
+				if (!isDragging && Math.abs(dragStartY - y) >= DRAG_DISTANCE) {  // The user is starting to move a pictogram
 					isDragging = true;
 					startAutoScroll();
 				}
@@ -572,7 +572,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		if (!isDragging) return;
 		
 		touchY = (int) newTouchY;
-		touchDeltaY = (int) (dragStartY - newTouchY);//Possible negative y value error
+		touchDeltaY = (int) (newTouchY - dragStartY );//Possible negative y value error
 		//Layout the dragging element. Is excluded from normal layout			
 		int newTop = calcChildTopPosition(startDragIndex) + touchDeltaY;
 		draggingView.layout(draggingView.getLeft(), newTop, draggingView.getLeft() + draggingView.getMeasuredWidth(), newTop + draggingView.getMeasuredHeight());
@@ -753,16 +753,16 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			int scrollAmount = (int) calculateMovement(timeDifference, borderDist);
 			
 			//Scrolling left?
-			if (borderTopDist > borderBottomDist)
+			if (borderTopDist < borderBottomDist)
 				scrollAmount = -scrollAmount;
 			
 			final int prevScrollY = currentScrollY;
 			
 			//scrollTo, unlike scrollBy, clamps within the child bounds.
-			scroller.scrollTo(currentScrollX, currentScrollY - scrollAmount);//Possible negative y value error
+			scroller.scrollTo(currentScrollX, currentScrollY + scrollAmount);//Possible negative y value error
 			currentScrollY = scroller.getScrollY();
 			
-			SequenceViewGroup.this.handleTouchMove(touchY + (prevScrollY - currentScrollY));
+			SequenceViewGroup.this.handleTouchMove(touchY + (currentScrollY - prevScrollY));
 			
 			post(this);
 			
@@ -770,13 +770,13 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		
 		private float calculateMovement(final long timeDifference, int borderDist) {	
 			//Interpolation is: 1 - (1 - x)^2
-			final float y = (float) (borderDist - BORDER_DIST_TO_SCROLL) / BORDER_DIST_TO_SCROLL;//Possible negative y value error
+			final float y = (float) (BORDER_DIST_TO_SCROLL - borderDist) / BORDER_DIST_TO_SCROLL;//Possible negative y value error
 			final float inv = 1 - y;
 			return (1 - inv * inv) * MAX_SCROLL_SPEED_PER_MS * timeDifference;
 		}
 		
 		private int getRelativePosInSeqViewGrp(int touchY) {
-			return scroller.getScrollY() - touchY;//Possible negative y value error
+			return touchY - scroller.getScrollY();//Possible negative y value error
 		}
 		
 		private boolean isDoneScrolling() {

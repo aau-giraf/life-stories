@@ -11,7 +11,7 @@ import dk.aau.cs.giraf.oasis.lib.models.OasisObserver;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 
-public class MediaFrame extends AbstractMediaFrame implements Comparator<MediaFrame> {
+public class MediaFrame extends AbstractMediaFrame{
 
     private Pictogram choicePictogram;
 	private List<Pictogram> content;
@@ -117,9 +117,5 @@ public class MediaFrame extends AbstractMediaFrame implements Comparator<MediaFr
                 EqualsUtil.areEqual(this.getPictogramId(), profileCategory.getPictogramId())&&
                 EqualsUtil.areEqual(this.getNestedSequenceID(), profileCategory.getNestedSequenceID())&&
                 EqualsUtil.areEqual(this.getContent(), profileCategory.getContent());
-    }
-    @Override
-    public int compare(MediaFrame a, MediaFrame b) {
-        return 1;
     }
 }

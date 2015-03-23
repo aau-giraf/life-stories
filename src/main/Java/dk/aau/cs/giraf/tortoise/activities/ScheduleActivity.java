@@ -198,7 +198,7 @@ public class ScheduleActivity extends TortoiseActivity
         int childcount = level1.getChildCount();
 
         // find each of the individual week days
-        for (int i = 0; i < childcount; i++)
+        for (int i = 0; i < childcount - 1; i++)
         {
             try
             {
@@ -460,7 +460,7 @@ public class ScheduleActivity extends TortoiseActivity
         int childcount = level1.getChildCount();
 
         // find each of the individual week days
-        for (int i = 0; i < childcount; i++)
+        for (int i = 0; i < childcount - 1; i++)
         {
             try
             {
