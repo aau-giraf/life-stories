@@ -65,6 +65,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private int pictogramEditPos = -1;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence schedule;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence choice = new dk.aau.cs.giraf.tortoise.controller.Sequence();
+    /*public static SequenceAdapter mondayAdapter;
+    public static SequenceAdapter tuesdayAdapter;
+    public static SequenceAdapter wednesdayAdapter;
+    public static SequenceAdapter thursdayAdapter;
+    public static SequenceAdapter fridayAdapter;
+    public static SequenceAdapter saturdayAdapter;
+    public static SequenceAdapter sundayAdapter;*/
     public static SequenceAdapter adapter;
     public static SequenceAdapter choiceAdapter;
     private List<MediaFrame> tempFrameList;
@@ -198,7 +205,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             });
 
             //After loading the sequences, render the schedule and show add buttons.
-            //renderSchedule(true);
+            renderSchedule(true);
         }
 
 
@@ -206,8 +213,18 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     private void setupFramesGrid() {
         // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
-        adapter = setupAdapter();
-        setupSequenceViewGroup(adapter);
+        /*Sequence monday;
+        Sequence tuesday;
+        Sequence wednesday;
+        Sequence thursday;
+        Sequence friday;
+        Sequence saturday;
+        Sequence sunday;
+
+        for(int i = 0; i < weekdaySequences.size(); i++) {*/
+            adapter = setupAdapter();
+            setupSequenceViewGroup(adapter);
+        //}
     }
     private void setupButtons() {
         //Creates all buttons in Activity and their listeners
@@ -296,6 +313,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         return sequenceGroup;
     }
 
+    // needs to be changed to each sequence
     private SequenceAdapter setupAdapter() {
         //Sets up the adapter for the Sequence to display
         final SequenceAdapter adapter = new SequenceAdapter(this, schedule);
@@ -699,7 +717,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
 
 
-        private class AddDialog extends GDialog {
+    private class AddDialog extends GDialog {
 
         private AddDialog(Context context) {
             super(context);
@@ -782,7 +800,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
     private class ChoiceDialog extends GDialog {
 
-        private ChoiceDialog(Context context) {
+        private ChoiceDialog(Context context/*, SequenceAdapter adapter*/) {
             super(context);
 
             choice.getMediaFrames().clear();
@@ -885,8 +903,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private void createAndShowSaveDialog(View v) {
         //Creates a dialog for saving Sequence. If Sequence is saved succesfully, exit Activity
         GDialogMessage saveDialog = new GDialogMessage(v.getContext(), R.drawable.save,
-                "Gem Sekvens",
-                "Du er ved at gemme sekvensen",
+                "Gem skema",
+                "Du er ved at gemme skemaet",
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
