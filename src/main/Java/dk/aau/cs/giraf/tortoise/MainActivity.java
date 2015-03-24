@@ -238,6 +238,7 @@ public class MainActivity extends TortoiseActivity {
                         i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
                         i.putExtra("template", arg2);
                         i.putExtra("EditMode", isInEditMode);
+                        i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
                         startActivity(i);
                     } else {
                         i = new Intent(getApplicationContext(), ScheduleViewActivity.class);

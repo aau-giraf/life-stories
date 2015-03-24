@@ -220,19 +220,31 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
 
     private void setupFramesGrid() {
+        //CHECK OM VIRKER
         // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
-        /*Sequence monday;
-        Sequence tuesday;
-        Sequence wednesday;
-        Sequence thursday;
-        Sequence friday;
-        Sequence saturday;
-        Sequence sunday;
 
-        for(int i = 0; i < weekdaySequences.size(); i++) {*/
-            adapter = setupAdapter();
-            setupSequenceViewGroup(adapter);
-        //}
+
+        final SequenceAdapter mondayAdapter = new SequenceAdapter(this, weekdaySequences.get(0));
+        setupAdapter(mondayAdapter, weekdaySequences.get(0));
+        setupSequenceViewGroup(mondayAdapter);
+        final SequenceAdapter tuesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(1));
+        setupAdapter(tuesdayAdapter, weekdaySequences.get(1));
+        setupSequenceViewGroup(tuesdayAdapter);
+        final SequenceAdapter wednesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(2));
+        setupAdapter(wednesdayAdapter, weekdaySequences.get(2));
+        setupSequenceViewGroup(wednesdayAdapter);
+        final SequenceAdapter thursdayAdapter = new SequenceAdapter(this, weekdaySequences.get(3));
+        setupAdapter(thursdayAdapter, weekdaySequences.get(3));
+        setupSequenceViewGroup(thursdayAdapter);
+        final SequenceAdapter fridayAdapter = new SequenceAdapter(this, weekdaySequences.get(4));
+        setupAdapter(fridayAdapter, weekdaySequences.get(4));
+        setupSequenceViewGroup(fridayAdapter);
+        final SequenceAdapter saturdayAdapter = new SequenceAdapter(this, weekdaySequences.get(5));
+        setupAdapter(saturdayAdapter, weekdaySequences.get(5));
+        setupSequenceViewGroup(saturdayAdapter);
+        final SequenceAdapter sundayAdapter = new SequenceAdapter(this, weekdaySequences.get(6));
+        setupAdapter(sundayAdapter, weekdaySequences.get(6));
+        setupSequenceViewGroup(sundayAdapter);
     }
     private void setupButtons() {
         //Creates all buttons in Activity and their listeners
@@ -322,9 +334,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
 
     // needs to be changed to each sequence
-    private SequenceAdapter setupAdapter() {
-        //Sets up the adapter for the Sequence to display
-        final SequenceAdapter adapter = new SequenceAdapter(this, schedule);
+    private SequenceAdapter setupAdapter(final SequenceAdapter adapter, final Sequence s) {
 
         //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
         adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
@@ -337,7 +347,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         @Override
                         public void onDeleteClick() {
                             //Remove frame and update Adapter
-                            schedule.getMediaFrames().remove(position);
+                            s.getMediaFrames().remove(position);
                             adapter.notifyDataSetChanged();
                         }
                     });
