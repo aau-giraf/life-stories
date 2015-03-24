@@ -111,6 +111,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         setContentView(R.layout.schedule_edit_activity);
         loadIntents();
+        loadProfiles();
         initSequences(intent);
         setupFramesGrid();
         setupButtons();
@@ -137,7 +138,14 @@ public class ScheduleEditActivity extends ScheduleActivity {
         childId = extras.getInt("childId");
         sequenceId = extras.getInt("sequenceId");
         guardianId = extras.getInt("guardianId");
-        isInEditMode = extras.getBoolean("editMode");
+        isInEditMode = extras.getBoolean("EditMode");
+    }
+
+    private void loadProfiles() {
+        //Create helper to load Child from Database
+        helper = new Helper(this);
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+        guardian = helper.profilesHelper.getProfileById(guardianId);
     }
 
     private void initSequences(Intent intent) {
