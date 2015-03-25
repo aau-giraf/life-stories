@@ -8,211 +8,45 @@
     android:background="@drawable/main_gradient_bg"
     android:focusableInTouchMode="true">
 
-    <RelativeLayout
-        android:id="@+id/sequence_bar"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:background="@drawable/main_topbar_gradient_bg"
-        android:orientation="horizontal" >
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/schedule_image_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="30dp"
-            android:scaleType="centerCrop"
-            android:drawableBottom="@drawable/no_image_big"
-            android:background="@drawable/gbutton"
-            android:onClick="startPictosearch"/>
-
-        <TextView
-            android:id="@+id/scheduleName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Skemanavn"
-            android:textSize="60sp"
-            android:textColor="@color/text_color" />
-
-        <ImageButton
-            android:id="@+id/home_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
-            android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/quit"
-            android:background="@drawable/gbutton"
-            android:onClick="doExit"/>
-
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/completeWeekLayout">
+        android:layout_gravity="center_horizontal">
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="@color/green"
-            android:layout_weight="1"
-            android:id="@id/mLayout">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
-                android:id="@+id/frameLayout7">
-
-                <dk.aau.cs.giraf.gui.GToggleButton
-                    gcomponent:Toggled="true"
-                    android:id="@+id/monday"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="@string/monday"
-                    android:id="@+id/child_name"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/weekday_text_width"
-                    android:textColor="@color/text_color" />
-
-            </FrameLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/scrollView"
-                android:layout_below="@+id/frameLayout7"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" >
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutMonday"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:dividerPadding="2dp" />
-            </ScrollView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/purple" >
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/schedule_view_top_bar_height"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:background="@drawable/main_topbar_gradient_bg">
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
-                android:id="@+id/frameLayout">
+                android:layout_height="match_parent">
 
-                <dk.aau.cs.giraf.gui.GToggleButton
-                    gcomponent:Toggled="true"
-                    android:onClick="weekdaySelected"
-                    android:id="@+id/tuesday"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="@string/tuesday"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/weekday_text_width"
-                    android:textColor="@color/text_color" />
+                <dk.aau.cs.giraf.gui.GButton
+                    android:id="@+id/home_button"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/btn_background"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginLeft="15dp"
+                    android:onClick="showExitDialog"/>
             </FrameLayout>
+        </LinearLayout>
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/scrollView2"
-                android:layout_below="@+id/frameLayout"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="1150dp"
+            android:id="@+id/horizontal_view_pager"
+            android:layout_row="1"
+            android:layout_column="0">
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/linearLayout"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:dividerPadding="2dp" />
-            </ScrollView>
 
-        </RelativeLayout>
+        </android.support.v4.view.ViewPager>
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/orange" >
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
-                android:id="@+id/frameLayout2">
-
-                <dk.aau.cs.giraf.gui.GToggleButton
-                    gcomponent:Toggled="true"
-                    android:onClick="weekdaySelected"
-                    android:id="@+id/wednesday"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="@string/wednesday"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/weekday_text_width"
-                    android:textColor="@color/text_color" />
-            </FrameLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/scrollView3"
-                android:layout_below="@+id/frameLayout2"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/linearLayout2"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:dividerPadding="2dp" />
-            </ScrollView>
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    </GridLayout>
 
 </LinearLayout>

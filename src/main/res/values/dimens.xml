@@ -5,10 +5,13 @@
     <dimen name="activity_vertical_margin">0dp</dimen>
     <dimen name="activity_overview_picto_size">200dp</dimen>
     <dimen name="activity_main_picto_size">300dp</dimen>
-    <dimen name="weekday_text_width">30dp</dimen>
-    <dimen name="weekday_button_height">40dp</dimen>
+    <dimen name="weekday_text_width">35sp</dimen>
+    <dimen name="weekday_button_height">48dp</dimen>
     <dimen name="schedule_view_top_bar_height">115dp</dimen>
-    <color name="text_color">#5b3b22</color>
+    <dimen name="weekday_horizontal_scroll_view">550dp</dimen>
+    <dimen name="weekday_text_width_portrait">45sp</dimen>
+    <dimen name="weekday_button_height_portrait">58dp</dimen>
+    <color name="text_color">#ffff</color>
 	<color name="text_hint_color">#55624319</color>
-	<color name="text_color_light">#46624319</color>
+	<color name="text_color_light">#000</color>
 </resources>

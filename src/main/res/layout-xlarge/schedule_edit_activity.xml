@@ -34,12 +34,11 @@
             android:maxLength="24"
             android:lines="1"
             android:selectAllOnFocus="true"
-            android:background="#00000000"
+            android:background="@drawable/text_background"
             android:textColorHighlight="#00000000"
             android:textSize="60sp"
-            android:textColor="@color/text_color"
+            android:textColor="#000000"
             android:hint="@string/schedule_name"
-            android:textAlignment="textStart"
             android:textIsSelectable="false"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
@@ -64,6 +63,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter"
+            android:background="@drawable/btn_background"
             android:drawableBottom="@drawable/quit"
             android:onClick="showExitDialog"
             android:layout_marginRight="15dp" />
@@ -86,7 +86,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
+                android:background="#ff007700"
                 android:id="@+id/frameLayout7"
                 android:clickable="false"
                 android:focusable="true">
@@ -97,7 +97,9 @@
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:alpha="0"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -153,7 +155,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
+                android:background="#ff800080"
                 android:id="@+id/frameLayout">
 
                 <dk.aau.cs.giraf.gui.GToggleButton
@@ -162,7 +164,8 @@
                     android:id="@+id/tuesday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -217,7 +220,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
+                android:background="#ffff8500"
                 android:id="@+id/frameLayout2">
 
                 <dk.aau.cs.giraf.gui.GToggleButton
@@ -226,7 +229,8 @@
                     android:id="@+id/wednesday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -281,7 +285,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
+                android:background="#ff0000ff"
                 android:id="@+id/frameLayout3">
 
                 <dk.aau.cs.giraf.gui.GToggleButton
@@ -291,7 +295,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:scaleType="fitCenter"
-                    />
+                    android:alpha="0" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -346,7 +350,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
+                android:background="#ffffdd00"
                 android:id="@+id/frameLayout4">
 
                 <dk.aau.cs.giraf.gui.GToggleButton
@@ -355,7 +359,8 @@
                     android:id="@+id/friday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -364,7 +369,7 @@
                     android:text="@string/friday"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
-                    android:textColor="@color/text_color" />
+                    android:textColor="#000000" />
 
             </FrameLayout>
 
@@ -408,7 +413,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
+                android:background="#ffff0000"
                 android:id="@+id/frameLayout5">
 
                 <dk.aau.cs.giraf.gui.GToggleButton
@@ -417,7 +422,8 @@
                     android:id="@+id/saturday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -472,7 +478,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/weekday_button_height"
-                android:background="#FFDD9639"
+                android:background="#ffffffff"
                 android:id="@+id/frameLayout6">
 
                 <dk.aau.cs.giraf.gui.GToggleButton
@@ -481,7 +487,8 @@
                     android:id="@+id/sunday"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -490,7 +497,7 @@
                     android:text="@string/sunday"
                     android:layout_gravity="center"
                     android:textSize="@dimen/weekday_text_width"
-                    android:textColor="@color/text_color" />
+                    android:textColor="#000000" />
             </FrameLayout>
 
             <ScrollView
