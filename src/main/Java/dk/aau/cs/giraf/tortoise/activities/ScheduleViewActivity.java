@@ -55,9 +55,42 @@ public class ScheduleViewActivity extends ScheduleActivity
         setUpViewMode();
     }
 
-    public void weekdaySelected(View view)
-    {
-        /*Do nothing for now*/
+    public void weekdaySelected(View view) {
+        Intent i = new Intent(getApplicationContext(), ScheduleViewPortraitActivity.class);
+        int weekDaySelected;
+
+        //Finds what day was selected and puts it in the weekDaySelected variable
+        switch(view.getId()) {
+            case R.id.monday: //If the day selected is Monday
+                weekDaySelected = 0;
+                break;
+            case R.id.tuesday: //If the day selected is Tuesday
+                weekDaySelected = 1;
+                break;
+            case R.id.wednesday: //If the day selected is Wednesday
+                weekDaySelected = 2;
+                break;
+            case R.id.thursday: //If the day selected is Thursday
+                weekDaySelected = 3;
+                break;
+            case R.id.friday: //If the day selected is Friday
+                weekDaySelected = 4;
+                break;
+            case R.id.saturday: //If the day selected is Saturday
+                weekDaySelected = 5;
+                break;
+            case R.id.sunday: //If the day selected is Sunday
+                weekDaySelected = 6;
+                break;
+            default:
+                weekDaySelected = 0; //If for some reason there is no day selected it defaults to Monday
+        }
+
+        //Puts the weekDaySelected variable in the intent, to pass it to the next Activity
+        i.putExtra("weekDaySelected", weekDaySelected);
+
+        //Starts the Portrait mode activity
+        startActivity(i);
     }
 
     public void disableScrolling()

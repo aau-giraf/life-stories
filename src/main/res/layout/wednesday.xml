@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@color/orange"
+    android:id="@+id/sectionWednesday"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gcomponent="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/weekday_button_height"
+        android:background="#ffff8500"
+        android:id="@+id/frameLayout2">
+
+        <dk.aau.cs.giraf.gui.GToggleButton
+            gcomponent:Toggled="true"
+            android:onClick="weekdaySelected"
+            android:id="@+id/wednesday"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            android:alpha="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/wednesday"
+            android:layout_gravity="center"
+            android:textSize="@dimen/weekday_text_width"
+            android:textColor="@color/text_color" />
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/scrollView7"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:id="@+id/layoutWednesday"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </ScrollView>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/frameLayout2"
+        android:id="@+id/border_wednesday"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

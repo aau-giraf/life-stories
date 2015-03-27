@@ -6,14 +6,23 @@
     android:layout_height="match_parent"
     android:background="@color/green"
     android:layout_weight="1"
-    android:id="@+id/portraitMonday">
+    android:id="@+id/sectionMonday">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/weekday_button_height_portrait"
+        android:layout_height="@dimen/weekday_button_height"
         android:background="#ff007700"
         android:clickable="false"
         android:focusable="true">
+
+        <dk.aau.cs.giraf.gui.GToggleButton
+            gcomponent:Toggled="true"
+            android:onClick="weekdaySelected"
+            android:id="@+id/wednesday"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            android:alpha="0" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -22,12 +31,12 @@
             android:text="@string/monday"
             android:id="@id/storyName"
             android:layout_gravity="center"
-            android:textSize="@dimen/weekday_text_width_portrait"
+            android:textSize="@dimen/weekday_text_width"
             android:textColor="@color/text_color" />
     </FrameLayout>
 
     <ScrollView
-        android:layout_width="@dimen/weekday_horizontal_scroll_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
         android:layout_centerHorizontal="true"
@@ -45,5 +54,15 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/border_monday"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/frameLayout7" />
 
 </RelativeLayout>
