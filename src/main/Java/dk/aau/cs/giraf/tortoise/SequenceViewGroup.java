@@ -94,7 +94,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			@Override
 			public void onClick(View v) {
 				if (isInEditMode && newButtonClickedListener != null)
-					newButtonClickedListener.onNewButtonClicked();
+					newButtonClickedListener.onNewButtonClicked(v);
 			}
 		});
 	}
@@ -808,6 +808,6 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	}
 	
 	public interface OnNewButtonClickedListener {
-		public void onNewButtonClicked();
+		public void onNewButtonClicked(View v);
 	}
 }

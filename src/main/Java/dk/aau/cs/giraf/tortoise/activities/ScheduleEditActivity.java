@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -65,14 +66,14 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private int pictogramEditPos = -1;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence schedule;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence choice = new dk.aau.cs.giraf.tortoise.controller.Sequence();
-    /*public static SequenceAdapter mondayAdapter;
+    public static SequenceAdapter mondayAdapter;
     public static SequenceAdapter tuesdayAdapter;
     public static SequenceAdapter wednesdayAdapter;
     public static SequenceAdapter thursdayAdapter;
     public static SequenceAdapter fridayAdapter;
     public static SequenceAdapter saturdayAdapter;
-    public static SequenceAdapter sundayAdapter;*/
-    public static SequenceAdapter adapter;
+    public static SequenceAdapter sundayAdapter;
+    public static ArrayList<SequenceAdapter> adapterList;
     public static SequenceAdapter choiceAdapter;
     private List<MediaFrame> tempFrameList;
     private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
@@ -82,9 +83,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
     private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
-    private final int PICTO_SEQUENCE_IMAGE_CALL = 345;
-    private final int PICTO_EDIT_PICTOGRAM_CALL = 456;
-    private final int PICTO_NEW_PICTOGRAM_CALL = 567;
+    private final int PICTO_SEQUENCE_IMAGE_CALL = 2;
+    private final int PICTO_EDIT_PICTOGRAM_CALL = 4;
+    private final int PICTO_NEW_PICTOGRAM_CALL = 3;
     private final int SEQUENCE_VIEWER_CALL = 1337;
     private final int NESTED_SEQUENCE_CALL = 40;
     public static Activity activityToKill;
@@ -213,7 +214,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             });
 
             //After loading the sequences, render the schedule and show add buttons.
-            renderSchedule(true);
+            //renderSchedule(true);
         }
 
 
@@ -224,27 +225,42 @@ public class ScheduleEditActivity extends ScheduleActivity {
         // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
 
 
-        final SequenceAdapter mondayAdapter = new SequenceAdapter(this, weekdaySequences.get(0));
-        setupAdapter(mondayAdapter, weekdaySequences.get(0));
-        setupSequenceViewGroup(mondayAdapter);
-        final SequenceAdapter tuesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(1));
-        setupAdapter(tuesdayAdapter, weekdaySequences.get(1));
-        setupSequenceViewGroup(tuesdayAdapter);
-        final SequenceAdapter wednesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(2));
-        setupAdapter(wednesdayAdapter, weekdaySequences.get(2));
-        setupSequenceViewGroup(wednesdayAdapter);
-        final SequenceAdapter thursdayAdapter = new SequenceAdapter(this, weekdaySequences.get(3));
-        setupAdapter(thursdayAdapter, weekdaySequences.get(3));
-        setupSequenceViewGroup(thursdayAdapter);
-        final SequenceAdapter fridayAdapter = new SequenceAdapter(this, weekdaySequences.get(4));
-        setupAdapter(fridayAdapter, weekdaySequences.get(4));
-        setupSequenceViewGroup(fridayAdapter);
-        final SequenceAdapter saturdayAdapter = new SequenceAdapter(this, weekdaySequences.get(5));
-        setupAdapter(saturdayAdapter, weekdaySequences.get(5));
-        setupSequenceViewGroup(saturdayAdapter);
-        final SequenceAdapter sundayAdapter = new SequenceAdapter(this, weekdaySequences.get(6));
-        setupAdapter(sundayAdapter, weekdaySequences.get(6));
-        setupSequenceViewGroup(sundayAdapter);
+        mondayAdapter = new SequenceAdapter(this, weekdaySequences.get(0));
+        mondayAdapter = setupAdapter(mondayAdapter, weekdaySequences.get(0));
+        setupSequenceViewGroup(mondayAdapter, R.id.sequenceViewGroup, 0);
+
+        tuesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(1));
+        tuesdayAdapter = setupAdapter(tuesdayAdapter, weekdaySequences.get(1));
+        setupSequenceViewGroup(tuesdayAdapter, R.id.sequenceViewGroup2, 1);
+
+        wednesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(2));
+        wednesdayAdapter = setupAdapter(wednesdayAdapter, weekdaySequences.get(2));
+        setupSequenceViewGroup(wednesdayAdapter, R.id.sequenceViewGroup3, 2);
+
+        thursdayAdapter = new SequenceAdapter(this, weekdaySequences.get(3));
+        thursdayAdapter = setupAdapter(thursdayAdapter, weekdaySequences.get(3));
+        setupSequenceViewGroup(thursdayAdapter, R.id.sequenceViewGroup4, 3);
+
+        fridayAdapter = new SequenceAdapter(this, weekdaySequences.get(4));
+        fridayAdapter = setupAdapter(fridayAdapter, weekdaySequences.get(4));
+        setupSequenceViewGroup(fridayAdapter, R.id.sequenceViewGroup5, 4);
+
+        saturdayAdapter = new SequenceAdapter(this, weekdaySequences.get(5));
+        saturdayAdapter = setupAdapter(saturdayAdapter, weekdaySequences.get(5));
+        setupSequenceViewGroup(saturdayAdapter, R.id.sequenceViewGroup6,50);
+
+        sundayAdapter = new SequenceAdapter(this, weekdaySequences.get(6));
+        sundayAdapter = setupAdapter(sundayAdapter, weekdaySequences.get(6));
+        setupSequenceViewGroup(sundayAdapter, R.id.sequenceViewGroup7, 6);
+
+        adapterList = new ArrayList<SequenceAdapter>();
+        adapterList.add(mondayAdapter);
+        adapterList.add(tuesdayAdapter);
+        adapterList.add(wednesdayAdapter);
+        adapterList.add(thursdayAdapter);
+        adapterList.add(fridayAdapter);
+        adapterList.add(saturdayAdapter);
+        adapterList.add(sundayAdapter);
     }
     private void setupButtons() {
         //Creates all buttons in Activity and their listeners
@@ -274,7 +290,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             @Override
             public void onClick(View v) {
                 if (isInEditMode) {
-                    callPictoAdmin(PICTO_SEQUENCE_IMAGE_CALL);
+                    callPictoAdmin(v, PICTO_SEQUENCE_IMAGE_CALL);
                 }
             }
         });
@@ -290,21 +306,21 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
     }
 
-    private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
+    private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter sAdapter, final int i, final int j) {
         //The SequenceViewGroup class takes care of most of the required functionality, including size properties, dragging and rearranging
 
         //Set up adapter to display the Sequence
-        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup6);
+        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(i);
         sequenceGroup.setEditModeEnabled(isInEditMode);
-        sequenceGroup.setAdapter(adapter);
+        sequenceGroup.setAdapter(sAdapter);
 
         //When clicking the big "+", lift up the view and show the Add Dialog
         sequenceGroup.setOnNewButtonClickedListener(new SequenceViewGroup.OnNewButtonClickedListener() {
             @Override
-            public void onNewButtonClicked() {
-                final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup6);
+            public void onNewButtonClicked(View v) {
+                final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(i);
                 sequenceGroup.liftUpAddNewButton();
-                createAndShowAddDialog(sequenceGroup);
+                createAndShowAddDialog(sequenceGroup, sAdapter);
             }
         });
 
@@ -315,10 +331,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 //Save Frame and Position
                 pictogramEditPos = position;
-                MediaFrame frame = schedule.getMediaFrames().get(position);
+                MediaFrame frame = weekdaySequences.get(j).getMediaFrames().get(position);
 
                 //Perform action depending on the type of pictogram clicked.
-                checkFrameMode(frame, view);
+                checkFrameMode(frame, view, sAdapter);
             }
         });
 
@@ -326,7 +342,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         sequenceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
             @Override
             public void onRearrange(int indexFrom, int indexTo) {
-                adapter.notifyDataSetChanged();
+                sAdapter.notifyDataSetChanged();
             }
         });
 
@@ -401,8 +417,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == 2) {
+            OnEditSequenceImageResult(data);
             // i think this is triggered when a profile image is chosen from pictosearch
-            try {
+            /*try {
 
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
 
@@ -428,11 +445,15 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             } catch (Exception e) {
                 GuiHelper.ShowToast(this, e.toString() + " - rcode 2.");
-            }
+            }*/
         }
         //Add content to NEW frame.
         else if (resultCode == RESULT_OK && requestCode == 3) {
-            try {
+            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+            sequenceGroup.placeDownAddNewButton();
+
+            OnNewPictogramResult(data);
+            /*try {
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
                 if (checkoutIds.length == 0) {
@@ -440,11 +461,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 } else // when pictograms are received
                 {
                     try {
-
-                        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
-                        sequenceGroup.placeDownAddNewButton();
-
-                        OnNewPictogramResult(data, getApplicationContext());
 
                         MediaFrame mf = new MediaFrame();
 
@@ -466,7 +482,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             } catch (NullPointerException e) {
                 GuiHelper.ShowToast(this, "Fejl");
-            }
+            }*/
         }
         //Edit content of frame.
         else if (resultCode == RESULT_OK && requestCode == 4) {
@@ -518,11 +534,36 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
     }
 
-    private void OnNewPictogramResult(Intent data, Context con) {
-        int[] checkoutIds = data.getExtras().getIntArray(
-                PICTO_INTENT_CHECKOUT_ID);
+    private void OnNewPictogramResult(Intent data) {
+        /*try {
 
+            int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
+
+            if (checkoutIds.length == 0) {
+                GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
+            } else {
+                try {
+                    //LifeStory.getInstance().setCurrentStory(new Sequence());
+                    LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                    Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                    Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
+                    bitmap = LayoutTools.getSquareBitmap(bitmap);
+                    bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+                    LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
+                    // TODO: fix this to not just write on top of image
+                    GButton storyImage = (GButton) findViewById(R.id.schedule_image_button);
+                    storyImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(getResources(), bitmap));
+                }
+                //We expect a null pointer exception if the pictogram is without image
+                catch (NullPointerException e) {
+                    GuiHelper.ShowToast(this, "Der skete en uventet fejl");
+                }
+            }
+        } catch (Exception e) {
+            GuiHelper.ShowToast(this, e.toString() + " - rcode 2.");
+        }*/
         //If no pictures are returned, assume user canceled and nothing is supposed to change.
+        int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
         if (checkoutIds.length == 0 || checkoutIds == null) {
             return;
         }
@@ -545,23 +586,62 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
             choiceAdapter.notifyDataSetChanged();
         } else {
+            MediaFrame mf = new MediaFrame();
 
-            for (int id : checkoutIds) {
-                MediaFrame frame = new MediaFrame();
-                frame.setPictogramId(id);
-                schedule.addFrame(frame);
+            addContentToMediaFrame(mf, checkoutIds);
+
+            weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
+
+            if (weekdayLayout.getChildCount() > 0) {
+                weekdayLayout.removeViewAt(weekdayLayout.getChildCount() - 1); // remove add button
             }
+            // add item to scroll view
+            addItems(mf, weekdayLayout);
+            weekdayLayout.addView(addButton());
 
-            if (schedule.getId() == 0 && checkoutIds.length > 0) {
-                schedule.setId(checkoutIds[0]);
+        }
+    }
+
+    private void OnEditSequenceImageResult(Intent data) {
+
+        int[] checkoutIds = data.getExtras().getIntArray(
+                PICTO_INTENT_CHECKOUT_ID);
+
+        if (checkoutIds.length == 0)
+            return;
+
+        for (int id : checkoutIds) {
+            MediaFrame frame = new MediaFrame();
+            frame.setPictogramId(id);
+            LifeStory.getInstance().getCurrentStory().addFrame(frame);
+        }
+
+        if (LifeStory.getInstance().getCurrentStory().getId() == 0 && checkoutIds.length > 0) {
+            try {
                 helper = new Helper(this);
-                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(schedule.getId()).getImage());
+
+                LifeStory.getInstance().setCurrentStory(new Sequence());
+                LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
+                LifeStory.getInstance().getCurrentStory().setId(checkoutIds[0]);
+
+                Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                Bitmap bitmap = picto.getImageData();
+                bitmap = LayoutTools.getSquareBitmap(bitmap);
+                bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+                LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
+
+                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(LifeStory.getInstance().getCurrentStory().getId()).getImage());
                 sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
                 sequenceImageButton.setVisibility(View.GONE);
                 sequenceImageButton.setVisibility(View.VISIBLE);
             }
-            adapter.notifyDataSetChanged();
+            catch(NullPointerException e){
+                GuiHelper.ShowToast(this, "Der skete en uventet fejl");
+            }
         }
+        Sequence s = LifeStory.getInstance().getCurrentStory();
+        int i = weekdaySequences.indexOf(s);
+        adapterList.get(i).notifyDataSetChanged();
     }
     // this is just a variable for a workaround
     //  public static LinearLayout weekdayLayout;
@@ -707,37 +787,39 @@ public class ScheduleEditActivity extends ScheduleActivity {
         assumeMinimize = false;
         finish();
     }
-    private void callPictoAdmin(int modeId) {
+    private void callPictoAdmin(View v, int modeId) {
         assumeMinimize = false;
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
-        intent.putExtra("currentChildID", selectedChild.getId());
-        intent.putExtra("currentGuardianID", guardian.getId());
+        Intent i = new Intent();
+        i.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+
+
 
         if (modeId == PICTO_NEW_PICTOGRAM_CALL)
-            intent.putExtra("purpose", "multi");
+            i.putExtra("purpose", "multi");
         else
-            intent.putExtra("purpose", "single");
+            i.putExtra("purpose", "single");
 
-        startActivityForResult(intent, modeId);
+        ScheduleEditActivity.this.startActivityForResult(i, 3);
     }
 
-    private void checkFrameMode(MediaFrame frame, View v) {
+    private void checkFrameMode(MediaFrame frame, View v, final SequenceAdapter adapter) {
 
         if (frame.getNestedSequenceID() != 0) {
             createAndShowNestedDialog(v);
 
         } else if (frame.getContent().size() > 0) {
-            createAndShowChoiceDialog(v);
+            createAndShowChoiceDialog(v, adapter);
         } else {
-            callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+            callPictoAdmin(v, PICTO_EDIT_PICTOGRAM_CALL);
         }
     }
 
 
     private class AddDialog extends GDialog {
 
-        private AddDialog(Context context) {
+        private AddDialog(Context context, final SequenceAdapter adapter) {
             super(context);
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog,null));
@@ -758,7 +840,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 @Override
                 public void onClick(View v) {
-                    callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                    callPictoAdmin(v, PICTO_NEW_PICTOGRAM_CALL);
                     dismiss();
                 }
             });
@@ -768,7 +850,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 public void onClick(View v) {
                     choiceMode = true;
                     dismiss();
-                    createAndShowChoiceDialog(v);
+                    createAndShowChoiceDialog(v, adapter);
                 }
             });
         }
@@ -818,7 +900,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
     private class ChoiceDialog extends GDialog {
 
-        private ChoiceDialog(Context context/*, SequenceAdapter adapter*/) {
+        private ChoiceDialog(Context context, final SequenceAdapter adapter) {
             super(context);
 
             choice.getMediaFrames().clear();
@@ -854,10 +936,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
                     if (pictogramEditPos == -1){
-                        schedule.addFrame(frame);
+                        weekdaySequences.get(LifeStory.getInstance().getCurrentStory().getId()).addFrame(frame);
                         pictogramEditPos = tempFrameList.size()-1;
                     } else {
-                        schedule.getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
+                        weekdaySequences.get(LifeStory.getInstance().getCurrentStory().getId()).getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
                     }
                     adapter.notifyDataSetChanged();
                     choiceMode = false;
@@ -896,11 +978,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
             choiceGroup
                     .setOnNewButtonClickedListener(new SequenceViewGroup.OnNewButtonClickedListener() {
                         @Override
-                        public void onNewButtonClicked() {
+                        public void onNewButtonClicked(View v) {
                             final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
                             sequenceGroup.liftUpAddNewButton();
 
-                            callPictoAdmin(PICTO_NEW_PICTOGRAM_CALL);
+                            callPictoAdmin(v, PICTO_NEW_PICTOGRAM_CALL);
                         }
                     });
 
@@ -909,7 +991,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
                     pictogramEditPos = position;
-                    callPictoAdmin(PICTO_EDIT_PICTOGRAM_CALL);
+                    callPictoAdmin(view, PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });
 
@@ -942,15 +1024,15 @@ public class ScheduleEditActivity extends ScheduleActivity {
         backDialog.show();
     }
 
-    private void createAndShowAddDialog(View v) {
+    private void createAndShowAddDialog(View v, final SequenceAdapter adapter) {
         //Create instance of AddDialog and display it
-        AddDialog addFrame = new AddDialog(v.getContext());
+        AddDialog addFrame = new AddDialog(v.getContext(), adapter);
         addFrame.show();
     }
 
-    private void createAndShowChoiceDialog(View v) {
+    private void createAndShowChoiceDialog(View v, final SequenceAdapter adapter) {
         //Create instance of ChoiceDialog and display it
-        ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext());
+        ChoiceDialog choiceDialog = new ChoiceDialog(v.getContext(), adapter);
         choiceDialog.show();
     }
 

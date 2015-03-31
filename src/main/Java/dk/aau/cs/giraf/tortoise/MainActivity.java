@@ -398,8 +398,8 @@ public class MainActivity extends TortoiseActivity {
         Intent i;
         if(isInScheduleMode){
             i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-            i.putExtra("childId", selectedChild.getId());
-            i.putExtra("guardianId", guardian.getId());
+            i.putExtra("childId", LifeStory.getInstance().getChild().getId());
+            i.putExtra("guardianId", LifeStory.getInstance().getGuardian().getId());
             i.putExtra("EditMode", true);
             i.putExtra("isNew", isNew);
             i.putExtra("sequenceId", s.getId());

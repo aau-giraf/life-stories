@@ -346,7 +346,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         sequenceGroup
                 .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
                     @Override
-                    public void onNewButtonClicked() {
+                    public void onNewButtonClicked(View v) {
                         final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
                         sequenceGroup.liftUpAddNewButton();
 

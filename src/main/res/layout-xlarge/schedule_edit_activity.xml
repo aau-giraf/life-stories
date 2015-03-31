@@ -111,28 +111,34 @@
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
             </FrameLayout>
-
             <ScrollView
+                android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView"
                 android:layout_below="@+id/frameLayout7"
+                android:layout_margin="0dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp">
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
 
-                <LinearLayout
-                    android:orientation="vertical"
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutMonday"
-                    android:dividerPadding="2dp">
-                </LinearLayout>
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    svg:horizontalSpacing="10dp"
+                    svg:itemHeight="@dimen/weekday_button_height"
+                    svg:itemWidth="@dimen/weekday_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
 
             </ScrollView>
-
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
@@ -175,28 +181,34 @@
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
             </FrameLayout>
-
             <ScrollView
+                android:id="@+id/scrollView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView3"
                 android:layout_below="@+id/frameLayout"
+                android:layout_margin="0dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp">
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
 
-                <LinearLayout
-                    android:orientation="vertical"
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutTuesday"
-                    android:layout_below="@+id/frameLayout"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-            </ScrollView>
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    svg:horizontalSpacing="10dp"
+                    svg:itemHeight="@dimen/weekday_button_height"
+                    svg:itemWidth="@dimen/weekday_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
 
+
+            </ScrollView>
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
@@ -239,26 +251,33 @@
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
             </FrameLayout>
-
             <ScrollView
+                android:id="@+id/scrollView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/frameLayout2"
+                android:layout_margin="0dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:id="@+id/scrollView7"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp">
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
 
-                <LinearLayout
-                    android:orientation="vertical"
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutWednesday"
-                    android:layout_below="@+id/frameLayout2"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    svg:horizontalSpacing="10dp"
+                    svg:itemHeight="@dimen/weekday_button_height"
+                    svg:itemWidth="@dimen/weekday_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
             </ScrollView>
 
             <LinearLayout
@@ -304,26 +323,31 @@
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
             </FrameLayout>
-
             <ScrollView
+                android:id="@+id/scrollView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView4"
                 android:layout_below="@+id/frameLayout3"
+                android:layout_margin="0dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp">
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
 
-                <LinearLayout
-                    android:orientation="vertical"
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutThursday"
-                    android:layout_below="@+id/frameLayout3"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    svg:horizontalSpacing="10dp"
+                    svg:itemHeight="@dimen/weekday_button_height"
+                    svg:itemWidth="@dimen/weekday_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
             </ScrollView>
 
             <LinearLayout
@@ -371,21 +395,32 @@
             </FrameLayout>
 
             <ScrollView
+                android:id="@+id/scrollView5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView2"
                 android:layout_below="@+id/frameLayout4"
+                android:layout_margin="0dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp">
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
 
-                <LinearLayout
-                    android:orientation="vertical"
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutFriday" />
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    svg:horizontalSpacing="10dp"
+                    svg:itemHeight="@dimen/weekday_button_height"
+                    svg:itemWidth="@dimen/weekday_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
             </ScrollView>
 
             <LinearLayout
@@ -430,28 +465,34 @@
                     android:textSize="@dimen/weekday_text_width"
                     android:textColor="@color/text_color" />
             </FrameLayout>
-
             <ScrollView
+                android:id="@+id/scrollView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/scrollView5"
                 android:layout_below="@+id/frameLayout5"
+                android:layout_margin="0dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp">
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
 
-                <LinearLayout
-                    android:orientation="vertical"
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/layoutSaturday"
-                    android:layout_below="@+id/frameLayout5"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
-            </ScrollView>
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    svg:horizontalSpacing="10dp"
+                    svg:itemHeight="@dimen/weekday_button_height"
+                    svg:itemWidth="@dimen/weekday_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
 
+
+            </ScrollView>
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
@@ -496,8 +537,8 @@
             </FrameLayout>
 
             <ScrollView
-                android:id="@+id/scrollView6"
-                android:layout_width="wrap_content"
+                android:id="@+id/scrollView7"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/frameLayout6"
                 android:layout_margin="0dp"
@@ -509,8 +550,8 @@
 
 
                 <dk.aau.cs.giraf.tortoise.SequenceViewGroup
-                    android:id="@+id/sequenceViewGroup6"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/sequenceViewGroup7"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"

@@ -482,8 +482,23 @@ public class ScheduleActivity extends TortoiseActivity
         int weekdayId = v.getId();
         LinearLayout layout;
 
+        if(weekdayId == R.id.sectionMonday){}
         switch (weekdayId)
         {
+            case R.id.completeWeekLayout:
+                break;
+            case R.id.parent_container:
+                break;
+            case R.id.sequence_bar:
+                break;
+            case R.id.scrollView:
+                break;
+            case R.id.border_monday:
+                break;
+            case R.id.sequenceViewGroup:
+                break;
+            case R.id.frameLayout7:
+                break;
             case R.id.sectionMonday:
                 layout = (LinearLayout) findViewById(R.id.layoutMonday);
                 ScheduleEditActivity.weekdayLayout = layout;
