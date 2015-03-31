@@ -13,12 +13,13 @@
         android:layout_height="@dimen/weekday_button_height"
         android:background="#ff007700"
         android:clickable="false"
-        android:focusable="true">
+        android:focusable="true"
+        android:id="@+id/monday_top_frame">
 
         <dk.aau.cs.giraf.gui.GToggleButton
             gcomponent:Toggled="true"
             android:onClick="weekdaySelected"
-            android:id="@+id/wednesday"
+            android:id="@+id/monday"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:scaleType="fitCenter"

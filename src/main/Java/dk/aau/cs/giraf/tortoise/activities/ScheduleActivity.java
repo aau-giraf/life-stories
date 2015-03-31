@@ -40,7 +40,7 @@ public class ScheduleActivity extends TortoiseActivity
     // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
     public GDialog multichoiceDialog;
-    List<Sequence> weekdaySequences;
+    public static List<Sequence> weekdaySequences;
     int weekdaySelected;
     int lastPosition;
     int currentActivity = 0;
@@ -405,9 +405,9 @@ public class ScheduleActivity extends TortoiseActivity
                 determineWeekSection(v);
 
                 // Sets this particular view to be the currant activity
-                if (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySelected == currentWeekday) {
+                if (ScheduleActivity.this instanceof ScheduleViewActivity) {
                     currentActivity = index;
-                    clearPictogramBorders(v);
+                    clearAllPictogramBorders();
                     //v.setPadding(10, 0, 0, 0);
                     //Drawable progressArrow = getResources().getDrawable(R.drawable.gdialogcolorselect_arrow_right);
                     Drawable blackTile = ScheduleActivity.this.getResources().getDrawable(R.drawable.week_schedule_bg_tile_big);
@@ -428,8 +428,44 @@ public class ScheduleActivity extends TortoiseActivity
         layout.addView(iw); // add new pictogram
     }
 
+    private void clearAllPictogramBorders() {
+        LinearLayout weekdayLayout;
+        for (int i = 0; i < 7; i++) {
+            switch(i) {
+                case 0:
+                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 1:
+                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 2:
+                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 3:
+                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 4:
+                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 5:
+                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 6:
+                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+            }
+        }
+    }
+
     private void clearPictogramBorders(View v) {
-        LinearLayout dayLayout = (LinearLayout) v.getParent();
+        LinearLayout dayLayout = (LinearLayout) v;
         int pictoCount = dayLayout.getChildCount();
         for (int i = 0; i < pictoCount; i++) {
             ImageView iv = (ImageView) dayLayout.getChildAt(i);

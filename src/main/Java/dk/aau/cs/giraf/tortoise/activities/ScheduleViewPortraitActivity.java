@@ -14,6 +14,8 @@ import android.widget.Button;
 
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.fragments.*;
+import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
+import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 /**
  * Taken from http://developer.android.com/training/animation/screen-slide.html
@@ -54,10 +56,6 @@ public class ScheduleViewPortraitActivity extends FragmentActivity {
 
     protected void setCurrentDay(int weekday) {
         mPager.setCurrentItem(weekday, true);
-    }
-
-    protected void weekdaySelected() {
-        
     }
 
     @Override

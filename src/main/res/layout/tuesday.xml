@@ -17,7 +17,7 @@
         <dk.aau.cs.giraf.gui.GToggleButton
             gcomponent:Toggled="true"
             android:onClick="weekdaySelected"
-            android:id="@+id/wednesday"
+            android:id="@+id/tuesday"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:scaleType="fitCenter"
