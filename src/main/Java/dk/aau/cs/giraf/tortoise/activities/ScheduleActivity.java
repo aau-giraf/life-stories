@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.PorterDuff;
@@ -29,13 +30,14 @@ import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.gui.GTooltip;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
+import dk.aau.cs.giraf.tortoise.MainActivity;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
-public class ScheduleActivity extends TortoiseActivity
+public class ScheduleActivity extends MainActivity
 {
     // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
@@ -644,6 +646,31 @@ public class ScheduleActivity extends TortoiseActivity
             // the exception is ignored because it is thrown when using portrait mode
             // the exception is a work-around
         }
+    }
+
+    public Drawable resizeDrawable(int srcDrawable, int width, int height)
+    {
+        Drawable tempDrawable = getResources().getDrawable(srcDrawable);
+        Bitmap b = ((BitmapDrawable) tempDrawable).getBitmap();
+        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(b, width, height, false));
+
+        return finalDrawable;
+    }
+
+    public Drawable resizeDrawable(Drawable srcDrawable, int width, int height)
+    {
+        Bitmap b = ((BitmapDrawable) srcDrawable).getBitmap();
+        Drawable finalDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(b, width, height, false));
+
+        return finalDrawable;
+    }
+
+    public Bitmap resizeBitmap(Bitmap srcBitmap, int width, int height)
+    {
+        Bitmap originalBitmap = srcBitmap;
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+
+        return resizedBitmap;
     }
 
     //TODO move common methods here

@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.tortoise;
 
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
@@ -20,17 +25,19 @@ import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+import dk.aau.cs.giraf.pictogram.PictoFactory;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
-import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.tortoise.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
 
-public class MainActivity extends TortoiseActivity {
+public class MainActivity extends GirafActivity {
 
     private final int DIALOG_DELETE = 1;
     private boolean isInEditMode = false;
@@ -83,6 +90,49 @@ public class MainActivity extends TortoiseActivity {
         findViewById(R.id.profileSelect).setVisibility(View.INVISIBLE);
         findViewById(R.id.add_button).setVisibility(View.INVISIBLE);
         findViewById(R.id.edit_mode_toggle).setVisibility(View.INVISIBLE);
+
+    }
+    public void doExit(View v)
+    {
+        finish();
+    }
+
+    public void addContentToMediaFrame(MediaFrame mf, int[] checkoutIds) {
+
+        List<Integer> pictoIDList = new ArrayList<Integer>();
+
+        // get the pictograms that are currently being shown
+        List<Pictogram> pictoList = mf.getContent();
+
+        // put all their IDs in a list
+        for(Pictogram p : pictoList)
+        {
+            pictoIDList.add(p.getPictogramID());
+        }
+
+        for (int i = 0; i < checkoutIds.length; i++)
+        {
+            Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[i]);
+            picto.renderAll();
+
+            boolean shouldAddToList = true;
+
+            // if pictogram already exists, don't add it. We don't want duplicates
+            for (Integer element : pictoIDList)
+            {
+                if(element == picto.getPictogramID())
+                {
+                    shouldAddToList = false;
+                }
+            }
+
+            if(shouldAddToList)
+            {
+                // add pictogram
+                pictoIDList.add(picto.getPictogramID());
+                mf.addContent(picto);
+            }
+        }
 
     }
 
