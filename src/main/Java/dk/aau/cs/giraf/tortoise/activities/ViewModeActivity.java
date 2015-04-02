@@ -30,12 +30,11 @@ import android.widget.ToggleButton;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.ChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.Frame;
-import dk.aau.cs.giraf.tortoise.MainActivity;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.R;
 
-public class ViewModeActivity extends MainActivity {
+public class ViewModeActivity extends TortoiseActivity {
 
 	private final int DIALOG_EXIT = 1;
 	

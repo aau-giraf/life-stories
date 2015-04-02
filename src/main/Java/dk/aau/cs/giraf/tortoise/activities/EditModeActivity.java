@@ -55,7 +55,6 @@ import dk.aau.cs.giraf.gui.GRadioButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
-import dk.aau.cs.giraf.tortoise.MainActivity;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -73,7 +72,7 @@ import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnRearrangeListener;
 import dk.aau.cs.giraf.tortoise.PictogramView;
 
-public class EditModeActivity extends MainActivity implements OnCurrentFrameEventListener {
+public class EditModeActivity extends TortoiseActivity implements OnCurrentFrameEventListener {
 
 
 	private static final int DIALOG_SAVE = 1;
