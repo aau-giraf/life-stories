@@ -10,11 +10,12 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
-public class TortoiseActivity extends Activity
+public class TortoiseActivity extends GirafActivity
 {
     @Override
     protected void onResume()
