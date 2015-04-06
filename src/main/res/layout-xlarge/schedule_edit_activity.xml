@@ -46,6 +46,16 @@
             android:singleLine="true" />
 
         <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/portrait"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/home_button"
+            android:scaleType="fitCenter"
+            android:onClick="startPortraitMode"
+            android:layout_marginRight="15dp" />
+
+        <dk.aau.cs.giraf.gui.GButton
             android:id="@+id/save"
             android:layout_width="80dp"
             android:layout_height="80dp"

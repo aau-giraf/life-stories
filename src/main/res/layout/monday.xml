@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/monday"
-            android:id="@id/storyName"
+            android:id="@+id/mondayStoryName"
             android:layout_gravity="center"
             android:textSize="@dimen/weekday_text_width"
             android:textColor="@color/text_color" />
@@ -39,7 +39,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView"
+        android:id="@+id/mondayScroll"
         android:layout_centerHorizontal="true"
         android:layout_alignParentStart="false"
         android:layout_marginTop="60dp"
@@ -47,9 +47,9 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:id="@+id/layoutMonday"
             android:dividerPadding="2dp">
         </LinearLayout>

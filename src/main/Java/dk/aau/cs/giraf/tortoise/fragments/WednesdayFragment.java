@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.fragments;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -21,6 +23,9 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
  * Creates a fragment of a wednesday from the layout file wednesday.xml
  */
 public class WednesdayFragment extends Fragment {
+
+    protected static int bitmapSize;
+    boolean pictogramInFocus = false;
 
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutWednesday);
@@ -31,11 +36,40 @@ public class WednesdayFragment extends Fragment {
             pictograms.addAll(mf.getContent());
         }
 
-        //scrollContent.removeAllViews();
         for (int i = 0; i < pictograms.size(); i++) {
             ImageView iw = new ImageView(getActivity().getApplicationContext());
-            iw.setImageBitmap(pictograms.get(i).getImageData());
+            iw.setImageBitmap(resizeBitmap(pictograms.get(i).getImageData()));
+            iw.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!pictogramInFocus) {
+                        v.setBackgroundResource(R.layout.weekday_selected);
+                        clearBorders();
+                        pictogramInFocus = true;
+                    }
+                    else {
+                        v.setBackgroundResource(0);
+                        pictogramInFocus = false;
+                    }
+                }
+            });
             scrollContent.addView(iw);
+        }
+    }
+
+    private void clearBorders() {
+        ScheduleActivity schedule = new ScheduleActivity();
+        schedule.clearAllPictogramBorders();
+    }
+
+    private Bitmap resizeBitmap (Bitmap originalBitmap) {
+        switch (bitmapSize) {
+            case 1:
+                return Bitmap.createScaledBitmap(originalBitmap, 838, 838, false);
+            case 2:
+                return Bitmap.createScaledBitmap(originalBitmap, 552, 552, false);
+            default:
+                return Bitmap.createScaledBitmap(originalBitmap, 276, 276, false);
         }
     }
 
@@ -43,7 +77,8 @@ public class WednesdayFragment extends Fragment {
      * Returns an instance of this fragment, to be used in a ViewPager
      * @return an instance of the WednesdayFragment
      */
-    public static WednesdayFragment newInstance() {
+    public static WednesdayFragment newInstance(int pictogramSize) {
+        bitmapSize = pictogramSize;
         return new WednesdayFragment();
     }
 

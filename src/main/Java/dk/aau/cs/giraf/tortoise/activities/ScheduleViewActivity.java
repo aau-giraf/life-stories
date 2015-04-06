@@ -23,9 +23,13 @@ import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.TextView;
 
 public class ScheduleViewActivity extends ScheduleActivity
 {
+
+    int weekDaySelected;
+
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -56,92 +60,90 @@ public class ScheduleViewActivity extends ScheduleActivity
     }
 
     public void weekdaySelected(View view) {
-        Intent i = new Intent(getApplicationContext(), ScheduleViewPortraitActivity.class);
-        int weekDaySelected;
+        TextView dayText;
+        resetTextView();
 
         //Finds what day was selected and puts it in the weekDaySelected variable
         switch(view.getId()) {
             case R.id.monday: //If the day selected is Monday
                 weekDaySelected = 0;
+                dayText = (TextView) findViewById(R.id.mondayStoryName);
+                dayText.setAllCaps(true);
                 break;
             case R.id.tuesday: //If the day selected is Tuesday
                 weekDaySelected = 1;
+                dayText = (TextView) findViewById(R.id.tuesdayStoryName);
+                dayText.setAllCaps(true);
                 break;
             case R.id.wednesday: //If the day selected is Wednesday
                 weekDaySelected = 2;
+                dayText = (TextView) findViewById(R.id.wednesdayStoryName);
+                dayText.setAllCaps(true);
                 break;
             case R.id.thursday: //If the day selected is Thursday
                 weekDaySelected = 3;
+                dayText = (TextView) findViewById(R.id.thursdayStoryName);
+                dayText.setAllCaps(true);
                 break;
             case R.id.friday: //If the day selected is Friday
                 weekDaySelected = 4;
+                dayText = (TextView) findViewById(R.id.fridayStoryName);
+                dayText.setAllCaps(true);
                 break;
             case R.id.saturday: //If the day selected is Saturday
                 weekDaySelected = 5;
+                dayText = (TextView) findViewById(R.id.saturdayStoryName);
+                dayText.setAllCaps(true);
                 break;
             case R.id.sunday: //If the day selected is Sunday
                 weekDaySelected = 6;
+                dayText = (TextView) findViewById(R.id.sundayStoryName);
+                dayText.setAllCaps(true);
                 break;
             default:
                 weekDaySelected = 0; //If for some reason there is no day selected it defaults to Monday
         }
+    }
+
+    protected void resetTextView() {
+        TextView text;
+        for (int i = 0; i < 7; i++) {
+            switch (i) {
+                case 0:
+                    text = (TextView) findViewById(R.id.mondayStoryName);
+                    text.setAllCaps(false);
+                case 1:
+                    text = (TextView) findViewById(R.id.tuesdayStoryName);
+                    text.setAllCaps(false);
+                case 2:
+                    text = (TextView) findViewById(R.id.wednesdayStoryName);
+                    text.setAllCaps(false);
+                case 3:
+                    text = (TextView) findViewById(R.id.thursdayStoryName);
+                    text.setAllCaps(false);
+                case 4:
+                    text = (TextView) findViewById(R.id.fridayStoryName);
+                    text.setAllCaps(false);
+                case 5:
+                    text = (TextView) findViewById(R.id.saturdayStoryName);
+                    text.setAllCaps(false);
+                case 6:
+                    text = (TextView) findViewById(R.id.sundayStoryName);
+                    text.setAllCaps(false);
+
+            }
+        }
+    }
+
+    public void startPortraitMode (View view) {
+        Intent i = new Intent(getApplicationContext(), ScheduleViewPortraitActivity.class);
 
         //Puts the weekDaySelected variable in the intent, to pass it to the next Activity
         i.putExtra("weekDaySelected", weekDaySelected);
+        i.putExtra("pictogramSize", 1);
 
         //Starts the Portrait mode activity
         startActivity(i);
-    }
-
-    public void disableScrolling()
-    {
-        // this method uses the border ids to get to the scroll views to disable regular scrolling
-        int[] ids = getBorderIds();
-
-        for(int i = 0; i < 7; i++)
-        {
-            // this is the scroll views parent
-            RelativeLayout parentLayout = (RelativeLayout) findViewById(ids[i]).getParent();
-
-            // we now get the second child which is the scroll view
-            if (parentLayout != null)
-            {
-                ScrollView sv = (ScrollView) parentLayout.getChildAt(1);
-
-                // hide scroll bars in the side of scroll views
-                sv.setHorizontalScrollBarEnabled(false);
-                sv.setVerticalScrollBarEnabled(false);
-
-                if (sv != null) {
-                    sv.setOnTouchListener(new View.OnTouchListener()
-                    {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent)
-                        {
-                            // return false when the scrollview is scrolled
-                            // this disables touch scrolling but programmatic scrolling is still enabled
-                            return true;
-                        }
-                    });
-                }
-            }
-
-        }
-    }
-
-    public void addArrows()
-    {
-        int[] borderIds = getBorderIds();
-
-        for(int i = 0; i < 7; i++)
-        {
-            // do not show arrows unless there are too many elements in the view
-            if(shouldShowArrow(borderIds[i]))
-            {
-                addUpArrow(borderIds[i]);
-                addDownArrow(borderIds[i]);
-            }
-        }
     }
 
     /**
@@ -176,128 +178,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         return ids;
     }
-
-    public void addUpArrow(int layoutId)
-    {
-        LinearLayout l = (LinearLayout) findViewById(layoutId);
-
-        LinearLayout arrow = new LinearLayout(this);
-        LayoutParams linLayoutParam = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        linLayoutParam.height = 60;
-        linLayoutParam.width = LayoutParams.MATCH_PARENT;
-        arrow.setLayoutParams(linLayoutParam);
-
-        arrow.setBackgroundResource(R.drawable.scroll_up);
-        l.addView(arrow);
-
-        arrow.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                try
-                {
-                LinearLayout arrowViewParent;
-                    arrowViewParent = (LinearLayout) view.getParent();
-
-                RelativeLayout scrollViewParent = (RelativeLayout) arrowViewParent.getParent();
-
-                ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
-
-                if (arrowScrollView != null)
-                {
-                    arrowScrollView.smoothScrollBy(0, -110);
-                }
-                }
-                catch (Exception ex)
-                {
-                    GuiHelper.ShowToast(getApplicationContext(), ex.toString());
-                }
-            }
-        });
-    }
-
-    public void addDownArrow(int layoutId)
-    {
-        LinearLayout l = (LinearLayout) findViewById(layoutId);
-
-        LinearLayout arrow = new LinearLayout(this);
-        LinearLayout.LayoutParams linLayoutParam = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        linLayoutParam.height = 60;
-        linLayoutParam.setMargins(0, 440, 0, 0);
-
-        LinearLayout ll = new LinearLayout(this);
-        ll.setOrientation(LinearLayout.VERTICAL);
-
-
-        linLayoutParam.width = LayoutParams.MATCH_PARENT;
-        arrow.setLayoutParams(linLayoutParam);
-
-        arrow.setBackgroundResource(R.drawable.scroll_down);
-        l.addView(arrow);
-
-        arrow.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                try{
-                    LinearLayout arrowViewParent;
-                    arrowViewParent = (LinearLayout) view.getParent();
-
-                    RelativeLayout scrollViewParent = null;
-                    if (arrowViewParent != null) {
-                        scrollViewParent = (RelativeLayout) arrowViewParent.getParent();
-                    }
-
-                    ScrollView arrowScrollView = (ScrollView) (scrollViewParent != null ? scrollViewParent.getChildAt(1) : null); // TODO: fix this hardcoding
-
-                    if (arrowScrollView != null) {
-                        arrowScrollView.smoothScrollBy(0, 110);
-                    }
-                } catch (Exception ex)
-                {
-                    GuiHelper.ShowToast(getApplicationContext(), ex.toString());
-                }
-            }
-        });
-    }
-
-    public Boolean shouldShowArrow(int borderID)
-    {
-        // method to determine whether arrows should be shown
-        LinearLayout borderLayout = (LinearLayout) findViewById(borderID);
-        try
-        {
-            RelativeLayout parentLayout = (RelativeLayout) borderLayout.getParent();
-
-            if (parentLayout != null) {
-                ScrollView sv = (ScrollView) parentLayout.getChildAt(1);
-
-                if (sv != null)
-                {
-                    // this is the view in the scroll view which contains pictograms in each week day
-                    LinearLayout scrollViewChild = (LinearLayout) sv.getChildAt(0); // TODO: fix hard coding of 0
-
-                    // if more than 4 pictograms in scroll view, show arrows
-                    if(scrollViewChild.getChildCount() >= 4)
-                    {
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            GuiHelper.ShowToast(this, ex.toString());
-        }
-
-        return false;
-    }
-
-
 
     private void displaySequences()
     {

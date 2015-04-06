@@ -29,6 +29,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/wednesday"
             android:layout_gravity="center"
+            android:id="@+id/wednesdayStoryName"
             android:textSize="@dimen/weekday_text_width"
             android:textColor="@color/text_color" />
     </FrameLayout>
@@ -37,15 +38,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:id="@+id/scrollView7"
+        android:id="@+id/wednesdayScroll"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="60dp">
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:id="@+id/layoutWednesday"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />

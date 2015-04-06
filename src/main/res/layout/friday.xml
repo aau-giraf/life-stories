@@ -29,6 +29,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/friday"
             android:layout_gravity="center"
+            android:id="@+id/fridayStoryName"
             android:textSize="@dimen/weekday_text_width"
             android:textColor="#000000" />
 
@@ -37,16 +38,16 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView2"
+        android:id="@+id/fridayScroll"
         android:layout_alignParentStart="true"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="60dp">
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:id="@+id/layoutFriday"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"

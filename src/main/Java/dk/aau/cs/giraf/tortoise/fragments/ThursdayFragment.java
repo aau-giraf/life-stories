@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.fragments;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -25,6 +26,9 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
  */
 public class ThursdayFragment extends Fragment {
 
+    protected static int bitmapSize;
+    boolean pictogramInFocus = false;
+
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutThursday);
         Sequence weekday = ScheduleViewActivity.weekdaySequences.get(3);
@@ -34,19 +38,34 @@ public class ThursdayFragment extends Fragment {
             pictograms.addAll(mf.getContent());
         }
 
-        //scrollContent.removeAllViews();
         for (int i = 0; i < pictograms.size(); i++) {
             ImageView iw = new ImageView(getActivity().getApplicationContext());
-            iw.setImageBitmap(pictograms.get(i).getImageData());
+            iw.setImageBitmap(resizeBitmap(pictograms.get(i).getImageData()));
             iw.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Drawable blackTile = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
-                    blackTile.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-                    v.setBackgroundDrawable(blackTile);
+                    if (!pictogramInFocus) {
+                        v.setBackgroundResource(R.layout.weekday_selected);
+                        pictogramInFocus = true;
+                    }
+                    else if (pictogramInFocus) {
+                        v.setBackgroundResource(0);
+                        pictogramInFocus = false;
+                    }
                 }
             });
             scrollContent.addView(iw);
+        }
+    }
+
+    private Bitmap resizeBitmap (Bitmap originalBitmap) {
+        switch (bitmapSize) {
+            case 1:
+                return Bitmap.createScaledBitmap(originalBitmap, 276, 276, false);
+            case 2:
+                return Bitmap.createScaledBitmap(originalBitmap, 184, 184, false);
+            default:
+                return Bitmap.createScaledBitmap(originalBitmap, 92, 92, false);
         }
     }
 
@@ -54,7 +73,8 @@ public class ThursdayFragment extends Fragment {
      * Returns an instance of this fragment, to be used in e ViewPager
      * @return an instance of the ThursdayFragment
      */
-    public static ThursdayFragment newInstance() {
+    public static ThursdayFragment newInstance(int pictogramSize) {
+        bitmapSize = pictogramSize;
         return new ThursdayFragment();
     }
 

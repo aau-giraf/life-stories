@@ -1,5 +1,9 @@
 package dk.aau.cs.giraf.tortoise.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,13 +26,8 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
  */
 public class MondayFragment extends Fragment {
 
-    /**
-     * Returns an instance of this fragment, to be used in a ViewPager
-     * @return an instance of the MondayFragment
-     */
-    public static MondayFragment newInstance() {
-        return new MondayFragment();
-    }
+    protected static int bitmapSize;
+    boolean pictogramInFocus = false;
 
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutMonday);
@@ -39,13 +38,46 @@ public class MondayFragment extends Fragment {
             pictograms.addAll(mf.getContent());
         }
 
-        //scrollContent.removeAllViews();
         for (int i = 0; i < pictograms.size(); i++) {
             ImageView iw = new ImageView(getActivity().getApplicationContext());
-            iw.setImageBitmap(pictograms.get(i).getImageData());
+            iw.setImageBitmap(resizeBitmap(pictograms.get(i).getImageData()));
+            iw.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!pictogramInFocus) {
+                        v.setBackgroundResource(R.layout.weekday_selected);
+                        pictogramInFocus = true;
+                    }
+                    else if (pictogramInFocus) {
+                        v.setBackgroundResource(0);
+                        pictogramInFocus = false;
+                    }
+                }
+            });
             scrollContent.addView(iw);
         }
     }
+
+    private Bitmap resizeBitmap (Bitmap originalBitmap) {
+        switch (bitmapSize) {
+            case 1:
+                return Bitmap.createScaledBitmap(originalBitmap, 276, 276, false);
+            case 2:
+                return Bitmap.createScaledBitmap(originalBitmap, 184, 184, false);
+            default:
+                return Bitmap.createScaledBitmap(originalBitmap, 92, 92, false);
+        }
+    }
+
+    /**
+     * Returns an instance of this fragment, to be used in a ViewPager
+     * @return an instance of the MondayFragment
+     */
+    public static MondayFragment newInstance(int pictogramSize) {
+        bitmapSize = pictogramSize;
+        return new MondayFragment();
+    }
+
 
     //Creates the view of a monday, using the layout file monday.xml
     @Override

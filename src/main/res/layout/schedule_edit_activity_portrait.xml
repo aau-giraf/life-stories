@@ -13,38 +13,12 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/schedule_view_top_bar_height"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:background="@drawable/main_topbar_gradient_bg">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <dk.aau.cs.giraf.gui.GButton
-                    android:id="@+id/home_button"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:scaleType="fitCenter"
-                    android:background="@drawable/btn_background"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:onClick="showExitDialog"/>
-            </FrameLayout>
-        </LinearLayout>
-
         <android.support.v4.view.ViewPager
             android:layout_width="match_parent"
             android:layout_height="1150dp"
             android:id="@+id/horizontal_view_pager"
             android:layout_row="1"
             android:layout_column="0">
-
-
         </android.support.v4.view.ViewPager>
     </GridLayout>
 

@@ -29,6 +29,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/tuesday"
             android:layout_gravity="center"
+            android:id="@+id/tuesdayStoryName"
             android:textSize="@dimen/weekday_text_width"
             android:textColor="@color/text_color" />
     </FrameLayout>
@@ -36,16 +37,16 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView3"
+        android:id="@+id/tuesdayScroll"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="60dp">
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:id="@+id/layoutTuesday"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />

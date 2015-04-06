@@ -26,6 +26,8 @@ public class ScheduleViewPortraitActivity extends FragmentActivity {
      */
     private static final int NUM_PAGES = 7;
 
+    private static int pictogramSize;
+
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next wizard steps.
@@ -45,11 +47,13 @@ public class ScheduleViewPortraitActivity extends FragmentActivity {
         Intent i = getIntent();
 
         int weekDaySelected = i.getIntExtra("weekDaySelected", 0);
+        pictogramSize = i.getIntExtra("pictogramSize", 0);
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.horizontal_view_pager);
         mPagerAdapter = new WeekDayPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
+        mPager.setOffscreenPageLimit(NUM_PAGES);
 
         setCurrentDay(weekDaySelected);
     }
@@ -76,25 +80,25 @@ public class ScheduleViewPortraitActivity extends FragmentActivity {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0: //This will show Monday
-                    return MondayFragment.newInstance();
+                    return MondayFragment.newInstance(pictogramSize);
 
                 case 1: //This will show Tuesday
-                    return TuesdayFragment.newInstance();
+                    return TuesdayFragment.newInstance(pictogramSize);
 
                 case 2: //This will show Wednesday
-                    return WednesdayFragment.newInstance();
+                    return WednesdayFragment.newInstance(pictogramSize);
 
                 case 3: //This will show Thursday
-                    return ThursdayFragment.newInstance();
+                    return ThursdayFragment.newInstance(pictogramSize);
 
                 case 4: //This will show Friday
-                    return FridayFragment.newInstance();
+                    return FridayFragment.newInstance(pictogramSize);
 
                 case 5: //This will show Saturday
-                    return SaturdayFragment.newInstance();
+                    return SaturdayFragment.newInstance(pictogramSize);
 
                 case 6: //This will show Sunday
-                    return SundayFragment.newInstance();
+                    return SundayFragment.newInstance(pictogramSize);
 
                 default:
                     return null;
