@@ -117,7 +117,7 @@ public class MainActivity extends TortoiseActivity {
                         false);
                 childSelector.show();
 
-                childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+                childSelector.setOnListItemClick(   new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         //When child is selected, save Child locally and update application accordingly (Title name and Sequences)

@@ -13,6 +13,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -38,7 +39,8 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 public class ScheduleActivity extends TortoiseActivity
 {
     // this is just a variable for a workaround
-    public static LinearLayout weekdayLayout;
+    public static ViewGroup weekdayLayout;
+    public static ViewGroup weekdayGroup;
     public GDialog multichoiceDialog;
     List<Sequence> weekdaySequences;
     int weekdaySelected;
@@ -64,7 +66,7 @@ public class ScheduleActivity extends TortoiseActivity
         i.putExtra("purpose", "multi");
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-        ScheduleEditActivity.weekdayLayout = (LinearLayout) v.getParent();
+        ScheduleEditActivity.weekdayLayout = (ViewGroup) v.getParent();
         determineWeekSection(v);
 
         this.startActivityForResult(i, 3);
@@ -245,7 +247,7 @@ public class ScheduleActivity extends TortoiseActivity
                 if(mf.getChoicePictogram() == null)
                 {
                     // if no default choice icon
-                    choiceImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.questionwhite);
+                    choiceImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.choose);
                 }
                 else
                 {
@@ -480,57 +482,42 @@ public class ScheduleActivity extends TortoiseActivity
     public void determineWeekSection(View v)
     {
         int weekdayId = v.getId();
-        LinearLayout layout;
+        ViewGroup layout;
 
-        if(weekdayId == R.id.sectionMonday){}
         switch (weekdayId)
         {
-            case R.id.completeWeekLayout:
-                break;
-            case R.id.parent_container:
-                break;
-            case R.id.sequence_bar:
-                break;
-            case R.id.scrollView:
-                break;
-            case R.id.border_monday:
-                break;
-            case R.id.sequenceViewGroup:
-                break;
-            case R.id.frameLayout7:
-                break;
             case R.id.sectionMonday:
-                layout = (LinearLayout) findViewById(R.id.layoutMonday);
+                layout = (ViewGroup) findViewById(R.id.sequenceViewGroup);
                 ScheduleEditActivity.weekdayLayout = layout;
                 weekdaySelected = Day.MONDAY.ordinal();
                 break;
             case R.id.sectionTuesday:
-                layout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                layout = (ViewGroup) findViewById(R.id.sequenceViewGroup2);
                 ScheduleEditActivity.weekdayLayout = layout;
                 weekdaySelected = Day.TUESDAY.ordinal();
                 break;
             case R.id.sectionWednesday:
-                layout = (LinearLayout) findViewById(R.id.layoutWednesday);
+                layout = (ViewGroup) findViewById(R.id.sequenceViewGroup3);
                 ScheduleEditActivity.weekdayLayout = layout;
                 weekdaySelected = Day.WEDNESDAY.ordinal();
                 break;
             case R.id.sectionThursday:
-                layout = (LinearLayout) findViewById(R.id.layoutThursday);
+                layout = (ViewGroup) findViewById(R.id.sequenceViewGroup4);
                 ScheduleEditActivity.weekdayLayout = layout;
                 weekdaySelected = Day.THURSDAY.ordinal();
                 break;
             case R.id.sectionFriday:
-                layout = (LinearLayout) findViewById(R.id.layoutFriday);
+                layout = (ViewGroup) findViewById(R.id.sequenceViewGroup5);
                 ScheduleEditActivity.weekdayLayout = layout;
                 weekdaySelected = Day.FRIDAY.ordinal();
                 break;
             case R.id.sectionSaturday:
-                layout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                layout = (ViewGroup) findViewById(R.id.sequenceViewGroup6);
                 ScheduleEditActivity.weekdayLayout = layout;
                 weekdaySelected = Day.SATURDAY.ordinal();
                 break;
             case R.id.sectionSunday:
-                layout = (LinearLayout) findViewById(R.id.layoutSunday);
+                layout = (ViewGroup) findViewById(R.id.sequenceViewGroup7);
                 ScheduleEditActivity.weekdayLayout = layout;
                 weekdaySelected = Day.SUNDAY.ordinal();
                 break;
