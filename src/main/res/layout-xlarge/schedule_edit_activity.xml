@@ -125,14 +125,12 @@
 
 
                 <dk.aau.cs.giraf.tortoise.SequenceViewGroup
-                    android:id="@+id/sequenceViewGroup"
+                    android:id="@+id/sequenceViewGroup1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    svg:horizontalSpacing="10dp"
-                    svg:itemHeight="@dimen/weekday_button_height"
-                    svg:itemWidth="@dimen/weekday_button_height"
+                    svg:verticalSpacing="10dp"
+                    svg:itemHeight="@dimen/activity_button_height"
+                    svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
                 </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
@@ -198,11 +196,9 @@
                     android:id="@+id/sequenceViewGroup2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    svg:horizontalSpacing="10dp"
-                    svg:itemHeight="@dimen/weekday_button_height"
-                    svg:itemWidth="@dimen/weekday_button_height"
+                    svg:verticalSpacing="10dp"
+                    svg:itemHeight="@dimen/activity_button_height"
+                    svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
                 </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
@@ -268,11 +264,9 @@
                     android:id="@+id/sequenceViewGroup3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    svg:horizontalSpacing="10dp"
-                    svg:itemHeight="@dimen/weekday_button_height"
-                    svg:itemWidth="@dimen/weekday_button_height"
+                    svg:verticalSpacing="10dp"
+                    svg:itemHeight="@dimen/activity_button_height"
+                    svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
                 </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
@@ -340,11 +334,9 @@
                     android:id="@+id/sequenceViewGroup4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    svg:horizontalSpacing="10dp"
-                    svg:itemHeight="@dimen/weekday_button_height"
-                    svg:itemWidth="@dimen/weekday_button_height"
+                    svg:verticalSpacing="10dp"
+                    svg:itemHeight="@dimen/activity_button_height"
+                    svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
                 </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
@@ -411,11 +403,9 @@
                     android:id="@+id/sequenceViewGroup5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    svg:horizontalSpacing="10dp"
-                    svg:itemHeight="@dimen/weekday_button_height"
-                    svg:itemWidth="@dimen/weekday_button_height"
+                    svg:verticalSpacing="10dp"
+                    svg:itemHeight="@dimen/activity_button_height"
+                    svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
                 </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
@@ -482,11 +472,9 @@
                     android:id="@+id/sequenceViewGroup6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    svg:horizontalSpacing="10dp"
-                    svg:itemHeight="@dimen/weekday_button_height"
-                    svg:itemWidth="@dimen/weekday_button_height"
+                    svg:verticalSpacing="10dp"
+                    svg:itemHeight="@dimen/activity_button_height"
+                    svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
                 </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
@@ -553,11 +541,9 @@
                     android:id="@+id/sequenceViewGroup7"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    svg:horizontalSpacing="10dp"
-                    svg:itemHeight="@dimen/weekday_button_height"
-                    svg:itemWidth="@dimen/weekday_button_height"
+                    svg:verticalSpacing="10dp"
+                    svg:itemHeight="@dimen/activity_button_height"
+                    svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
                 </dk.aau.cs.giraf.tortoise.SequenceViewGroup>

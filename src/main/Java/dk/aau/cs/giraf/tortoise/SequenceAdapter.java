@@ -62,32 +62,12 @@ public class SequenceAdapter extends BaseAdapter {
 		} else
 			view = (PictogramView)convertView;
 
-        //Set pictogramview image to choice pictogram if more choices.
-        Bitmap choiceImage;
-        if(sequence.getMediaFrames().get(position).getContent().size() > 1)
-        {
-            if(sequence.getMediaFrames().get(position).getChoicePictogram() == null)
-            {
-                choiceImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.questionwhite);
-            }
-            else
-            {
-                choiceImage = sequence.getMediaFrames().get(position).getChoicePictogram().getImageData();
-            }
-            view.setImage(choiceImage);
-        }
-        //Set pictogramview image to the only pictogram in it, if there is only one.
-        else
-        {
-            view.setImage(mediaFrame.getContent().get(0).getImageData());
-        }
+        view.setImageFromId(mediaFrame.getPictogramId());
 
+        if (onAdapterGetViewListener != null)
+            onAdapterGetViewListener.onAdapterGetView(position, view);
 
-		
-		if (onAdapterGetViewListener != null)
-			onAdapterGetViewListener.onAdapterGetView(position, view);
-		
-		return view;
+        return view;
 	}
 	
 	public void setOnAdapterGetViewListener(OnAdapterGetViewListener onCreateViewListener) {
@@ -102,3 +82,4 @@ public class SequenceAdapter extends BaseAdapter {
 		public void onAdapterGetView(int position, View view);
 	}
 }
+

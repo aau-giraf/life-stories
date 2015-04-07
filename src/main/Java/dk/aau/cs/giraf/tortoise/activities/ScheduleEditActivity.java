@@ -9,12 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -37,7 +34,6 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Frame;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
@@ -66,7 +62,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private int sequenceId;
     private int pictogramEditPos = -1;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence schedule;
-    public static List<Sequence> days;
+    public static ArrayList<Sequence> weekSequences = new ArrayList<Sequence>();
     public static Sequence mondaySequence;
     public static Sequence tuesdaySequence;
     public static Sequence wednesdaySequence;
@@ -162,8 +158,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private void initSequences(Intent intent) {
 
         // Create new array of sequences.
-        weekdaySequences = new ArrayList<Sequence>();
-
         helper = new Helper(this);
 
         // Test if we get a template. Create new (empty) sequences if not.
@@ -302,31 +296,31 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         mondayAdapter = new SequenceAdapter(this, weekdaySequences.get(0));
         mondayAdapter = setupAdapter(mondayAdapter, weekdaySequences.get(0));
-        setupSequenceViewGroup(mondayAdapter, R.id.sequenceViewGroup, 0);
+        setupSequenceViewGroup(mondayAdapter, R.id.sequenceViewGroup1);
 
         tuesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(1));
         tuesdayAdapter = setupAdapter(tuesdayAdapter, weekdaySequences.get(1));
-        setupSequenceViewGroup(tuesdayAdapter, R.id.sequenceViewGroup2, 1);
+        setupSequenceViewGroup(tuesdayAdapter, R.id.sequenceViewGroup2);
 
         wednesdayAdapter = new SequenceAdapter(this, weekdaySequences.get(2));
         wednesdayAdapter = setupAdapter(wednesdayAdapter, weekdaySequences.get(2));
-        setupSequenceViewGroup(wednesdayAdapter, R.id.sequenceViewGroup3, 2);
+        setupSequenceViewGroup(wednesdayAdapter, R.id.sequenceViewGroup3);
 
         thursdayAdapter = new SequenceAdapter(this, weekdaySequences.get(3));
         thursdayAdapter = setupAdapter(thursdayAdapter, weekdaySequences.get(3));
-        setupSequenceViewGroup(thursdayAdapter, R.id.sequenceViewGroup4, 3);
+        setupSequenceViewGroup(thursdayAdapter, R.id.sequenceViewGroup4);
 
         fridayAdapter = new SequenceAdapter(this, weekdaySequences.get(4));
         fridayAdapter = setupAdapter(fridayAdapter, weekdaySequences.get(4));
-        setupSequenceViewGroup(fridayAdapter, R.id.sequenceViewGroup5, 4);
+        setupSequenceViewGroup(fridayAdapter, R.id.sequenceViewGroup5);
 
         saturdayAdapter = new SequenceAdapter(this, weekdaySequences.get(5));
         saturdayAdapter = setupAdapter(saturdayAdapter, weekdaySequences.get(5));
-        setupSequenceViewGroup(saturdayAdapter, R.id.sequenceViewGroup6, 5);
+        setupSequenceViewGroup(saturdayAdapter, R.id.sequenceViewGroup6);
 
         sundayAdapter = new SequenceAdapter(this, weekdaySequences.get(6));
         sundayAdapter = setupAdapter(sundayAdapter, weekdaySequences.get(6));
-        setupSequenceViewGroup(sundayAdapter, R.id.sequenceViewGroup7, 6);
+        setupSequenceViewGroup(sundayAdapter, R.id.sequenceViewGroup7);
 
         scheduleAdapter = new SequenceAdapter(this, schedule);
         scheduleAdapter = setupAdapter(scheduleAdapter, schedule);
@@ -384,7 +378,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
     }
 
-    private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter sAdapter, final int i, final int j) {
+    private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter sAdapter, final int i) {
         //The SequenceViewGroup class takes care of most of the required functionality, including size properties, dragging and rearranging
 
         //Set up adapter to display the Sequence
@@ -397,11 +391,12 @@ public class ScheduleEditActivity extends ScheduleActivity {
             @Override
             public void onNewButtonClicked(View v) {
                 // update weekdaySelected
-                determineWeekSection(v);
+                currentWeekSection(v);
 
                 final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(i);
                 sequenceGroup.liftUpAddNewButton();
                 createAndShowAddDialog(sequenceGroup, adapterList.get(weekdaySelected));
+                sequenceGroup.placeDownAddNewButton();
             }
         });
 
@@ -410,10 +405,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 // update weekdaySelected
-                determineWeekSection(view);
+                currentWeekSection(view);
                 //Save Frame and Position
                 pictogramEditPos = position;
-                MediaFrame frame = weekdaySequences.get(j).getMediaFrames().get(position);
+                MediaFrame frame = weekdaySequences.get(weekdaySelected).getMediaFrames().get(position);
 
                 //Perform action depending on the type of pictogram clicked.
                 checkFrameMode(frame, view, adapterList.get(weekdaySelected));
@@ -431,7 +426,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
         return sequenceGroup;
     }
 
-    // needs to be changed to each sequence
     private SequenceAdapter setupAdapter(final SequenceAdapter adapter, final Sequence s) {
 
         //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
@@ -500,96 +494,19 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         if (resultCode == RESULT_OK && requestCode == 2) {
             OnEditSequenceImageResult(data);
-            // i think this is triggered when a profile image is chosen from pictosearch
-            /*try {
-
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
-
-                if (checkoutIds.length == 0) {
-                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
-                } else {
-                    try {
-                        //LifeStory.getInstance().setCurrentStory(new Sequence());
-                        LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                        Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
-                        bitmap = LayoutTools.getSquareBitmap(bitmap);
-                        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
-                        LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
-                        // TODO: fix this to not just write on top of image
-                        GButton storyImage = (GButton) findViewById(R.id.schedule_image_button);
-                        storyImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(getResources(), bitmap));
-                    }
-                    //We expect a null pointer exception if the pictogram is without image
-                    catch (NullPointerException e) {
-                        GuiHelper.ShowToast(this, "Der skete en uventet fejl");
-                    }
-                }
-            } catch (Exception e) {
-                GuiHelper.ShowToast(this, e.toString() + " - rcode 2.");
-            }*/
         }
         //Add content to NEW frame.
         else if (resultCode == RESULT_OK && requestCode == 3) {
-            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+            int i = currentViewGroup();
+            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(i);
             sequenceGroup.placeDownAddNewButton();
 
             OnNewPictogramResult(data);
-            /*try {
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
-
-                if (checkoutIds.length == 0) {
-                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt");
-                } else // when pictograms are received
-                {
-                    try {
-
-                        MediaFrame mf = new MediaFrame();
-
-                        addContentToMediaFrame(mf, checkoutIds);
-
-                        weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
-
-                        if (weekdayLayout.getChildCount() > 0) {
-                            weekdayLayout.removeViewAt(weekdayLayout.getChildCount() - 1); // remove add button
-                        }
-                        // add item to scroll view
-                        addItems(mf, weekdayLayout);
-                        weekdayLayout.addView(addButton()); // add the add button again
-
-
-                    } catch (NullPointerException e) {
-                        GuiHelper.ShowToast(this, "Der skete en uventet fejl");
-                    }
-                }
-            } catch (NullPointerException e) {
-                GuiHelper.ShowToast(this, "Fejl");
-            }*/
         }
         //Edit content of frame.
         else if (resultCode == RESULT_OK && requestCode == 4) {
 
             OnEditPictogramResult(data);
-            /*try {
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
-
-                if (checkoutIds.length == 0) {
-                    GuiHelper.ShowToast(this, "Ingen pictogrammer valgt.");
-                } else {
-                    MediaFrame mf = weekdaySequences.get(weekdaySelected).getMediaFrame(lastPosition);
-
-                    addContentToMediaFrame(mf, checkoutIds);
-                    /*for (int id : checkoutIds) {
-                        Pictogram pictogram = PictoFactory.getPictogram(this, id);
-                        mediaFrame.addContent(pictogram);
-                    }
-
-                    renderSchedule(true);
-                    updateMultiChoiceDialog(lastPosition);
-                }
-            } catch (Exception e) {
-                GuiHelper.ShowToast(this, e.toString());
-            } */
         }
         //Change choice icon
         else if (resultCode == RESULT_OK && requestCode == 5){
@@ -638,44 +555,27 @@ public class ScheduleEditActivity extends ScheduleActivity {
         sequenceImageButton.setVisibility(View.VISIBLE);
 
         scheduleAdapter.notifyDataSetChanged();
-        /*int[] checkoutIds = data.getExtras().getIntArray(
-                PICTO_INTENT_CHECKOUT_ID);
+    }
 
-        if (checkoutIds.length == 0)
-            return;
-
-        for (int id : checkoutIds) {
-            MediaFrame frame = new MediaFrame();
-            frame.setPictogramId(id);
-            LifeStory.getInstance().getCurrentStory().addFrame(frame);
+    private int currentViewGroup(){
+        switch(weekdaySelected){
+            case 1:
+                return R.id.sequenceViewGroup1;
+            case 2:
+                return R.id.sequenceViewGroup2;
+            case 3:
+                return R.id.sequenceViewGroup3;
+            case 4:
+                return R.id.sequenceViewGroup4;
+            case 5:
+                return R.id.sequenceViewGroup5;
+            case 6:
+                return R.id.sequenceViewGroup6;
+            case 7:
+                return R.id.sequenceViewGroup7;
+            default:
+                throw new IllegalStateException("Illegal return from pictosearch.");
         }
-
-        if (LifeStory.getInstance().getCurrentStory().getId() == 0 && checkoutIds.length > 0) {
-            try {
-                helper = new Helper(this);
-
-                LifeStory.getInstance().setCurrentStory(new Sequence());
-                LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-                LifeStory.getInstance().getCurrentStory().setId(checkoutIds[0]);
-
-                Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                Bitmap bitmap = picto.getImageData();
-                bitmap = LayoutTools.getSquareBitmap(bitmap);
-                bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
-                LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
-
-                Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(LifeStory.getInstance().getCurrentStory().getId()).getImage());
-                sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-                sequenceImageButton.setVisibility(View.GONE);
-                sequenceImageButton.setVisibility(View.VISIBLE);
-            }
-            catch(NullPointerException e){
-                GuiHelper.ShowToast(this, "Der skete en uventet fejl");
-            }
-        }
-        Sequence s = LifeStory.getInstance().getCurrentStory();
-        int i = weekdaySequences.indexOf(s);
-        adapterList.get(i).notifyDataSetChanged();*/
     }
 
     private void OnNewPictogramResult(Intent data) {
@@ -712,20 +612,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
             }
 
             adapterList.get(weekdaySelected).notifyDataSetChanged();
-
-            /*MediaFrame mf = new MediaFrame();
-
-            addContentToMediaFrame(mf, checkoutIds);
-
-            weekdaySequences.get(weekdaySelected).getMediaFrames().add(mf);
-
-            if (weekdayLayout.getChildCount() > 0) {
-                weekdayLayout.removeViewAt(weekdayLayout.getChildCount() - 1); // remove add button
-            }
-            // add item to scroll view
-            addItems(mf, weekdayLayout);
-            weekdayLayout.addView(addButton());*/
-
         }
     }
 
@@ -835,6 +721,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             return true;
         }
         else {
+
             GuiHelper.ShowToast(this, "Der var ikke nogle ændringer");
             return false;
         }

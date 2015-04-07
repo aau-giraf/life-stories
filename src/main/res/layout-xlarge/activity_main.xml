@@ -34,7 +34,7 @@
             android:layout_height="match_parent">
 
             <dk.aau.cs.giraf.tortoise.SequenceViewGroup
-                android:id="@+id/sequenceViewGroup"
+                android:id="@+id/sequenceViewGroup1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"

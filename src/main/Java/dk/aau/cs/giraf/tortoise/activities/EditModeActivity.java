@@ -31,7 +31,6 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -179,7 +178,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		super.onActivityResult(requestCode, resultCode, data);
 
         // Remove the highlight from the add pictogram button
-        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup1);
         sequenceGroup.placeDownAddNewButton();
 
         //Add pictograms to NEW MediaFrame
@@ -328,7 +327,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
-        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup1);
         sequenceGroup.setEditModeEnabled(isInEditMode);
         sequenceGroup.setAdapter(adapter);
 
@@ -347,7 +346,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
                     @Override
                     public void onNewButtonClicked(View v) {
-                        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup);
+                        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup1);
                         sequenceGroup.liftUpAddNewButton();
 
                         addPictograms(findViewById(R.id.addMediaFrame));

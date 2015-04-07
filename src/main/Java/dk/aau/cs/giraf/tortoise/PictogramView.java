@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import dk.aau.cs.giraf.oasis.lib.Helper;
+
 
 /**
  * Contains a pictogram and a title.
@@ -22,7 +24,9 @@ public class PictogramView extends LinearLayout {
     public final static float HIGHLIGHT_SCALE = 0.9f;
     public final static float LOWLIGHT_SCALE = 0.7f;
 	private final static float DEFAULT_TEXT_SIZE = 9f;
-	
+
+    private Helper helper;
+
 	private RoundedImageView pictogram;
 	private TextView title;
 	private ImageButton deleteButton;
@@ -87,7 +91,7 @@ public class PictogramView extends LinearLayout {
 		deleteButton = new ImageButton(getContext());
 		deleteButton.setImageResource(R.drawable.btn_delete);
 		
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		deleteButton.setLayoutParams(params);
 		
@@ -100,40 +104,9 @@ public class PictogramView extends LinearLayout {
 		
 		return deleteButton;
 	}
-	
-	private void setDeleteButtonVisible(boolean visible) {
-		deleteButton.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-		invalidate();
-	}
-	
-	public void setEditModeEnabled(boolean editMode) {
-		if (editMode != isInEditMode) {
-			isInEditMode = editMode;
-			setDeleteButtonVisible(editMode);
-		}
-	}
-	
-	public boolean getEditModeEnabled() {
-		return isInEditMode;
-	}
-	
+
 	public void setImage(Bitmap bitmap) {
 		pictogram.setImageBitmap(bitmap);
-	}
-	
-	public void setTitle(String newTitle)
-	{
-		title.setText(newTitle);
-	}
-	
-	public void setupOnDeleteClickHandler() {
-		deleteButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (isInEditMode && onDeleteClickListener != null)
-					onDeleteClickListener.onDeleteClick();
-			}
-		});
 	}
 
     public void liftUp() {
@@ -168,6 +141,42 @@ public class PictogramView extends LinearLayout {
         this.invalidate();
     }
 
+
+    private void setDeleteButtonVisible(boolean visible) {
+        deleteButton.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        invalidate();
+    }
+
+    public boolean getEditModeEnabled() {
+        return isInEditMode;
+    }
+
+    public void setEditModeEnabled(boolean editMode) {
+        if (editMode != isInEditMode) {
+            isInEditMode = editMode;
+            setDeleteButtonVisible(editMode);
+        }
+    }
+
+    public void setImageFromId(int id) {
+        helper = new Helper(getContext());
+        pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
+    }
+
+    public void setTitle(String newTitle)
+    {
+        title.setText(newTitle);
+    }
+
+    public void setupOnDeleteClickHandler() {
+        deleteButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isInEditMode && onDeleteClickListener != null)
+                    onDeleteClickListener.onDeleteClick();
+            }
+        });
+    }
 	public void setOnDeleteClickListener(OnDeleteClickListener listener) {
 		onDeleteClickListener = listener;
 	}

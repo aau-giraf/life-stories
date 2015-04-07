@@ -18,6 +18,9 @@ import android.widget.AdapterView;
 import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 
+import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
+
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
  * the horizontal dimension.
@@ -25,8 +28,8 @@ import android.widget.ScrollView;
  */
 public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
-	private final int DEFAULT_ITEM_WIDTH = 40;
-	private final int DEFAULT_ITEM_HEIGHT = 40;
+	private final int DEFAULT_ITEM_WIDTH = 150;
+	private final int DEFAULT_ITEM_HEIGHT = 150;
 	private final int DEFAULT_HORIZONTAL_SPACING = 10;
 	
 	private final int ANIMATION_TIME = 350;
@@ -34,11 +37,11 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
 	//Layout
 	private int verticalSpacing;
-	private int itemWidth;//remember me
+	private int itemWidth;
 	private int itemHeight;
 
 	private int offsetX = 0;
-    private int offsetY = 0; // remember me as well
+    private int offsetY = 0;
 
 	//Dragging data
 	private View draggingView = null;
@@ -113,9 +116,9 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
 		int dragCenterY = touchY - centerOffset;
 
-		boolean isDraggingRight = dragCenterY - getCenterY(curDragIndexPos) > 0;
+		boolean isDraggingDown = dragCenterY - getCenterY(curDragIndexPos) > 0;
 
-		if (isDraggingRight) {
+		if (isDraggingDown) {
 			int checkIndex = curDragIndexPos + 1;
 			//Don't swap with  new sequence diagram view.
 			while (checkIndex < getCurrentSequenceViewCount() && dragCenterY > ((getCenterY(curDragIndexPos) + getCenterY(checkIndex)) / 2)) {
@@ -159,7 +162,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		//This is where the current view occupying indexFrom originally came from.
 		int realFrom = newPositions[indexFrom];
 
-		int destOffset = calcChildTopPosition(realFrom) - calcChildTopPosition(indexTo);
+		int destOffset = calcChildTopPosition(indexTo) - calcChildTopPosition(realFrom);
 
 		//This is the view currently occuping indexFrom
 		View view = getChildAt(realFrom);
@@ -421,7 +424,12 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 	
 						@Override
 						public void onAnimationEnd(Animation animation) {
-							if (startDragIndex != curDragIndexPos) {
+
+
+                            if (startDragIndex != curDragIndexPos) {
+
+                                ScheduleEditActivity.weekdaySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
+
 								final int childViews = getChildCount();
 								for (int i = 0; i < childViews; i++) {
 									getChildAt(i).clearAnimation();
@@ -705,7 +713,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 		long timeBefore = -1;
 		
 		private View getScroller(View viewGroup) {
-			return (View)viewGroup.getParent().getParent();
+			return (View)viewGroup.getParent();
 		}
 		
 		public AutoScroller() {
