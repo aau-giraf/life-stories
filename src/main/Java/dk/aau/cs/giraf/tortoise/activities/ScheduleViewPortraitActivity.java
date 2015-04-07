@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -11,9 +12,12 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.fragments.*;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
@@ -22,7 +26,7 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 /**
  * Taken from http://developer.android.com/training/animation/screen-slide.html
  */
-public class ScheduleViewPortraitActivity extends FragmentActivity {
+public class ScheduleViewPortraitActivity extends TortoiseActivity {
     /**
      * The number of pages in the ViewPager.
      */
@@ -50,12 +54,18 @@ public class ScheduleViewPortraitActivity extends FragmentActivity {
 
         int weekDaySelected = i.getIntExtra("weekDaySelected", 0);
         pictogramSize = i.getIntExtra("pictogramSize", 0);
+        String scheduleName = i.getStringExtra("scheduleName");
+        String citizenName = i.getStringExtra("childName");
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.horizontal_view_pager);
         mPagerAdapter = new WeekDayPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         mPager.setOffscreenPageLimit(NUM_PAGES);
+
+        EditText scheduleTitle = (EditText) findViewById(R.id.editText);
+        scheduleTitle.setText(scheduleName);
+        scheduleTitle.setEnabled(false);
 
         setCurrentDay(weekDaySelected);
     }

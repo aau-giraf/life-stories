@@ -32,7 +32,6 @@ public class ScheduleViewActivity extends ScheduleActivity
     int weekDaySelected;
     private GirafButton scheduleImage;
     private GirafButton portraitButton;
-    private TextView scheduleTitle;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -47,29 +46,21 @@ public class ScheduleViewActivity extends ScheduleActivity
             return;
         }
 
-        initializeButtons();
-        createTitle();
-
         // the view activity uses a modified version of the edit activity layout
         setContentView(R.layout.schedule_edit_activity);
+
+        initializeButtons();
+
 
         // disable non-programmatic scrolling
         //disableScrolling();
 
         // display the sequences in the week schedule
         displaySequences();
-
-        // add arrows to week days with more than four pictograms
-        // addArrows();
-
-        // Set title, remove buttons that should not be there. Set orientation to landscape
-        setUpViewMode();
-
-
     }
 
     private void initializeButtons() {
-        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image));
+        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
         scheduleImage.setEnabled(false);
         portraitButton = new GirafButton(this, getResources().getDrawable(R.drawable.placeholder));
         portraitButton.setOnClickListener(new View.OnClickListener() {
@@ -82,12 +73,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(portraitButton, RIGHT);
-    }
-
-    private void createTitle() {
-        LinearLayout weekSchedule = (LinearLayout) findViewById(R.id.completeWeekLayout);
-        scheduleTitle = new TextView(this);
-        weekSchedule.addView(scheduleTitle);
     }
 
     public void weekdaySelected(View view) {
@@ -168,43 +153,16 @@ public class ScheduleViewActivity extends ScheduleActivity
 
     public void startPortraitMode (View view) {
         Intent i = new Intent(getApplicationContext(), ScheduleViewPortraitActivity.class);
+        EditText scheduleName = (EditText) findViewById(R.id.editText);
 
         //Puts the weekDaySelected variable in the intent, to pass it to the next Activity
         i.putExtra("weekDaySelected", weekDaySelected);
         i.putExtra("pictogramSize", 0);
+        i.putExtra("scheduleName", scheduleName.getText().toString());
+        i.putExtra("childName", LifeStory.getInstance().getChild().getName());
 
         //Starts the Portrait mode activity
         startActivity(i);
-    }
-
-    /**
-     * Adds title name and removes the part of the layout that should not be visible in view mode.
-     */
-    private void setUpViewMode() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        View saveButton = findViewById(R.id.save);
-        saveButton.setVisibility(View.INVISIBLE);
-
-        scheduleImage.setClickable(false);
-
-        scheduleTitle.setText(LifeStory.getInstance().getCurrentStory().getTitle());
-    }
-
-    public int[] getBorderIds()
-    {
-        int ids[] =
-        {
-            R.id.border_monday,
-            R.id.border_tuesday,
-            R.id.border_wednesday,
-            R.id.border_thursday,
-            R.id.border_friday,
-            R.id.border_saturday,
-            R.id.border_sunday,
-        };
-
-        return ids;
     }
 
     private void displaySequences()
@@ -227,6 +185,8 @@ public class ScheduleViewActivity extends ScheduleActivity
             Drawable scheduleImageDrawable = new BitmapDrawable(getResources(), seq.getTitleImage());
             scheduleImage.setIcon(scheduleImageDrawable);
             LifeStory.getInstance().setCurrentStory(seq);
+            EditText scheduleName = (EditText) findViewById(R.id.editText);
+            scheduleName.setText(seq.getTitle());
 
             // show sequences
             weekdaySequences = new ArrayList<Sequence>();
@@ -237,30 +197,6 @@ public class ScheduleViewActivity extends ScheduleActivity
             }
 
             renderSchedule(false);
-
-
-           /* int layoutArray[] = new int[7];
-
-            layoutArray[0] = R.id.layoutMonday;
-            layoutArray[1] = R.id.layoutTuesday;
-            layoutArray[2] = R.id.layoutWednesday;
-            layoutArray[3] = R.id.layoutThursday;
-            layoutArray[4] = R.id.layoutFriday;
-            layoutArray[5] = R.id.layoutSaturday;
-            layoutArray[6] = R.id.layoutSunday;
-
-
-            int ii = 0;
-            for(MediaFrame mf : seq.getMediaFrames())
-            {
-                for(MediaFrame activityFrame : DBController.getInstance().getSequenceFromID(mf.getNestedSequenceID(), getApplicationContext()).getMediaFrames())
-                {
-                    LinearLayout l = (LinearLayout) findViewById(layoutArray[ii]);
-                    addItems(activityFrame, l);
-                }
-
-                ii++;
-            }*/
         }
         else
         {

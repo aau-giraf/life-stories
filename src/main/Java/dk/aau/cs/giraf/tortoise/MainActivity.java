@@ -3,11 +3,16 @@ package dk.aau.cs.giraf.tortoise;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -41,8 +46,6 @@ public class MainActivity extends TortoiseActivity {
     private GirafButton profileSelector;
     private GirafButton addButton;
     private GirafButton editButton;
-    private TextView profileName;
-
     /**
      * Initializes all app elements.
      * @param savedInstanceState
@@ -80,17 +83,7 @@ public class MainActivity extends TortoiseActivity {
             LifeStory.getInstance().setChild(
                     h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
             // Initialize name of profile
-            createChildName();
         }
-    }
-
-    private void createChildName() {
-        // Initialize name of profile
-        GridView weekSchedule = (GridView) findViewById(R.id.sequence_grid);
-        profileName = new TextView(this);
-        weekSchedule.addView(profileName);
-        profileName.setText(LifeStory.getInstance().getChild().getName());
-
     }
 
     private void initializeButtons() {
@@ -127,7 +120,7 @@ public class MainActivity extends TortoiseActivity {
                         LifeStory.getInstance().setChild(
                                 new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
 
-                        profileName.setText(LifeStory.getInstance().getChild().getName());
+                        //profileName.setText(LifeStory.getInstance().getChild().getName());
 
                         loadSeqGrid(LifeStory.getInstance().getChild());
 
@@ -143,8 +136,8 @@ public class MainActivity extends TortoiseActivity {
 
             @Override
             public void onClick(View v) {
-                GToggleButton button = (GToggleButton) v;
-                isInEditMode = button.isToggled();
+                if (isInEditMode) { isInEditMode = false; }
+                else { isInEditMode = v.isPressed(); }
                 GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
 
                 // Make sure that all views currently not visible will have the correct
@@ -274,7 +267,7 @@ public class MainActivity extends TortoiseActivity {
         editButton.setPressed(false);
         Profile child = LifeStory.getInstance().getChild();
         if(child != null) {
-            profileName.setText(child.getName());
+            //profileName.setText(child.getName());
             loadSeqGrid(child);
         }
         if(sequenceAdapter != null) {

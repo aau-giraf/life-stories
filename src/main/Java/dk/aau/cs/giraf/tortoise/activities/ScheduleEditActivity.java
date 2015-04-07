@@ -43,7 +43,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
     GDialog exitDialog;
     private GirafButton scheduleImage;
     private GirafButton saveButton;
-    private EditText scheduleName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         setContentView(R.layout.schedule_edit_activity);
         initializeButtons();
-        addTitelToView();
+
 
         exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
 
@@ -79,12 +78,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         //Create empty sequences if no existing sequence is received. Otherwise load this sequence.
         initSequences(intent);
-    }
-
-    private void addTitelToView() {
-        LinearLayout weekSchedule = (LinearLayout) findViewById(R.id.completeWeekLayout);
-        scheduleName = new EditText(this);
-        weekSchedule.addView(scheduleName);
     }
 
     private void initializeButtons() {
@@ -144,6 +137,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
             Bitmap titleBitmap = weekSequence.getTitleImage();
             Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
             scheduleImage.setIcon(titleDrawable);
+
+            EditText scheduleName = (EditText) findViewById(R.id.editText);
 
             //Set title text
             scheduleName.setText(weekSequence.getTitle());
@@ -311,7 +306,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
             GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et titel-pictogram");
             return false;
         }
-        String strTitle = scheduleName.toString();
+        EditText scheduleName = (EditText) findViewById(R.id.editText);
+        String strTitle = scheduleName.getText().toString();
         if (strTitle.equals("")) {
             // if no title, set a default one
             scheduleSeq.setTitle(getString(R.string.unnamed_sequence));
