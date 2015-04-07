@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -38,8 +40,10 @@ import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleEditActivity extends ScheduleActivity {
-    public List<List<ImageView>> weekdayLists;
     GDialog exitDialog;
+    private GirafButton scheduleImage;
+    private GirafButton saveButton;
+    private EditText scheduleName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
         setContentView(R.layout.schedule_edit_activity);
+        initializeButtons();
+        addTitelToView();
 
         exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
 
@@ -73,6 +79,32 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         //Create empty sequences if no existing sequence is received. Otherwise load this sequence.
         initSequences(intent);
+    }
+
+    private void addTitelToView() {
+        LinearLayout weekSchedule = (LinearLayout) findViewById(R.id.completeWeekLayout);
+        scheduleName = new EditText(this);
+        weekSchedule.addView(scheduleName);
+    }
+
+    private void initializeButtons() {
+        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image));
+        scheduleImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPictosearch(v);
+            }
+        });
+        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.save));
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveSchedule(v);
+            }
+        });
+
+        addGirafButtonToActionBar(scheduleImage, LEFT);
+        addGirafButtonToActionBar(saveButton, LEFT);
     }
 
     private void initSequences(Intent intent) {
@@ -111,13 +143,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
             //Set title image.
             Bitmap titleBitmap = weekSequence.getTitleImage();
             Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
-            GButton titleImage = (GButton) findViewById(R.id.schedule_image_button);
-            titleImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, titleDrawable);
+            scheduleImage.setIcon(titleDrawable);
 
             //Set title text
-            EditText title = (EditText) findViewById(R.id.scheduleName);
-            title.setText(weekSequence.getTitle());
-            title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            scheduleName.setText(weekSequence.getTitle());
+            scheduleName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -125,7 +155,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             });
-            title.setOnKeyListener(new View.OnKeyListener() {
+            scheduleName.setOnKeyListener(new View.OnKeyListener() {
 
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -179,8 +209,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
                         LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
                         // TODO: fix this to not just write on top of image
-                        GButton storyImage = (GButton) findViewById(R.id.schedule_image_button);
-                        storyImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, new BitmapDrawable(getResources(), bitmap));
+                        scheduleImage.setIcon(new BitmapDrawable(getResources(), bitmap));
                     }
                     //We expect a null pointer exception if the pictogram is without image
                     catch (NullPointerException e) {
@@ -282,8 +311,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et titel-pictogram");
             return false;
         }
-        Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
-        String strTitle = title.toString();
+        String strTitle = scheduleName.toString();
         if (strTitle.equals("")) {
             // if no title, set a default one
             scheduleSeq.setTitle(getString(R.string.unnamed_sequence));

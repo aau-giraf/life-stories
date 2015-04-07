@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.tortoise.fragments;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleViewPortraitActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
@@ -42,24 +44,14 @@ public class WednesdayFragment extends Fragment {
             iw.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!pictogramInFocus) {
-                        v.setBackgroundResource(R.layout.weekday_selected);
-                        clearBorders();
-                        pictogramInFocus = true;
-                    }
-                    else {
-                        v.setBackgroundResource(0);
-                        pictogramInFocus = false;
-                    }
+                        ScheduleViewPortraitActivity.clearAllPictogramBorders();
+                        Drawable backgroundDrawable = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
+                        v.setBackgroundDrawable(backgroundDrawable);
                 }
             });
+            iw.setPadding(0, 10, 0, 10);
             scrollContent.addView(iw);
         }
-    }
-
-    private void clearBorders() {
-        ScheduleActivity schedule = new ScheduleActivity();
-        schedule.clearAllPictogramBorders();
     }
 
     private Bitmap resizeBitmap (Bitmap originalBitmap) {
@@ -69,7 +61,7 @@ public class WednesdayFragment extends Fragment {
             case 2:
                 return Bitmap.createScaledBitmap(originalBitmap, 552, 552, false);
             default:
-                return Bitmap.createScaledBitmap(originalBitmap, 276, 276, false);
+                return Bitmap.createScaledBitmap(originalBitmap, 188, 188, false);
         }
     }
 

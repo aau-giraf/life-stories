@@ -11,6 +11,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.fragments.*;
@@ -32,7 +34,7 @@ public class ScheduleViewPortraitActivity extends FragmentActivity {
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next wizard steps.
      */
-    private ViewPager mPager;
+    private static ViewPager mPager;
 
     /**
      * The pager adapter, which provides the pages to the view pager widget.
@@ -56,6 +58,52 @@ public class ScheduleViewPortraitActivity extends FragmentActivity {
         mPager.setOffscreenPageLimit(NUM_PAGES);
 
         setCurrentDay(weekDaySelected);
+    }
+
+    public static void clearAllPictogramBorders() {
+        LinearLayout weekdayLayout;
+        for (int i = 0; i < 7; i++) {
+            switch(i) {
+                case 0:
+                    weekdayLayout = (LinearLayout) mPager.findViewById(R.id.layoutMonday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 1:
+                    weekdayLayout = (LinearLayout) mPager.findViewById(R.id.layoutTuesday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 2:
+                    weekdayLayout = (LinearLayout) mPager.findViewById(R.id.layoutWednesday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 3:
+                    weekdayLayout = (LinearLayout) mPager.findViewById(R.id.layoutThursday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 4:
+                    weekdayLayout = (LinearLayout) mPager.findViewById(R.id.layoutFriday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 5:
+                    weekdayLayout = (LinearLayout) mPager.findViewById(R.id.layoutSaturday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+                case 6:
+                    weekdayLayout = (LinearLayout) mPager.findViewById(R.id.layoutSunday);
+                    clearPictogramBorders(weekdayLayout);
+                    break;
+            }
+        }
+    }
+
+    private static void clearPictogramBorders(View v) {
+        LinearLayout dayLayout = (LinearLayout) v;
+        int pictoCount = dayLayout.getChildCount();
+        for (int i = 0; i < pictoCount; i++) {
+            ImageView iv = (ImageView) dayLayout.getChildAt(i);
+            iv.setBackgroundResource(0);
+            iv.setPadding(0, 10, 0, 10);
+        }
     }
 
     protected void setCurrentDay(int weekday) {

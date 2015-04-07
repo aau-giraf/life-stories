@@ -311,7 +311,6 @@ public class ScheduleActivity extends TortoiseActivity
     public void addPictogramToDay(Bitmap bm, LinearLayout layout) {
 
         ImageView iw = new ImageView(this);
-        iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
 
         int xy = 0;
 
@@ -328,8 +327,8 @@ public class ScheduleActivity extends TortoiseActivity
 
         // set padding of each imageview containing
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 5, 0, 5); // pad pictogram at top to space them out
         iw.setLayoutParams(lp);
+        iw.setPadding(0, 5, 0, 5);
 
         final LinearLayout workaroundLayout = layout;
 
@@ -410,8 +409,7 @@ public class ScheduleActivity extends TortoiseActivity
                     clearAllPictogramBorders();
                     //v.setPadding(10, 0, 0, 0);
                     //Drawable progressArrow = getResources().getDrawable(R.drawable.gdialogcolorselect_arrow_right);
-                    Drawable blackTile = ScheduleActivity.this.getResources().getDrawable(R.drawable.week_schedule_bg_tile_big);
-                    blackTile.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+                    Drawable blackTile = ScheduleActivity.this.getResources().getDrawable(R.drawable.week_schedule_bg_tile);
                     v.setBackgroundDrawable(blackTile);
                     //GuiHelper.ShowToast(ScheduleActivity.this, "Current activity set!");
                 }
@@ -470,6 +468,7 @@ public class ScheduleActivity extends TortoiseActivity
         for (int i = 0; i < pictoCount; i++) {
             ImageView iv = (ImageView) dayLayout.getChildAt(i);
             iv.setBackgroundResource(0);
+            iv.setPadding(0, 5, 0, 5);
         }
     }
 

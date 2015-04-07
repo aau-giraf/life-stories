@@ -15,7 +15,9 @@ import android.widget.ScrollView;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.tortoise.R;
 
 import dk.aau.cs.giraf.tortoise.controller.DBController;
@@ -27,8 +29,10 @@ import android.widget.TextView;
 
 public class ScheduleViewActivity extends ScheduleActivity
 {
-
     int weekDaySelected;
+    private GirafButton scheduleImage;
+    private GirafButton portraitButton;
+    private TextView scheduleTitle;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -42,6 +46,9 @@ public class ScheduleViewActivity extends ScheduleActivity
             finish();
             return;
         }
+
+        initializeButtons();
+        createTitle();
 
         // the view activity uses a modified version of the edit activity layout
         setContentView(R.layout.schedule_edit_activity);
@@ -57,6 +64,30 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         // Set title, remove buttons that should not be there. Set orientation to landscape
         setUpViewMode();
+
+
+    }
+
+    private void initializeButtons() {
+        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image));
+        scheduleImage.setEnabled(false);
+        portraitButton = new GirafButton(this, getResources().getDrawable(R.drawable.placeholder));
+        portraitButton.setOnClickListener(new View.OnClickListener() {
+                                              //Open Child Selector when pressing the Child Select Button
+                                              @Override
+                                              public void onClick(View v) {
+                                                  startPortraitMode(v);
+                                              }
+                                          });
+
+        addGirafButtonToActionBar(scheduleImage, LEFT);
+        addGirafButtonToActionBar(portraitButton, RIGHT);
+    }
+
+    private void createTitle() {
+        LinearLayout weekSchedule = (LinearLayout) findViewById(R.id.completeWeekLayout);
+        scheduleTitle = new TextView(this);
+        weekSchedule.addView(scheduleTitle);
     }
 
     public void weekdaySelected(View view) {
@@ -140,7 +171,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         //Puts the weekDaySelected variable in the intent, to pass it to the next Activity
         i.putExtra("weekDaySelected", weekDaySelected);
-        i.putExtra("pictogramSize", 1);
+        i.putExtra("pictogramSize", 0);
 
         //Starts the Portrait mode activity
         startActivity(i);
@@ -155,12 +186,9 @@ public class ScheduleViewActivity extends ScheduleActivity
         View saveButton = findViewById(R.id.save);
         saveButton.setVisibility(View.INVISIBLE);
 
-        GButton scheduleImageButton = (GButton)findViewById(R.id.schedule_image_button);
-        scheduleImageButton.setClickable(false);
+        scheduleImage.setClickable(false);
 
-        EditText title = (EditText) findViewById(R.id.scheduleName);
-        title.setText(LifeStory.getInstance().getCurrentStory().getTitle());
-        title.setEnabled(false);
+        scheduleTitle.setText(LifeStory.getInstance().getCurrentStory().getTitle());
     }
 
     public int[] getBorderIds()
@@ -186,7 +214,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         // get sequences from database
         List<Sequence> storyList = LifeStory.getInstance().getStories();
-        GButton scheduleImage = (GButton) findViewById(R.id.schedule_image_button);
 
 
         Intent i = getIntent();
@@ -198,7 +225,7 @@ public class ScheduleViewActivity extends ScheduleActivity
             Sequence seq = storyList.get(storyIndex);
 
             Drawable scheduleImageDrawable = new BitmapDrawable(getResources(), seq.getTitleImage());
-            scheduleImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, scheduleImageDrawable);
+            scheduleImage.setIcon(scheduleImageDrawable);
             LifeStory.getInstance().setCurrentStory(seq);
 
             // show sequences

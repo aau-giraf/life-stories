@@ -17,7 +17,9 @@ import java.util.List;
 
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.R;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
+import dk.aau.cs.giraf.tortoise.activities.ScheduleViewPortraitActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
@@ -44,16 +46,12 @@ public class MondayFragment extends Fragment {
             iw.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!pictogramInFocus) {
-                        v.setBackgroundResource(R.layout.weekday_selected);
-                        pictogramInFocus = true;
-                    }
-                    else if (pictogramInFocus) {
-                        v.setBackgroundResource(0);
-                        pictogramInFocus = false;
-                    }
+                        ScheduleViewPortraitActivity.clearAllPictogramBorders();
+                        Drawable backgroundDrawable = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
+                        v.setBackgroundDrawable(backgroundDrawable);
                 }
             });
+            iw.setPadding(0, 10, 0, 10);
             scrollContent.addView(iw);
         }
     }
@@ -61,11 +59,11 @@ public class MondayFragment extends Fragment {
     private Bitmap resizeBitmap (Bitmap originalBitmap) {
         switch (bitmapSize) {
             case 1:
-                return Bitmap.createScaledBitmap(originalBitmap, 276, 276, false);
+                return Bitmap.createScaledBitmap(originalBitmap, 838, 838, false);
             case 2:
-                return Bitmap.createScaledBitmap(originalBitmap, 184, 184, false);
+                return Bitmap.createScaledBitmap(originalBitmap, 552, 552, false);
             default:
-                return Bitmap.createScaledBitmap(originalBitmap, 92, 92, false);
+                return Bitmap.createScaledBitmap(originalBitmap, 188, 188, false);
         }
     }
 

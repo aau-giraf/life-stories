@@ -17,6 +17,7 @@ import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -37,6 +38,10 @@ public class MainActivity extends TortoiseActivity {
     private boolean isInScheduleMode = false;
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
+    private GirafButton profileSelector;
+    private GirafButton addButton;
+    private GirafButton editButton;
+    private TextView profileName;
 
     /**
      * Initializes all app elements.
@@ -66,29 +71,46 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().setGuardian(
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
 
+        initializeButtons();
+
         overrideViews();
         if (i.getIntExtra("currentChildID", -1) == -1) {
-            findViewById(R.id.profileSelect).performClick();
+            profileSelector.performClick();
         }else {
             LifeStory.getInstance().setChild(
                     h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
             // Initialize name of profile
-            TextView profileName = (TextView) findViewById(R.id.child_name);
-            profileName.setText(LifeStory.getInstance().getChild().getName());
-            HideButtons();
+            createChildName();
         }
     }
 
-    private void HideButtons() {
-        findViewById(R.id.profileSelect).setVisibility(View.INVISIBLE);
-        findViewById(R.id.add_button).setVisibility(View.INVISIBLE);
-        findViewById(R.id.edit_mode_toggle).setVisibility(View.INVISIBLE);
+    private void createChildName() {
+        // Initialize name of profile
+        GridView weekSchedule = (GridView) findViewById(R.id.sequence_grid);
+        profileName = new TextView(this);
+        weekSchedule.addView(profileName);
+        profileName.setText(LifeStory.getInstance().getChild().getName());
 
     }
 
+    private void initializeButtons() {
+        profileSelector = new GirafButton(this, getResources().getDrawable(R.drawable.default_profile));
+        addButton = new GirafButton(this, getResources().getDrawable(R.drawable.add));
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addSchedule(v);
+            }
+        });
+        editButton = new GirafButton(this, getResources().getDrawable(R.drawable.btn_edit_image));
+
+        addGirafButtonToActionBar(profileSelector, LEFT);
+        addGirafButtonToActionBar(addButton, RIGHT);
+        addGirafButtonToActionBar(editButton, RIGHT);
+    }
+
     private void overrideViews() {
-        GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
-        gbps.setOnClickListener(new View.OnClickListener() {
+        profileSelector.setOnClickListener(new View.OnClickListener() {
             //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
@@ -105,7 +127,6 @@ public class MainActivity extends TortoiseActivity {
                         LifeStory.getInstance().setChild(
                                 new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
 
-                        TextView profileName = (TextView) findViewById(R.id.child_name);
                         profileName.setText(LifeStory.getInstance().getChild().getName());
 
                         loadSeqGrid(LifeStory.getInstance().getChild());
@@ -118,11 +139,7 @@ public class MainActivity extends TortoiseActivity {
             }
         });
 
-
-        // Edit mode switcher button
-        GToggleButton button = (GToggleButton) findViewById(R.id.edit_mode_toggle);
-
-        button.setOnClickListener(new ImageButton.OnClickListener() {
+        editButton.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -252,11 +269,9 @@ public class MainActivity extends TortoiseActivity {
     protected void onResume()
     {
         super.onResume();
-        GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
-        TextView profileName = (TextView)findViewById(R.id.child_name);
 
         isInEditMode = false;
-        editMode.setToggled(false);
+        editButton.setPressed(false);
         Profile child = LifeStory.getInstance().getChild();
         if(child != null) {
             profileName.setText(child.getName());
