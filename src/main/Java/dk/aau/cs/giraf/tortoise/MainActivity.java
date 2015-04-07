@@ -87,15 +87,15 @@ public class MainActivity extends TortoiseActivity {
     }
 
     private void initializeButtons() {
-        profileSelector = new GirafButton(this, getResources().getDrawable(R.drawable.default_profile));
-        addButton = new GirafButton(this, getResources().getDrawable(R.drawable.add));
+        profileSelector = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_user));
+        addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addSchedule(v);
             }
         });
-        editButton = new GirafButton(this, getResources().getDrawable(R.drawable.btn_edit_image));
+        editButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_edit));
 
         addGirafButtonToActionBar(profileSelector, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);

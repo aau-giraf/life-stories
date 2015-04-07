@@ -81,14 +81,14 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
 
     private void initializeButtons() {
-        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image));
+        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
         scheduleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startPictosearch(v);
             }
         });
-        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.save));
+        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -293,7 +293,7 @@ public class ScheduleActivity extends TortoiseActivity
 
         int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
 
-        Drawable resizedDrawable = resizeDrawable(R.drawable.add, xy, xy);
+        Drawable resizedDrawable = resizeDrawable(R.drawable.icon_add, xy, xy);
         iv.setImageDrawable(resizedDrawable);
 
         // set listener on the add button so it starts pictosearch when clicked
