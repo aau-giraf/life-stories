@@ -427,36 +427,36 @@ public class ScheduleActivity extends TortoiseActivity
     }
 
     public void clearAllPictogramBorders() {
-        LinearLayout weekdayLayout;
+        LinearLayout dayLayout;
         for (int i = 0; i < 7; i++) {
             switch(i) {
                 case 0:
-                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
-                    clearPictogramBorders(weekdayLayout);
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
+                    clearPictogramBorders(dayLayout);
                     break;
                 case 1:
-                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
-                    clearPictogramBorders(weekdayLayout);
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                    clearPictogramBorders(dayLayout);
                     break;
                 case 2:
-                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
-                    clearPictogramBorders(weekdayLayout);
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
+                    clearPictogramBorders(dayLayout);
                     break;
                 case 3:
-                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
-                    clearPictogramBorders(weekdayLayout);
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
+                    clearPictogramBorders(dayLayout);
                     break;
                 case 4:
-                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
-                    clearPictogramBorders(weekdayLayout);
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
+                    clearPictogramBorders(dayLayout);
                     break;
                 case 5:
-                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
-                    clearPictogramBorders(weekdayLayout);
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                    clearPictogramBorders(dayLayout);
                     break;
                 case 6:
-                    weekdayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
-                    clearPictogramBorders(weekdayLayout);
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
+                    clearPictogramBorders(dayLayout);
                     break;
             }
         }

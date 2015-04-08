@@ -40,7 +40,8 @@
         android:id="@+id/tuesdayScroll"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
-        android:layout_marginBottom="60dp">
+        android:layout_marginBottom="60dp"
+        android:fillViewport="true">
 
         <LinearLayout
             android:orientation="vertical"

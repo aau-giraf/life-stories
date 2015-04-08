@@ -31,13 +31,13 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
  */
 public class FridayFragment extends Fragment {
 
-    protected static int bitmapSize;
-    boolean pictogramInFocus = false;
+    private static int amountOfPictograms;
 
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutFriday);
         Sequence weekday = ScheduleViewActivity.weekdaySequences.get(4);
         List<Pictogram> pictograms = new ArrayList<Pictogram>();
+        resizeLinearLayout(scrollContent);
 
         for (MediaFrame mf : weekday.getMediaFrames()) {
             pictograms.addAll(mf.getContent());
@@ -49,9 +49,8 @@ public class FridayFragment extends Fragment {
             iw.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                        ScheduleViewPortraitActivity.clearAllPictogramBorders();
-                        Drawable backgroundDrawable = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
-                        v.setBackgroundDrawable(backgroundDrawable);
+                    Drawable backgroundDrawable = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
+                    v.setBackgroundDrawable(backgroundDrawable);
 
                 }
             });
@@ -60,23 +59,29 @@ public class FridayFragment extends Fragment {
         }
     }
 
-    private Bitmap resizeBitmap (Bitmap originalBitmap) {
-        switch (bitmapSize) {
+    private void resizeLinearLayout(LinearLayout layout) {
+        switch(amountOfPictograms) {
+            case 0:
+                layout.setMinimumHeight(188);
+                break;
             case 1:
-                return Bitmap.createScaledBitmap(originalBitmap, 838, 838, false);
-            case 2:
-                return Bitmap.createScaledBitmap(originalBitmap, 552, 552, false);
+                layout.setMinimumHeight(376);
+                break;
             default:
-                return Bitmap.createScaledBitmap(originalBitmap, 188, 188, false);
+                layout.setMinimumHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    private Bitmap resizeBitmap (Bitmap originalBitmap) {
+          return Bitmap.createScaledBitmap(originalBitmap, 188, 188, false);
     }
 
     /**
      * Returns an instance of this fragment, to use in a ViewPager
      * @return an instance of the FridayFragment
      */
-    public static FridayFragment newInstance(int pictogramSize) {
-        bitmapSize = pictogramSize;
+    public static FridayFragment newInstance(int pictogramNum) {
+        amountOfPictograms = pictogramNum;
         return new FridayFragment();
     }
 

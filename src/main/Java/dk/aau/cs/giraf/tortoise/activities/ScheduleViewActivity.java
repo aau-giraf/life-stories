@@ -157,9 +157,8 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         //Puts the weekDaySelected variable in the intent, to pass it to the next Activity
         i.putExtra("weekDaySelected", weekDaySelected);
-        i.putExtra("pictogramSize", 0);
+        i.putExtra("amountOfPictograms", 0);
         i.putExtra("scheduleName", scheduleName.getText().toString());
-        i.putExtra("childName", LifeStory.getInstance().getChild().getName());
 
         //Starts the Portrait mode activity
         startActivity(i);
