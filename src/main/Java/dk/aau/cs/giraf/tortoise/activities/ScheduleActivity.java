@@ -28,6 +28,7 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
+import dk.aau.cs.giraf.tortoise.MainActivity;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -530,7 +531,7 @@ public class ScheduleActivity extends TortoiseActivity
 
         switch (weekdayId)
         {
-            case R.id.sequenceViewGroup1:
+            case R.id.sequenceViewGroupMon:
                 weekdaySelected = Day.MONDAY.ordinal();
                 break;
             case R.id.sequenceViewGroup2:

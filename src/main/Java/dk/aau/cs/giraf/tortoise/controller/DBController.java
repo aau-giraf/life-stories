@@ -200,8 +200,9 @@ public class DBController {
         MediaFrame mediaFrame = new MediaFrame();
         PictogramController pc = new PictogramController(con);
         if (dbFrame.getPictogramId() > 0) {
-            mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con,
-                    pc.getPictogramById(dbFrame.getPictogramId())));
+            mediaFrame.setPictogramId(dbFrame.getPictogramId());
+            /*mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con,
+                    pc.getPictogramById(dbFrame.getPictogramId())));*/
         }
         if (!dbFrame.getPictogramList().isEmpty()){
             mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
@@ -254,6 +255,9 @@ public class DBController {
         dk.aau.cs.giraf.oasis.lib.models.Frame f = new dk.aau.cs.giraf.oasis.lib.models.Frame();
         if (mf.getChoicePictogram() != null){
             f.setPictogramId(mf.getChoicePictogram().getPictogramID());
+        }
+        else{
+            f.setPictogramId(mf.getPictogramId());
         }
         f.setNestedSequence(mf.getNestedSequenceID());
         f.setPictogramList(morphPictogramsToDBPictograms(mf.getContent()));

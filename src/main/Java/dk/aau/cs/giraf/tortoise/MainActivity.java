@@ -39,8 +39,7 @@ public class MainActivity extends TortoiseActivity {
     private boolean isInScheduleMode = false;
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
-
-
+    private View currentMainWindow;
 
     private Profile guardian;
     private Profile selectedChild;
@@ -63,7 +62,6 @@ public class MainActivity extends TortoiseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.startup_activity);
 
-
         Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf
         if (i.getExtras() == null) {
@@ -83,7 +81,7 @@ public class MainActivity extends TortoiseActivity {
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
 
         overrideViews();
-        if (i.getIntExtra("currentChildID", -1) == -1) {
+        if (i.getExtras().getInt("currentChildID", -1) == -1) {
             findViewById(R.id.profileSelect).performClick();
         }else {
             LifeStory.getInstance().setChild(
@@ -104,7 +102,7 @@ public class MainActivity extends TortoiseActivity {
 
     private void overrideViews() {
         GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
-        GToggleButton button = (GToggleButton) findViewById(R.id.edit_mode_toggle);
+       GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
         GButton addButton = (GButton) findViewById(R.id.add_button);
 
         gbps.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +137,7 @@ public class MainActivity extends TortoiseActivity {
 
 
         // Edit mode switcher button
-        button.setOnClickListener(new ImageButton.OnClickListener() {
+        editMode.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -238,8 +236,11 @@ public class MainActivity extends TortoiseActivity {
                 if (isInScheduleMode){
                     if (isInEditMode) {
                         i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
+                        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+                        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+                        i.putExtra("isNew", false);
                         i.putExtra("template", arg2);
-                        i.putExtra("EditMode", isInEditMode);
+                        i.putExtra("EditMode", true);
                         i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
                         startActivity(i);
                     } else {
@@ -318,8 +319,9 @@ public class MainActivity extends TortoiseActivity {
     protected void onResume()
     {
         super.onResume();
+
         GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
-        TextView profileName = (TextView)findViewById(R.id.child_name);
+        TextView profileName = (TextView) findViewById(R.id.child_name);
 
         isInEditMode = false;
         editMode.setToggled(false);
@@ -400,8 +402,8 @@ public class MainActivity extends TortoiseActivity {
         Intent i;
         if(isInScheduleMode){
             i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-            i.putExtra("childId", LifeStory.getInstance().getChild().getId());
-            i.putExtra("guardianId", LifeStory.getInstance().getGuardian().getId());
+            i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+            i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
             i.putExtra("EditMode", true);
             i.putExtra("isNew", isNew);
             i.putExtra("sequenceId", s.getId());

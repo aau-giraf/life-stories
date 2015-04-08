@@ -125,7 +125,7 @@
 
 
                 <dk.aau.cs.giraf.tortoise.SequenceViewGroup
-                    android:id="@+id/sequenceViewGroup1"
+                    android:id="@+id/sequenceViewGroupMon"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     svg:verticalSpacing="10dp"

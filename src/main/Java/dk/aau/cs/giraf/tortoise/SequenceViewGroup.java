@@ -15,10 +15,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 
-import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
 
 /**
@@ -428,7 +426,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                             if (startDragIndex != curDragIndexPos) {
 
-                                ScheduleEditActivity.weekdaySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
+                                ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
 
 								final int childViews = getChildCount();
 								for (int i = 0; i < childViews; i++) {
