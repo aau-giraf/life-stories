@@ -1,25 +1,24 @@
 package dk.aau.cs.giraf.tortoise.fragments;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.R;
-import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
-import dk.aau.cs.giraf.tortoise.activities.ScheduleViewPortraitActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
@@ -32,9 +31,10 @@ public class MondayFragment extends Fragment {
 
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutMonday);
+        ScrollView scrollView = (ScrollView) scrollContent.getParent();
         Sequence weekday = ScheduleViewActivity.weekdaySequences.get(0);
         List<Pictogram> pictograms = new ArrayList<Pictogram>();
-        resizeLinearLayout(scrollContent);
+        resizeScrollView(scrollView);
 
         for (MediaFrame mf : weekday.getMediaFrames()) {
             pictograms.addAll(mf.getContent());
@@ -56,16 +56,21 @@ public class MondayFragment extends Fragment {
         }
     }
 
-    private void resizeLinearLayout(LinearLayout layout) {
+    private void resizeScrollView(ScrollView scrollView) {
+        RelativeLayout parent = (RelativeLayout) scrollView.getParent();
         switch(amountOfPictograms) {
             case 0:
-                layout.setMinimumHeight(188);
+                ScrollView.LayoutParams params1 = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, 198);
+                params1.setMargins(0, (parent.getHeight() / 2) - 198, 0 , 0);
+                scrollView.setLayoutParams(params1);
                 break;
             case 1:
-                layout.setMinimumHeight(376);
+                ScrollView.LayoutParams params2 = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, 420);
+                params2.setMargins(0, (parent.getHeight() / 2) - 420, 0 , 0);
+                scrollView.setLayoutParams(params2);
                 break;
             default:
-                layout.setMinimumHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+                scrollView.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
         }
     }
 

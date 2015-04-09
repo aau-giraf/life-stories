@@ -35,9 +35,10 @@ public class FridayFragment extends Fragment {
 
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutFriday);
-        Sequence weekday = ScheduleViewActivity.weekdaySequences.get(4);
+        ScrollView scrollView = (ScrollView) scrollContent.getParent();
+        Sequence weekday = ScheduleViewActivity.weekdaySequences.get(0);
         List<Pictogram> pictograms = new ArrayList<Pictogram>();
-        resizeLinearLayout(scrollContent);
+        resizeScrollView(scrollView);
 
         for (MediaFrame mf : weekday.getMediaFrames()) {
             pictograms.addAll(mf.getContent());
@@ -59,16 +60,16 @@ public class FridayFragment extends Fragment {
         }
     }
 
-    private void resizeLinearLayout(LinearLayout layout) {
+    private void resizeScrollView(ScrollView scrollView) {
         switch(amountOfPictograms) {
             case 0:
-                layout.setMinimumHeight(188);
+                scrollView.getLayoutParams().height = 198;
                 break;
             case 1:
-                layout.setMinimumHeight(376);
+                scrollView.getLayoutParams().height = 420;
                 break;
             default:
-                layout.setMinimumHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+                scrollView.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
         }
     }
 
