@@ -63,6 +63,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private int childId;
     private int sequenceId;
     private int pictogramEditPos = -1;
+
+
     public static dk.aau.cs.giraf.tortoise.controller.Sequence schedule;
     public static ArrayList<Sequence> daySequences = new ArrayList<Sequence>();
     public static Sequence mondaySequence;
@@ -73,6 +75,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
     public static Sequence saturdaySequence;
     public static Sequence sundaySequence;
     public static dk.aau.cs.giraf.tortoise.controller.Sequence choice = new dk.aau.cs.giraf.tortoise.controller.Sequence();
+
+
     public static SequenceAdapter scheduleAdapter;
     public static SequenceAdapter mondayAdapter;
     public static SequenceAdapter tuesdayAdapter;
@@ -83,25 +87,20 @@ public class ScheduleEditActivity extends ScheduleActivity {
     public static SequenceAdapter sundayAdapter;
     public static ArrayList<SequenceAdapter> adapterList;
     public static SequenceAdapter choiceAdapter;
+
+
     private List<MediaFrame> tempFrameList;
-    private List<Pictogram> tempPictogramList = new ArrayList<Pictogram>();
     private GButton backButton;
     private GButton sequenceImageButton;
-    private EditText sequenceTitleView;
     private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
     private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
     private final int PICTO_SEQUENCE_IMAGE_CALL = 2;
     private final int PICTO_EDIT_PICTOGRAM_CALL = 4;
     private final int PICTO_NEW_PICTOGRAM_CALL = 3;
-    private final int SEQUENCE_VIEWER_CALL = 1337;
     private final int NESTED_SEQUENCE_CALL = 40;
-    public static Activity activityToKill;
     private Helper helper;
-    private GDialog printAlignmentDialog;
-    private File[] file;
 
-    public List<List<ImageView>> weekdayLists;
     GDialog exitDialog;
 
     @Override
@@ -124,22 +123,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
         initSequences(intent);
         setupFramesGrid();
         setupButtons();
+
         exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
-
-        //TODO:This was never implemented.
-        // check whether tablet is in portrait or landscape mode and set the layout accordingly
-        // landscape mode shows mode days than portrait mode
-       /* int screenOrientation = getResources().getConfiguration().orientation;
-        if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            isInLandscape = true;
-            setContentView(R.layout.schedule_edit_activity);
-        } else {
-            isInLandscape = false;
-            setContentView(R.layout.schedule_edit_activity_portrait);
-        }*/
-
-        //Create empty sequences if no existing sequence is received. Otherwise load this sequence.
-
     }
 
     private void loadIntents() {
@@ -148,6 +133,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         sequenceId = extras.getInt("sequenceId");
         guardianId = extras.getInt("currentGuardianID");
         isInEditMode = extras.getBoolean("EditMode");
+        isNew = extras.getBoolean("isNew");
     }
 
     private void loadProfiles() {
@@ -165,10 +151,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
         // Test if we get a template. Create new (empty) sequences if not.
         int template = intent.getIntExtra("template", -1);
 
-        if(template == -1)
+        if(isNew)
         {
             LifeStory.getInstance().setCurrentStory(new Sequence());
 
+            // add empty sequences for each week day
             mondaySequence = new Sequence();
             daySequences.add(0, mondaySequence);
 
@@ -189,9 +176,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
             sundaySequence = new Sequence();
             daySequences.add(6, sundaySequence);
-                    // add empty sequences for each week day
+
             schedule = new Sequence();
-            //showAddButtons();
         }
         else
         {
@@ -261,7 +247,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
             });
             daySequences.add(6, sundaySequence);
 
-            //Set title image.
 
             //Set title text
             EditText title = (EditText) findViewById(R.id.scheduleName);
@@ -284,16 +269,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
                     return false;
                 }
             });
-
-            //After loading the sequences, render the schedule and show add buttons.
-            //renderSchedule(true);
         }
-
-
     }
 
     private void setupFramesGrid() {
-        //CHECK OM VIRKER
         // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
 
         mondayAdapter = new SequenceAdapter(this, daySequences.get(0));
@@ -511,7 +490,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             OnEditPictogramResult(data);
         }
         //Change choice icon
-        else if (resultCode == RESULT_OK && requestCode == 5){
+        /*else if (resultCode == RESULT_OK && requestCode == 5){
             try{
                 int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
                 if (checkoutIds.length == 0) {
@@ -534,7 +513,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             } catch (Exception e){
                 GuiHelper.ShowToast(this, e.toString());
             }
-        }
+        }*/
     }
 
     private void OnEditSequenceImageResult(Intent data) {
@@ -954,43 +933,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             setupChoiceGroup(choiceAdapter);
-        }
-        private ChoiceDialog(Context context, final SequenceAdapter adapter, MediaFrame f, int index) {
-            super(context);
-
-            choice.getMediaFrames().clear();
-
-            choiceAdapter = setupChoiceAdapter();
-
-            Pictogram pictogram = PictoFactory.getPictogram(context, f.getPictogramId());
-            pictogram.setId(f.getPictogramId());
-
-            //tempPictogramList.clear();
-            //tempPictogramList.add(pictogram);
-
-            //ArrayList<Pictogram> tempPictoList = new ArrayList<Pictogram>();
-            //tempPictoList.add(pictogram);
-
-            MediaFrame frame = new MediaFrame();
-            frame.setPictogramId(f.getPictogramId());
-            frame.addContent(pictogram);
-
-            choice.addFrame(frame);
-
-            choice.setId(f.getPictogramId());
-
-            choiceAdapter.notifyDataSetChanged();
-
-            //tempFrameList = daySequences.get(weekdaySelected).getMediaFrames();
-
-            //daySequences.get(weekdaySelected).getMediaFrames().get(index).setContent(tempPictoList);
-
-            //adapter.notifyDataSetChanged();
-            //choiceMode = false;
-            //pictogramEditPos = -1;
-            //setupChoiceGroup(choiceAdapter);
-            //dismiss();
-
         }
         private HorizontalSequenceViewGroup setupChoiceGroup(
                 final SequenceAdapter adapter) {
