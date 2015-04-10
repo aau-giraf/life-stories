@@ -53,7 +53,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         }
 
         // the view activity uses a modified version of the edit activity layout
-        setContentView(R.layout.schedule_edit_activity);
+        setContentView(R.layout.schedule_view_activity);
 
         initializeButtons();
 

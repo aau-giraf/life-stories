@@ -2,7 +2,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:gcomponent="http://schemas.android.com/apk/res-auto"
-    xmlns:svg="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/green"
@@ -38,29 +37,23 @@
     </FrameLayout>
 
     <ScrollView
-        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/monday_top_frame"
-        android:layout_margin="0dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:overScrollMode="always"
-        android:padding="0dp"
-        android:fadeScrollbars="false">
+        android:id="@+id/mondayScroll"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="false"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        android:fillViewport="true">
 
-
-        <dk.aau.cs.giraf.tortoise.SequenceViewGroup
-            android:id="@+id/sequenceViewGroupMon"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            svg:verticalSpacing="10dp"
-            svg:itemHeight="@dimen/activity_button_height"
-            svg:itemWidth="@dimen/activity_button_height"
             android:layout_gravity="center_horizontal"
-            android:background="@layout/main_picto_container_bg">
-        </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
-
+            android:id="@+id/layoutMonday"
+            android:dividerPadding="2dp">
+        </LinearLayout>
 
     </ScrollView>
 
@@ -72,6 +65,6 @@
         android:layout_alignParentStart="true"
         android:id="@+id/border_monday"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/monday_top_frame" />
+        android:layout_below="@+id/frameLayout7" />
 
 </RelativeLayout>

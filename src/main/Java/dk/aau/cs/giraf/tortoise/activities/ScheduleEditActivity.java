@@ -152,28 +152,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
         guardian = helper.profilesHelper.getProfileById(guardianId);
     }
 
-    private void initializeButtons() {
-        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
-        scheduleImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startPictosearch(v);
-            }
-        });
-        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveSchedule(v);
-            }
-        });
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setVisibility(View.INVISIBLE);
-
-        addGirafButtonToActionBar(scheduleImage, LEFT);
-        addGirafButtonToActionBar(saveButton, LEFT);
-    }
-
     private void initSequences(Intent intent) {
 
         // Create new array of sequences.
@@ -351,7 +329,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         adapterList.add(saturdayAdapter);
         adapterList.add(sundayAdapter);
     }
-    private void setupButtons() {
+    /*private void setupButtons() {
         //Creates all buttons in Activity and their listeners
         GButton saveButton = (GButton) findViewById(R.id.save_button);
         backButton = (GButton) findViewById(R.id.back_button);
@@ -393,6 +371,30 @@ public class ScheduleEditActivity extends ScheduleActivity {
             Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(schedule.getTitlePictoId()).getImage());
             sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
         }
+    }*/
+
+    private void initializeButtons() {
+        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        scheduleImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isInEditMode) {
+                    callPictoAdmin(v, PICTO_SEQUENCE_IMAGE_CALL);
+                }
+            }
+        });
+        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createAndShowSaveDialog(v);
+            }
+        });
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setVisibility(View.INVISIBLE);
+
+        addGirafButtonToActionBar(scheduleImage, LEFT);
+        addGirafButtonToActionBar(saveButton, LEFT);
     }
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter sAdapter, final int i) {
