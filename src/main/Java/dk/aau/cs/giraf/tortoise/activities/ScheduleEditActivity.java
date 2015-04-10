@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -37,6 +38,7 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.MainActivity;
 import dk.aau.cs.giraf.tortoise.PictogramView;
@@ -588,13 +590,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
         if (choiceMode) {
 
             for (int id : checkoutIds) {
-                Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
                 pictogram.setId(id);
-                tempPictogramList.add(pictogram);
-
 
                 MediaFrame frame = new MediaFrame();
                 frame.setPictogramId(id);
+                frame.addContent(pictogram);
+
                 choice.addFrame(frame);
 
                 if (choice.getId() == 0) {
@@ -604,11 +606,17 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
             choiceAdapter.notifyDataSetChanged();
         } else {
-
             for (int id : checkoutIds) {
+                Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
+                pictogram.setId(id);
+
                 MediaFrame frame = new MediaFrame();
+                frame.setChoicePictogram(pictogram);
                 frame.setPictogramId(id);
+                frame.addContent(pictogram);
+
                 daySequences.get(weekdaySelected).addFrame(frame);
+
             }
 
             adapterList.get(weekdaySelected).notifyDataSetChanged();
@@ -625,13 +633,22 @@ public class ScheduleEditActivity extends ScheduleActivity {
         if (checkoutIds.length == 0)
             return;
 
-        MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos);
+        if (choiceMode) {
 
-        frame.setPictogramId(checkoutIds[0]);
+            MediaFrame frame = choice.getMediaFrames().get(pictogramEditPos);
 
-        adapterList.get(weekdaySelected).notifyDataSetChanged();
+            frame.setPictogramId(checkoutIds[0]);
+
+            choiceAdapter.notifyDataSetChanged();
+
+        } else {
+            MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos);
+
+            frame.setPictogramId(checkoutIds[0]);
+
+            adapterList.get(weekdaySelected).notifyDataSetChanged();
+        }
     }
-
     // this is just a variable for a workaround
     //  public static LinearLayout weekdayLayout;
     public boolean saveSchedule(View v) {
@@ -690,37 +707,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
         if (s1 && s2) {
             return true;
         } else {
-            return false;
-        }
-    }
-
-    private boolean overrideSchedule(View v, Sequence scheduleSeq) {
-        Sequence seq = DBController.getInstance().getSequenceFromID(scheduleSeq.getId(), getApplicationContext());
-
-        boolean hasChanged = false;
-        //Checks whether the title of the new schedule is different from the one in the database
-        if(!scheduleSeq.getTitle().equals(seq.getTitle())) {
-            seq.setTitle(scheduleSeq.getTitle());
-            hasChanged = true;
-        }
-        //Checks whether the title pictogram of the new schedule is different from the one in the database
-        if(!(scheduleSeq.getTitlePictoId() == seq.getTitlePictoId())) {
-            seq.setTitlePictoId(scheduleSeq.getTitlePictoId());
-            hasChanged = true;
-        }
-        List<MediaFrame> newFrames = scheduleSeq.getMediaFrames();
-        List<MediaFrame> oldFrames = seq.getMediaFrames();
-
-        //Loops through all the days and checks whether there are any changes
-
-
-        if (hasChanged) {
-            GuiHelper.ShowToast(this, "Ændringer er gemt");
-            return true;
-        }
-        else {
-
-            GuiHelper.ShowToast(this, "Der var ikke nogle ændringer");
             return false;
         }
     }
@@ -890,6 +876,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
     private class ChoiceDialog extends GDialog {
 
+        private boolean firstTimeOpening = false;
+
         private ChoiceDialog(Context context, final SequenceAdapter adapter) {
             super(context);
 
@@ -898,7 +886,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 for (int i = 0; i < adapter.getItem(pictogramEditPos).getContent().size(); i++)
                 {
                     MediaFrame frame = new MediaFrame();
-                    frame.setPictogramId(adapter.getItem(pictogramEditPos).getContent().get(i).getId());
+                    int id = adapter.getItem(pictogramEditPos).getContent().get(i).getId();
+                    frame.setPictogramId(id);
+                    Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
+                    pictogram.setId(id);
+                    frame.addContent(pictogram);
                     choice.addFrame(frame);
                 }
             }
@@ -915,29 +907,46 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 @Override
                 public void onClick(View v) {
-                    tempFrameList = schedule.getMediaFrames();
+                    tempFrameList = daySequences.get(weekdaySelected).getMediaFrames();
                     MediaFrame frame = new MediaFrame();
-                    if(tempPictogramList == null) {
+                    ArrayList<Pictogram> tempPictoList = new ArrayList<Pictogram>();
+
+                    for(MediaFrame f : choice.getMediaFrames()){
+                        for(Pictogram p : f.getContent()) {
+                            tempPictoList.add(p);
+                        }
+                    }
+
+                    if( tempPictoList.size() == 0) {
                         //TODO: Display message that user can not save empty choice.
                         return;
                     }
-                    frame.setContent(tempPictogramList);
-                    frame.setPictogramId(tempPictogramList.get(0).getId());
-
+                    else if ( tempPictoList.size() == 1) {
+                        frame.setContent(tempPictoList);
+                        frame.setChoicePictogram(tempPictoList.get(0));
+                        frame.setPictogramId(tempPictoList.get(0).getPictogramID());
+                    }
+                    else{
+                        frame.setContent(tempPictoList);
+                        frame.setChoicePictogram(tempPictoList.get(0));
+                        frame.setPictogramId(tempPictoList.get(0).getPictogramID());
+                    }
 
                     if (pictogramEditPos == -1){
-                        daySequences.get(schedule.getId()).addFrame(frame);
+                        daySequences.get(weekdaySelected).addFrame(frame);
                         pictogramEditPos = tempFrameList.size()-1;
                     } else {
-                        daySequences.get(schedule.getId()).getMediaFrames().get(pictogramEditPos).setContent(tempPictogramList);
+                        daySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos).setContent(tempPictoList);
+                        //daySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos).setPictogramId(frame.getPictogramId());
                     }
+
                     adapter.notifyDataSetChanged();
                     choiceMode = false;
                     pictogramEditPos = -1;
                     dismiss();
                 }
             });
-            discardChoice.setOnClickListener(new GButton.OnClickListener(){
+            discardChoice.setOnClickListener(new GButton.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     choiceMode = false;
@@ -946,16 +955,52 @@ public class ScheduleEditActivity extends ScheduleActivity {
             });
             setupChoiceGroup(choiceAdapter);
         }
+        private ChoiceDialog(Context context, final SequenceAdapter adapter, MediaFrame f, int index) {
+            super(context);
 
-        private SequenceViewGroup setupChoiceGroup(
+            choice.getMediaFrames().clear();
+
+            choiceAdapter = setupChoiceAdapter();
+
+            Pictogram pictogram = PictoFactory.getPictogram(context, f.getPictogramId());
+            pictogram.setId(f.getPictogramId());
+
+            //tempPictogramList.clear();
+            //tempPictogramList.add(pictogram);
+
+            //ArrayList<Pictogram> tempPictoList = new ArrayList<Pictogram>();
+            //tempPictoList.add(pictogram);
+
+            MediaFrame frame = new MediaFrame();
+            frame.setPictogramId(f.getPictogramId());
+            frame.addContent(pictogram);
+
+            choice.addFrame(frame);
+
+            choice.setId(f.getPictogramId());
+
+            choiceAdapter.notifyDataSetChanged();
+
+            //tempFrameList = daySequences.get(weekdaySelected).getMediaFrames();
+
+            //daySequences.get(weekdaySelected).getMediaFrames().get(index).setContent(tempPictoList);
+
+            //adapter.notifyDataSetChanged();
+            //choiceMode = false;
+            //pictogramEditPos = -1;
+            //setupChoiceGroup(choiceAdapter);
+            //dismiss();
+
+        }
+        private HorizontalSequenceViewGroup setupChoiceGroup(
                 final SequenceAdapter adapter) {
-            final SequenceViewGroup choiceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+            final HorizontalSequenceViewGroup choiceGroup = (HorizontalSequenceViewGroup) findViewById(R.id.choice_view_group);
             choiceGroup.setEditModeEnabled(isInEditMode);
             choiceGroup.setAdapter(adapter);
 
             // Handle rearrange
             choiceGroup
-                    .setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
+                    .setOnRearrangeListener(new HorizontalSequenceViewGroup.OnRearrangeListener() {
                         @Override
                         public void onRearrange(int indexFrom, int indexTo) {
                             adapter.notifyDataSetChanged();
@@ -966,12 +1011,12 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
             // Handle new view
             choiceGroup
-                    .setOnNewButtonClickedListener(new SequenceViewGroup.OnNewButtonClickedListener() {
+                    .setOnNewButtonClickedListener(new HorizontalSequenceViewGroup.OnNewButtonClickedListener() {
                         @Override
                         public void onNewButtonClicked(View v) {
-                            final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.choice_view_group);
+                            final HorizontalSequenceViewGroup sequenceGroup = (HorizontalSequenceViewGroup) findViewById(R.id.choice_view_group);
                             sequenceGroup.liftUpAddNewButton();
-
+                            choiceMode = true;
                             callPictoAdmin(v, PICTO_NEW_PICTOGRAM_CALL);
                         }
                     });
@@ -981,6 +1026,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 public void onItemClick(AdapterView<?> adapter, View view,
                                         int position, long id) {
                     pictogramEditPos = position;
+                    choiceMode = true;
                     callPictoAdmin(view, PICTO_EDIT_PICTOGRAM_CALL);
                 }
             });

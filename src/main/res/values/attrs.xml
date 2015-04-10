@@ -5,6 +5,12 @@
         <attr name="itemHeight" format="dimension" />
         <attr name="itemWidth" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="HorizontalSequenceViewGroup">
+        <attr name="horizontalSpacing" format="dimension" />
+        <attr name="horizontalItemHeight" format="dimension" />
+        <attr name="horizontalItemWidth" format="dimension" />
+    </declare-styleable>
     
     <declare-styleable name="RoundedImageView">
         <attr name="cornerRadius" format="dimension" />

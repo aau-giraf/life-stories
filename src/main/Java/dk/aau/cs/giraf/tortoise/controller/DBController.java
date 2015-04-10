@@ -168,12 +168,18 @@ public class DBController {
      * @return Sequence
      */
     private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq, Context con){
+        SequenceController sc = new SequenceController(con);
+        if(dbSeq.getPictogramId() == 0){
+            sc.removeSequence(dbSeq.getId());
+            return new Sequence();
+        }
         return new Sequence(dbSeq.getId(),
                 dbSeq.getPictogramId(),
                 dbSeq.getName(),
                 morphDBFramesToMediaFrames(dbSeq.getFramesList(), con),
                 con);
     }
+
 
     /**
      * Morphs a list of DB frames to OUR kind of list of frames (MediaFrame-list)
@@ -201,8 +207,8 @@ public class DBController {
         PictogramController pc = new PictogramController(con);
         if (dbFrame.getPictogramId() > 0) {
             mediaFrame.setPictogramId(dbFrame.getPictogramId());
-            /*mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con,
-                    pc.getPictogramById(dbFrame.getPictogramId())));*/
+            mediaFrame.setChoicePictogram(PictoFactory.convertPictogram(con,
+                    pc.getPictogramById(dbFrame.getPictogramId())));
         }
         if (!dbFrame.getPictogramList().isEmpty()){
             mediaFrame.setContent(PictoFactory.convertPictograms(con, dbFrame.getPictogramList()));
