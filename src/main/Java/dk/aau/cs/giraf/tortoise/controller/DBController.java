@@ -168,11 +168,11 @@ public class DBController {
      * @return Sequence
      */
     private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq, Context con){
-        SequenceController sc = new SequenceController(con);
+        /*SequenceController sc = new SequenceController(con);
         if(dbSeq.getPictogramId() == 0){
             sc.removeSequence(dbSeq.getId());
             return new Sequence();
-        }
+        }*/
         return new Sequence(dbSeq.getId(),
                 dbSeq.getPictogramId(),
                 dbSeq.getName(),
