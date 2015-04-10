@@ -5,72 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/main_gradient_bg"
+    android:background="#ffffffff"
     android:focusableInTouchMode="true"
     xmlns:svg="http://schemas.android.com/tools">
 
-    <RelativeLayout
-        android:id="@+id/sequence_bar"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/schedule_view_top_bar_height"
-        android:background="@drawable/main_topbar_gradient_bg"
-        android:orientation="horizontal" >
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/back_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/quit"
-            android:onClick="showExitDialog"
-            android:layout_marginLeft="15dp"/>
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/sequence_image"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_centerVertical="true"
-            android:scaleType="centerCrop"
-            android:drawableBottom="@drawable/no_image_big"
-            android:onClick="startPictosearch"
-            android:layout_marginLeft="200dp"/>
+        android:layout_height="80dp">
 
         <EditText
-            android:id="@+id/scheduleName"
             android:layout_width="800dp"
-            android:layout_height="wrap_content"
-            android:saveEnabled="true"
-            android:maxLength="24"
-            android:lines="1"
-            android:selectAllOnFocus="true"
-            android:background="#00000000"
-            android:textColorHighlight="#00000000"
-            android:textSize="50sp"
-            android:textColor="@color/text_color"
-            android:hint="@string/schedule_name"
-            android:textIsSelectable="false"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:singleLine="true" />
+            android:layout_height="60dp"
+            android:id="@+id/editText"
+            android:textColor="#000000"
+            android:textSize="45dp"
+            android:background="@drawable/text_background"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:maxLength="24" />
 
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/save_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/home_button"
-            android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/save"
-            android:onClick="saveSchedule"
-            android:layout_marginRight="30dp"/>
+        <Spinner
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:id="@+id/spinner"
+            android:layout_gravity="right|center_vertical" />
+    </FrameLayout>
 
-
-
-    </RelativeLayout>
+    <View
+        android:background="#000000"
+        android:layout_height="2dp"
+        android:layout_width="fill_parent"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -563,5 +528,4 @@
 
         </RelativeLayout>
     </LinearLayout>
-
 </LinearLayout>

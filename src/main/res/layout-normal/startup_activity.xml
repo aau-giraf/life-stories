@@ -7,67 +7,6 @@
     android:background="@drawable/main_gradient_bg"
     android:focusableInTouchMode="true" >
 
-    <RelativeLayout
-        android:id="@+id/sequence_bar"
-        android:layout_width="match_parent"
-        android:layout_height="110sp"
-        android:background="@drawable/main_topbar_gradient_bg"
-        android:orientation="horizontal" >
-
-        <dk.aau.cs.giraf.gui.GButtonProfileSelect
-            android:id="@+id/profileSelect"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:padding="12dp"
-            android:layout_marginLeft="15dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            />
-
-        <dk.aau.cs.giraf.gui.GTextView
-            android:id="@+id/child_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text=""
-            android:textSize="60sp"
-            android:textColor="@color/text_color" />
-        
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/add_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_toLeftOf="@+id/edit_mode_toggle"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/add"
-            android:onClick="addStory"/>
-
-        <dk.aau.cs.giraf.gui.GButton
-            android:id="@+id/home_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:scaleType="fitCenter"
-            android:drawableBottom="@drawable/exit"
-            android:onClick="doExit"/>
-
-        <dk.aau.cs.giraf.gui.GToggleButton
-            android:id="@+id/edit_mode_toggle"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_toLeftOf="@+id/home_button"
-            android:layout_centerVertical="true"
-            android:drawableBottom="@drawable/wrench"
-            android:layout_marginRight="15dp" />
-
-
-    </RelativeLayout>
-
     <GridView
         android:id="@+id/sequence_grid"
         android:layout_width="match_parent"

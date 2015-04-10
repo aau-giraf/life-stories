@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,6 +23,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,6 +35,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -101,7 +105,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private final int NESTED_SEQUENCE_CALL = 40;
     private Helper helper;
 
+    public List<List<ImageView>> weekdayLists;
     GDialog exitDialog;
+    private GirafButton scheduleImage;
+    private GirafButton saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +129,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
         loadProfiles();
         initSequences(intent);
         setupFramesGrid();
-        setupButtons();
+        //setupButtons();
+        initializeButtons();
+
 
         exitDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_schedule_exit, null));
     }
@@ -141,6 +150,28 @@ public class ScheduleEditActivity extends ScheduleActivity {
         helper = new Helper(this);
         selectedChild = helper.profilesHelper.getProfileById(childId);
         guardian = helper.profilesHelper.getProfileById(guardianId);
+    }
+
+    private void initializeButtons() {
+        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        scheduleImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPictosearch(v);
+            }
+        });
+        saveButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveSchedule(v);
+            }
+        });
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setVisibility(View.INVISIBLE);
+
+        addGirafButtonToActionBar(scheduleImage, LEFT);
+        addGirafButtonToActionBar(saveButton, LEFT);
     }
 
     private void initSequences(Intent intent) {
@@ -247,11 +278,16 @@ public class ScheduleEditActivity extends ScheduleActivity {
             });
             daySequences.add(6, sundaySequence);
 
+            //Set title image.
+            Bitmap titleBitmap = schedule.getTitleImage();
+            Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
+            scheduleImage.setIcon(titleDrawable);
 
+            EditText scheduleName = (EditText) findViewById(R.id.editText);
+            
             //Set title text
-            EditText title = (EditText) findViewById(R.id.scheduleName);
-            title.setText(schedule.getTitle());
-            title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            scheduleName.setText(schedule.getTitle());
+            scheduleName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -259,7 +295,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             });
-            title.setOnKeyListener(new View.OnKeyListener() {
+            scheduleName.setOnKeyListener(new View.OnKeyListener() {
 
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -530,11 +566,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
         bitmap = LayoutTools.getSquareBitmap(bitmap);
         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
         schedule.setTitleImage(bitmap);
-        Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(schedule.getTitlePictoId()).getImage());
-        sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-        sequenceImageButton.setVisibility(View.GONE);
-        sequenceImageButton.setVisibility(View.VISIBLE);
-
+        scheduleImage.setIcon(new BitmapDrawable(getResources(), bitmap));
+        
         scheduleAdapter.notifyDataSetChanged();
     }
 
@@ -637,8 +670,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
             GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et titel-pictogram");
             return false;
         }
-        Editable title = ((EditText) findViewById(R.id.scheduleName)).getText();
-        String strTitle = title.toString();
+        EditText scheduleName = (EditText) findViewById(R.id.editText);
+        String strTitle = scheduleName.getText().toString();
         if (strTitle.equals("")) {
             // if no title, set a default one
             scheduleSeq.setTitle(getString(R.string.unnamed_sequence));
@@ -684,8 +717,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 getApplicationContext());
 
         if (s1 && s2) {
+            GuiHelper.ShowToast(this, "Skema gemt");
             return true;
         } else {
+            GuiHelper.ShowToast(this, "Skema er ikke gemt!"); 
             return false;
         }
     }

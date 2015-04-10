@@ -23,9 +23,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.gui.GTooltip;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.MainActivity;
@@ -39,9 +41,8 @@ public class ScheduleActivity extends TortoiseActivity
 {
     // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
-    public static ViewGroup weekdayGroup;
     public GDialog multichoiceDialog;
-    List<Sequence> weekdaySequences;
+    public static List<Sequence> weekdaySequences;
     public static int weekdaySelected;
     int lastPosition;
     int currentActivity = 0;
@@ -199,7 +200,7 @@ public class ScheduleActivity extends TortoiseActivity
         int childcount = level1.getChildCount();
 
         // find each of the individual week days
-        for (int i = 0; i < childcount - 1; i++)
+        for (int i = 0; i < childcount; i++)
         {
             try
             {
@@ -246,7 +247,7 @@ public class ScheduleActivity extends TortoiseActivity
                 if(mf.getChoicePictogram() == null)
                 {
                     // if no default choice icon
-                    choiceImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.choose);
+                    choiceImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.questionwhite);
                 }
                 else
                 {
@@ -294,7 +295,7 @@ public class ScheduleActivity extends TortoiseActivity
 
         int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
 
-        Drawable resizedDrawable = resizeDrawable(R.drawable.add, xy, xy);
+        Drawable resizedDrawable = resizeDrawable(R.drawable.icon_add, xy, xy);
         iv.setImageDrawable(resizedDrawable);
 
         // set listener on the add button so it starts pictosearch when clicked
@@ -312,7 +313,6 @@ public class ScheduleActivity extends TortoiseActivity
     public void addPictogramToDay(Bitmap bm, LinearLayout layout) {
 
         ImageView iw = new ImageView(this);
-        iw.setBackgroundResource(R.drawable.week_schedule_bg_tile);
 
         int xy = 0;
 
@@ -329,8 +329,8 @@ public class ScheduleActivity extends TortoiseActivity
 
         // set padding of each imageview containing
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 5, 0, 5); // pad pictogram at top to space them out
         iw.setLayoutParams(lp);
+        iw.setPadding(0, 5, 0, 5);
 
         final LinearLayout workaroundLayout = layout;
 
@@ -406,13 +406,12 @@ public class ScheduleActivity extends TortoiseActivity
                 determineWeekSection(v);
 
                 // Sets this particular view to be the currant activity
-                if (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySelected == currentWeekday) {
+                if (ScheduleActivity.this instanceof ScheduleViewActivity) {
                     currentActivity = index;
-                    clearPictogramBorders(v);
+                    clearAllPictogramBorders();
                     //v.setPadding(10, 0, 0, 0);
                     //Drawable progressArrow = getResources().getDrawable(R.drawable.gdialogcolorselect_arrow_right);
-                    Drawable blackTile = ScheduleActivity.this.getResources().getDrawable(R.drawable.week_schedule_bg_tile_big);
-                    blackTile.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+                    Drawable blackTile = ScheduleActivity.this.getResources().getDrawable(R.drawable.week_schedule_bg_tile);
                     v.setBackgroundDrawable(blackTile);
                     //GuiHelper.ShowToast(ScheduleActivity.this, "Current activity set!");
                 }
@@ -429,12 +428,49 @@ public class ScheduleActivity extends TortoiseActivity
         layout.addView(iw); // add new pictogram
     }
 
+    public void clearAllPictogramBorders() {
+        LinearLayout dayLayout;
+        for (int i = 0; i < 7; i++) {
+            switch(i) {
+                case 0:
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
+                    clearPictogramBorders(dayLayout);
+                    break;
+                case 1:
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                    clearPictogramBorders(dayLayout);
+                    break;
+                case 2:
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
+                    clearPictogramBorders(dayLayout);
+                    break;
+                case 3:
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
+                    clearPictogramBorders(dayLayout);
+                    break;
+                case 4:
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
+                    clearPictogramBorders(dayLayout);
+                    break;
+                case 5:
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                    clearPictogramBorders(dayLayout);
+                    break;
+                case 6:
+                    dayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
+                    clearPictogramBorders(dayLayout);
+                    break;
+            }
+        }
+    }
+
     private void clearPictogramBorders(View v) {
-        LinearLayout dayLayout = (LinearLayout) v.getParent();
+        LinearLayout dayLayout = (LinearLayout) v;
         int pictoCount = dayLayout.getChildCount();
         for (int i = 0; i < pictoCount; i++) {
             ImageView iv = (ImageView) dayLayout.getChildAt(i);
-            iv.setBackgroundResource(R.drawable.week_schedule_bg_tile);
+            iv.setBackgroundResource(0);
+            iv.setPadding(0, 5, 0, 5);
         }
     }
 
@@ -461,7 +497,7 @@ public class ScheduleActivity extends TortoiseActivity
         int childcount = level1.getChildCount();
 
         // find each of the individual week days
-        for (int i = 0; i < childcount - 1; i++)
+        for (int i = 0; i < childcount; i++)
         {
             try
             {

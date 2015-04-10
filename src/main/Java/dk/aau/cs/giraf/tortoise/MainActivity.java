@@ -4,11 +4,16 @@ package dk.aau.cs.giraf.tortoise;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -19,6 +24,7 @@ import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -53,6 +59,9 @@ public class MainActivity extends TortoiseActivity {
     private int childId;
 
     private Helper helper;
+    private GirafButton profileSelector;
+    private GirafButton addButton;
+    private GirafButton editButton;
     /**
      * Initializes all app elements.
      * @param savedInstanceState
@@ -80,32 +89,37 @@ public class MainActivity extends TortoiseActivity {
         LifeStory.getInstance().setGuardian(
                 h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
 
+        initializeButtons();
+
         overrideViews();
-        if (i.getExtras().getInt("currentChildID", -1) == -1) {
-            findViewById(R.id.profileSelect).performClick();
+        if (i.getIntExtra("currentChildID", -1) == -1) {
+            profileSelector.performClick();
         }else {
             LifeStory.getInstance().setChild(
                     h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
             // Initialize name of profile
-            TextView profileName = (TextView) findViewById(R.id.child_name);
-            profileName.setText(LifeStory.getInstance().getChild().getName());
-            HideButtons();
         }
     }
 
-    private void HideButtons() {
-        findViewById(R.id.profileSelect).setVisibility(View.INVISIBLE);
-        findViewById(R.id.add_button).setVisibility(View.INVISIBLE);
-        findViewById(R.id.edit_mode_toggle).setVisibility(View.INVISIBLE);
+    private void initializeButtons() {
+        profileSelector = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_user));
+        addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Sequence sequence = new Sequence();
+                addSchedule(sequence, true, v);
+            }
+        });
+        editButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_edit));
 
+        addGirafButtonToActionBar(profileSelector, LEFT);
+        addGirafButtonToActionBar(addButton, RIGHT);
+        addGirafButtonToActionBar(editButton, RIGHT);
     }
 
     private void overrideViews() {
-        GButtonProfileSelect gbps = (GButtonProfileSelect) findViewById(R.id.profileSelect);
-       GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
-        GButton addButton = (GButton) findViewById(R.id.add_button);
-
-        gbps.setOnClickListener(new View.OnClickListener() {
+        profileSelector.setOnClickListener(new View.OnClickListener() {
             //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
@@ -115,15 +129,14 @@ public class MainActivity extends TortoiseActivity {
                         false);
                 childSelector.show();
 
-                childSelector.setOnListItemClick(   new AdapterView.OnItemClickListener() {
+                childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
                         LifeStory.getInstance().setChild(
                                 new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
 
-                        TextView profileName = (TextView) findViewById(R.id.child_name);
-                        profileName.setText(LifeStory.getInstance().getChild().getName());
+                        //profileName.setText(LifeStory.getInstance().getChild().getName());
 
                         loadSeqGrid(LifeStory.getInstance().getChild());
 
@@ -135,14 +148,12 @@ public class MainActivity extends TortoiseActivity {
             }
         });
 
-
-        // Edit mode switcher button
-        editMode.setOnClickListener(new ImageButton.OnClickListener() {
+        editButton.setOnClickListener(new ImageButton.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                GToggleButton button = (GToggleButton) v;
-                isInEditMode = button.isToggled();
+                if (isInEditMode) { isInEditMode = false; }
+                else { isInEditMode = v.isPressed(); }
                 GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
 
                 // Make sure that all views currently not visible will have the correct
@@ -161,16 +172,6 @@ public class MainActivity extends TortoiseActivity {
                 }
             }
         });
-
-        addButton.setOnClickListener(new View.OnClickListener() {
-            //Enter SequenceActivity when clicking the Add Button
-            @Override
-            public void onClick(View v) {
-                Sequence sequence = new Sequence();
-                addStory(sequence, true, v);
-            }
-        });
-
     }
 
     private void setupModeFromIntents() {
@@ -307,27 +308,16 @@ public class MainActivity extends TortoiseActivity {
         super.onStop();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_tortoise_startup_screen, menu);
-        return true;
-    }
-
     @Override
     protected void onResume()
     {
         super.onResume();
 
-        GToggleButton editMode = (GToggleButton) findViewById(R.id.edit_mode_toggle);
-        TextView profileName = (TextView) findViewById(R.id.child_name);
-
         isInEditMode = false;
-        editMode.setToggled(false);
+        editButton.setPressed(false);
         Profile child = LifeStory.getInstance().getChild();
         if(child != null) {
-            profileName.setText(child.getName());
+            //profileName.setText(child.getName());
             loadSeqGrid(child);
         }
         if(sequenceAdapter != null) {
@@ -376,12 +366,17 @@ public class MainActivity extends TortoiseActivity {
 
     }
 
-    public void addSchedule(View v)
+    public void addSchedule(Sequence s, boolean isNew, View v)
     {
         canFinish = false;
         Intent i = new Intent(this, ScheduleEditActivity.class);
         i.putExtra("template", -1);
-
+        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
+        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        i.putExtra("EditMode", true);
+        i.putExtra("isNew", isNew);
+        i.putExtra("sequenceId", s.getId());
+        
         if (i.resolveActivity(getPackageManager()) != null)
         {
             try{
@@ -396,17 +391,12 @@ public class MainActivity extends TortoiseActivity {
         }
     }
 
-    public void addStory(Sequence s, boolean isNew, View v)
+    public void addStory(View v)
     {
         canFinish = false;
         Intent i;
         if(isInScheduleMode){
             i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-            i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
-            i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-            i.putExtra("EditMode", true);
-            i.putExtra("isNew", isNew);
-            i.putExtra("sequenceId", s.getId());
             i.putExtra("template", -1);
         }else {
             i = new Intent(getApplicationContext(), EditModeActivity.class);
