@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -95,6 +96,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 saveSchedule(v);
             }
         });
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setVisibility(View.INVISIBLE);
 
         addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(saveButton, LEFT);

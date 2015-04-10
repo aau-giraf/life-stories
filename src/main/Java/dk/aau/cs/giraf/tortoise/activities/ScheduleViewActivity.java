@@ -5,8 +5,11 @@ import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -16,8 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafSpinner;
+import dk.aau.cs.giraf.gui.GirafSpinnerAdapter;
 import dk.aau.cs.giraf.tortoise.R;
 
 import dk.aau.cs.giraf.tortoise.controller.DBController;
@@ -25,11 +29,13 @@ import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class ScheduleViewActivity extends ScheduleActivity
 {
     int weekDaySelected;
+    int amountOfPictograms;
     private GirafButton scheduleImage;
     private GirafButton portraitButton;
 
@@ -62,7 +68,7 @@ public class ScheduleViewActivity extends ScheduleActivity
     private void initializeButtons() {
         scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
         scheduleImage.setEnabled(false);
-        portraitButton = new GirafButton(this, getResources().getDrawable(R.drawable.placeholder));
+        portraitButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_land_to_port));
         portraitButton.setOnClickListener(new View.OnClickListener() {
                                               //Open Child Selector when pressing the Child Select Button
                                               @Override
@@ -70,6 +76,35 @@ public class ScheduleViewActivity extends ScheduleActivity
                                                   startPortraitMode(v);
                                               }
                                           });
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.spinnercontent,
+                R.layout.giraf_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        amountOfPictograms = 2;
+                        break;
+                    case 1:
+                        amountOfPictograms = 0;
+                        break;
+                    case 2:
+                        amountOfPictograms = 1;
+                        break;
+                    case 3:
+                        amountOfPictograms = 2;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                amountOfPictograms = 2;
+            }
+        });
 
         addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(portraitButton, RIGHT);
@@ -157,7 +192,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         //Puts the weekDaySelected variable in the intent, to pass it to the next Activity
         i.putExtra("weekDaySelected", weekDaySelected);
-        i.putExtra("amountOfPictograms", 0);
+        i.putExtra("amountOfPictograms", amountOfPictograms);
         i.putExtra("scheduleName", scheduleName.getText().toString());
 
         //Starts the Portrait mode activity

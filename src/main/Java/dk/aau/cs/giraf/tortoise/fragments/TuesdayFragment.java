@@ -34,7 +34,7 @@ public class TuesdayFragment extends Fragment {
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutTuesday);
         ScrollView scrollView = (ScrollView) scrollContent.getParent();
-        Sequence weekday = ScheduleViewActivity.weekdaySequences.get(0);
+        Sequence weekday = ScheduleViewActivity.weekdaySequences.get(1);
         List<Pictogram> pictograms = new ArrayList<Pictogram>();
         resizeScrollView(scrollView);
 

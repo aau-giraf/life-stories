@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinnercontent">
+        <item>Vælg antal piktogrammer...</item>
+        <item>1 Piktogram</item>
+        <item>2 Piktogrammer</item>
+        <item>Flere Piktogrammer</item>
+    </string-array>
+</resources>

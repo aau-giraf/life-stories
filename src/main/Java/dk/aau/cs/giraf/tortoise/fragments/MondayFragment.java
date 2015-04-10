@@ -7,10 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
@@ -57,17 +55,12 @@ public class MondayFragment extends Fragment {
     }
 
     private void resizeScrollView(ScrollView scrollView) {
-        RelativeLayout parent = (RelativeLayout) scrollView.getParent();
         switch(amountOfPictograms) {
             case 0:
-                ScrollView.LayoutParams params1 = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, 198);
-                params1.setMargins(0, (parent.getHeight() / 2) - 198, 0 , 0);
-                scrollView.setLayoutParams(params1);
+                scrollView.getLayoutParams().height = 198;
                 break;
             case 1:
-                ScrollView.LayoutParams params2 = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, 420);
-                params2.setMargins(0, (parent.getHeight() / 2) - 420, 0 , 0);
-                scrollView.setLayoutParams(params2);
+                scrollView.getLayoutParams().height = 420;
                 break;
             default:
                 scrollView.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;

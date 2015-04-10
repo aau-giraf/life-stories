@@ -7,8 +7,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.EditText;
 
+import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafSpinner;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.fragments.*;
 
@@ -22,6 +25,7 @@ public class ScheduleViewPortraitActivity extends ScheduleActivity {
     private static final int NUM_PAGES = 7;
 
     private static int amountOfPictograms;
+    private GirafButton changeToLandscape;
 
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -54,8 +58,21 @@ public class ScheduleViewPortraitActivity extends ScheduleActivity {
         EditText scheduleTitle = (EditText) findViewById(R.id.editText);
         scheduleTitle.setText(scheduleName);
         scheduleTitle.setEnabled(false);
+        initializeButtons();
 
         setCurrentDay(weekDaySelected);
+    }
+
+    private void initializeButtons() {
+        changeToLandscape = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_port_to_land));
+        changeToLandscape.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        addGirafButtonToActionBar(changeToLandscape, RIGHT);
     }
 
     protected void setCurrentDay(int weekday) {
