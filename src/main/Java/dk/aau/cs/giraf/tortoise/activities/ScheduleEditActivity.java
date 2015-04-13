@@ -160,6 +160,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
         // Test if we get a template. Create new (empty) sequences if not.
         int template = intent.getIntExtra("template", -1);
 
+        daySequences.clear();
+
+        EditText scheduleName = (EditText) findViewById(R.id.editText);
+
         if(isNew)
         {
             LifeStory.getInstance().setCurrentStory(new Sequence());
@@ -187,6 +191,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
             daySequences.add(6, sundaySequence);
 
             schedule = new Sequence();
+
+            scheduleName.setText(getString(R.string.unnamed_sequence));
         }
         else
         {
@@ -256,34 +262,30 @@ public class ScheduleEditActivity extends ScheduleActivity {
             });
             daySequences.add(6, sundaySequence);
 
-            //Set title image.
-            Bitmap titleBitmap = schedule.getTitleImage();
-            Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
-            scheduleImage.setIcon(titleDrawable);
-
-            EditText scheduleName = (EditText) findViewById(R.id.editText);
-            
             //Set title text
             scheduleName.setText(schedule.getTitle());
-            scheduleName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                        InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            });
-            scheduleName.setOnKeyListener(new View.OnKeyListener() {
-
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(keyCode == KeyEvent.KEYCODE_ENTER) {
-                        v.clearFocus();
-                    }
-                    return false;
-                }
-            });
         }
+
+
+
+        scheduleName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        });
+        scheduleName.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER) {
+                    v.clearFocus();
+                }
+                return false;
+            }
+        });
     }
 
     private void setupFramesGrid() {
@@ -329,49 +331,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
         adapterList.add(saturdayAdapter);
         adapterList.add(sundayAdapter);
     }
-    /*private void setupButtons() {
-        //Creates all buttons in Activity and their listeners
-        GButton saveButton = (GButton) findViewById(R.id.save_button);
-        backButton = (GButton) findViewById(R.id.back_button);
-        //If sticking with this way of doing xml, implement find title pictogram
-        sequenceImageButton = (GButton) findViewById(R.id.sequence_image);
-
-        saveButton.setOnClickListener(new ImageButton.OnClickListener() {
-            //Show Dialog to save Sequence when clicking the Save Button
-            @Override
-            public void onClick(View v) {
-                createAndShowSaveDialog(v);
-            }
-        });
-
-        backButton.setOnClickListener(new ImageButton.OnClickListener() {
-            //Show Back Dialog when clicking the Cancel Button
-            @Override
-            public void onClick(View v) {
-                createAndShowBackDialog(v);
-            }
-        });
-
-        sequenceImageButton.setOnClickListener(new ImageView.OnClickListener() {
-            //If Sequence Image Button is clicked, call PictoAdmin to select an Image for the Sequence
-            @Override
-            public void onClick(View v) {
-                if (isInEditMode) {
-                    callPictoAdmin(v, PICTO_SEQUENCE_IMAGE_CALL);
-                }
-            }
-        });
-
-        //If no Image has been selected or the Sequence, display the Add Sequence Picture. Otherwise load the image for the Button
-        if (schedule.getTitlePictoId() == 0) {
-            Drawable d = getResources().getDrawable(R.drawable.add_sequence_picture);
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
-        } else {
-            helper = new Helper(this);
-            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(schedule.getTitlePictoId()).getImage());
-            sequenceImageButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
-        }
-    }*/
 
     private void initializeButtons() {
         scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
@@ -395,6 +354,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(saveButton, LEFT);
+
+        //Set title image.
+        Bitmap titleBitmap = schedule.getTitleImage();
+        Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
+        scheduleImage.setIcon(titleDrawable);
     }
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter sAdapter, final int i) {
@@ -414,7 +378,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
                 final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(i);
                 sequenceGroup.liftUpAddNewButton();
-                createAndShowAddDialog(sequenceGroup, adapterList.get(weekdaySelected));
+                createAndShowAddDialog(sequenceGroup, sAdapter);
             }
         });
 
@@ -429,7 +393,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(position);
 
                 //Perform action depending on the type of pictogram clicked.
-                checkFrameMode(frame, view, adapterList.get(weekdaySelected));
+                checkFrameMode(frame, view, sAdapter);
             }
         });
 
@@ -437,7 +401,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         sequenceGroup.setOnRearrangeListener(new SequenceViewGroup.OnRearrangeListener() {
             @Override
             public void onRearrange(int indexFrom, int indexTo) {
-                adapterList.get(weekdaySelected).notifyDataSetChanged();
+                sAdapter.notifyDataSetChanged();
             }
         });
 
@@ -674,7 +638,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
         EditText scheduleName = (EditText) findViewById(R.id.editText);
         String strTitle = scheduleName.getText().toString();
-        if (strTitle.equals("")) {
+        if (strTitle.equals("") || strTitle.equals(getString(R.string.unnamed_sequence))) {
             // if no title, set a default one
             scheduleSeq.setTitle(getString(R.string.unnamed_sequence));
         } else {
@@ -897,12 +861,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
         private ChoiceDialog(Context context, final SequenceAdapter adapter) {
             super(context);
 
+            final SequenceAdapter a = adapter;
             choice.getMediaFrames().clear();
             if ( pictogramEditPos != -1 ) {
                 for (int i = 0; i < adapter.getItem(pictogramEditPos).getContent().size(); i++)
                 {
                     MediaFrame frame = new MediaFrame();
-                    int id = adapter.getItem(pictogramEditPos).getContent().get(i).getId();
+                    int id = adapter.getItem(pictogramEditPos).getContent().get(i).getPictogramID();
                     frame.setPictogramId(id);
                     Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
                     pictogram.setId(id);
