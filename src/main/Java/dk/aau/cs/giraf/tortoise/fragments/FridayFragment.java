@@ -3,6 +3,8 @@ package dk.aau.cs.giraf.tortoise.fragments;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -32,13 +34,18 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
 public class FridayFragment extends Fragment {
 
     private static int amountOfPictograms;
+    private static int currentActivity;
 
-    private void addPictograms(ViewGroup view) {
+    private void addPictograms(final ViewGroup view) {
+
+
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutFriday);
         ScrollView scrollView = (ScrollView) scrollContent.getParent();
         Sequence weekday = ScheduleViewActivity.weekdaySequences.get(4);
         List<Pictogram> pictograms = new ArrayList<Pictogram>();
         resizeScrollView(scrollView);
+        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(view.getMeasuredWidth(),view.getMeasuredWidth());
+
 
         for (MediaFrame mf : weekday.getMediaFrames()) {
             pictograms.addAll(mf.getContent());
@@ -47,18 +54,91 @@ public class FridayFragment extends Fragment {
         for (int i = 0; i < pictograms.size(); i++) {
             ImageView iw = new ImageView(getActivity().getApplicationContext());
             iw.setImageBitmap(resizeBitmap(pictograms.get(i).getImageData()));
+            iw.setMaxWidth(iw.getHeight());
+            iw.setScaleY(0.8f);
+            iw.setScaleX(0.8f);
             iw.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+
+                    // index of pictogram being clicked
+                    int index = getViewIndex(v);
+                    LinearLayout dayLayout = (LinearLayout) v.getParent();
+                    int pictoCount = dayLayout.getChildCount();
+                    if(index == 0 || (index-1) == currentActivity || (index+1) == currentActivity)
+                    {
+                        currentActivity = index;
+                        setPictogramSizes((View) v.getParent());
+
+                        /*Re-size*/
+                        v.setScaleX(1.2f);
+                        v.setScaleY(1.2f);
+                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
+                        iv.setColorFilter(null);
+                        iv.setBackgroundColor(Color.TRANSPARENT);
+
+                    } else if((index+1) == pictoCount)
+                    {
+                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
+
+                        /*Re-size*/
+                        iv.setScaleY(0.4f);
+                        iv.setScaleX(0.4f);
+                        /*Adding grey scale*/
+                        ColorMatrix matrix = new ColorMatrix();
+                        matrix.setSaturation(0);
+                        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                        iv.setColorFilter(filter);
+                        iv.setBackgroundColor(Color.GRAY);
+                    }
+                    /*
                     Drawable backgroundDrawable = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
-                    v.setBackgroundDrawable(backgroundDrawable);
+                    v.setBackgroundDrawable(backgroundDrawable);*/
 
                 }
             });
-            iw.setPadding(0, 10, 0, 10);
+            iw.setPadding(0, 0, 0, 0);
             scrollContent.addView(iw);
         }
     }
+
+    private void setPictogramSizes(View v) {
+        LinearLayout dayLayout = (LinearLayout) v;
+        int pictoCount = dayLayout.getChildCount();
+        for (int i = 0; i < pictoCount; i++) {
+            ImageView iv = (ImageView) dayLayout.getChildAt(i);
+
+            if(i < currentActivity){
+                /*Re-Size*/
+                iv.setScaleY(0.4f);
+                iv.setScaleX(0.4f);
+
+                /*Greyscale*/
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.setSaturation(0);
+                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                iv.setColorFilter(filter);
+                iv.setBackgroundColor(Color.GRAY);
+
+
+
+            }else if(i > currentActivity)
+            {
+                iv.setScaleX(0.8f);
+                iv.setScaleY(0.8f);
+                iv.setColorFilter(null);
+                iv.setBackgroundColor(Color.TRANSPARENT);
+
+            }
+
+            /*
+            iv.setBackgroundResource(0);
+            iv.setPadding(0, 5, 0, 5);
+            */
+        }
+    }
+
 
     private void resizeScrollView(ScrollView scrollView) {
         switch(amountOfPictograms) {
@@ -99,5 +179,21 @@ public class FridayFragment extends Fragment {
         addPictograms(view);
 
         return view;
+    }
+
+    public int getViewIndex(View v)
+    {
+        int index;
+
+        if(((LinearLayout) v.getParent()).getChildCount() > 0)
+        {
+            index = ((LinearLayout) v.getParent()).indexOfChild(v);
+        }
+        else
+        {
+            index = -1;
+        }
+
+        return index;
     }
 }
