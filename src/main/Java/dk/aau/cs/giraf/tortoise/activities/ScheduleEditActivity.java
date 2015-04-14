@@ -998,9 +998,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
         saveDialog.show();
     }
 
-    private void createAndShowBackDialog(View v) {
+    @Override
+    public void onBackPressed() {
         //Create instance of BackDialog class and display it
-        BackDialog backDialog = new BackDialog(v.getContext());
+        BackDialog backDialog = new BackDialog(this);
         backDialog.show();
     }
 
