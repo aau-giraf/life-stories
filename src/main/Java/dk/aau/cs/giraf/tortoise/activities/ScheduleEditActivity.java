@@ -119,7 +119,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         Intent intent = getIntent();
 
         if (intent.getExtras() == null) {
-            GuiHelper.ShowToast(this, "Ingen data modtaget fra Tortoise");
+            GuiHelper.ShowToast(this, "Ingen data modtaget");
             finish();
         }
 
