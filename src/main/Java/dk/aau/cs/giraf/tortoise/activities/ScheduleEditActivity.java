@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -266,7 +267,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
             scheduleName.setText(schedule.getTitle());
         }
 
-
+        // Create listener on Parent View(s) to remove focus when touched
+        createClearFocusListener(findViewById(R.id.parent_container));
 
         scheduleName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
@@ -286,6 +288,27 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 return false;
             }
         });
+    }
+
+    private void createClearFocusListener(View view){
+        // Create listener to remove focus from EditText when something else is touched
+        if (!(view instanceof EditText)){
+            view.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    EditText editText = (EditText) findViewById(R.id.editText);
+                    editText.clearFocus();
+                    return false;
+                }
+            });
+        }
+
+        if (view instanceof ViewGroup){
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++){
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                createClearFocusListener(innerView);
+            }
+        }
     }
 
     private void setupFramesGrid() {
