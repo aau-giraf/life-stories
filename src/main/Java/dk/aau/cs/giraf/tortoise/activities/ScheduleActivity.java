@@ -349,6 +349,7 @@ public class ScheduleActivity extends TortoiseActivity
                 // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
+
                     try
                     {
                         // TODO: refactor this *very* ugly workaround
