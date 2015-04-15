@@ -8,12 +8,12 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -23,14 +23,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
-import dk.aau.cs.giraf.gui.GTooltip;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
-import dk.aau.cs.giraf.tortoise.MainActivity;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -310,11 +307,21 @@ public class ScheduleActivity extends TortoiseActivity
         return iv;
     }
 
-    public void addPictogramToDay(Bitmap bm, LinearLayout layout) {
+    public void addPictogramToDay(Bitmap bm, final LinearLayout layout) {
 
         ImageView iw = new ImageView(this);
 
         int xy = 0;
+
+        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(layout.getMeasuredWidth(),layout.getMeasuredWidth());
+
+
+        iw.setLayoutParams(param);
+        iw.setScaleX(0.8f);
+        iw.setScaleY(0.8f);
+
+        /*This is set so that the pictograms are placed in the middle. ONLY works on Xlarge layout*/
+
 
         // use wider buttons when in portrait mode
         if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
@@ -330,7 +337,7 @@ public class ScheduleActivity extends TortoiseActivity
         // set padding of each imageview containing
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         iw.setLayoutParams(lp);
-        iw.setPadding(0, 5, 0, 5);
+        iw.setPadding(0, 0, 0, 0);
 
         final LinearLayout workaroundLayout = layout;
 
@@ -342,6 +349,7 @@ public class ScheduleActivity extends TortoiseActivity
                 // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
+
                     try
                     {
                         // TODO: refactor this *very* ugly workaround
@@ -371,6 +379,7 @@ public class ScheduleActivity extends TortoiseActivity
                             dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
                             LayerDrawable layerDrawable = new LayerDrawable(dlayers);
                             iv.setImageDrawable(layerDrawable);
+
                         }else
                         {
                             GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
@@ -392,12 +401,6 @@ public class ScheduleActivity extends TortoiseActivity
         iw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-/*                ImageView iv = (ImageView) v;
-
-                LinearLayout l = (LinearLayout) iv.getParent();
-
-                // index of pictogram being clicked
-                int index = l.indexOfChild(v);*/
 
                 // index of pictogram being clicked
                 int index = getViewIndex(v);
@@ -407,20 +410,40 @@ public class ScheduleActivity extends TortoiseActivity
 
                 // Sets this particular view to be the currant activity
                 if (ScheduleActivity.this instanceof ScheduleViewActivity) {
-                    currentActivity = index;
-                    clearAllPictogramBorders();
-                    //v.setPadding(10, 0, 0, 0);
-                    //Drawable progressArrow = getResources().getDrawable(R.drawable.gdialogcolorselect_arrow_right);
-                    Drawable blackTile = ScheduleActivity.this.getResources().getDrawable(R.drawable.week_schedule_bg_tile);
-                    v.setBackgroundDrawable(blackTile);
-                    //GuiHelper.ShowToast(ScheduleActivity.this, "Current activity set!");
+                    LinearLayout dayLayout = (LinearLayout) v.getParent();
+                    int pictoCount = dayLayout.getChildCount();
+                    if(index == 0 || (index-1) == currentActivity || (index+1) == currentActivity)
+                    {
+                        currentActivity = index;
+                        setPictogramSizes((View) v.getParent());
+
+                        /*Re-size*/
+                        v.setScaleX(1.2f);
+                        v.setScaleY(1.2f);
+                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
+                        iv.setColorFilter(null);
+                        iv.setBackgroundColor(Color.TRANSPARENT);
+
+                    } else if((index+1) == pictoCount)
+                    {
+                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
+
+                        /*Re-size*/
+                        iv.setScaleY(0.4f);
+                        iv.setScaleX(0.4f);
+                        /*Adding grey scale*/
+                        ColorMatrix matrix = new ColorMatrix();
+                        matrix.setSaturation(0);
+                        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                        iv.setColorFilter(filter);
+                        iv.setBackgroundColor(Color.GRAY);
+                    }
                 }
 
                 // show if in edit mode or there is more than one choice in view mode
                 if (ScheduleActivity.this instanceof ScheduleEditActivity || (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1)) {
                     showMultiChoiceDialog(index, weekdaySelected, ScheduleActivity.this);
                 }
-                //GuiHelper.ShowToast(ScheduleActivity.this, "weekdaySelected = " + weekdaySelected + "currentWeekday = " + currentWeekday);
             }
         });
 
@@ -428,49 +451,76 @@ public class ScheduleActivity extends TortoiseActivity
         layout.addView(iw); // add new pictogram
     }
 
-    public void clearAllPictogramBorders() {
+    public void clearAllPictogramBorders(View v, LinearLayout layout) {
         LinearLayout dayLayout;
+
         for (int i = 0; i < 7; i++) {
             switch(i) {
                 case 0:
                     dayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
-                    clearPictogramBorders(dayLayout);
+                    setPictogramSizes(dayLayout);
                     break;
                 case 1:
                     dayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
-                    clearPictogramBorders(dayLayout);
+                    setPictogramSizes(dayLayout);
                     break;
                 case 2:
                     dayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
-                    clearPictogramBorders(dayLayout);
+                    setPictogramSizes(dayLayout);
                     break;
                 case 3:
                     dayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
-                    clearPictogramBorders(dayLayout);
+                    setPictogramSizes(dayLayout);
                     break;
                 case 4:
                     dayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
-                    clearPictogramBorders(dayLayout);
+                    setPictogramSizes(dayLayout);
                     break;
                 case 5:
                     dayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
-                    clearPictogramBorders(dayLayout);
+                    setPictogramSizes(dayLayout);
                     break;
                 case 6:
                     dayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
-                    clearPictogramBorders(dayLayout);
+                    setPictogramSizes(dayLayout);
                     break;
             }
         }
     }
 
-    private void clearPictogramBorders(View v) {
+    private void setPictogramSizes(View v) {
         LinearLayout dayLayout = (LinearLayout) v;
         int pictoCount = dayLayout.getChildCount();
         for (int i = 0; i < pictoCount; i++) {
             ImageView iv = (ImageView) dayLayout.getChildAt(i);
+
+            if(i < currentActivity){
+                /*Re-Size*/
+                iv.setScaleY(0.4f);
+                iv.setScaleX(0.4f);
+
+                /*Greyscale*/
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.setSaturation(0);
+                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                iv.setColorFilter(filter);
+                iv.setBackgroundColor(Color.GRAY);
+
+
+
+            }else if(i > currentActivity)
+            {
+                iv.setScaleX(0.8f);
+                iv.setScaleY(0.8f);
+                iv.setColorFilter(null);
+                iv.setBackgroundColor(Color.TRANSPARENT);
+
+            }
+
+            /*
             iv.setBackgroundResource(0);
             iv.setPadding(0, 5, 0, 5);
+            */
         }
     }
 
