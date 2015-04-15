@@ -52,9 +52,11 @@ public class FridayFragment extends Fragment {
         }
 
         for (int i = 0; i < pictograms.size(); i++) {
+
             ImageView iw = new ImageView(getActivity().getApplicationContext());
             iw.setImageBitmap(resizeBitmap(pictograms.get(i).getImageData()));
             iw.setMaxWidth(iw.getHeight());
+
             iw.setScaleY(0.8f);
             iw.setScaleX(0.8f);
             iw.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +67,10 @@ public class FridayFragment extends Fragment {
                     // index of pictogram being clicked
                     int index = getViewIndex(v);
                     LinearLayout dayLayout = (LinearLayout) v.getParent();
+
                     int pictoCount = dayLayout.getChildCount();
+                    ImageView iv = (ImageView) dayLayout.getChildAt(index);
+
                     if(index == 0 || (index-1) == currentActivity || (index+1) == currentActivity)
                     {
                         currentActivity = index;
@@ -74,13 +79,10 @@ public class FridayFragment extends Fragment {
                         /*Re-size*/
                         v.setScaleX(1.2f);
                         v.setScaleY(1.2f);
-                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
                         iv.setColorFilter(null);
-                        iv.setBackgroundColor(Color.TRANSPARENT);
 
                     } else if((index+1) == pictoCount)
                     {
-                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
 
                         /*Re-size*/
                         iv.setScaleY(0.4f);
@@ -90,15 +92,12 @@ public class FridayFragment extends Fragment {
                         matrix.setSaturation(0);
                         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
                         iv.setColorFilter(filter);
-                        iv.setBackgroundColor(Color.GRAY);
                     }
-                    /*
-                    Drawable backgroundDrawable = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
-                    v.setBackgroundDrawable(backgroundDrawable);*/
+
 
                 }
             });
-            iw.setPadding(0, 0, 0, 0);
+            iw.setPadding(0, 20, 0, 20);
             scrollContent.addView(iw);
         }
     }
@@ -119,7 +118,6 @@ public class FridayFragment extends Fragment {
                 matrix.setSaturation(0);
                 ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
                 iv.setColorFilter(filter);
-                iv.setBackgroundColor(Color.GRAY);
 
 
 
@@ -128,14 +126,9 @@ public class FridayFragment extends Fragment {
                 iv.setScaleX(0.8f);
                 iv.setScaleY(0.8f);
                 iv.setColorFilter(null);
-                iv.setBackgroundColor(Color.TRANSPARENT);
 
             }
 
-            /*
-            iv.setBackgroundResource(0);
-            iv.setPadding(0, 5, 0, 5);
-            */
         }
     }
 
@@ -144,9 +137,11 @@ public class FridayFragment extends Fragment {
         switch(amountOfPictograms) {
             case 0:
                 scrollView.getLayoutParams().height = 198;
+                scrollView.setY(420);
                 break;
             case 1:
-                scrollView.getLayoutParams().height = 420;
+                scrollView.getLayoutParams().height = 395;
+                scrollView.setY(198);
                 break;
             default:
                 scrollView.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
