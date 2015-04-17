@@ -110,6 +110,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     GDialog exitDialog;
     private GirafButton scheduleImage;
     private GirafButton saveButton;
+    private GirafButton binClosed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -372,11 +373,21 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 createAndShowSaveDialog(v);
             }
         });
+        binClosed = new GirafButton(this,getResources().getDrawable(R.drawable.bin_closed));
+        binClosed.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+            }
+
+        });
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setVisibility(View.INVISIBLE);
 
         addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(saveButton, LEFT);
+        addGirafButtonToActionBar(binClosed, RIGHT);
 
         //Set title image.
         Bitmap titleBitmap = schedule.getTitleImage();
@@ -933,7 +944,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                     else{
                         frame.setContent(tempPictoList);
                         frame.setChoicePictogram(tempPictoList.get(0));
-                        frame.setPictogramId(tempPictoList.get(0).getPictogramID());
+                        frame.setPictogramId(18118);
                     }
 
                     if (pictogramEditPos == -1){

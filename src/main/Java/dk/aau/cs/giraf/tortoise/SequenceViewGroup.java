@@ -432,8 +432,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                             if (startDragIndex != curDragIndexPos) {
 
-                                ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
-
+                                //ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
+                                adapter.getSequence().rearrange(startDragIndex,curDragIndexPos);
                                 final int childViews = getChildCount();
                                 for (int i = 0; i < childViews; i++) {
                                     getChildAt(i).clearAnimation();

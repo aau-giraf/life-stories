@@ -2,10 +2,12 @@ package dk.aau.cs.giraf.tortoise.activities;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -26,8 +28,11 @@ import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
+import dk.aau.cs.giraf.gui.GirafPictogram;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
+import dk.aau.cs.giraf.tortoise.LayoutTools;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -178,6 +183,7 @@ public class ScheduleActivity extends TortoiseActivity
                 EditChoiceFrameView choiceFramView = new EditChoiceFrameView(this, weekdaySequences.get(day).getMediaFrames().get(position), p, params);
                 choiceFramView.addDeleteButton(position);
                 newChoiceContent.addView(choiceFramView);
+
             }
 
             renderChoiceIcon(position, this);
@@ -209,6 +215,7 @@ public class ScheduleActivity extends TortoiseActivity
 
                     for(MediaFrame mf : weekdaySequences.get(i).getMediaFrames())
                     {
+
                         addItems(mf, level3);
                     }
 
@@ -448,7 +455,10 @@ public class ScheduleActivity extends TortoiseActivity
         });
 
         // add pictogram to week day and make sure the add button is always at the bottom of the week day
-        layout.addView(iw); // add new pictogram
+
+        PictogramView vv = new PictogramView(this);
+        vv.setImageFromId(mf.getPictogramId());
+        layout.addView(); // add new pictogram
     }
 
     public void clearAllPictogramBorders(View v, LinearLayout layout) {

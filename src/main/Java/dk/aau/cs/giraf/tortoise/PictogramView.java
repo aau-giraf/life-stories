@@ -90,9 +90,12 @@ public class PictogramView extends LinearLayout {
 	private View createDeleteButton() {
 		deleteButton = new ImageButton(getContext());
 		deleteButton.setImageResource(R.drawable.btn_delete);
+        /*For when the other delete mode is implemented */
+        //deleteButton.setImageResource(R.drawable.icon_edit_small);
 		
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		deleteButton.setLayoutParams(params);
 		
 		deleteButton.setPadding(4, 4, 4, 4);
@@ -101,7 +104,7 @@ public class PictogramView extends LinearLayout {
 		deleteButton.setFocusable(false);
 		
         setDeleteButtonVisible(false);
-		
+
 		return deleteButton;
 	}
 
