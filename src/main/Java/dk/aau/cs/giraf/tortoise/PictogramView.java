@@ -23,7 +23,10 @@ public class PictogramView extends LinearLayout {
     public final static float NORMAL_SCALE = 0.8f;
     public final static float HIGHLIGHT_SCALE = 0.9f;
     public final static float LOWLIGHT_SCALE = 0.7f;
-	private final static float DEFAULT_TEXT_SIZE = 9f;
+    public final static float MAIN_NORMAL_SCALE = 0.8f;
+    public final static float MAIN_HIGHLIGHT_SCALE = 0.9f;
+    public final static float MAIN_LOWLIGHT_SCALE = 0.7f;
+	private final static float DEFAULT_TEXT_SIZE = 20f;
 
     private Helper helper;
 
@@ -38,35 +41,47 @@ public class PictogramView extends LinearLayout {
 	public PictogramView(Context context) {
 		super(context);
 		
-		initialize(context, 0);
+		initialize(context, 0, true);
 	}
 
-	public PictogramView(Context context, float radius) {
+	public PictogramView(Context context, float radius, boolean inMain) {
 		super(context);
 		
-		initialize(context, radius);
+		initialize(context, radius, inMain );
 	}
 	
 	
-	private void initialize(Context context, float radius) {
+	private void initialize(Context context, float radius, boolean inMain) {
 		// Disable hardware accelleration to improve performance
 		this.setLayerType(LAYER_TYPE_SOFTWARE, null);
-        
+
         
 		this.setOrientation(LinearLayout.VERTICAL);
-		
+
 		
 		SquaredRelativeLayout square = new SquaredRelativeLayout(context);
 		square.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT));
-		
-		square.addView(createImageView(radius));
-		square.addView(createDeleteButton());
-		
-		setupOnDeleteClickHandler();
-		
-		this.addView(square);
-		
-		this.addView(createTextView());
+
+        if(inMain) {
+            square.addView(createImageViewForMain(radius));
+            square.addView(createDeleteButtonForMain());
+
+            setupOnDeleteClickHandler();
+
+            this.addView(square);
+
+            this.addView(createTextView());
+        }
+        else{
+            square.addView(createImageView(radius));
+            square.addView(createDeleteButton());
+
+            setupOnDeleteClickHandler();
+
+            this.addView(square);
+
+            this.addView(createTextView());
+        }
 	}
 	
 	private View createImageView(float radius) {
@@ -74,9 +89,16 @@ public class PictogramView extends LinearLayout {
 		pictogram.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT));
 		pictogram.setScaleX(NORMAL_SCALE);
 		pictogram.setScaleY(NORMAL_SCALE);
-		
 		return pictogram;
 	}
+
+    private View createImageViewForMain(float radius) {
+        pictogram = new RoundedImageView(getContext(), radius);
+        pictogram.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+        pictogram.setScaleX(MAIN_NORMAL_SCALE);
+        pictogram.setScaleY(MAIN_NORMAL_SCALE);
+        return pictogram;
+    }
 	
 	private View createTextView() {
 		title = new TextView(getContext());
@@ -87,26 +109,52 @@ public class PictogramView extends LinearLayout {
 		return title;
 	}
 	
-	private View createDeleteButton() {
+	private View createDeleteButtonForMain() {
 		deleteButton = new ImageButton(getContext());
 		deleteButton.setImageResource(R.drawable.btn_delete);
         /*For when the other delete mode is implemented */
         //deleteButton.setImageResource(R.drawable.icon_edit_small);
-		
+
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		deleteButton.setLayoutParams(params);
-		
+
+
+
 		deleteButton.setPadding(4, 4, 4, 4);
 		deleteButton.setBackgroundColor(Color.TRANSPARENT);
-		
+
 		deleteButton.setFocusable(false);
-		
+
         setDeleteButtonVisible(false);
 
 		return deleteButton;
 	}
+    private View createDeleteButton() {
+        deleteButton = new ImageButton(getContext());
+        deleteButton.setImageResource(R.drawable.btn_delete);
+        /*For when the other delete mode is implemented */
+        //deleteButton.setImageResource(R.drawable.icon_edit_small);
+        deleteButton.setScaleX(0.7f);
+        deleteButton.setScaleY(0.7f);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        deleteButton.setLayoutParams(params);
+
+        deleteButton.setY(12);
+        deleteButton.setX(12);
+
+        deleteButton.setPadding(4, 4, 4, 4);
+        deleteButton.setBackgroundColor(Color.TRANSPARENT);
+
+        deleteButton.setFocusable(false);
+
+        setDeleteButtonVisible(false);
+
+        return deleteButton;
+    }
 
 	public void setImage(Bitmap bitmap) {
 		pictogram.setImageBitmap(bitmap);

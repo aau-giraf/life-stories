@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.tortoise;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Build;
@@ -65,17 +66,20 @@ public class RoundedImageView extends ImageView {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
     	   this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
+
+        //setBackgroundColor(Color.GREEN);
     }
  
     @Override
     protected void onDraw(Canvas canvas) {
+        //canvas.drawColor(Color.WHITE);
         Path clipPath = new Path();
         RectF rect = new RectF(0, 0, this.getWidth(), this.getHeight());
         clipPath.addRoundRect(rect, cornerRadius, cornerRadius, Path.Direction.CW);
+        //canvas.drawColor(Color.WHITE);
         canvas.clipPath(clipPath);
         
     	canvas.drawColor(0x28FFFFFF);
-        
         super.onDraw(canvas);
         
     }    

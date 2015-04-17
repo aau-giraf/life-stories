@@ -936,15 +936,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
                         //TODO: Display message that user can not save empty choice.
                         return;
                     }
-                    else if ( tempPictoList.size() == 1) {
-                        frame.setContent(tempPictoList);
-                        frame.setChoicePictogram(tempPictoList.get(0));
-                        frame.setPictogramId(tempPictoList.get(0).getPictogramID());
-                    }
                     else{
                         frame.setContent(tempPictoList);
                         frame.setChoicePictogram(tempPictoList.get(0));
-                        frame.setPictogramId(18118);
+                        frame.setPictogramId(tempPictoList.get(0).getPictogramID());
                     }
 
                     if (pictogramEditPos == -1){
