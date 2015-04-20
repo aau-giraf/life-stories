@@ -28,7 +28,6 @@ import java.util.List;
 
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
-import dk.aau.cs.giraf.gui.GirafPictogram;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -49,6 +48,7 @@ public class ScheduleActivity extends TortoiseActivity
     int lastPosition;
     int currentActivity = 0;
     int currentWeekday = 0;
+    List<boolean[]> markMatrix = new ArrayList<boolean[]>();
 
     public void startPictosearch(View v)
     {
@@ -216,7 +216,7 @@ public class ScheduleActivity extends TortoiseActivity
                     for(MediaFrame mf : weekdaySequences.get(i).getMediaFrames())
                     {
 
-                        addItems(mf, level3);
+                        addItems(mf, level3, i);
                     }
 
                 if(addButtonVisible)
@@ -234,7 +234,7 @@ public class ScheduleActivity extends TortoiseActivity
         //showAddButtons();
     }
 
-    public void addItems(MediaFrame mf, LinearLayout layout)
+    public void addItems(MediaFrame mf, LinearLayout layout, int day)
     {
         try
         {
@@ -242,7 +242,7 @@ public class ScheduleActivity extends TortoiseActivity
                         // if only one pictogram is in the sequence, just display it in its respective week day
             if(pictoList.size() == 1)
             {
-                addPictogramToDay(pictoList.get(0).getImageData(), layout);
+                addPictogramToDay(pictoList.get(0).getImageData(), layout, day);
             }
             else if(pictoList.size() > 1)
             {
@@ -258,7 +258,7 @@ public class ScheduleActivity extends TortoiseActivity
                     choiceImage = mf.getChoicePictogram().getImageData();
                 }
 
-                addPictogramToDay(choiceImage, layout);
+                //addPictogramToDay(choiceImage, layout);
             }
         }
         catch (Exception ex)
@@ -314,7 +314,7 @@ public class ScheduleActivity extends TortoiseActivity
         return iv;
     }
 
-    public void addPictogramToDay(Bitmap bm, final LinearLayout layout) {
+    public void addPictogramToDay(Bitmap bm, final LinearLayout layout, final int day) {
 
         ImageView iw = new ImageView(this);
 
@@ -423,6 +423,7 @@ public class ScheduleActivity extends TortoiseActivity
                     {
                         currentActivity = index;
                         setPictogramSizes((View) v.getParent());
+                        markActivityInMatrix(index, day);
 
                         /*Re-size*/
                         v.setScaleX(1.2f);
@@ -444,6 +445,7 @@ public class ScheduleActivity extends TortoiseActivity
                         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
                         iv.setColorFilter(filter);
                         iv.setBackgroundColor(Color.GRAY);
+                        markMatrix.set(index, new boolean[] {false, false, false, false, false, false, false});
                     }
                 }
 
@@ -461,47 +463,38 @@ public class ScheduleActivity extends TortoiseActivity
         layout.addView(iw); // add new pictogram
     }
 
-    public void clearAllPictogramBorders(View v, LinearLayout layout) {
-        LinearLayout dayLayout;
+    public void markActivityInMatrix(int index, int day) {
 
-        for (int i = 0; i < 7; i++) {
-            switch(i) {
-                case 0:
-                    dayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
-                    setPictogramSizes(dayLayout);
-                    break;
-                case 1:
-                    dayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
-                    setPictogramSizes(dayLayout);
-                    break;
-                case 2:
-                    dayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
-                    setPictogramSizes(dayLayout);
-                    break;
-                case 3:
-                    dayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
-                    setPictogramSizes(dayLayout);
-                    break;
-                case 4:
-                    dayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
-                    setPictogramSizes(dayLayout);
-                    break;
-                case 5:
-                    dayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
-                    setPictogramSizes(dayLayout);
-                    break;
-                case 6:
-                    dayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
-                    setPictogramSizes(dayLayout);
-                    break;
-            }
+        switch(day) {
+            case 0:
+                markMatrix.add(index, new boolean[] {true, false, false, false, false, false, false});
+                break;
+            case 1:
+                markMatrix.add(index, new boolean[] {false, true, false, false, false, false, false});
+                break;
+            case 2:
+                markMatrix.add(index, new boolean[] {false, false, true, false, false, false, false});
+                break;
+            case 3:
+                markMatrix.add(index, new boolean[] {false, false, false, true, false, false, false});
+                break;
+            case 4:
+                markMatrix.add(index, new boolean[] {false, false, false, false, true, false, false});
+                break;
+            case 5:
+                markMatrix.add(index, new boolean[] {false, false, false, false, false, true, false});
+                break;
+            case 6:
+                markMatrix.add(index, new boolean[] {false, false, false, false, false, false, true});
+                break;
         }
-    }
+        }
 
     private void setPictogramSizes(View v) {
         LinearLayout dayLayout = (LinearLayout) v;
         int pictoCount = dayLayout.getChildCount();
         for (int i = 0; i < pictoCount; i++) {
+            markMatrix.set(i, new boolean[] {false, false, false, false, false, false, false});
             ImageView iv = (ImageView) dayLayout.getChildAt(i);
 
             if(i < currentActivity){
