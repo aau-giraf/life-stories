@@ -2,7 +2,12 @@ package dk.aau.cs.giraf.tortoise;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -157,7 +162,23 @@ public class PictogramView extends LinearLayout {
     }
 
 	public void setImage(Bitmap bitmap) {
-		pictogram.setImageBitmap(bitmap);
+        Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());  // Create another image the same size
+        imageWithBG.eraseColor(Color.WHITE);  // set its background to white, or whatever color you want
+        Drawable[] dList = new Drawable[2];
+        Drawable d = new BitmapDrawable(getResources(), imageWithBG);
+        Drawable d2 = new BitmapDrawable(getResources(), bitmap);
+        dList[0] = d;
+        dList[1] = d2;
+        LayerDrawable layers = new LayerDrawable(dList);
+
+        int width = layers.getIntrinsicWidth();
+        int height = layers.getIntrinsicHeight();
+        Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(newBitmap);
+        layers.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        layers.draw(canvas);
+
+        pictogram.setImageBitmap(newBitmap);
 	}
 
     public void liftUp() {
@@ -211,7 +232,24 @@ public class PictogramView extends LinearLayout {
 
     public void setImageFromId(int id) {
         helper = new Helper(getContext());
-        pictogram.setImageBitmap(helper.pictogramHelper.getPictogramById(id).getImage());
+        Bitmap bitmap = helper.pictogramHelper.getPictogramById(id).getImage();
+        Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());  // Create another image the same size
+        imageWithBG.eraseColor(Color.WHITE);  // set its background to white, or whatever color you want
+        Drawable[] dList = new Drawable[2];
+        Drawable d = new BitmapDrawable(getResources(), imageWithBG);
+        Drawable d2 = new BitmapDrawable(getResources(), bitmap);
+        dList[0] = d;
+        dList[1] = d2;
+        LayerDrawable layers = new LayerDrawable(dList);
+
+        int width = layers.getIntrinsicWidth();
+        int height = layers.getIntrinsicHeight();
+        Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(newBitmap);
+        layers.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        layers.draw(canvas);
+
+        pictogram.setImageBitmap(newBitmap);
     }
 
     public void setTitle(String newTitle)

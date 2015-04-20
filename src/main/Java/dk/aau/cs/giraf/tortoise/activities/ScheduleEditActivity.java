@@ -108,7 +108,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     public List<List<ImageView>> weekdayLists;
     GDialog exitDialog;
-    private GirafButton scheduleImage;
+    private GButton scheduleImage;
     private GirafButton saveButton;
     private GirafButton binClosed;
 
@@ -357,7 +357,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
 
     private void initializeButtons() {
-        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        //scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        scheduleImage = (GButton) findViewById(R.id.schedule_image);
         scheduleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -385,14 +386,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setVisibility(View.INVISIBLE);
 
-        addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(saveButton, LEFT);
         addGirafButtonToActionBar(binClosed, RIGHT);
 
         //Set title image.
         Bitmap titleBitmap = schedule.getTitleImage();
         Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
-        scheduleImage.setIcon(titleDrawable);
+        scheduleImage.SetImage(titleDrawable);
     }
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter sAdapter, final int i) {
@@ -566,7 +566,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         bitmap = LayoutTools.getSquareBitmap(bitmap);
         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
         schedule.setTitleImage(bitmap);
-        scheduleImage.setIcon(new BitmapDrawable(getResources(), bitmap));
+        scheduleImage.SetImage(new BitmapDrawable(getResources(), bitmap));
         
         scheduleAdapter.notifyDataSetChanged();
     }

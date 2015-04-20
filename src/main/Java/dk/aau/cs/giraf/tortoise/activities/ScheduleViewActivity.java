@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafSpinner;
 import dk.aau.cs.giraf.gui.GirafSpinnerAdapter;
@@ -36,7 +37,7 @@ public class ScheduleViewActivity extends ScheduleActivity
 {
     int weekDaySelected;
     int amountOfPictograms;
-    private GirafButton scheduleImage;
+    private GButton scheduleImage;
     private GirafButton portraitButton;
 
     protected void onCreate(Bundle savedInstanceState)
@@ -66,7 +67,7 @@ public class ScheduleViewActivity extends ScheduleActivity
     }
 
     private void initializeButtons() {
-        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        scheduleImage = (GButton) findViewById(R.id.schedule_image);
         scheduleImage.setEnabled(false);
         portraitButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_land_to_port));
         portraitButton.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +107,6 @@ public class ScheduleViewActivity extends ScheduleActivity
             }
         });
 
-        addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(portraitButton, RIGHT);
     }
 
@@ -217,10 +217,11 @@ public class ScheduleViewActivity extends ScheduleActivity
             Sequence seq = storyList.get(storyIndex);
 
             Drawable scheduleImageDrawable = new BitmapDrawable(getResources(), seq.getTitleImage());
-            scheduleImage.setIcon(scheduleImageDrawable);
+            scheduleImage.SetImage(scheduleImageDrawable);
             LifeStory.getInstance().setCurrentStory(seq);
             EditText scheduleName = (EditText) findViewById(R.id.editText);
             scheduleName.setText(seq.getTitle());
+            scheduleName.setEnabled(false);
 
             // show sequences
             weekdaySequences = new ArrayList<Sequence>();

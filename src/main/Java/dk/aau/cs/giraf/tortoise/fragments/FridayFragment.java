@@ -38,16 +38,11 @@ public class FridayFragment extends Fragment {
 
     private void addPictograms(final ViewGroup view) {
 
-
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutFriday);
         ScrollView scrollView = (ScrollView) scrollContent.getParent();
         Sequence weekday = ScheduleViewActivity.weekdaySequences.get(4);
         List<Pictogram> pictograms = new ArrayList<Pictogram>();
         resizeScrollView(scrollView);
-        RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(view.getMeasuredWidth(),view.getMeasuredWidth());
-
-
-
 
         for (MediaFrame mf : weekday.getMediaFrames()) {
             pictograms.addAll(mf.getContent());
@@ -86,14 +81,16 @@ public class FridayFragment extends Fragment {
                     } else if((index+1) == pictoCount)
                     {
 
+                        if(iv.getScaleX() == 1.2f) {
                         /*Re-size*/
-                        iv.setScaleY(0.4f);
-                        iv.setScaleX(0.4f);
+                            iv.setScaleY(0.4f);
+                            iv.setScaleX(0.4f);
                         /*Adding grey scale*/
-                        ColorMatrix matrix = new ColorMatrix();
-                        matrix.setSaturation(0);
-                        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                        iv.setColorFilter(filter);
+                            ColorMatrix matrix = new ColorMatrix();
+                            matrix.setSaturation(0);
+                            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                            iv.setColorFilter(filter);
+                        }
                     }
 
 
