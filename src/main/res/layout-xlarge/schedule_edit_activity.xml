@@ -13,6 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="80dp">
 
+        <dk.aau.cs.giraf.gui.GButton
+            android:id="@+id/schedule_image"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="140dp"
+            android:scaleType="centerCrop"
+            android:drawableBottom="@drawable/no_image_big" />
+
         <EditText
             android:layout_width="800dp"
             android:layout_height="60dp"

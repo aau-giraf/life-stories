@@ -1,6 +1,8 @@
 package dk.aau.cs.giraf.tortoise.fragments;
 
 import android.graphics.Bitmap;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +30,7 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
 public class WednesdayFragment extends Fragment {
 
     private static int amountOfPictograms;
+    private static int currentActivity;
 
     private void addPictograms(ViewGroup view) {
         LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutWednesday);
@@ -46,13 +49,74 @@ public class WednesdayFragment extends Fragment {
             iw.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Drawable backgroundDrawable = getResources().getDrawable(R.drawable.week_schedule_bg_tile);
-                    v.setBackgroundDrawable(backgroundDrawable);
+
+
+                    // index of pictogram being clicked
+                    int index = getViewIndex(v);
+                    LinearLayout dayLayout = (LinearLayout) v.getParent();
+
+                    int pictoCount = dayLayout.getChildCount();
+                    ImageView iv = (ImageView) dayLayout.getChildAt(index);
+
+                    if(index == 0 || (index-1) == currentActivity || ((index+1) == currentActivity && index+1 > pictoCount))
+                    {
+                        currentActivity = index;
+                        setPictogramSizes((View) v.getParent());
+
+                        /*Re-size*/
+                        v.setScaleX(1.2f);
+                        v.setScaleY(1.2f);
+                        iv.setColorFilter(null);
+
+                    } else if((index+1) == pictoCount)
+                    {
+                        if(iv.getScaleX() == 1.2f) {
+                        /*Re-size*/
+                            iv.setScaleY(0.4f);
+                            iv.setScaleX(0.4f);
+                        /*Adding grey scale*/
+                            ColorMatrix matrix = new ColorMatrix();
+                            matrix.setSaturation(0);
+                            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                            iv.setColorFilter(filter);
+                        }
+                    }
+
 
                 }
             });
             iw.setPadding(0, 10, 0, 10);
             scrollContent.addView(iw);
+        }
+    }
+
+    private void setPictogramSizes(View v) {
+        LinearLayout dayLayout = (LinearLayout) v;
+        int pictoCount = dayLayout.getChildCount();
+        for (int i = 0; i < pictoCount; i++) {
+            ImageView iv = (ImageView) dayLayout.getChildAt(i);
+
+            if(i < currentActivity){
+                /*Re-Size*/
+                iv.setScaleY(0.4f);
+                iv.setScaleX(0.4f);
+
+                /*Greyscale*/
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.setSaturation(0);
+                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                iv.setColorFilter(filter);
+
+
+
+            }else if(i > currentActivity)
+            {
+                iv.setScaleX(0.8f);
+                iv.setScaleY(0.8f);
+                iv.setColorFilter(null);
+
+            }
+
         }
     }
 
@@ -95,5 +159,20 @@ public class WednesdayFragment extends Fragment {
         addPictograms(view);
 
         return view;
+    }
+    public int getViewIndex(View v)
+    {
+        int index;
+
+        if(((LinearLayout) v.getParent()).getChildCount() > 0)
+        {
+            index = ((LinearLayout) v.getParent()).indexOfChild(v);
+        }
+        else
+        {
+            index = -1;
+        }
+
+        return index;
     }
 }
