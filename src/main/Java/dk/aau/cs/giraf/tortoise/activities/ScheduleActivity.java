@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.tortoise.activities;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -30,8 +29,7 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
-import dk.aau.cs.giraf.tortoise.LayoutTools;
-import dk.aau.cs.giraf.tortoise.PictogramView;
+import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -48,7 +46,8 @@ public class ScheduleActivity extends TortoiseActivity
     int lastPosition;
     int currentActivity = 0;
     int currentWeekday = 0;
-    List<boolean[]> markMatrix = new ArrayList<boolean[]>();
+    protected int[] markedActivity = new int[2];
+    protected ProgressTracker progress = new ProgressTracker();
 
     public void startPictosearch(View v)
     {
@@ -423,7 +422,8 @@ public class ScheduleActivity extends TortoiseActivity
                     {
                         currentActivity = index;
                         setPictogramSizes((View) v.getParent());
-                        markActivityInMatrix(index, day);
+                        markedActivity[0] = day; markedActivity[1] = index;
+                        progress.setProgress(markedActivity);
 
                         /*Re-size*/
                         v.setScaleX(1.2f);
@@ -435,6 +435,8 @@ public class ScheduleActivity extends TortoiseActivity
                     } else if((index+1) == pictoCount)
                     {
                         ImageView iv = (ImageView) dayLayout.getChildAt(index);
+                        markedActivity[1] = -1;
+                        progress.setProgress(markedActivity);
 
                         /*Re-size*/
                         iv.setScaleY(0.4f);
@@ -445,7 +447,6 @@ public class ScheduleActivity extends TortoiseActivity
                         ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
                         iv.setColorFilter(filter);
                         iv.setBackgroundColor(Color.GRAY);
-                        markMatrix.set(index, new boolean[] {false, false, false, false, false, false, false});
                     }
                 }
 
@@ -463,38 +464,169 @@ public class ScheduleActivity extends TortoiseActivity
         layout.addView(iw); // add new pictogram
     }
 
-    public void markActivityInMatrix(int index, int day) {
-
+    public void resumeProgress(int day) {
         switch(day) {
             case 0:
-                markMatrix.add(index, new boolean[] {true, false, false, false, false, false, false});
+                LinearLayout mondayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
+                if (markedActivity[1] == -1) {
+                    grayPreviousDays(day + 1);
+                    currentActivity = 0;
+                } else {
+                    currentActivity = markedActivity[1] - 1;
+                    mondayLayout.getChildAt(markedActivity[1]).performClick();
+                }
                 break;
             case 1:
-                markMatrix.add(index, new boolean[] {false, true, false, false, false, false, false});
+                LinearLayout tuesdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                if (markedActivity[1] == -1) {
+                    grayPreviousDays(day + 1);
+                    currentActivity = 0;
+                } else {
+                    currentActivity = markedActivity[1] - 1;
+                    grayPreviousDays(day);
+                    markedActivity[1] = currentActivity + 1;
+                    tuesdayLayout.getChildAt(markedActivity[1]).performClick();
+                }
                 break;
             case 2:
-                markMatrix.add(index, new boolean[] {false, false, true, false, false, false, false});
+                LinearLayout wednesdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
+                if (markedActivity[1] == -1) {
+                    grayPreviousDays(day + 1);
+                    currentActivity = 0;
+                } else {
+                    currentActivity = markedActivity[1] - 1;
+                    grayPreviousDays(day);
+                    markedActivity[1] = currentActivity + 1;
+                    wednesdayLayout.getChildAt(markedActivity[1]).performClick();
+                }
                 break;
             case 3:
-                markMatrix.add(index, new boolean[] {false, false, false, true, false, false, false});
+                LinearLayout thursdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
+                if (markedActivity[1] == -1) {
+                    grayPreviousDays(day + 1);
+                    currentActivity = 0;
+                } else {
+                    currentActivity = markedActivity[1] - 1;
+                    grayPreviousDays(day);
+                    markedActivity[1] = currentActivity + 1;
+                    thursdayLayout.getChildAt(markedActivity[1]).performClick();
+                }
                 break;
             case 4:
-                markMatrix.add(index, new boolean[] {false, false, false, false, true, false, false});
+                LinearLayout fridayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
+                if (markedActivity[1] == -1) {
+                    grayPreviousDays(day + 1);
+                    currentActivity = 0;
+                } else {
+                    currentActivity = markedActivity[1] - 1;
+                    grayPreviousDays(day);
+                    markedActivity[1] = currentActivity + 1;
+                    fridayLayout.getChildAt(markedActivity[1]).performClick();
+                }
                 break;
             case 5:
-                markMatrix.add(index, new boolean[] {false, false, false, false, false, true, false});
+                LinearLayout saturdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                if (markedActivity[1] == -1) {
+                    grayPreviousDays(day + 1);
+                    currentActivity = 0;
+                } else {
+                    currentActivity = markedActivity[1] - 1;
+                    grayPreviousDays(day);
+                    markedActivity[1] = currentActivity + 1;
+                    saturdayLayout.getChildAt(markedActivity[1]).performClick();
+                }
                 break;
             case 6:
-                markMatrix.add(index, new boolean[] {false, false, false, false, false, false, true});
+                LinearLayout sundayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
+                if (markedActivity[1] == -1) {
+                    grayPreviousDays(day + 1);
+                    currentActivity = 0;
+                } else {
+                    currentActivity = markedActivity[1] - 1;
+                    grayPreviousDays(day);
+                    markedActivity[1] = currentActivity + 1;
+                    sundayLayout.getChildAt(markedActivity[1]).performClick();
+                }
                 break;
         }
         }
+
+    private void grayPreviousDays(int days) {
+        int tempCurrentActivity = currentActivity;
+        for (int i = 0; i < days; i++) {
+            switch(i) {
+                case 0:
+                    LinearLayout mondayLayout = (LinearLayout) findViewById(R.id.layoutMonday);
+                    currentActivity = mondayLayout.getChildCount();
+                    setPictogramSizes(mondayLayout);
+                    if (currentActivity != 0) {
+                        mondayLayout.getChildAt(mondayLayout.getChildCount() - 1).performClick();
+                        mondayLayout.getChildAt(mondayLayout.getChildCount() - 1).performClick();
+                    }
+                    break;
+                case 1:
+                    LinearLayout tuesdayLayout = (LinearLayout) findViewById(R.id.layoutTuesday);
+                    currentActivity = tuesdayLayout.getChildCount();
+                    setPictogramSizes(tuesdayLayout);
+                    if (currentActivity != 0) {
+                        tuesdayLayout.getChildAt(tuesdayLayout.getChildCount() - 1).performClick();
+                        tuesdayLayout.getChildAt(tuesdayLayout.getChildCount() - 1).performClick();
+                    }
+                    break;
+                case 2:
+                    LinearLayout wednesdayLayout = (LinearLayout) findViewById(R.id.layoutWednesday);
+                    currentActivity = wednesdayLayout.getChildCount();
+                    setPictogramSizes(wednesdayLayout);
+                    if (currentActivity != 0) {
+                        wednesdayLayout.getChildAt(wednesdayLayout.getChildCount() - 1).performClick();
+                        wednesdayLayout.getChildAt(wednesdayLayout.getChildCount() - 1).performClick();
+                    }
+                    break;
+                case 3:
+                    LinearLayout thursdayLayout = (LinearLayout) findViewById(R.id.layoutThursday);
+                    currentActivity = thursdayLayout.getChildCount();
+                    setPictogramSizes(thursdayLayout);
+                    if (currentActivity != 0) {
+                        thursdayLayout.getChildAt(thursdayLayout.getChildCount() - 1).performClick();
+                        thursdayLayout.getChildAt(thursdayLayout.getChildCount() - 1).performClick();
+                    }
+                    break;
+                case 4:
+                    LinearLayout fridayLayout = (LinearLayout) findViewById(R.id.layoutFriday);
+                    currentActivity = fridayLayout.getChildCount();
+                    setPictogramSizes(fridayLayout);
+                    if (currentActivity != 0) {
+                        fridayLayout.getChildAt(fridayLayout.getChildCount() - 1).performClick();
+                        fridayLayout.getChildAt(fridayLayout.getChildCount() - 1).performClick();
+                    }
+                    break;
+                case 5:
+                    LinearLayout saturdayLayout = (LinearLayout) findViewById(R.id.layoutSaturday);
+                    currentActivity = saturdayLayout.getChildCount();
+                    setPictogramSizes(saturdayLayout);
+                    if (currentActivity != 0) {
+                        saturdayLayout.getChildAt(saturdayLayout.getChildCount() - 1).performClick();
+                        saturdayLayout.getChildAt(saturdayLayout.getChildCount() - 1).performClick();
+                    }
+                    break;
+                case 6:
+                    LinearLayout sundayLayout = (LinearLayout) findViewById(R.id.layoutSunday);
+                    currentActivity = sundayLayout.getChildCount();
+                    setPictogramSizes(sundayLayout);
+                    if (currentActivity != 0) {
+                        sundayLayout.getChildAt(sundayLayout.getChildCount() - 1).performClick();
+                        sundayLayout.getChildAt(sundayLayout.getChildCount() - 1).performClick();
+                    }
+                    break;
+            }
+        }
+        currentActivity = tempCurrentActivity;
+    }
 
     private void setPictogramSizes(View v) {
         LinearLayout dayLayout = (LinearLayout) v;
         int pictoCount = dayLayout.getChildCount();
         for (int i = 0; i < pictoCount; i++) {
-            markMatrix.set(i, new boolean[] {false, false, false, false, false, false, false});
             ImageView iv = (ImageView) dayLayout.getChildAt(i);
 
             if(i < currentActivity){

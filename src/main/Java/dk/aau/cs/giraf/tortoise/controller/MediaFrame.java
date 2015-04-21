@@ -19,7 +19,6 @@ public class MediaFrame extends AbstractMediaFrame{
     private int posY;
     private int nestedSequenceID;
     private int pictogramId;
-    private boolean isMarked = false;
 	
 	public MediaFrame(){
 		super();
@@ -99,14 +98,6 @@ public class MediaFrame extends AbstractMediaFrame{
 	public SerializableMediaFrame getSerializableMediaFrame() {
 		return new SerializableMediaFrame(this);
 	}
-
-    public boolean getMarked() {
-        return isMarked;
-    }
-
-    public void setMarked (boolean mark) {
-        isMarked = mark;
-    }
 
     @Override
     public String toString() {
