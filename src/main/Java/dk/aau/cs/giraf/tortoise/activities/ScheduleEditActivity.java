@@ -61,6 +61,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private Profile guardian;
     private Profile selectedChild;
     private boolean isInEditMode;
+    private boolean isInDeleteMode;
     private boolean isNew;
     private boolean assumeMinimize = true;
     public static boolean choiceMode = false;

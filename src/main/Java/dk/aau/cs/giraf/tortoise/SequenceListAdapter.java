@@ -22,6 +22,7 @@ public class SequenceListAdapter extends BaseAdapter {
 	private Context context;
 	private boolean isInEditMode = false;
 	private boolean isInTemplateMode = false;
+    private boolean isInDeleteMode = false;
 	private List<Sequence> items;
 	private OnAdapterGetViewListener onAdapterGetViewListener;
 	
@@ -42,7 +43,7 @@ public class SequenceListAdapter extends BaseAdapter {
 		Sequence s = items.get(position);
         
         v.setTitle(s.getTitle());
-        v.setEditModeEnabled(isInEditMode);
+        v.setEditModeEnabled(isInEditMode,isInDeleteMode);
         
         Pictogram p = PictoFactory.getPictogram(context, s.getTitlePictoId());
         Bitmap bm = p.getImageData();
@@ -74,6 +75,11 @@ public class SequenceListAdapter extends BaseAdapter {
 			isInEditMode = editEnabled;
 		}
 	}
+    public void setDeleteModeEnabled(boolean deleteEnabled)
+    {
+        if(isInDeleteMode != deleteEnabled)
+            isInDeleteMode = deleteEnabled;
+    }
 	
 	public void setTemplateModeEnabled(boolean templateEnabled) {
 		if(isInTemplateMode != templateEnabled) {

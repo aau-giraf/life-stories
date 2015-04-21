@@ -300,7 +300,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			
 			View newView = adapter.getView(currentIndex, oldView, this);
 			if (newView instanceof PictogramView) {
-				((PictogramView)newView).setEditModeEnabled(isInEditMode);
+				((PictogramView)newView).setEditModeEnabled(isInEditMode, false);
 			}
 
 			if (oldView == null) {

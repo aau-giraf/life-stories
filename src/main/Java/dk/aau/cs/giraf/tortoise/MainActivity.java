@@ -25,6 +25,7 @@ import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafPictogram;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
@@ -42,6 +43,7 @@ public class MainActivity extends TortoiseActivity {
 
     private final int DIALOG_DELETE = 1;
     private boolean isInEditMode = false;
+    private boolean isInDeleteMode = false;
     private boolean isInScheduleMode = false;
     private boolean canFinish;
     private SequenceListAdapter sequenceAdapter;
@@ -62,6 +64,7 @@ public class MainActivity extends TortoiseActivity {
     private GirafButton profileSelector;
     private GirafButton addButton;
     private GirafButton editButton;
+    private GirafButton deleteButton;
     /**
      * Initializes all app elements.
      * @param savedInstanceState
@@ -112,10 +115,12 @@ public class MainActivity extends TortoiseActivity {
             }
         });
         editButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_edit));
+        deleteButton = new GirafButton(this,getResources().getDrawable(R.drawable.bin_closed));
 
         addGirafButtonToActionBar(profileSelector, LEFT);
         addGirafButtonToActionBar(addButton, RIGHT);
         addGirafButtonToActionBar(editButton, RIGHT);
+        addGirafButtonToActionBar(deleteButton,RIGHT);
     }
 
     private void overrideViews() {
@@ -167,7 +172,27 @@ public class MainActivity extends TortoiseActivity {
                     View view = sequenceGrid.getChildAt(i);
 
                     if (view instanceof PictogramView) {
-                        ((PictogramView) view).setEditModeEnabled(isInEditMode);
+                        ((PictogramView) view).setEditModeEnabled(isInEditMode, false);
+                    }
+                }
+            }
+        });
+
+
+        deleteButton.setOnClickListener(new ImageButton.OnClickListener(){
+
+            @Override
+            public void onClick(View v){
+                if(isInDeleteMode) {isInDeleteMode = false;}
+                else {isInDeleteMode = v.isPressed();}
+                GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+
+                sequenceAdapter.setDeleteModeEnabled(isInDeleteMode);
+                for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
+                    View view = sequenceGrid.getChildAt(i);
+
+                    if (view instanceof PictogramView) {
+                        ((PictogramView) view).setEditModeEnabled(false, isInDeleteMode);
                     }
                 }
             }

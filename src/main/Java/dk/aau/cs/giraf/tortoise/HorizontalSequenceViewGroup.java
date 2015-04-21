@@ -55,6 +55,7 @@ public class HorizontalSequenceViewGroup extends AdapterView<SequenceAdapter> {
 	
 	//Mode handling
 	private boolean isInEditMode = false;
+    private boolean isInDeleteMode = false;
     private View addNewPictoGramView;
 	
 	//Data and Event handling
@@ -292,7 +293,7 @@ public class HorizontalSequenceViewGroup extends AdapterView<SequenceAdapter> {
 			
 			View newView = adapter.getView(currentIndex, oldView, this);
 			if (newView instanceof PictogramView) {
-				((PictogramView)newView).setEditModeEnabled(isInEditMode);
+				((PictogramView)newView).setEditModeEnabled(isInEditMode, isInDeleteMode);
 			}
 
 			if (oldView == null) {
