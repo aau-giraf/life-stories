@@ -458,9 +458,6 @@ public class ScheduleActivity extends TortoiseActivity
         });
 
         // add pictogram to week day and make sure the add button is always at the bottom of the week day
-
-        /*PictogramView vv = new PictogramView(this);
-        vv.setImageFromId(mf.getPictogramId());*/
         layout.addView(iw); // add new pictogram
     }
 
