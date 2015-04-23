@@ -50,7 +50,7 @@ public class TuesdayFragment extends AbstractFragment {
         view.findViewById(R.id.tuesday).setEnabled(false);
 
         weekday = ScheduleViewActivity.weekdaySequences.get(1);
-        currentWeekday = R.id.tuesday;
+        currentWeekday = R.id.layoutTuesday;
         addPictograms(view);
 
         return view;
