@@ -16,7 +16,9 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -375,7 +377,7 @@ public class ScheduleActivity extends TortoiseActivity
         iw.setLayoutParams(lp);
         iw.setPadding(0, 0, 0, 0);
 
-        final LinearLayout workaroundLayout = layout;
+        final LinearLayout Wlayout = layout;
 
         // remove pictogram in the linear view contained in the scroll view
         iw.setOnLongClickListener(new View.OnLongClickListener() {
@@ -385,51 +387,23 @@ public class ScheduleActivity extends TortoiseActivity
                 // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
-
-                    try
-                    {
-                        // TODO: refactor this *very* ugly workaround
-                        ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
-                        if (iv != null)
-                        {
-
-                            // this will fail the first time because there is no layer drawable on the pictogram
-                            // in the try catch the pictogram is turned into layered drawable
-                            LayerDrawable l = (LayerDrawable) iv.getDrawable();
-                        }else
-                        {
-                            GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
-                        }
-                    } catch(Exception ex)
-                    {
-                        // this code is triggered when a pictogram has no layered drawable
-                        // this adds the cancel image on top of the original drawable of the pictogram
-                        ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
-
-                        if (iv != null)
-                        {
-                            Resources r = getResources();
-                            Drawable[] dlayers = new Drawable[2];
-                            dlayers[0] = iv.getDrawable();
-                            int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
-                            dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
-                            LayerDrawable layerDrawable = new LayerDrawable(dlayers);
-                            iv.setImageDrawable(layerDrawable);
-
-                        }else
-                        {
-                            GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
-                        }
-
-                    }
+                    // this adds the cancel image on top of the original drawable of the pictogram
+                    ImageView iv = (ImageView) Wlayout.getChildAt(getViewIndex(v));
+                    Resources r = getResources();
+                    Drawable[] dlayers = new Drawable[2];
+                    dlayers[0] = iv.getDrawable();
+                    int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                    dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
+                    LayerDrawable layerDrawable = new LayerDrawable(dlayers);
+                    iv.setImageDrawable(layerDrawable);
+                }
                 // longclick has the functionality to remove a selected pictogram if in edit mode
-                }else
+                else
                 {
                     int position = getViewIndex(v);
-                    workaroundLayout.removeView(v);
+                    Wlayout.removeView(v);
                     weekdaySequences.get(weekdaySelected).getMediaFrames().remove(position);
                 }
-
                 return true;
             }
         });
