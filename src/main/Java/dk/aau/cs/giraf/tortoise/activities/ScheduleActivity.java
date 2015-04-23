@@ -57,6 +57,9 @@ public class ScheduleActivity extends TortoiseActivity
     int currentWeekday = 0;
     int[] currentActivity = {-1,-1,-1,-1,-1,-1,-1};
 
+    ArrayList<boolean[]> markedActivities = new ArrayList<boolean[]>();
+
+
     public void startPictosearch(View v)
     {
         Intent i = new Intent();
@@ -233,6 +236,8 @@ public class ScheduleActivity extends TortoiseActivity
 
                         addItems(mf, level3);
                     }
+                markedActivities.add(i, new boolean[weekdaySequences.get(i).getMediaFrames().size()]);
+
 
                 if(addButtonVisible)
                 {
@@ -384,18 +389,46 @@ public class ScheduleActivity extends TortoiseActivity
             @Override
             public boolean onLongClick(View v)
             {
+                int index = getViewIndex(v);
+
+                determineWeekSection(v);
                 // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
-                    // this adds the cancel image on top of the original drawable of the pictogram
-                    ImageView iv = (ImageView) Wlayout.getChildAt(getViewIndex(v));
-                    Resources r = getResources();
-                    Drawable[] dlayers = new Drawable[2];
-                    dlayers[0] = iv.getDrawable();
-                    int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
-                    dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
-                    LayerDrawable layerDrawable = new LayerDrawable(dlayers);
-                    iv.setImageDrawable(layerDrawable);
+                    /*Check if picto marked*/
+                    boolean[] currentActiv = markedActivities.get(weekdaySelected);
+                    if(!markedActivities.get(weekdaySelected)[index]) {
+                        // this adds the cancel image on top of the original drawable of the pictogram
+                        ImageView iv = (ImageView) Wlayout.getChildAt(getViewIndex(v));
+                        Resources r = getResources();
+                        Drawable[] dlayers = new Drawable[2];
+                        dlayers[0] = iv.getDrawable();
+                        int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                        dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
+                        LayerDrawable layerDrawable = new LayerDrawable(dlayers);
+                        iv.setImageDrawable(layerDrawable);
+                        markedActivities.get(weekdaySelected)[index] = true;
+                    }
+                    else {
+                        ImageView iv = (ImageView) Wlayout.getChildAt(getViewIndex(v));
+                        List<Pictogram> pics = weekdaySequences.get(weekdaySelected).getMediaFrame(index).getContent(); // check for size
+                        if (pics.size() > 1) {
+                            int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                            BitmapDrawable bitDraw = new BitmapDrawable(getResources(),ConstructWhiteBackground(BitmapFactory.decodeResource(getResources(), R.drawable.icon_choose)));
+                            Drawable resizedDrawable = resizeDrawable(bitDraw, xy, xy);
+                            iv.setImageDrawable(resizedDrawable);
+                            markedActivities.get(weekdaySelected)[index] = false;
+                        } else {
+                            int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                            BitmapDrawable bitDraw = new BitmapDrawable(getResources(), ConstructWhiteBackground(pics.get(0).getImageData()));
+                            Drawable resizedDrawable = resizeDrawable(bitDraw, xy, xy);
+                            iv.setImageDrawable(resizedDrawable);
+                            markedActivities.get(weekdaySelected)[index] = false;
+
+                        }
+                    }
+                    /*If picto marked
+                    * Get old pictogram and replace*/
                 }
                 // longclick has the functionality to remove a selected pictogram if in edit mode
                 else
