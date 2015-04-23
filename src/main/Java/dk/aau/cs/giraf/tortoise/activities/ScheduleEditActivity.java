@@ -749,7 +749,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     public void removeChoiceIcon(View v){
         daySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(null);
-        renderChoiceIcon(lastPosition, this);
+        //renderChoiceIcon(lastPosition, this);
     }
 
     public class DrawView extends View {
