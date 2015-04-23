@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    * The dialog box color changed at run-time, so what is seen in the XML-viewer
+        is only a default color.
+    * The buttons do not have any text because they inherit it from the buttons passed
+        to the dialog box, again - set at run-time.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:alpha="0.5"
+        android:id="@+id/GDialog_Shade"/>
+
+    <RelativeLayout
+        android:id="@+id/GDialog_Background"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:soundEffectsEnabled="false"
+        android:padding="25dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/GDialog_ViewWrapper"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
+
