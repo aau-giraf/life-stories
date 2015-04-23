@@ -36,7 +36,7 @@ public class SequenceListAdapter extends BaseAdapter {
 		PictogramView v = (PictogramView) convertView;
 		
 		if (v == null) {
-			v = new PictogramView(context, 16f);
+			v = new PictogramView(context, 16f, true);
 		}
 		
 		Sequence s = items.get(position);

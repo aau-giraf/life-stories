@@ -28,8 +28,8 @@ import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
  */
 public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
-	private final int DEFAULT_ITEM_WIDTH = 150;
-	private final int DEFAULT_ITEM_HEIGHT = 150;
+	private final int DEFAULT_ITEM_WIDTH = 100;
+	private final int DEFAULT_ITEM_HEIGHT = 100;
 	private final int DEFAULT_HORIZONTAL_SPACING = 10;
 
 	private final int ANIMATION_TIME = 350;
@@ -432,8 +432,8 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                             if (startDragIndex != curDragIndexPos) {
 
-                                ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
-
+                                //ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
+                                adapter.getSequence().rearrange(startDragIndex,curDragIndexPos);
                                 final int childViews = getChildCount();
                                 for (int i = 0; i < childViews; i++) {
                                     getChildAt(i).clearAnimation();

@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.tortoise;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -58,11 +59,18 @@ public class SequenceAdapter extends BaseAdapter {
 		MediaFrame mediaFrame = getItem(position);
 		
 		if (convertView == null) {
-			view = new PictogramView(context, 24f);
+			view = new PictogramView(context, 15f, false);
 		} else
 			view = (PictogramView)convertView;
 
-        view.setImageFromId(mediaFrame.getPictogramId());
+        if (mediaFrame.getContent().size() == 1) {
+            view.setImageFromId(mediaFrame.getPictogramId());
+        }
+        else{
+            Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.icon_choose);
+            view.setImage(icon);
+        }
 
         if (onAdapterGetViewListener != null)
             onAdapterGetViewListener.onAdapterGetView(position, view);
@@ -81,5 +89,10 @@ public class SequenceAdapter extends BaseAdapter {
 	public interface OnAdapterGetViewListener {
 		public void onAdapterGetView(int position, View view);
 	}
+
+    public Sequence getSequence()
+    {
+        return sequence;
+    }
 }
 

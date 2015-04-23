@@ -47,6 +47,8 @@ public class FridayFragment extends Fragment {
         RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(view.getMeasuredWidth(),view.getMeasuredWidth());
 
 
+
+
         for (MediaFrame mf : weekday.getMediaFrames()) {
             pictograms.addAll(mf.getContent());
         }

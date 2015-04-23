@@ -1,34 +1,31 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.gui.GirafSpinner;
-import dk.aau.cs.giraf.gui.GirafSpinnerAdapter;
+import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
 
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
-import android.view.ViewGroup.LayoutParams;
+
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,6 +35,7 @@ public class ScheduleViewActivity extends ScheduleActivity
     int amountOfPictograms;
     private GirafButton scheduleImage;
     private GirafButton portraitButton;
+    int template;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -57,12 +55,43 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         initializeButtons();
 
+        template = intent.getIntExtra("story", -1);
+
+        if(loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin")) != null) {
+            progress = loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin"));
+        }
+
+            markedActivity = progress.getProgress();
+
 
         // disable non-programmatic scrolling
         //disableScrolling();
 
         // display the sequences in the week schedule
         displaySequences();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin")) != null) {
+            progress = loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin"));
+        }
+
+        markedActivity = progress.getProgress();
+
+
+        resumeProgress(markedActivity[0]);
+    }
+
+    private ProgressTracker loadProgress(File f) {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
+            return (ProgressTracker) ois.readObject();
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     private void initializeButtons() {
@@ -207,9 +236,8 @@ public class ScheduleViewActivity extends ScheduleActivity
         // get sequences from database
         List<Sequence> storyList = LifeStory.getInstance().getStories();
 
+        int storyIndex = template;
 
-        Intent i = getIntent();
-        int storyIndex = i.getIntExtra("story", -1);
          // -1 indicates an error
         if(storyIndex != -1)
         {
@@ -238,6 +266,20 @@ public class ScheduleViewActivity extends ScheduleActivity
         }
 
         markCurrentWeekday();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        try {
+            File f = new File(getApplicationContext().getFilesDir() ,"progress.bin");
+            FileOutputStream fos = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(progress);
+            oos.flush();
+            oos.close();
+        } catch (Exception e){
+        }
     }
 
     @Override
