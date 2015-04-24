@@ -7,30 +7,39 @@
     android:orientation="vertical"
     android:background="#ffffffff"
     android:focusableInTouchMode="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:svg="http://schemas.android.com/tools">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_gravity="center">
+
+        <dk.aau.cs.giraf.gui.GirafButton
+            android:id="@+id/sequenceThumbnail"
+            android:layout_width="80dp"
+            android:layout_height="fill_parent"
+            app:icon="@drawable/add_sequence_picture"/>
 
         <EditText
-            android:layout_width="800dp"
+            android:id="@+id/sequenceName"
+            android:layout_width="400dp"
             android:layout_height="60dp"
-            android:id="@+id/editText"
-            android:textColor="#000000"
-            android:textSize="45dp"
-            android:background="@drawable/text_background"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:singleLine="true"
-            android:maxLength="24" />
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:hint="@string/unnamed_sequence"
+            android:imeOptions="actionDone"
+            android:inputType="textImeMultiLine"
+            android:text=""
+            android:textSize="24sp"/>
+
 
         <Spinner
             android:layout_width="200dp"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:id="@+id/spinner"
-            android:layout_gravity="right|center_vertical" />
-    </FrameLayout>
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
 
     <View
         android:background="#000000"

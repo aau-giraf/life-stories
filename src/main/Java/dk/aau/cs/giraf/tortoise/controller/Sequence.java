@@ -41,10 +41,15 @@ public class Sequence extends AbstractSequence {
 
 
     private void setBitmapFromTitlePictoID(Context con){
-        Bitmap bitmap = PictoFactory.getPictogram(con, this.getTitlePictoId()).getImageData();
-        bitmap = LayoutTools.getSquareBitmap(bitmap);
-        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
-        this.titleImage = bitmap;
+        if(this.getTitlePictoId() == 0){
+            this.titleImage = null;
+        }
+        else {
+            Bitmap bitmap = PictoFactory.getPictogram(con, this.getTitlePictoId()).getImageData();
+            bitmap = LayoutTools.getSquareBitmap(bitmap);
+            bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
+            this.titleImage = bitmap;
+        }
     }
 
     public void addFrame(MediaFrame frame) {

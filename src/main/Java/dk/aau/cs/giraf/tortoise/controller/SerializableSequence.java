@@ -1,11 +1,12 @@
 package dk.aau.cs.giraf.tortoise.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 
-public class SerializableSequence extends AbstractSequence {
+public class SerializableSequence extends AbstractSequence implements Serializable{
 	
 	private List<SerializableMediaFrame> mediaFrames;
 	

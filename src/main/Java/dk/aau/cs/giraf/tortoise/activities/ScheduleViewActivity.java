@@ -17,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
@@ -61,7 +62,7 @@ public class ScheduleViewActivity extends ScheduleActivity
             progress = loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin"));
         }
 
-            markedActivity = progress.getProgress();
+            progressActivity = progress.getProgress();
 
 
         // disable non-programmatic scrolling
@@ -75,14 +76,30 @@ public class ScheduleViewActivity extends ScheduleActivity
     public void onResume() {
         super.onResume();
 
-        if(loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin")) != null) {
-            progress = loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin"));
+        ProgressTracker temp = loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin"));
+
+        if(temp != null) {
+
+            progress = temp;
+
+            if(progress.getChangedDays(getApplicationContext()) != null && progress.getChangedDays(getApplicationContext()) != weekdaySequences){
+                weekdaySequences = progress.getChangedDays(getApplicationContext());
+                renderSchedule(false);
+            }
+
+            if(progress.getProgress() != null && progress.getProgress() != progressActivity) {
+                progressActivity = progress.getProgress();
+                resumeProgress(progressActivity[0]);
+            }
+            else {
+                progressActivity = new int[2];
+            }
+
+            if(progress.getMarkedActivities() != null && progress.getMarkedActivities() != markedActivities) {
+                markedActivities = progress.getMarkedActivities();
+                setMarks();
+            }
         }
-
-        markedActivity = progress.getProgress();
-
-
-        resumeProgress(markedActivity[0]);
     }
 
     private ProgressTracker loadProgress(File f) {
@@ -95,7 +112,7 @@ public class ScheduleViewActivity extends ScheduleActivity
     }
 
     private void initializeButtons() {
-        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        scheduleImage = (GirafButton) findViewById(R.id.schedule_image);
         scheduleImage.setEnabled(false);
         portraitButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_land_to_port));
         portraitButton.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +152,6 @@ public class ScheduleViewActivity extends ScheduleActivity
             }
         });
 
-        addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(portraitButton, RIGHT);
     }
 
@@ -249,6 +265,7 @@ public class ScheduleViewActivity extends ScheduleActivity
             LifeStory.getInstance().setCurrentStory(seq);
             EditText scheduleName = (EditText) findViewById(R.id.editText);
             scheduleName.setText(seq.getTitle());
+            scheduleName.setEnabled(false);
 
             // show sequences
             weekdaySequences = new ArrayList<Sequence>();
@@ -282,12 +299,6 @@ public class ScheduleViewActivity extends ScheduleActivity
         }
     }
 
-    @Override
-    public void dismissAddContentDialog(View v)
-    {
-        multichoiceDialog.dismiss();
-        renderSchedule(false);
-    }
     public void showExitDialog(View v){
         finish();
     }

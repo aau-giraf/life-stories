@@ -63,11 +63,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private boolean isInEditMode;
     private boolean isNew;
     private boolean assumeMinimize = true;
+    private boolean doingDelete;
     public static boolean choiceMode = false;
     private int guardianId;
     private int childId;
     private int sequenceId;
     private int pictogramEditPos = -1;
+    private String tempNameHolder;
 
 
     public static dk.aau.cs.giraf.tortoise.controller.Sequence schedule;
@@ -111,6 +113,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private GirafButton scheduleImage;
     private GirafButton saveButton;
     private GirafButton binClosed;
+    private EditText scheduleName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +167,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
         daySequences.clear();
 
-        EditText scheduleName = (EditText) findViewById(R.id.editText);
+        scheduleName = (EditText) findViewById(R.id.sequenceName);
 
         if(isNew)
         {
@@ -194,7 +197,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
             schedule = new Sequence();
 
-            scheduleName.setText(getString(R.string.unnamed_sequence));
+            //scheduleName.setText("");
         }
         else
         {
@@ -265,7 +268,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             daySequences.add(6, sundaySequence);
 
             //Set title text
-            scheduleName.setText(schedule.getTitle());
+            scheduleName.setText(schedule.getTitle(), EditText.BufferType.EDITABLE);
         }
 
         // Create listener on Parent View(s) to remove focus when touched
@@ -297,7 +300,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    EditText editText = (EditText) findViewById(R.id.editText);
+                    EditText editText = (EditText) findViewById(R.id.sequenceName);
                     editText.clearFocus();
                     return false;
                 }
@@ -357,7 +360,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
     }
 
     private void initializeButtons() {
-        scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        //scheduleImage = new GirafButton(this, getResources().getDrawable(R.drawable.no_image_big));
+        scheduleImage = (GirafButton) findViewById(R.id.sequenceThumbnail);
         scheduleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -378,14 +382,26 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
             @Override
             public void onClick(View v) {
-
+                if(doingDelete){
+                    doingDelete = false;
+                    saveButton.setVisibility(View.VISIBLE);
+                    scheduleImage.setVisibility(View.VISIBLE);
+                    scheduleName.setText(tempNameHolder);
+                    scheduleName.setEnabled(true);
+                }
+                else {
+                    doingDelete = true;
+                    saveButton.setVisibility(View.INVISIBLE);
+                    scheduleImage.setVisibility(View.INVISIBLE);
+                    tempNameHolder = scheduleName.getText().toString();
+                    scheduleName.setText("Deleting");
+                    scheduleName.setEnabled(false);
+                }
             }
-
         });
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setVisibility(View.INVISIBLE);
 
-        addGirafButtonToActionBar(scheduleImage, LEFT);
         addGirafButtonToActionBar(saveButton, LEFT);
         addGirafButtonToActionBar(binClosed, RIGHT);
 
@@ -409,10 +425,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
             public void onNewButtonClicked(View v) {
                 // update weekdaySelected
                 currentWeekSection(v);
-
-                final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(i);
-                sequenceGroup.liftUpAddNewButton();
-                createAndShowAddDialog(sequenceGroup, sAdapter);
+                if(!doingDelete){
+                    final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(i);
+                    sequenceGroup.liftUpAddNewButton();
+                    createAndShowAddDialog(sequenceGroup, sAdapter);
+                }
             }
         });
 
@@ -426,8 +443,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 pictogramEditPos = position;
                 MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(position);
 
-                //Perform action depending on the type of pictogram clicked.
-                checkFrameMode(frame, view, sAdapter);
+                if(doingDelete){
+
+                }
+                else {
+                    //Perform action depending on the type of pictogram clicked.
+                    checkFrameMode(frame, view, sAdapter);
+                }
             }
         });
 
@@ -670,7 +692,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             GuiHelper.ShowToast(this, "Skema er ikke gemt!, vælg et titel-pictogram");
             return false;
         }
-        EditText scheduleName = (EditText) findViewById(R.id.editText);
+        EditText scheduleName = (EditText) findViewById(R.id.sequenceName);
         String strTitle = scheduleName.getText().toString();
         if (strTitle.equals("") || strTitle.equals(getString(R.string.unnamed_sequence))) {
             // if no title, set a default one
@@ -749,7 +771,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     public void removeChoiceIcon(View v){
         daySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(null);
-        renderChoiceIcon(lastPosition, this);
+        //renderChoiceIcon(lastPosition, this);
     }
 
     public class DrawView extends View {
