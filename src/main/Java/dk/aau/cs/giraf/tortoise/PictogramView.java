@@ -181,7 +181,8 @@ public class PictogramView extends LinearLayout {
         editButton.setX(12);
         editButton.setY(12);
 
-        editButton.setPadding(4,4,4,4);
+        editButton.setPadding(4,4,
+                4,4);
         editButton.setBackgroundColor(Color.TRANSPARENT);
 
         editButton.setFocusable(false);
