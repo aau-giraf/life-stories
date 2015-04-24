@@ -5,12 +5,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -64,6 +67,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private boolean isNew;
     private boolean assumeMinimize = true;
     private boolean doingDelete;
+    private boolean deletingSomething = false;
     public static boolean choiceMode = false;
     private int guardianId;
     private int childId;
@@ -97,8 +101,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
     private List<MediaFrame> tempFrameList;
-    private GButton backButton;
-    private GButton sequenceImageButton;
     private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
     private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
@@ -379,29 +381,39 @@ public class ScheduleEditActivity extends ScheduleActivity {
         });
         binClosed = new GirafButton(this,getResources().getDrawable(R.drawable.bin_closed));
         binClosed.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 if(doingDelete){
+                    if(deletingSomething) {
+                        // Create and show dialog here
+                        deletingSomething = false;
+                    }
                     doingDelete = false;
                     saveButton.setVisibility(View.VISIBLE);
                     scheduleImage.setVisibility(View.VISIBLE);
                     scheduleName.setText(tempNameHolder);
                     scheduleName.setEnabled(true);
+                    for(SequenceAdapter a : adapterList){
+                        a.setDraggability(true);
+                    }
                 }
                 else {
+
+                    initializeMarkingArrayList();
+                    // Initialize marking array (use markedActivities)
+
                     doingDelete = true;
                     saveButton.setVisibility(View.INVISIBLE);
                     scheduleImage.setVisibility(View.INVISIBLE);
                     tempNameHolder = scheduleName.getText().toString();
                     scheduleName.setText("Deleting");
                     scheduleName.setEnabled(false);
+                    for(SequenceAdapter a : adapterList){
+                        a.setDraggability(false);
+                    }
                 }
             }
         });
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setVisibility(View.INVISIBLE);
-
         addGirafButtonToActionBar(saveButton, LEFT);
         addGirafButtonToActionBar(binClosed, RIGHT);
 
@@ -444,7 +456,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(position);
 
                 if(doingDelete){
-
+                    deletingSomething = true;
+                    daySequences.get(weekdaySelected).getMediaFrames().get(position).setMarked(true);
+                    sAdapter.notifyDataSetChanged();
                 }
                 else {
                     //Perform action depending on the type of pictogram clicked.
@@ -512,6 +526,15 @@ public class ScheduleEditActivity extends ScheduleActivity {
         return adapter;
     }
 
+    private void initializeMarkingArrayList(){
+        markedActivities = new ArrayList<boolean[]>();
+
+        for(int i = 0; i < daySequences.size(); i++){
+            boolean[] b = new boolean[daySequences.get(i).getMediaFrames().size()];
+            markedActivities.add(i, b);
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -547,31 +570,6 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
             OnEditPictogramResult(data);
         }
-        //Change choice icon
-        /*else if (resultCode == RESULT_OK && requestCode == 5){
-            try{
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds"); // .getLongArray("checkoutIds");
-                if (checkoutIds.length == 0) {
-                    Toast t = Toast.makeText(this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
-                    t.show();
-                }
-                else
-                {
-                    try{
-                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
-                        daySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(picto);
-                        renderChoiceIcon(lastPosition, this);
-                    }
-                    //We expect a null pointer exception if the pictogram is without image
-                    catch (NullPointerException e){
-                        Toast t = Toast.makeText(this, "Der skete en uventet fejl.", Toast.LENGTH_SHORT);
-                        t.show();
-                    }
-                }
-            } catch (Exception e){
-                GuiHelper.ShowToast(this, e.toString());
-            }
-        }*/
     }
 
     private void OnEditSequenceImageResult(Intent data) {
@@ -703,6 +701,13 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
 
         if(DBController.getInstance().existScheduleSequence(scheduleSeq, getApplicationContext())){
+            try {
+                File file = new File(getApplicationContext().getFilesDir(), "progress" + String.valueOf(scheduleSeq.getId()) + ".bin");
+                boolean deleted = file.delete();
+            }
+            catch(NullPointerException e){
+                GuiHelper.ShowToast(this, "New progress to delete");
+            }
             DBController.getInstance().deleteSequence(scheduleSeq, getApplicationContext());
             scheduleSeq.deleteAllMediaFrames();
             scheduleSeq.setId(0);

@@ -23,6 +23,7 @@ import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
 
 import dk.aau.cs.giraf.tortoise.controller.DBController;
+import dk.aau.cs.giraf.tortoise.controller.SerializableSequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -35,8 +36,10 @@ public class ScheduleViewActivity extends ScheduleActivity
     int weekDaySelected;
     int amountOfPictograms;
     private GirafButton scheduleImage;
+    private GirafButton resetProgress;
     private GirafButton portraitButton;
     int template;
+    private Sequence seq;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -58,47 +61,52 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         template = intent.getIntExtra("story", -1);
 
-        if(loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin")) != null) {
-            progress = loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin"));
-        }
+        displaySequences();
 
-            progressActivity = progress.getProgress();
+
+        /*if(loadProgress(new File(getApplicationContext().getFilesDir(), "progress"+String.valueOf(seq.getId())+".bin")) != null) {
+            resumeSession(loadProgress(new File(getApplicationContext().getFilesDir(), "progress"+String.valueOf(seq.getId())+".bin")));
+        }*/
 
 
         // disable non-programmatic scrolling
         //disableScrolling();
 
         // display the sequences in the week schedule
-        displaySequences();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        ProgressTracker temp = loadProgress(new File(getApplicationContext().getFilesDir(), "progress.bin"));
+        ProgressTracker temp = loadProgress(new File(getApplicationContext().getFilesDir(),
+                "progress"+String.valueOf(seq.getId())+".bin"));
 
         if(temp != null) {
+            resumeSession(temp);
+        }
+    }
 
-            progress = temp;
+    private void resumeSession(ProgressTracker temp){
+        progress = temp;
 
-            if(progress.getChangedDays(getApplicationContext()) != null && progress.getChangedDays(getApplicationContext()) != weekdaySequences){
-                weekdaySequences = progress.getChangedDays(getApplicationContext());
-                renderSchedule(false);
-            }
+        if(progress.getChangedDays(getApplicationContext()) != null && progress.getChangedDays(getApplicationContext()) != weekdaySequences){
+            weekdaySequences = progress.getChangedDays(getApplicationContext());
+            renderSchedule(false);
+        }
 
-            if(progress.getProgress() != null && progress.getProgress() != progressActivity) {
-                progressActivity = progress.getProgress();
-                resumeProgress(progressActivity[0]);
-            }
-            else {
-                progressActivity = new int[2];
-            }
+        if(progress.getProgress() != null && progress.getProgress() != progressActivity) {
+            progressActivity = progress.getProgress();
+            resumeProgress(progressActivity[0]);
+        }
+        else {
+            progressActivity = new int[2];
+        }
 
-            if(progress.getMarkedActivities() != null && progress.getMarkedActivities() != markedActivities) {
-                markedActivities = progress.getMarkedActivities();
-                setMarks();
-            }
+        if(progress.getMarkedActivities() != null && progress.getMarkedActivities() != markedActivities) {
+            markedActivities = progress.getMarkedActivities();
+            setMarks();
         }
     }
 
@@ -114,6 +122,13 @@ public class ScheduleViewActivity extends ScheduleActivity
     private void initializeButtons() {
         scheduleImage = (GirafButton) findViewById(R.id.schedule_image);
         scheduleImage.setEnabled(false);
+        resetProgress = new GirafButton(this, getResources().getDrawable(R.drawable.icon_rotate));
+        resetProgress.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                ProgressResetting();
+            }
+        });
         portraitButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_land_to_port));
         portraitButton.setOnClickListener(new View.OnClickListener() {
                                               //Open Child Selector when pressing the Child Select Button
@@ -152,7 +167,25 @@ public class ScheduleViewActivity extends ScheduleActivity
             }
         });
 
+        addGirafButtonToActionBar(resetProgress, RIGHT);
         addGirafButtonToActionBar(portraitButton, RIGHT);
+    }
+
+    public void ProgressResetting(){
+
+        progress = new ProgressTracker();
+        progressActivity = new int[2];
+        markedActivities = null;
+        currentActivity = new int[] {-1,-1,-1,-1,-1,-1,-1};
+        try {
+            File file = new File(getApplicationContext().getFilesDir(), "progress" + String.valueOf(seq.getId()) + ".bin");
+            boolean deleted = file.delete();
+        }
+        catch(NullPointerException e){
+            GuiHelper.ShowToast(this, "New progress to delete");
+        }
+        displaySequences();
+
     }
 
     public void weekdaySelected(View view) {
@@ -258,7 +291,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         if(storyIndex != -1)
         {
             // get parent sequence and set image of week schedule in layout accordingly
-            Sequence seq = storyList.get(storyIndex);
+            seq = storyList.get(storyIndex);
 
             Drawable scheduleImageDrawable = new BitmapDrawable(getResources(), seq.getTitleImage());
             scheduleImage.setIcon(scheduleImageDrawable);
@@ -289,7 +322,7 @@ public class ScheduleViewActivity extends ScheduleActivity
     public void onBackPressed() {
         super.onBackPressed();
         try {
-            File f = new File(getApplicationContext().getFilesDir() ,"progress.bin");
+            File f = new File(getApplicationContext().getFilesDir() ,"progress"+String.valueOf(seq.getId())+".bin");
             FileOutputStream fos = new FileOutputStream(f);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(progress);

@@ -48,6 +48,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
     private boolean longClick = false;
 	private View draggingView = null;
 	private boolean isDragging = false;
+    private boolean draggable = true;
 	private int startDragIndex = -1;
 	private int curDragIndexPos = -1;
 	private int dragStartY;//Make this a Y coordinate
@@ -395,151 +396,155 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
         boolean handled = false;
 
+        setDraggable(adapter.getDraggability());
         float x = event.getX();
         float y = event.getY();
 
-        //End drag if UP, Cancel or multiple pointers or pointer is gone
-        if (event.getActionMasked() == MotionEvent.ACTION_UP ||
-                event.getActionMasked() == MotionEvent.ACTION_CANCEL ||
-                event.getPointerCount() != 1 ||
-                y >= getHeight() || y <= 0) {//Possible negative y value error
+        if(draggable) {
+            //End drag if UP, Cancel or multiple pointers or pointer is gone
+            if (event.getActionMasked() == MotionEvent.ACTION_UP ||
+                    event.getActionMasked() == MotionEvent.ACTION_CANCEL ||
+                    event.getPointerCount() != 1 ||
+                    y >= getHeight() || y <= 0) {//Possible negative y value error
 
-            //Be careful with coordinates from the event if getPointerCount != 1
-            if (draggingView != null) {
-                if (isDragging) {
-                    handled = true;
-
-                    stopAutoScroll();
-
-                    // Remove the highlight of the pictogram
-                    ((PictogramView) draggingView).placeDown();
-
-                    //Disallow movement when repositioning dragged view.
-                    animatingDragReposition = true;
-                    //Possible negative y value error
-                    TranslateAnimation move = new TranslateAnimation(
-                            0,
-                            0,
-                            0,
-                            calcChildTopPosition(curDragIndexPos) - draggingView.getTop());
-                    move.setDuration(ANIMATION_TIME);
-
-                    move.setAnimationListener(new AnimationListener() {
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-
-
-                            if (startDragIndex != curDragIndexPos) {
-
-                                //ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
-                                adapter.getSequence().rearrange(startDragIndex,curDragIndexPos);
-                                final int childViews = getChildCount();
-                                for (int i = 0; i < childViews; i++) {
-                                    getChildAt(i).clearAnimation();
-                                }
-                                rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
-                                //layout(getLeft(), getTop(), getRight(), getBottom());
-                                //This prevents lots of flicker
-                                onLayout(true, getLeft(), getTop(), getRight(), getBottom());
-                            } else {
-                                //Must clear animation to prevent flicker - even though it just ended.
-                                getChildAt(startDragIndex).clearAnimation();
-                                layoutChild(startDragIndex);
-                            }
-
-                            startDragIndex = -1;
-                            isDragging = false;
-                            curDragIndexPos = -1;
-                            animatingDragReposition = false;
-                            draggingView = null;
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-                        }
-
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                        }
-                    });
-
-                    draggingView.startAnimation(move);
-
-                } else { //Not dragging
-
-                    if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                //Be careful with coordinates from the event if getPointerCount != 1
+                if (draggingView != null) {
+                    if (isDragging) {
                         handled = true;
 
-                        performItemClick(draggingView, startDragIndex, startDragIndex);
+                        stopAutoScroll();
 
                         // Remove the highlight of the pictogram
                         ((PictogramView) draggingView).placeDown();
 
-                        // Reset the dragging parameters
-                        startDragIndex = -1;
-                        draggingView = null;
+                        //Disallow movement when repositioning dragged view.
+                        animatingDragReposition = true;
+                        //Possible negative y value error
+                        TranslateAnimation move = new TranslateAnimation(
+                                0,
+                                0,
+                                0,
+                                calcChildTopPosition(curDragIndexPos) - draggingView.getTop());
+                        move.setDuration(ANIMATION_TIME);
+
+                        move.setAnimationListener(new AnimationListener() {
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+
+
+                                if (startDragIndex != curDragIndexPos) {
+
+                                    //ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
+                                    adapter.getSequence().rearrange(startDragIndex, curDragIndexPos);
+                                    final int childViews = getChildCount();
+                                    for (int i = 0; i < childViews; i++) {
+                                        getChildAt(i).clearAnimation();
+                                    }
+                                    rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
+                                    //layout(getLeft(), getTop(), getRight(), getBottom());
+                                    //This prevents lots of flicker
+                                    onLayout(true, getLeft(), getTop(), getRight(), getBottom());
+                                } else {
+                                    //Must clear animation to prevent flicker - even though it just ended.
+                                    getChildAt(startDragIndex).clearAnimation();
+                                    layoutChild(startDragIndex);
+                                }
+
+                                startDragIndex = -1;
+                                isDragging = false;
+                                curDragIndexPos = -1;
+                                animatingDragReposition = false;
+                                draggingView = null;
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+                        });
+
+                        draggingView.startAnimation(move);
+
+                    } else { //Not dragging
+
+                        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                            handled = true;
+
+                            performItemClick(draggingView, startDragIndex, startDragIndex);
+
+                            // Remove the highlight of the pictogram
+                            ((PictogramView) draggingView).placeDown();
+
+                            // Reset the dragging parameters
+                            startDragIndex = -1;
+                            draggingView = null;
+                        }
                     }
                 }
+
+                return handled;
             }
 
-            return handled;
-        }
-
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                draggingView = childAtPoint((int) x, (int) y);
-                if (draggingView != null && draggingView != addNewPictoGramView) {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    draggingView = childAtPoint((int) x, (int) y);
+                    if (draggingView != null && draggingView != addNewPictoGramView) {
 
 
+                        //Grap original drag position
+                        startDragIndex = indexOfChild(draggingView);
 
-                    //Grap original drag position
-                    startDragIndex = indexOfChild(draggingView);
+                        if (isInEditMode) {
+                            handled = true;
 
-                    if (isInEditMode) {
+                            ((PictogramView) draggingView).liftUp();
+
+                            for (int i = 0; i < this.getChildCount(); i++) {
+                                this.getChildAt(i).invalidate();
+                            }
+
+                            requestDisallowInterceptTouchEvent(true);
+
+                            curDragIndexPos = startDragIndex;
+
+                            //Everything is in the right place at the start.
+                            resetViewPositions();
+
+                            touchY = (int) y;
+                            dragStartY = touchY;
+                            centerOffset = touchY - getCenterY(startDragIndex);//Possible negative y value error
+
+                            draggingView.invalidate();
+                        } else {
+                            // When a pictogram is clicked when not in editmode it is selected
+                            setLowHighLighting(startDragIndex);
+                        }
+                    }
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+
+                    if (draggingView == null) {  // The user is not touching a pictogram
                         handled = true;
+                    } else {  // The user is touching a pictogram
 
-                        ((PictogramView) draggingView).liftUp();
-
-                        for (int i = 0; i < this.getChildCount(); i++) {
-                            this.getChildAt(i).invalidate();
+                        if (!isDragging && Math.abs(dragStartY - y) >= DRAG_DISTANCE) {  // The user is starting to move a pictogram
+                            isDragging = true;
+                            startAutoScroll();
                         }
 
-                        requestDisallowInterceptTouchEvent(true);
-
-                        curDragIndexPos = startDragIndex;
-
-                        //Everything is in the right place at the start.
-                        resetViewPositions();
-
-                        touchY = (int) y;
-                        dragStartY = touchY;
-                        centerOffset = touchY - getCenterY(startDragIndex);//Possible negative y value error
-
-                        draggingView.invalidate();
-                    } else {
-                        // When a pictogram is clicked when not in editmode it is selected
-                        setLowHighLighting(startDragIndex);
+                        handled = true;
+                        handleTouchMove(y);
                     }
-                }
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-
-                if (draggingView == null) {  // The user is not touching a pictogram
-                    handled = true;
-                } else {  // The user is touching a pictogram
-
-                    if (!isDragging && Math.abs(dragStartY - y) >= DRAG_DISTANCE) {  // The user is starting to move a pictogram
-                        isDragging = true;
-                        startAutoScroll();
-                    }
-
-                    handled = true;
-                    handleTouchMove(y);
-                }
-                break;
+                    break;
+            }
+            return handled;
         }
+        handled = true;
         return handled;
     }
 
@@ -618,6 +623,10 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			requestLayout();
 		}
 	}
+
+    public void setDraggable(boolean value){
+        draggable = value;
+    }
 	
 	/**
 	 * Sets the OnRearrangeListener that is called when Views are rearranged.

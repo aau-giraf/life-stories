@@ -19,6 +19,7 @@ public class MediaFrame extends AbstractMediaFrame{
     private int posY;
     private int nestedSequenceID;
     private int pictogramId;
+    private boolean marked = false;
 	
 	public MediaFrame(){
 		super();
@@ -94,6 +95,14 @@ public class MediaFrame extends AbstractMediaFrame{
 		else if (mListener != null)
 			mListener.OnContentSizeChanged(this);
 	}
+
+    public boolean getMarked(){
+        return marked;
+    }
+
+    public void setMarked(boolean value){
+        marked = value;
+    }
 	
 	public SerializableMediaFrame getSerializableMediaFrame() {
 		return new SerializableMediaFrame(this);

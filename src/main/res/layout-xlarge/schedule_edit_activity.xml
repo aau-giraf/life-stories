@@ -33,12 +33,6 @@
             android:text=""
             android:textSize="24sp"/>
 
-
-        <Spinner
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:id="@+id/spinner"
-            android:layout_gravity="center_vertical" />
     </LinearLayout>
 
     <View

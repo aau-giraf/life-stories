@@ -57,7 +57,6 @@ public class ScheduleActivity extends TortoiseActivity
 
     ArrayList<boolean[]> markedActivities = new ArrayList<boolean[]>();
 
-
     public void startPictosearch(View v)
     {
         Intent i = new Intent();
@@ -347,7 +346,6 @@ public class ScheduleActivity extends TortoiseActivity
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
                     /*Check if picto marked*/
-                    boolean[] currentActiv = markedActivities.get(weekdaySelected);
                     if(!markedActivities.get(weekdaySelected)[index]) {
                         // this adds the cancel image on top of the original drawable of the pictogram
                         ImageView iv = (ImageView) Wlayout.getChildAt(getViewIndex(v));
@@ -402,13 +400,12 @@ public class ScheduleActivity extends TortoiseActivity
                 determineWeekSection(v);
 
                 // show there is more than one choice in view mode
-                if (ScheduleActivity.this instanceof ScheduleViewActivity &&
-                        weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1 &&
-                        currentActivity[weekdaySelected] == index-1) {
+                if (weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1 &&
+                        (currentActivity[weekdaySelected] == index-1 || currentActivity[weekdaySelected] == 0)) {
                     showMultiChoiceDialog(index, weekdaySelected, v, ScheduleActivity.this, day);
                 }
                 // Sets this particular view to be the currant activity
-                else if (ScheduleActivity.this instanceof ScheduleViewActivity) {
+                else {
                     setPictogramSize(index, v, day);
                 }
             }
