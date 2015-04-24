@@ -240,13 +240,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         markCurrentWeekday();
     }
-
-    @Override
-    public void dismissAddContentDialog(View v)
-    {
-        multichoiceDialog.dismiss();
-        renderSchedule(false);
-    }
     public void showExitDialog(View v){
         finish();
     }

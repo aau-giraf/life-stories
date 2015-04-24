@@ -5,50 +5,50 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:padding="25dp">
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="75dp"
-        android:text="@string/dialog_add_frames_title"
-        android:textSize="30sp"
-        android:textColor="@color/text_color" />
-
-    <RelativeLayout
-        android:id="@+id/choiceContainer"
-        android:layout_width="165dp"
-        android:layout_height="165dp"
-        android:layout_centerHorizontal="true">
-        <ImageView
-            android:id="@+id/choiceIcon"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/question"
-            android:background="@layout/border"
-            android:onClick="chooseChoicePictogram"/>
-        <ImageView
-            android:id="@+id/removeChoiceIcon"
+    <!--
+        <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_delete"
-            android:layout_alignParentRight="true"
-            android:visibility="visible"
-            android:onClick="removeChoiceIcon"/>
-    </RelativeLayout>
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="75dp"
+            android:text="@string/dialog_add_frames_title"
+            android:textSize="30sp"
+            android:textColor="@color/text_color" />
 
 
-    <dk.aau.cs.giraf.gui.GDividerHorizontal
-        android:id="@+id/seperatorLine"
-        android:layout_width="700dp"
-        android:layout_height="4dp"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/choiceContainer" />
+        <RelativeLayout
+            android:id="@+id/choiceContainer"
+            android:layout_width="165dp"
+            android:layout_height="165dp"
+            android:layout_centerHorizontal="true">
+            <ImageView
+                android:id="@+id/choiceIcon"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/question"
+                android:background="@layout/border"
+                android:onClick="chooseChoicePictogram"/>
+            <ImageView
+                android:id="@+id/removeChoiceIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_delete"
+                android:layout_alignParentRight="true"
+                android:visibility="visible"
+                android:onClick="removeChoiceIcon"/>
+        </RelativeLayout>
 
+        <dk.aau.cs.giraf.gui.GDividerHorizontal
+            android:id="@+id/seperatorLine"
+            android:layout_width="700dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/choiceContainer" />
+    -->
     <TextView
         android:id="@+id/choicesText"
         android:layout_width="wrap_content"
@@ -98,7 +98,7 @@
 
 
     </HorizontalScrollView>
-
+<!--
     <LinearLayout
         android:layout_width="400dp"
         android:layout_height="wrap_content"
@@ -118,5 +118,5 @@
             android:textColor="@color/text_color"
             android:onClick="dismissAddContentDialog" />
     </LinearLayout>
-
+-->
 </RelativeLayout>

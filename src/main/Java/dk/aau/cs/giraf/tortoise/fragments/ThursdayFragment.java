@@ -29,116 +29,7 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
 /**
  * Creates a fragment of a thursday from the layout file thursday.xml
  */
-public class ThursdayFragment extends Fragment {
-
-    private static int amountOfPictograms;
-    private static int currentActivity;
-
-    private void addPictograms(ViewGroup view) {
-        LinearLayout scrollContent = (LinearLayout) view.findViewById(R.id.layoutThursday);
-        ScrollView scrollView = (ScrollView) scrollContent.getParent();
-        Sequence weekday = ScheduleViewActivity.weekdaySequences.get(3);
-        List<Pictogram> pictograms = new ArrayList<Pictogram>();
-        resizeScrollView(scrollView);
-
-        for (MediaFrame mf : weekday.getMediaFrames()) {
-            pictograms.addAll(mf.getContent());
-        }
-
-        for (int i = 0; i < pictograms.size(); i++) {
-            ImageView iw = new ImageView(getActivity().getApplicationContext());
-            iw.setImageBitmap(resizeBitmap(pictograms.get(i).getImageData()));
-            iw.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                    // index of pictogram being clicked
-                    int index = getViewIndex(v);
-                    LinearLayout dayLayout = (LinearLayout) v.getParent();
-
-                    int pictoCount = dayLayout.getChildCount();
-                    ImageView iv = (ImageView) dayLayout.getChildAt(index);
-
-                    if(index == 0 || (index-1) == currentActivity || (index+1) == currentActivity)
-                    {
-                        currentActivity = index;
-                        setPictogramSizes((View) v.getParent());
-
-                        /*Re-size*/
-                        v.setScaleX(1.2f);
-                        v.setScaleY(1.2f);
-                        iv.setColorFilter(null);
-
-                    } else if((index+1) == pictoCount)
-                    {
-                        if(iv.getScaleX() == 1.2f) {
-                        /*Re-size*/
-                            iv.setScaleY(0.4f);
-                            iv.setScaleX(0.4f);
-                        /*Adding grey scale*/
-                            ColorMatrix matrix = new ColorMatrix();
-                            matrix.setSaturation(0);
-                            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                            iv.setColorFilter(filter);
-                        }
-                    }
-
-
-                }
-            });
-            iw.setPadding(0, 10, 0, 10);
-            scrollContent.addView(iw);
-        }
-    }
-
-    private void setPictogramSizes(View v) {
-        LinearLayout dayLayout = (LinearLayout) v;
-        int pictoCount = dayLayout.getChildCount();
-        for (int i = 0; i < pictoCount; i++) {
-            ImageView iv = (ImageView) dayLayout.getChildAt(i);
-
-            if(i < currentActivity){
-                /*Re-Size*/
-                iv.setScaleY(0.4f);
-                iv.setScaleX(0.4f);
-
-                /*Greyscale*/
-                ColorMatrix matrix = new ColorMatrix();
-                matrix.setSaturation(0);
-                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                iv.setColorFilter(filter);
-
-
-
-            }else if(i > currentActivity)
-            {
-                iv.setScaleX(0.8f);
-                iv.setScaleY(0.8f);
-                iv.setColorFilter(null);
-
-            }
-
-        }
-    }
-
-    private void resizeScrollView(ScrollView scrollView) {
-        switch(amountOfPictograms) {
-            case 0:
-                scrollView.getLayoutParams().height = 198;
-                break;
-            case 1:
-                scrollView.getLayoutParams().height = 420;
-                break;
-            default:
-                scrollView.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        }
-    }
-
-    private Bitmap resizeBitmap (Bitmap originalBitmap) {
-        return Bitmap.createScaledBitmap(originalBitmap, 188, 188, false);
-    }
-
+public class ThursdayFragment extends AbstractFragment {
     /**
      * Returns an instance of this fragment, to be used in e ViewPager
      * @return an instance of the ThursdayFragment
@@ -158,23 +49,10 @@ public class ThursdayFragment extends Fragment {
         //Finds the button on top of the day name and disables it, it is not needed in portrait mode
         view.findViewById(R.id.thursday).setEnabled(false);
 
+        weekday = ScheduleViewActivity.weekdaySequences.get(3);
+        currentWeekday = R.id.layoutThursday;
         addPictograms(view);
 
         return view;
-    }
-    public int getViewIndex(View v)
-    {
-        int index;
-
-        if(((LinearLayout) v.getParent()).getChildCount() > 0)
-        {
-            index = ((LinearLayout) v.getParent()).indexOfChild(v);
-        }
-        else
-        {
-            index = -1;
-        }
-
-        return index;
     }
 }

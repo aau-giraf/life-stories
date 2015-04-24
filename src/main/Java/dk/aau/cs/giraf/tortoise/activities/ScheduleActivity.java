@@ -9,12 +9,16 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +33,7 @@ import java.util.List;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
 //import dk.aau.cs.giraf.gui.GirafPictogram;
+import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -43,12 +48,17 @@ public class ScheduleActivity extends TortoiseActivity
 {
     // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
+    public LinearLayout level1;
     public GDialog multichoiceDialog;
     public static List<Sequence> weekdaySequences;
     public static int weekdaySelected;
     int lastPosition;
-    int currentActivity = 0;
+    //int currentActivity = 0;
     int currentWeekday = 0;
+    int[] currentActivity = {-1,-1,-1,-1,-1,-1,-1};
+
+    ArrayList<boolean[]> markedActivities = new ArrayList<boolean[]>();
+
 
     public void startPictosearch(View v)
     {
@@ -75,13 +85,22 @@ public class ScheduleActivity extends TortoiseActivity
     }
 
 
-    public void dismissAddContentDialog(View v)
+    public void dismissAddContentDialog(View vs, View pictoView, int index)
     {
         multichoiceDialog.dismiss();
-        renderSchedule(true);
+
+        RelativeLayout v = (RelativeLayout) level1.getChildAt(weekdaySelected); // the +1 is to choose the element at depth 2
+        ScrollView level2 = (ScrollView) v.getChildAt(1);
+        LinearLayout level3 = (LinearLayout) level2.getChildAt(0);
+        ImageView selected = (ImageView) level3.getChildAt(index);
+        if(selected != null){
+
+            setPictogramSize(index, selected);
+        }
+
     }
 
-    public void showMultiChoiceDialog(int position, int day, Activity activity)
+    public void showMultiChoiceDialog(final int position, int day, final View currentView, Activity activity)
     {
             lastPosition = position;
             multichoiceDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content, null));
@@ -101,9 +120,9 @@ public class ScheduleActivity extends TortoiseActivity
                     choiceFramView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            updateContent(view);
-                            renderSchedule(false);
-                            dismissAddContentDialog(view);
+                            updateContent(view, position, currentView);
+                            //renderSchedule(false);
+                            dismissAddContentDialog(view, currentView, position);
                         }
                     });
                 }
@@ -114,26 +133,25 @@ public class ScheduleActivity extends TortoiseActivity
             if(activity instanceof ScheduleViewActivity)
             {
                 multichoiceDialog.findViewById(R.id.addChoice2).setVisibility(View.GONE);
-                multichoiceDialog.findViewById(R.id.choiceIcon).setClickable(false);
-                multichoiceDialog.findViewById(R.id.title).setVisibility(View.GONE);
                 multichoiceDialog.findViewById(R.id.choicesText).setVisibility(View.GONE);
             }
 
 
-            renderChoiceIcon(position, this);
+            //renderChoiceIcon(position, this);
             multichoiceDialog.show();
     }
 
-    private void updateContent(View view) {
+    private void updateContent(View view, int index, View pictoView) {
         Pictogram selectedPictogram = weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).getContent().get(getViewIndex(view));
         List<Pictogram> newContent = new ArrayList<Pictogram>();
         newContent.add(selectedPictogram);
         weekdaySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setContent(newContent);
+        renderSchedule(false);
     }
 
-    public void renderChoiceIcon(int position, Activity activity)
+    /*public void renderChoiceIcon(int position, Activity activity)
     {
-        ImageView choiceIcon = (ImageView) multichoiceDialog.findViewById(R.id.choiceIcon);
+        //ImageView choiceIcon = (ImageView) multichoiceDialog.findViewById(R.id.choiceIcon);
         ImageView deleteBtn = (ImageView) multichoiceDialog.findViewById(R.id.removeChoiceIcon);
 
         Pictogram currentChoiceIcon = weekdaySequences.get(weekdaySelected).getMediaFrames().get(position).getChoicePictogram();
@@ -142,12 +160,12 @@ public class ScheduleActivity extends TortoiseActivity
         {
             Bitmap defaultBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.question);
 
-            choiceIcon.setImageBitmap(defaultBitmap);
+            //choiceIcon.setImageBitmap(defaultBitmap);
             deleteBtn.setVisibility(View.GONE);
         }
         else
         {
-            choiceIcon.setImageBitmap(currentChoiceIcon.getImageData());
+            //choiceIcon.setImageBitmap(currentChoiceIcon.getImageData());
             if(activity instanceof ScheduleEditActivity)
             {
                 deleteBtn.setVisibility(View.VISIBLE);
@@ -162,7 +180,7 @@ public class ScheduleActivity extends TortoiseActivity
         {
             renderSchedule(true);
         }
-    }
+    }*/
 
     public void updateMultiChoiceDialog(int position)
     {
@@ -171,7 +189,7 @@ public class ScheduleActivity extends TortoiseActivity
         if(weekdaySequences.get(day).getMediaFrames().get(position).getContent().size() == 0)
         {
             weekdaySequences.get(day).getMediaFrames().remove(position);
-            dismissAddContentDialog(getCurrentFocus());
+            dismissAddContentDialog(getCurrentFocus(), null, 0);
         }
         else
         {
@@ -186,7 +204,7 @@ public class ScheduleActivity extends TortoiseActivity
 
             }
 
-            renderChoiceIcon(position, this);
+            //renderChoiceIcon(position, this);
 
         }
         renderSchedule(true);
@@ -198,7 +216,7 @@ public class ScheduleActivity extends TortoiseActivity
      */
     public void renderSchedule(Boolean addButtonVisible)
     {
-        LinearLayout level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
+        level1 = (LinearLayout) findViewById(R.id.completeWeekLayout);
 
         int childcount = level1.getChildCount();
 
@@ -218,6 +236,8 @@ public class ScheduleActivity extends TortoiseActivity
 
                         addItems(mf, level3);
                     }
+                markedActivities.add(i, new boolean[weekdaySequences.get(i).getMediaFrames().size()]);
+
 
                 if(addButtonVisible)
                 {
@@ -242,22 +262,12 @@ public class ScheduleActivity extends TortoiseActivity
                         // if only one pictogram is in the sequence, just display it in its respective week day
             if(pictoList.size() == 1)
             {
-                addPictogramToDay(pictoList.get(0).getImageData(), layout);
+
+                addPictogramToDay(ConstructWhiteBackground(pictoList.get(0).getImageData()), layout);
             }
             else if(pictoList.size() > 1)
             {
-                Bitmap choiceImage;
-
-                if(mf.getChoicePictogram() == null)
-                {
-                    // if no default choice icon
-                    choiceImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.questionwhite);
-                }
-                else
-                {
-                    choiceImage = mf.getChoicePictogram().getImageData();
-                }
-
+                Bitmap choiceImage = ConstructWhiteBackground(BitmapFactory.decodeResource(this.getResources(), R.drawable.icon_choose));
                 addPictogramToDay(choiceImage, layout);
             }
         }
@@ -266,6 +276,32 @@ public class ScheduleActivity extends TortoiseActivity
             GuiHelper.ShowToast(this, ex.toString() + " addbtn");
         }
 
+    }
+
+    public Bitmap ConstructWhiteBackground(Bitmap bitmap){
+
+        Helper helper = new Helper(getApplicationContext());
+
+        //Bitmap bitmap = helper.pictogramHelper.getPictogramById(id).getImage();
+        Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());  // Create another image the same size
+
+        imageWithBG.eraseColor(Color.WHITE);  // set its background to white, or whatever color you want
+
+        Drawable[] dList = new Drawable[2];
+        Drawable d = new BitmapDrawable(getResources(), imageWithBG);
+        Drawable d2 = new BitmapDrawable(getResources(), bitmap);
+        dList[0] = d;
+        dList[1] = d2;
+        LayerDrawable layers = new LayerDrawable(dList);
+
+        int width = layers.getIntrinsicWidth();
+        int height = layers.getIntrinsicHeight();
+        Bitmap newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(newBitmap);
+        layers.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        layers.draw(canvas);
+
+        return newBitmap;
     }
 
     public List<Pictogram> unpackSequence(MediaFrame mf)
@@ -346,61 +382,61 @@ public class ScheduleActivity extends TortoiseActivity
         iw.setLayoutParams(lp);
         iw.setPadding(0, 0, 0, 0);
 
-        final LinearLayout workaroundLayout = layout;
+        final LinearLayout Wlayout = layout;
 
         // remove pictogram in the linear view contained in the scroll view
         iw.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v)
             {
+                int index = getViewIndex(v);
+
+                determineWeekSection(v);
                 // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
-
-                    try
-                    {
-                        // TODO: refactor this *very* ugly workaround
-                        ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
-                        if (iv != null)
-                        {
-
-                            // this will fail the first time because there is no layer drawable on the pictogram
-                            // in the try catch the pictogram is turned into layered drawable
-                            LayerDrawable l = (LayerDrawable) iv.getDrawable();
-                        }else
-                        {
-                            GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
-                        }
-                    } catch(Exception ex)
-                    {
-                        // this code is triggered when a pictogram has no layered drawable
+                    /*Check if picto marked*/
+                    boolean[] currentActiv = markedActivities.get(weekdaySelected);
+                    if(!markedActivities.get(weekdaySelected)[index]) {
                         // this adds the cancel image on top of the original drawable of the pictogram
-                        ImageView iv = (ImageView) workaroundLayout.getChildAt(getViewIndex(v));
-
-                        if (iv != null)
-                        {
-                            Resources r = getResources();
-                            Drawable[] dlayers = new Drawable[2];
-                            dlayers[0] = iv.getDrawable();
-                            int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
-                            dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
-                            LayerDrawable layerDrawable = new LayerDrawable(dlayers);
-                            iv.setImageDrawable(layerDrawable);
-
-                        }else
-                        {
-                            GuiHelper.ShowToast(getApplicationContext(), "Der opstod en fejl");
-                        }
-
+                        ImageView iv = (ImageView) Wlayout.getChildAt(getViewIndex(v));
+                        Resources r = getResources();
+                        Drawable[] dlayers = new Drawable[2];
+                        dlayers[0] = iv.getDrawable();
+                        int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                        dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
+                        LayerDrawable layerDrawable = new LayerDrawable(dlayers);
+                        iv.setImageDrawable(layerDrawable);
+                        markedActivities.get(weekdaySelected)[index] = true;
                     }
+                    else {
+                        ImageView iv = (ImageView) Wlayout.getChildAt(getViewIndex(v));
+                        List<Pictogram> pics = weekdaySequences.get(weekdaySelected).getMediaFrame(index).getContent(); // check for size
+                        if (pics.size() > 1) {
+                            int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                            BitmapDrawable bitDraw = new BitmapDrawable(getResources(),ConstructWhiteBackground(BitmapFactory.decodeResource(getResources(), R.drawable.icon_choose)));
+                            Drawable resizedDrawable = resizeDrawable(bitDraw, xy, xy);
+                            iv.setImageDrawable(resizedDrawable);
+                            markedActivities.get(weekdaySelected)[index] = false;
+                        } else {
+                            int xy = getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
+                            BitmapDrawable bitDraw = new BitmapDrawable(getResources(), ConstructWhiteBackground(pics.get(0).getImageData()));
+                            Drawable resizedDrawable = resizeDrawable(bitDraw, xy, xy);
+                            iv.setImageDrawable(resizedDrawable);
+                            markedActivities.get(weekdaySelected)[index] = false;
+
+                        }
+                    }
+                    /*If picto marked
+                    * Get old pictogram and replace*/
+                }
                 // longclick has the functionality to remove a selected pictogram if in edit mode
-                }else
+                else
                 {
                     int position = getViewIndex(v);
-                    workaroundLayout.removeView(v);
+                    Wlayout.removeView(v);
                     weekdaySequences.get(weekdaySelected).getMediaFrames().remove(position);
                 }
-
                 return true;
             }
         });
@@ -415,42 +451,18 @@ public class ScheduleActivity extends TortoiseActivity
                 // update weekdaySelected
                 determineWeekSection(v);
 
+                // show there is more than one choice in view mode
+                if (ScheduleActivity.this instanceof ScheduleViewActivity &&
+                        weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1 &&
+                        currentActivity[weekdaySelected] == index-1) {
+                    showMultiChoiceDialog(index, weekdaySelected, v, ScheduleActivity.this);
+                }
                 // Sets this particular view to be the currant activity
-                if (ScheduleActivity.this instanceof ScheduleViewActivity) {
-                    LinearLayout dayLayout = (LinearLayout) v.getParent();
-                    int pictoCount = dayLayout.getChildCount();
-                    if(index == 0 || (index-1) == currentActivity || (index+1) == currentActivity)
-                    {
-                        currentActivity = index;
-                        setPictogramSizes((View) v.getParent());
-
-                        /*Re-size*/
-                        v.setScaleX(1.2f);
-                        v.setScaleY(1.2f);
-                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
-                        iv.setColorFilter(null);
-                        iv.setBackgroundColor(Color.TRANSPARENT);
-
-                    } else if((index+1) == pictoCount)
-                    {
-                        ImageView iv = (ImageView) dayLayout.getChildAt(index);
-
-                        /*Re-size*/
-                        iv.setScaleY(0.4f);
-                        iv.setScaleX(0.4f);
-                        /*Adding grey scale*/
-                        ColorMatrix matrix = new ColorMatrix();
-                        matrix.setSaturation(0);
-                        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                        iv.setColorFilter(filter);
-                        iv.setBackgroundColor(Color.GRAY);
-                    }
+                else if (ScheduleActivity.this instanceof ScheduleViewActivity) {
+                    setPictogramSize(index, v);
                 }
 
-                // show if in edit mode or there is more than one choice in view mode
-                if (ScheduleActivity.this instanceof ScheduleEditActivity || (ScheduleActivity.this instanceof ScheduleViewActivity && weekdaySequences.get(weekdaySelected).getMediaFrames().get(index).getContent().size() > 1)) {
-                    showMultiChoiceDialog(index, weekdaySelected, ScheduleActivity.this);
-                }
+
             }
         });
 
@@ -459,6 +471,37 @@ public class ScheduleActivity extends TortoiseActivity
         /*PictogramView vv = new PictogramView(this);
         vv.setImageFromId(mf.getPictogramId());*/
         layout.addView(iw); // add new pictogram
+    }
+
+    public void setPictogramSize(final int index, View v){
+        LinearLayout dayLayout = (LinearLayout) v.getParent();
+        int pictoCount = dayLayout.getChildCount();
+        if(index == 0 || (index-1) == currentActivity[weekdaySelected] || (index+1) == currentActivity[weekdaySelected])
+        {
+            currentActivity[weekdaySelected] = index;
+            setPictogramSizes((View) v.getParent());
+
+                        /*Re-size*/
+            v.setScaleX(1.2f);
+            v.setScaleY(1.2f);
+            ImageView iv = (ImageView) dayLayout.getChildAt(index);
+            iv.setColorFilter(null);
+            iv.setBackgroundColor(Color.TRANSPARENT);
+
+        } else if((index+1) == pictoCount && dayLayout.getChildAt(index).getScaleX() == 1.2f)
+        {
+            ImageView iv = (ImageView) dayLayout.getChildAt(index);
+
+                        /*Re-size*/
+            iv.setScaleY(0.4f);
+            iv.setScaleX(0.4f);
+                        /*Adding grey scale*/
+            ColorMatrix matrix = new ColorMatrix();
+            matrix.setSaturation(0);
+            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+            iv.setColorFilter(filter);
+            iv.setBackgroundColor(Color.GRAY);
+        }
     }
 
     public void clearAllPictogramBorders(View v, LinearLayout layout) {
@@ -504,7 +547,7 @@ public class ScheduleActivity extends TortoiseActivity
         for (int i = 0; i < pictoCount; i++) {
             ImageView iv = (ImageView) dayLayout.getChildAt(i);
 
-            if(i < currentActivity){
+            if(i < currentActivity[weekdaySelected]){
                 /*Re-Size*/
                 iv.setScaleY(0.4f);
                 iv.setScaleX(0.4f);
@@ -518,7 +561,7 @@ public class ScheduleActivity extends TortoiseActivity
 
 
 
-            }else if(i > currentActivity)
+            }else if(i > currentActivity[weekdaySelected])
             {
                 iv.setScaleX(0.8f);
                 iv.setScaleY(0.8f);
