@@ -24,10 +24,16 @@ public class SequenceListAdapter extends BaseAdapter {
 	private boolean isInTemplateMode = false;
 	private List<Sequence> items;
 	private OnAdapterGetViewListener onAdapterGetViewListener;
-	
-	public SequenceListAdapter(Context context) {
-		this.items = new ArrayList<Sequence>();
-		setItems();
+    private SelectedSequenceAware selectedSequenceAware;
+
+    public interface SelectedSequenceAware {
+        boolean isSequenceMarked(dk.aau.cs.giraf.tortoise.controller.Sequence sequence);
+    }
+
+	public SequenceListAdapter(Context context, List<Sequence> items, SelectedSequenceAware selectedSequenceAware) {
+        this.selectedSequenceAware = selectedSequenceAware;
+	    this.items = items;
+        //setItems(items);
 		this.context = context;
 	}
 
@@ -47,7 +53,23 @@ public class SequenceListAdapter extends BaseAdapter {
         Pictogram p = PictoFactory.getPictogram(context, s.getTitlePictoId());
         Bitmap bm = p.getImageData();
         v.setImage(LayoutTools.getSquareBitmap(bm));
-        
+
+        if (selectedSequenceAware != null) {
+            final boolean isSequenceMarked = selectedSequenceAware.isSequenceMarked(s);
+
+            // Check if the view is selected
+            //sequence.getId() == selectedSequencePictogramViewPair.sequence.getId()
+            if (isSequenceMarked) {
+                // Set the background-color for the selected item
+                v.setBackgroundColor(context.getResources().getColor(R.color.giraf_page_indicator_active));
+            }
+            else
+            {
+                v.setBackgroundDrawable(null);
+            }
+        }
+
+
         if (onAdapterGetViewListener != null)
 			onAdapterGetViewListener.onAdapterGetView(position, v);
 
@@ -79,16 +101,19 @@ public class SequenceListAdapter extends BaseAdapter {
 		if(isInTemplateMode != templateEnabled) {
 			isInTemplateMode = templateEnabled;
 		}
-		setItems();
+		setItems(null);
 	}
 	
-	public void setItems() {
+	public void setItems(List<Sequence> itemList) {
 		items.clear();
 		if(isInTemplateMode) {
 			items.addAll(LifeStory.getInstance().getTemplates());
 		}
 		else {
-			items.addAll(LifeStory.getInstance().getStories());
+
+            if(itemList != null) {
+                items.addAll(itemList);
+            }
 		}
 	}
 	

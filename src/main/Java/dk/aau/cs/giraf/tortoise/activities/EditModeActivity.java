@@ -71,7 +71,7 @@ import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnNewButtonClickedListener;
 import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnRearrangeListener;
 import dk.aau.cs.giraf.tortoise.PictogramView;
 
-public class EditModeActivity extends TortoiseActivity implements OnCurrentFrameEventListener {
+public class EditModeActivity extends TortoiseActivity implements OnCurrentFrameEventListener, SequenceAdapter.SelectedFrameAware {
 
 
 	private static final int DIALOG_SAVE = 1;
@@ -116,6 +116,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	public void addOnMediaFrameChangedListener(OnMediaFrameEventListener mediaFrameListener) {
 		this.mediaFrameListeners.add(mediaFrameListener);
 	}
+
+    @Override
+    public boolean isFrameMarked(MediaFrame f) {
+        return false;
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -301,7 +306,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
     private SequenceAdapter setupAdapter() {
-        final SequenceAdapter adapter = new SequenceAdapter(this, sequence);
+        final SequenceAdapter adapter = new SequenceAdapter(this, sequence, this);
 
         // Setup delete handler.
         adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {

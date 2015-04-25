@@ -97,6 +97,17 @@ public class DBController {
 
     }
 
+    public List<Sequence> loadCurrentProfileSequencesAndFrames(int profileID, SequenceType sequenceType, Context con){
+        SequenceController sc = new SequenceController(con);
+        try{
+        List<Sequence> items = morphDBSequenceListToSequenceList(
+                sc.getSequencesAndFramesByProfileIdAndType(profileID, sequenceType),con);
+            return items;
+        }catch (NullPointerException e){
+            GuiHelper.ShowToast(con, "No sequences found!");
+        }
+        return null;
+    }
     /**
      * Sets the templates of the current guardian
      * @param profileID

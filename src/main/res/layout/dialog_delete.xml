@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/delete_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="DeleteSequencesActivity"
+    android:gravity="center">
+
+    <dk.aau.cs.giraf.gui.GirafButton
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/giraf_button_height"
+        android:layout_marginRight="@dimen/padding_standard"
+        android:onClick="deleteClick"
+        app:icon="@drawable/icon_delete"
+        app:text="@string/delete" />
+
+    <dk.aau.cs.giraf.gui.GirafButton
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/giraf_button_height"
+        android:onClick="cancelDeleteClick"
+        app:icon="@drawable/icon_cancel"
+        app:text="@string/cancel" />
+
+</LinearLayout>

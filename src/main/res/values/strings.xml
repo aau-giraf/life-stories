@@ -8,6 +8,7 @@
     <string name="title_activity_tortoise_startup_screen">Livshistorier</string>
     <string name="new_lifestory">Create a new life story</string>
     <string name="bin">Papirkurv</string>
+    <string name="cancel">Fortryd </string>
     <string name="test_data">Test Data</string>
     <string name="contentDes_lifestories">Image representing lifestory</string>
     <string name="story_name">Navn på historie</string>
@@ -24,6 +25,13 @@
     <string name="dialog_delete_message">Vil du slette</string>
     <string name="dialog_add_frames_title">Vælg ikon</string>
     <string name="dialog_add_frames_choices">Tilføj valgmuligheder</string>
+    <string name="delete">Slet</string>
+    <string name="delete_schedule">Slet ugeplan</string>
+    <string name="delete_schedules">Slet ugeplaner</string>
+    <string name="delete_these">Vil du slette de </string>
+    <string name="delete_this">Vil du slette denne ugeplan?</string>
+    <string name="delete_this_schedule">Vil du slette den markerede ugeplan?</string>
+    <string name="marked_schedules"> markerede ugeplaner?</string>
     <string name="choice">Valg</string>
     <string name="save">Gem</string>
     <string name="no">Nej</string>

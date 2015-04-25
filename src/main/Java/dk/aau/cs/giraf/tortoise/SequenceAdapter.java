@@ -31,8 +31,14 @@ public class SequenceAdapter extends BaseAdapter {
     private boolean draggable = true;
 	
 	private OnAdapterGetViewListener onAdapterGetViewListener;
+    private SelectedFrameAware selectedFrameAware;
 
-	public SequenceAdapter(Context context, Sequence sequence) {
+    public interface SelectedFrameAware {
+        boolean isFrameMarked(MediaFrame frame);
+    }
+
+	public SequenceAdapter(Context context, Sequence sequence, SelectedFrameAware selectedFrameAware) {
+        this.selectedFrameAware = selectedFrameAware;
 		this.context = context;
 		this.sequence = sequence;
 	}
@@ -76,31 +82,27 @@ public class SequenceAdapter extends BaseAdapter {
 		} else
 			view = (PictogramView)convertView;
 
-        if(mediaFrame.getMarked()){
 
-            Resources r = context.getResources();
-
-            Drawable[] dlayers = new Drawable[2];
-            Pictogram picto = PictoFactory.getPictogram(context.getApplicationContext(), mediaFrame.getPictogramId());
-            Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
-            bitmap = LayoutTools.getSquareBitmap(bitmap);
-            bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, context.getApplicationContext(), 20);
-            dlayers[0] = new BitmapDrawable(context.getResources(),  bitmap);
-            int xy = context.getResources().getInteger(R.dimen.weekschedule_picto_xy_landscape);
-            dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
-
-            LayerDrawable layerDrawable = new LayerDrawable(dlayers);
-            Drawable drawableMarkedIcon = (Drawable) layerDrawable;
-            BitmapDrawable markedIcon = (BitmapDrawable) drawableMarkedIcon;
-            view.setImage(markedIcon.getBitmap());
+        if (mediaFrame.getContent().size() == 1) {
+            view.setImageFromId(mediaFrame.getPictogramId());
+        } else {
+            Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.icon_choose);
+            view.setImage(icon);
         }
-        else {
-            if (mediaFrame.getContent().size() == 1) {
-                view.setImageFromId(mediaFrame.getPictogramId());
-            } else {
-                Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.icon_choose);
-                view.setImage(icon);
+
+        if (selectedFrameAware != null) {
+            final boolean isFrameMarked = selectedFrameAware.isFrameMarked(mediaFrame);
+
+            // Check if the view is selected
+            //sequence.getId() == selectedSequencePictogramViewPair.sequence.getId()
+            if (isFrameMarked) {
+                // Set the background-color for the selected item
+                view.setBackgroundColor(context.getResources().getColor(R.color.giraf_page_indicator_active));
+            }
+            else
+            {
+                view.setBackgroundDrawable(null);
             }
         }
 

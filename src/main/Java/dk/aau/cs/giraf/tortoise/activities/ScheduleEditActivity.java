@@ -1,22 +1,16 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,23 +19,22 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
@@ -59,7 +52,9 @@ import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
-public class ScheduleEditActivity extends ScheduleActivity {
+public class ScheduleEditActivity extends ScheduleActivity implements SequenceAdapter.SelectedFrameAware {
+
+    private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
 
     private Profile guardian;
     private Profile selectedChild;
@@ -74,7 +69,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private int sequenceId;
     private int pictogramEditPos = -1;
     private String tempNameHolder;
-
+    private ArrayList<boolean[]> markedFrames = new ArrayList<boolean[]>();
 
     public static dk.aau.cs.giraf.tortoise.controller.Sequence schedule;
     public static ArrayList<Sequence> daySequences = new ArrayList<Sequence>();
@@ -112,6 +107,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     public List<List<ImageView>> weekdayLists;
     GDialog exitDialog;
+    GirafInflatableDialog acceptDeleteDialog;
     private GirafButton scheduleImage;
     private GirafButton saveButton;
     private GirafButton binClosed;
@@ -178,24 +174,31 @@ public class ScheduleEditActivity extends ScheduleActivity {
             // add empty sequences for each week day
             mondaySequence = new Sequence();
             daySequences.add(0, mondaySequence);
+            markedFrames.add(new boolean[0]);
 
             tuesdaySequence = new Sequence();
             daySequences.add(1, tuesdaySequence);
+            markedFrames.add(new boolean[0]);
 
             wednesdaySequence = new Sequence();
             daySequences.add(2, wednesdaySequence);
+            markedFrames.add(new boolean[0]);
 
             thursdaySequence = new Sequence();
             daySequences.add(3, thursdaySequence);
+            markedFrames.add(new boolean[0]);
 
             fridaySequence = new Sequence();
             daySequences.add(4, fridaySequence);
+            markedFrames.add(new boolean[0]);
 
             saturdaySequence = new Sequence();
             daySequences.add(5, saturdaySequence);
+            markedFrames.add(new boolean[0]);
 
             sundaySequence = new Sequence();
             daySequences.add(6, sundaySequence);
+            markedFrames.add(new boolean[0]);
 
             schedule = new Sequence();
 
@@ -203,10 +206,11 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
         else
         {
-            schedule = LifeStory.getInstance().getStories().get(template);
+            List<Sequence> seqs = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            schedule = seqs.get(template);
             LifeStory.getInstance().setCurrentStory(schedule);
 
-            int dayID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(0).getNestedSequenceID();
+            int dayID = schedule.getMediaFrames().get(0).getNestedSequenceID();
             mondaySequence = DBController.getInstance().getSequenceFromID(dayID, this);
             Collections.sort(mondaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -214,8 +218,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             daySequences.add(0, mondaySequence);
+            markedFrames.add(new boolean[mondaySequence.getMediaFrames().size()]);
 
-            int day1ID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(1).getNestedSequenceID();
+            int day1ID = schedule.getMediaFrames().get(1).getNestedSequenceID();
             tuesdaySequence = DBController.getInstance().getSequenceFromID(day1ID, this);
             Collections.sort(tuesdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -223,8 +228,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             daySequences.add(1, tuesdaySequence);
+            markedFrames.add(new boolean[tuesdaySequence.getMediaFrames().size()]);
 
-            int day2ID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(2).getNestedSequenceID();
+            int day2ID = schedule.getMediaFrames().get(2).getNestedSequenceID();
             wednesdaySequence = DBController.getInstance().getSequenceFromID(day2ID, this);
             Collections.sort(wednesdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -232,8 +238,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             daySequences.add(2, wednesdaySequence);
+            markedFrames.add(new boolean[wednesdaySequence.getMediaFrames().size()]);
 
-            int day3ID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(3).getNestedSequenceID();
+            int day3ID = schedule.getMediaFrames().get(3).getNestedSequenceID();
             thursdaySequence = DBController.getInstance().getSequenceFromID(day3ID, this);
             Collections.sort(thursdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -241,8 +248,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             daySequences.add(3, thursdaySequence);
+            markedFrames.add(new boolean[thursdaySequence.getMediaFrames().size()]);
 
-            int day4ID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(4).getNestedSequenceID();
+            int day4ID = schedule.getMediaFrames().get(4).getNestedSequenceID();
             fridaySequence = DBController.getInstance().getSequenceFromID(day4ID, this);
             Collections.sort(fridaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -250,8 +258,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             daySequences.add(4, fridaySequence);
+            markedFrames.add(new boolean[fridaySequence.getMediaFrames().size()]);
 
-            int day5ID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(5).getNestedSequenceID();
+            int day5ID = schedule.getMediaFrames().get(5).getNestedSequenceID();
             saturdaySequence = DBController.getInstance().getSequenceFromID(day5ID, this);
             Collections.sort(saturdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -259,8 +268,9 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             daySequences.add(5, saturdaySequence);
+            markedFrames.add(new boolean[saturdaySequence.getMediaFrames().size()]);
 
-            int day6ID = LifeStory.getInstance().getStories().get(template).getMediaFrames().get(6).getNestedSequenceID();
+            int day6ID = schedule.getMediaFrames().get(6).getNestedSequenceID();
             sundaySequence = DBController.getInstance().getSequenceFromID(day6ID, this);
             Collections.sort(sundaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -268,6 +278,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 }
             });
             daySequences.add(6, sundaySequence);
+            markedFrames.add(new boolean[sundaySequence.getMediaFrames().size()]);
 
             //Set title text
             scheduleName.setText(schedule.getTitle(), EditText.BufferType.EDITABLE);
@@ -320,35 +331,35 @@ public class ScheduleEditActivity extends ScheduleActivity {
     private void setupFramesGrid() {
         // Create Adapter for the SequenceViewGroup (The Grid displaying the Sequence)
 
-        mondayAdapter = new SequenceAdapter(this, daySequences.get(0));
+        mondayAdapter = new SequenceAdapter(this, daySequences.get(0), this);
         mondayAdapter = setupAdapter(mondayAdapter, daySequences.get(0));
         setupSequenceViewGroup(mondayAdapter, R.id.sequenceViewGroupMon);
 
-        tuesdayAdapter = new SequenceAdapter(this, daySequences.get(1));
+        tuesdayAdapter = new SequenceAdapter(this, daySequences.get(1), this);
         tuesdayAdapter = setupAdapter(tuesdayAdapter, daySequences.get(1));
         setupSequenceViewGroup(tuesdayAdapter, R.id.sequenceViewGroup2);
 
-        wednesdayAdapter = new SequenceAdapter(this, daySequences.get(2));
+        wednesdayAdapter = new SequenceAdapter(this, daySequences.get(2), this );
         wednesdayAdapter = setupAdapter(wednesdayAdapter, daySequences.get(2));
         setupSequenceViewGroup(wednesdayAdapter, R.id.sequenceViewGroup3);
 
-        thursdayAdapter = new SequenceAdapter(this, daySequences.get(3));
+        thursdayAdapter = new SequenceAdapter(this, daySequences.get(3), this);
         thursdayAdapter = setupAdapter(thursdayAdapter, daySequences.get(3));
         setupSequenceViewGroup(thursdayAdapter, R.id.sequenceViewGroup4);
 
-        fridayAdapter = new SequenceAdapter(this, daySequences.get(4));
+        fridayAdapter = new SequenceAdapter(this, daySequences.get(4), this);
         fridayAdapter = setupAdapter(fridayAdapter, daySequences.get(4));
         setupSequenceViewGroup(fridayAdapter, R.id.sequenceViewGroup5);
 
-        saturdayAdapter = new SequenceAdapter(this, daySequences.get(5));
+        saturdayAdapter = new SequenceAdapter(this, daySequences.get(5), this);
         saturdayAdapter = setupAdapter(saturdayAdapter, daySequences.get(5));
         setupSequenceViewGroup(saturdayAdapter, R.id.sequenceViewGroup6);
 
-        sundayAdapter = new SequenceAdapter(this, daySequences.get(6));
+        sundayAdapter = new SequenceAdapter(this, daySequences.get(6), this);
         sundayAdapter = setupAdapter(sundayAdapter, daySequences.get(6));
         setupSequenceViewGroup(sundayAdapter, R.id.sequenceViewGroup7);
 
-        scheduleAdapter = new SequenceAdapter(this, schedule);
+        scheduleAdapter = new SequenceAdapter(this, schedule, this);
         scheduleAdapter = setupAdapter(scheduleAdapter, schedule);
 
         adapterList = new ArrayList<SequenceAdapter>();
@@ -384,24 +395,18 @@ public class ScheduleEditActivity extends ScheduleActivity {
             @Override
             public void onClick(View v) {
                 if(doingDelete){
-                    if(deletingSomething) {
-                        // Create and show dialog here
-                        deletingSomething = false;
-                    }
-                    doingDelete = false;
-                    saveButton.setVisibility(View.VISIBLE);
-                    scheduleImage.setVisibility(View.VISIBLE);
-                    scheduleName.setText(tempNameHolder);
-                    scheduleName.setEnabled(true);
-                    for(SequenceAdapter a : adapterList){
-                        a.setDraggability(true);
-                    }
+
+                    acceptDeleteDialog = GirafInflatableDialog.newInstance(
+                            getApplicationContext().getString(R.string.delete_schedules),
+                            getApplicationContext().getString(R.string.delete_this) + " "
+                                    + getApplicationContext().getString(R.string.marked_schedules),
+                            R.layout.dialog_delete);
+                    acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
                 }
                 else {
 
                     initializeMarkingArrayList();
                     // Initialize marking array (use markedActivities)
-
                     doingDelete = true;
                     saveButton.setVisibility(View.INVISIBLE);
                     scheduleImage.setVisibility(View.INVISIBLE);
@@ -418,9 +423,18 @@ public class ScheduleEditActivity extends ScheduleActivity {
         addGirafButtonToActionBar(binClosed, RIGHT);
 
         //Set title image.
-        Bitmap titleBitmap = schedule.getTitleImage();
-        Drawable titleDrawable = new BitmapDrawable(getResources(), titleBitmap);
-        scheduleImage.setIcon(titleDrawable);
+
+        int xy = 200;
+
+        if (schedule.getTitlePictoId() != 0) {
+            helper = new Helper(this);
+            Drawable d = new BitmapDrawable(getResources(), helper.pictogramHelper.getPictogramById(schedule.getTitlePictoId()).getImage());
+            scheduleImage.setIcon(resizeDrawable(d,xy,xy));
+        }
+        else {
+            Drawable titleDrawable = getResources().getDrawable(R.drawable.add_sequence_picture);
+            scheduleImage.setIcon(resizeDrawable(titleDrawable, xy, xy));
+        }
     }
 
     private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter sAdapter, final int i) {
@@ -452,15 +466,21 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 // update weekdaySelected
                 currentWeekSection(view);
                 //Save Frame and Position
-                pictogramEditPos = position;
                 MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(position);
 
                 if(doingDelete){
-                    deletingSomething = true;
-                    daySequences.get(weekdaySelected).getMediaFrames().get(position).setMarked(true);
-                    sAdapter.notifyDataSetChanged();
+                    if(!isFrameMarked(frame)) {
+                        deletingSomething = true;
+                        markSequence(position, (PictogramView) view);
+                        sAdapter.notifyDataSetChanged();
+                    }
+                    else{
+                        unMarkSequence(position, view);
+                        sAdapter.notifyDataSetChanged();
+                    }
                 }
                 else {
+                    pictogramEditPos = position;
                     //Perform action depending on the type of pictogram clicked.
                     checkFrameMode(frame, view, sAdapter);
                 }
@@ -476,6 +496,50 @@ public class ScheduleEditActivity extends ScheduleActivity {
         });
 
         return sequenceGroup;
+    }
+
+    private void markSequence(int index, View view) {
+        markedFrames.get(weekdaySelected)[index] = true;
+        view.setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
+    }
+
+    private void unMarkSequence(int index, View view) {
+        markedFrames.get(weekdaySelected)[index] = false;
+        view.setBackgroundDrawable(null);
+    }
+
+    public void deleteClick(View v) {
+
+        acceptDeleteDialog.dismiss();
+
+        if(deletingSomething) {
+            deletingSomething = false;
+            for(int i = 0; i < daySequences.size(); i++){
+                for(int j = 0; j <daySequences.get(i).getMediaFrames().size(); j++){
+                    if(markedFrames.get(i)[j]){
+                        daySequences.get(i).getMediaFrames().remove(j);
+                    }
+                }
+                markedFrames.set(i, new boolean[daySequences.get(i).getMediaFrames().size()]);
+                adapterList.get(i).notifyDataSetChanged();
+            }
+
+        }
+        doingDelete = false;
+        saveButton.setVisibility(View.VISIBLE);
+        scheduleImage.setVisibility(View.VISIBLE);
+        scheduleName.setText(tempNameHolder);
+        scheduleName.setEnabled(true);
+        for(SequenceAdapter a : adapterList){
+            a.setDraggability(true);
+        }
+
+
+    }
+
+    public void cancelDeleteClick(View v) {
+        // Button to cancel delete of sequences
+        acceptDeleteDialog.dismiss();
     }
 
     private SequenceAdapter setupAdapter(final SequenceAdapter adapter, final Sequence s) {
@@ -503,7 +567,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
 
     private SequenceAdapter setupChoiceAdapter() {
         //Sets up the adapter for the Choice Frames
-        final SequenceAdapter adapter = new SequenceAdapter(this, choice);
+        final SequenceAdapter adapter = new SequenceAdapter(this, choice, this);
 
         //Adds a Delete Icon to all Frames which deletes the relevant Frame on click.
         adapter.setOnAdapterGetViewListener(new SequenceAdapter.OnAdapterGetViewListener() {
@@ -584,10 +648,10 @@ public class ScheduleEditActivity extends ScheduleActivity {
         Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
         Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
         bitmap = LayoutTools.getSquareBitmap(bitmap);
-        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
+        bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 40);
         schedule.setTitleImage(bitmap);
-        scheduleImage.setIcon(new BitmapDrawable(getResources(), bitmap));
-        
+        int xy = 120;
+        scheduleImage.setIcon(resizeDrawable(new BitmapDrawable(getResources(), bitmap), xy, xy));
         scheduleAdapter.notifyDataSetChanged();
     }
 
@@ -650,7 +714,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
                 daySequences.get(weekdaySelected).addFrame(frame);
 
             }
-
+            markedFrames.set(weekdaySelected, new boolean[daySequences.get(weekdaySelected).getMediaFrames().size()]);
             adapterList.get(weekdaySelected).notifyDataSetChanged();
         }
     }
@@ -730,8 +794,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
             daySeq.setId(0);
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
                     dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
-                    LifeStory.getInstance().getChild().getId(),
-                    getApplicationContext());
+                    childId, getApplicationContext());
             MediaFrame mf = new MediaFrame();
             mf.setNestedSequenceID(daySeq.getId());
             scheduleSeq.getMediaFrames().add(mf);
@@ -740,8 +803,7 @@ public class ScheduleEditActivity extends ScheduleActivity {
         //Saves the week sequence with reference to the days
         boolean s2 = DBController.getInstance().saveSequence(scheduleSeq,
                 dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
-                LifeStory.getInstance().getChild().getId(),
-                getApplicationContext());
+                childId, getApplicationContext());
 
         if (s1 && s2) {
             GuiHelper.ShowToast(this, "Skema gemt");
@@ -800,6 +862,17 @@ public class ScheduleEditActivity extends ScheduleActivity {
         }
 
     }
+
+    @Override
+    public boolean isFrameMarked(MediaFrame frame) {
+        for(int i = 0; i < daySequences.size(); i++){
+            if(daySequences.get(i).getMediaFrames().contains(frame)){
+                return markedFrames.get(i)[daySequences.get(i).getMediaFrames().indexOf(frame)];
+            }
+        }
+        return false;
+    }
+
     private void finishActivity(){
         assumeMinimize = false;
         finish();
@@ -808,8 +881,8 @@ public class ScheduleEditActivity extends ScheduleActivity {
         assumeMinimize = false;
         Intent i = new Intent();
         i.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
-        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
-        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        i.putExtra("currentChildID", childId);
+        i.putExtra("currentGuardianID", guardianId);
 
 
 
@@ -1057,8 +1130,24 @@ public class ScheduleEditActivity extends ScheduleActivity {
     @Override
     public void onBackPressed() {
         //Create instance of BackDialog class and display it
-        BackDialog backDialog = new BackDialog(this);
-        backDialog.show();
+        if(!doingDelete){
+            BackDialog backDialog = new BackDialog(this);
+            backDialog.show();
+        }
+        else{
+
+            if(deletingSomething) {
+                deletingSomething = false;
+                markedFrames.clear();
+                for(int j = 0; j < markedFrames.size(); j++){
+                    markedFrames.set(j, new boolean[daySequences.get(j).getMediaFrames().size()]);
+                    adapterList.get(j).notifyDataSetChanged();
+                }
+            }
+            doingDelete = false;
+            saveButton.setVisibility(View.VISIBLE);
+            scheduleImage.setVisibility(View.VISIBLE);
+        }
     }
 
     private void createAndShowAddDialog(View v, final SequenceAdapter adapter) {

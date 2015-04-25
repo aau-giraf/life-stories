@@ -4,47 +4,50 @@ package dk.aau.cs.giraf.tortoise;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
-import dk.aau.cs.giraf.gui.GButton;
-import dk.aau.cs.giraf.gui.GButtonProfileSelect;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
-import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+//import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
 import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
+import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
 import dk.aau.cs.giraf.tortoise.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
 
-public class MainActivity extends TortoiseActivity {
+public class MainActivity extends TortoiseActivity implements SequenceListAdapter.SelectedSequenceAware {
 
     private final int DIALOG_DELETE = 1;
+    private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
+
     private boolean isInEditMode = false;
     private boolean isInScheduleMode = false;
     private boolean canFinish;
+    private boolean markingMode = false;
+    private boolean isChildSet = false;
     private SequenceListAdapter sequenceAdapter;
+    GridView sequenceGrid;
+    private List<Sequence> schedules;
+    private Set<Sequence> markedSequences = new HashSet<Sequence>();
     private View currentMainWindow;
 
     private Profile guardian;
@@ -59,9 +62,11 @@ public class MainActivity extends TortoiseActivity {
     private int childId;
 
     private Helper helper;
+    GirafInflatableDialog acceptDeleteDialog;
     private GirafButton profileSelector;
     private GirafButton addButton;
     private GirafButton editButton;
+    private GirafButton deleteButton;
     /**
      * Initializes all app elements.
      * @param savedInstanceState
@@ -83,48 +88,48 @@ public class MainActivity extends TortoiseActivity {
         if (i.getIntExtra("app_to_start", -1) == 10)
             isInScheduleMode = true;
 
-        // If launched from Giraf, then execute!
-        Helper h = new Helper(this);
+        helper = new Helper(this);
         // Set guardian- and child profiles
-        LifeStory.getInstance().setGuardian(
-                h.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+        //LifeStory.getInstance().setGuardian(
+        //        helper.profilesHelper.getProfileById(i.getIntExtra("currentGuardianID", -1)));
+
+        setupSequenceGridView();
 
         initializeButtons();
 
-        overrideViews();
-        if (i.getIntExtra("currentChildID", -1) == -1) {
+        setupModeFromIntents();
+
+        //overrideViews();
+        /*if (i.getIntExtra("currentChildID", -1) == -1) {
             profileSelector.performClick();
         }else {
             LifeStory.getInstance().setChild(
-                    h.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+                    helper.profilesHelper.getProfileById(i.getIntExtra("currentChildID", -1)));
+            isChildSet = true;
             // Initialize name of profile
-        }
+        }*/
+    }
+
+    private void setupSequenceGridView() {
+
+        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+
+        //sequenceAdapter = new SequenceListAdapter(MainActivity.this, sequences, MainActivity.this);
+        //sequenceGrid.setAdapter(sequenceAdapter);
     }
 
     private void initializeButtons() {
         profileSelector = new GirafButton(this, getResources().getDrawable(R.drawable.icon_change_user));
         addButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_add));
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Sequence sequence = new Sequence();
-                addSchedule(sequence, true, v);
-            }
-        });
+        deleteButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_delete));
         editButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_edit));
 
-        addGirafButtonToActionBar(profileSelector, LEFT);
-        addGirafButtonToActionBar(addButton, RIGHT);
-        addGirafButtonToActionBar(editButton, RIGHT);
-    }
-
-    private void overrideViews() {
         profileSelector.setOnClickListener(new View.OnClickListener() {
             //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
                 final GProfileSelector childSelector = new GProfileSelector(v.getContext(),
-                        LifeStory.getInstance().getGuardian(),
+                        guardian,
                         null,
                         false);
                 childSelector.show();
@@ -133,13 +138,14 @@ public class MainActivity extends TortoiseActivity {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
-                        LifeStory.getInstance().setChild(
-                                new Helper(getApplicationContext()).profilesHelper.getProfileById((int) id));
-
+                        selectedChild = helper.profilesHelper.getProfileById((int) id);
+                        childId = (int) id;
+                        schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
+                                childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
                         //profileName.setText(LifeStory.getInstance().getChild().getName());
 
-                        loadSeqGrid(LifeStory.getInstance().getChild());
-
+                        loadSeqGrid();
+                        isChildSet = true;
                         childSelector.dismiss();
                     }
                 });
@@ -147,6 +153,28 @@ public class MainActivity extends TortoiseActivity {
                 catch (Exception ignored){}
             }
         });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Sequence sequence = new Sequence();
+                addSchedule(sequence, true, v);
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            // Opens a dialog to remove the selected sequences
+            @Override
+            public void onClick(View v) {
+                acceptDeleteDialog = GirafInflatableDialog.newInstance(
+                        getApplicationContext().getString(R.string.delete_schedules),
+                        getApplicationContext().getString(R.string.delete_this) + " "
+                                + getApplicationContext().getString(R.string.marked_schedules),
+                        R.layout.dialog_delete);
+                acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
+            }
+        });
+        deleteButton.setVisibility(View.GONE);
 
         editButton.setOnClickListener(new ImageButton.OnClickListener() {
 
@@ -172,48 +200,94 @@ public class MainActivity extends TortoiseActivity {
                 }
             }
         });
+
+        addGirafButtonToActionBar(profileSelector, LEFT);
+        addGirafButtonToActionBar(addButton, RIGHT);
+        addGirafButtonToActionBar(editButton, RIGHT);
+        addGirafButtonToActionBar(deleteButton, RIGHT);
     }
 
+    /*private void overrideViews() {
+
+    }*/
+
     private void setupModeFromIntents() {
-        //Create helper to fetch data from database
-        helper = new Helper(this);
+        //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
 
-        //Fetches intents (from Launcher or SequenceActivity)
         Bundle extras = getIntent().getExtras();
-
-        //Makes the Activity killable from SequenceActivity and (Nested) MainActivity
-        if (extras.getBoolean("insertSequence") == false) {
-            activityToKill = this;
-        }
+        int guardianId;
 
         //Get GuardianId and ChildId from extras
-        int guardianId = extras.getInt("currentGuardianID");
+        guardianId = extras.getInt("currentGuardianID");
         childId = extras.getInt("currentChildID");
 
         //Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getProfileById(guardianId);
 
-        //Setup nestedMode if insertSequence extra is present
-        /*if (extras.getBoolean("insertSequence")) {
-            nestedMode = true;
-            setupNestedMode();
-            setChild();
-        }
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
-        else if (childId == -1) {
+         if(childId == -1){
             pickAndSetChild();
-            setupGuardianMode();
+            schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
+                     childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            //loadSeqGrid();
         }
         //Else setup application for a Child
         else {
-            setupChildMode();
+            schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
+                     childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            loadSeqGrid();
             setChild();
-            childIsSet = true;
-        }*/
+            isChildSet = true;
+        }
     }
-    private void loadSeqGrid(Profile profile){
+
+    private void pickAndSetChild() {
+        //Create ProfileSelector to make Guardian select Child
+        final GProfileSelector childSelector = new GProfileSelector(this, guardian, null, false);
+
+        //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
+        childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                selectedChild = helper.profilesHelper.getProfileById((int) id);
+                childId = (int) id;
+                schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
+                        childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+                //profileName.setText(LifeStory.getInstance().getChild().getName());
+
+                setChild();
+                isChildSet = true;
+                childSelector.dismiss();
+                loadSeqGrid();
+            }
+        });
+        childSelector.show();
+    }
+
+    // Sets up child mode - only possible to view sequences
+    private void setupChildMode() {
+        //When clicking a Sequence, lift up the view, create Intent for SequenceViewer and launch it
+        sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+                ((PictogramView) arg1).liftUp();
+
+                //Create Intent with relevant Extras
+                Intent i = new Intent(getApplicationContext(), ScheduleViewActivity.class);;
+                i.putExtra("story", position);
+                startActivity(i);
+            }
+        });
+
+        addButton.setVisibility(View.INVISIBLE);
+        deleteButton.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
+        profileSelector.setVisibility(View.INVISIBLE);
+    }
+
+    private void loadSeqGrid(){
         // Clear existing life stories
-        LifeStory.getInstance().getStories().clear();
+        /*LifeStory.getInstance().getStories().clear();
         if (isInScheduleMode)
             DBController.getInstance().loadCurrentProfileSequences(
                     profile.getId(), Sequence.SequenceType.SCHEDULE, getApplicationContext());
@@ -222,10 +296,23 @@ public class MainActivity extends TortoiseActivity {
                     profile.getId(), Sequence.SequenceType.STORY, getApplicationContext());
 
         // Initialize grid view
-        GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
+        sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
-        sequenceGrid.setAdapter(sequenceAdapter);
+        sequenceGrid.setAdapter(sequenceAdapter);*/
 
+
+        sequenceGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                markingMode = true;
+                Sequence sequence = sequenceAdapter.getItem(position);
+                markSequence(sequence, view);
+                deleteButton.setVisibility(View.VISIBLE);
+                editButton.setVisibility(View.INVISIBLE);
+                addButton.setVisibility(View.GONE);
+                return true;
+            }
+        });
 
         // Load Sequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -233,44 +320,93 @@ public class MainActivity extends TortoiseActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 canFinish = false;
+
                 Intent i;
-                if (isInScheduleMode){
-                    if (isInEditMode) {
-                        i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-                        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
-                        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
-                        i.putExtra("isNew", false);
-                        i.putExtra("template", arg2);
-                        i.putExtra("EditMode", true);
-                        i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
-                        startActivity(i);
+                final Sequence sequence = sequenceAdapter.getItem(arg2);
+                selectedChild = helper.profilesHelper.getProfileById(childId);
+
+                if(!markingMode){
+                    if (isInScheduleMode){
+                        if (isInEditMode) {
+                            i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
+                            i.putExtra("currentChildID", selectedChild.getId());
+                            i.putExtra("currentGuardianID", guardian.getId());
+                            i.putExtra("isNew", false);
+                            i.putExtra("template", arg2);
+                            i.putExtra("EditMode", true);
+                            i.putExtra("sequenceId", sequence.getId());
+                            startActivity(i);
+                        } else {
+                            i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
+                            i.putExtra("currentChildID", selectedChild.getId());
+                            i.putExtra("currentGuardianID", guardian.getId());
+                            i.putExtra("story", arg2);
+                            i.putExtra("sequenceId", sequence.getId());
+                            startActivity(i);
+                        }
                     } else {
-                        i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
-                        i.putExtra("story", arg2);
-                        startActivity(i);
+                        if (isInEditMode) {
+                            i = new Intent(getApplicationContext(), EditModeActivity.class);
+                            i.putExtra("template", arg2);
+                            startActivity(i);
+                        } else {
+                            i = new Intent();
+                            i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                            i.putExtra("sequenceId", sequence.getId());
+                            Log.e("Tag", Integer.toString(sequence.getMediaFrames().get(0).getContent().get(0).getPictogramID()));
+                            i.putExtra("landscapeMode", true);
+                            i.putExtra("visiblePictogramCount", 4);
+                            i.putExtra("callerType", "Tortoise");
+                            startActivityForResult(i, 0);
+                        }
                     }
-                } else {
-                    if (isInEditMode) {
-                        i = new Intent(getApplicationContext(), EditModeActivity.class);
-                        i.putExtra("template", arg2);
-                        startActivity(i);
+                }
+                else
+                {
+                    if (markedSequences.contains(sequence))
+                    {
+                        unMarkSequence(sequence, arg1);
                     } else {
-                        i = new Intent();
-                        i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
-                        i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
-                        Log.e("Tag", Integer.toString(LifeStory.getInstance().getStories().get(arg2).getMediaFrames().get(0).getContent().get(0).getPictogramID()));
-                        i.putExtra("landscapeMode", true);
-                        i.putExtra("visiblePictogramCount", 4);
-                        i.putExtra("callerType", "Tortoise");
-                        startActivityForResult(i, 0);
+                        markSequence(sequence, arg1);
                     }
                 }
             }
         });
     }
 
+    private void markSequence(Sequence sequence, View view) {
+        markedSequences.add(sequence);
+        view.setBackgroundColor(getResources().getColor(R.color.giraf_page_indicator_active));
+    }
+
+    private void unMarkSequence(Sequence c, View view) {
+        markedSequences.remove(c);
+        view.setBackgroundDrawable(null);
+    }
+
+    public void deleteClick(View v) {
+        // Button to accept delete of sequences
+        acceptDeleteDialog.dismiss();
+        // Delete all selected items
+        for (Sequence seq : markedSequences) {
+            DBController.getInstance().deleteSequence(seq, getApplicationContext());
+            schedules.remove(seq);//Check to whether cascading delete
+        }
+        sequenceAdapter.notifyDataSetChanged(); // Needs fixing
+
+        addButton.setVisibility(View.VISIBLE);
+        deleteButton.setVisibility(View.GONE);
+        editButton.setVisibility(View.VISIBLE);
+    }
+
+    public void cancelDeleteClick(View v) {
+        // Button to cancel delete of sequences
+        acceptDeleteDialog.dismiss();
+    }
+
     public SequenceListAdapter initAdapter() {
-        final SequenceListAdapter adapter = new SequenceListAdapter(this);
+
+        final SequenceListAdapter adapter = new SequenceListAdapter(MainActivity.this, schedules, MainActivity.this);
 
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
 
@@ -308,33 +444,23 @@ public class MainActivity extends TortoiseActivity {
         super.onStop();
     }
 
-    @Override
+    /*@Override
     protected void onResume()
     {
         super.onResume();
 
-        isInEditMode = false;
-        editButton.setPressed(false);
-        Profile child = LifeStory.getInstance().getChild();
-        if(child != null) {
-            //profileName.setText(child.getName());
-            loadSeqGrid(child);
-        }
-        if(sequenceAdapter != null) {
-            sequenceAdapter.setEditModeEnabled(isInEditMode);
-            sequenceAdapter.notifyDataSetChanged();
-        }
-    }
+
+    }*/
 
     public void renderDialog(int dialogId, final int position) {
-        final dk.aau.cs.giraf.tortoise.controller.Sequence seq;
+        final Sequence seq;
         final LifeStory lifeStory = LifeStory.getInstance();
         final DBController dbc = DBController.getInstance();
         final MainActivity parentObj = this;
 
         // If isInTemplateMode is true then the guardian profile is active. If not, the child profile is active.
 
-        seq = LifeStory.getInstance().getStories().get(position);
+        seq = schedules.get(position);
 
         // Dialog that prompts for deleting a story or template
         switch (dialogId) {
@@ -351,7 +477,7 @@ public class MainActivity extends TortoiseActivity {
                             dbc.deleteSequence(seq, parentObj);
                             lifeStory.removeStory(seq);
 
-                            sequenceAdapter.setItems();
+                            sequenceAdapter.setItems(schedules);
                             sequenceAdapter.notifyDataSetChanged();
                         }
 
@@ -371,8 +497,8 @@ public class MainActivity extends TortoiseActivity {
         canFinish = false;
         Intent i = new Intent(this, ScheduleEditActivity.class);
         i.putExtra("template", -1);
-        i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
-        i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
+        i.putExtra("currentChildID", selectedChild.getId());
+        i.putExtra("currentGuardianID", guardian.getId());
         i.putExtra("EditMode", true);
         i.putExtra("isNew", isNew);
         i.putExtra("sequenceId", s.getId());
@@ -388,6 +514,85 @@ public class MainActivity extends TortoiseActivity {
         } else
         {
             GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte ugeplanlægger");
+        }
+    }
+
+    private synchronized void setChild() {
+        //Save Child locally and update relevant information for application
+        selectedChild = helper.profilesHelper.getProfileById(childId);
+        this.setActionBarTitle(getResources().getString(R.string.app_name_week_schedule) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
+
+        /*sequenceAdapter = initAdapter();
+        sequenceGrid.setAdapter(sequenceAdapter);
+        loadSeqGrid();*/
+        // AsyncTask thread
+        AsyncFetchDatabase fetchDatabaseSetChild = new AsyncFetchDatabase();
+        fetchDatabaseSetChild.execute();
+    }
+
+    @Override
+    public boolean isSequenceMarked(Sequence sequence) {
+        return markedSequences.contains(sequence);
+    }
+
+    // AsyncTask. Used to fetch data from the database in another thread which is NOT the GUI thread
+    public class AsyncFetchDatabase extends AsyncTask<Void, Void, List<Sequence>> {
+
+        @Override
+        protected List<Sequence> doInBackground(Void... params) {
+            return DBController.getInstance().loadCurrentProfileSequencesAndFrames(selectedChild.getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+        }
+
+        @Override
+        protected void onPostExecute(final List<Sequence> result) {
+            sequenceAdapter = new SequenceListAdapter(MainActivity.this, result, MainActivity.this);
+            sequenceGrid.setAdapter(sequenceAdapter);
+        }
+    }
+
+    @Override
+    protected synchronized void onResume() {
+        super.onResume();
+        // Create the AsyncTask thread used to fetch database content
+        AsyncFetchDatabase fetchDatabase = new AsyncFetchDatabase();
+
+        // Removes highlighting from Sequences that might have been lifted up when selected before entering the sequence
+        for (int i = 0; i < sequenceGrid.getChildCount(); i++) {
+            View view = sequenceGrid.getChildAt(i);
+
+            ((PictogramView) view).placeDown();
+        }
+        //If a Child is selected at this point, update Sequences for the Child
+        //Profile child = LifeStory.getInstance().getChild();
+        if(isChildSet) {
+            /*sequenceAdapter = initAdapter();
+            sequenceGrid.setAdapter(sequenceAdapter);
+            */
+            fetchDatabase.execute();
+            //loadSeqGrid();
+        }
+
+        isInEditMode = false;
+        editButton.setPressed(false);
+
+        /*if(sequenceAdapter != null) {
+            sequenceAdapter.setEditModeEnabled(isInEditMode);
+            sequenceAdapter.notifyDataSetChanged();
+        }*/
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (markingMode) {
+            markedSequences.clear();
+            sequenceAdapter.notifyDataSetChanged();
+
+            deleteButton.setVisibility(View.GONE);
+            addButton.setVisibility(View.VISIBLE);
+            editButton.setVisibility(View.VISIBLE);
+            markingMode = false;
+        } else {
+            super.onBackPressed();
         }
     }
 

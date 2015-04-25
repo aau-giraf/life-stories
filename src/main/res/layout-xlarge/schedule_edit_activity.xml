@@ -17,7 +17,7 @@
 
         <dk.aau.cs.giraf.gui.GirafButton
             android:id="@+id/sequenceThumbnail"
-            android:layout_width="80dp"
+            android:layout_width="@dimen/schedule_image_button_height"
             android:layout_height="fill_parent"
             app:icon="@drawable/add_sequence_picture"/>
 

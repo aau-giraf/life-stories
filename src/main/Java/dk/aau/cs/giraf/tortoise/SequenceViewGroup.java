@@ -400,94 +400,93 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
         float x = event.getX();
         float y = event.getY();
 
-        if(draggable) {
-            //End drag if UP, Cancel or multiple pointers or pointer is gone
-            if (event.getActionMasked() == MotionEvent.ACTION_UP ||
-                    event.getActionMasked() == MotionEvent.ACTION_CANCEL ||
-                    event.getPointerCount() != 1 ||
-                    y >= getHeight() || y <= 0) {//Possible negative y value error
+        //End drag if UP, Cancel or multiple pointers or pointer is gone
+        if (event.getActionMasked() == MotionEvent.ACTION_UP ||
+                event.getActionMasked() == MotionEvent.ACTION_CANCEL ||
+                event.getPointerCount() != 1 ||
+                y >= getHeight() || y <= 0) {//Possible negative y value error
 
-                //Be careful with coordinates from the event if getPointerCount != 1
-                if (draggingView != null) {
-                    if (isDragging) {
+            //Be careful with coordinates from the event if getPointerCount != 1
+            if (draggingView != null) {
+                if (isDragging) {
+                    handled = true;
+
+                    stopAutoScroll();
+
+                    // Remove the highlight of the pictogram
+                    ((PictogramView) draggingView).placeDown();
+
+                    //Disallow movement when repositioning dragged view.
+                    animatingDragReposition = true;
+                    //Possible negative y value error
+                    TranslateAnimation move = new TranslateAnimation(
+                            0,
+                            0,
+                            0,
+                            calcChildTopPosition(curDragIndexPos) - draggingView.getTop());
+                    move.setDuration(ANIMATION_TIME);
+
+                    move.setAnimationListener(new AnimationListener() {
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+
+
+                            if (startDragIndex != curDragIndexPos) {
+
+                                //ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
+                                adapter.getSequence().rearrange(startDragIndex, curDragIndexPos);
+                                final int childViews = getChildCount();
+                                for (int i = 0; i < childViews; i++) {
+                                    getChildAt(i).clearAnimation();
+                                }
+                                rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
+                                //layout(getLeft(), getTop(), getRight(), getBottom());
+                                //This prevents lots of flicker
+                                onLayout(true, getLeft(), getTop(), getRight(), getBottom());
+                            } else {
+                                //Must clear animation to prevent flicker - even though it just ended.
+                                getChildAt(startDragIndex).clearAnimation();
+                                layoutChild(startDragIndex);
+                            }
+
+                            startDragIndex = -1;
+                            isDragging = false;
+                            curDragIndexPos = -1;
+                            animatingDragReposition = false;
+                            draggingView = null;
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                        }
+                    });
+
+                    draggingView.startAnimation(move);
+
+                } else { //Not dragging
+
+                    if (event.getActionMasked() == MotionEvent.ACTION_UP) {
                         handled = true;
 
-                        stopAutoScroll();
+                        performItemClick(draggingView, startDragIndex, startDragIndex);
 
                         // Remove the highlight of the pictogram
                         ((PictogramView) draggingView).placeDown();
 
-                        //Disallow movement when repositioning dragged view.
-                        animatingDragReposition = true;
-                        //Possible negative y value error
-                        TranslateAnimation move = new TranslateAnimation(
-                                0,
-                                0,
-                                0,
-                                calcChildTopPosition(curDragIndexPos) - draggingView.getTop());
-                        move.setDuration(ANIMATION_TIME);
-
-                        move.setAnimationListener(new AnimationListener() {
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-
-
-                                if (startDragIndex != curDragIndexPos) {
-
-                                    //ScheduleEditActivity.daySequences.get(ScheduleEditActivity.weekdaySelected).rearrange(startDragIndex, curDragIndexPos);
-                                    adapter.getSequence().rearrange(startDragIndex, curDragIndexPos);
-                                    final int childViews = getChildCount();
-                                    for (int i = 0; i < childViews; i++) {
-                                        getChildAt(i).clearAnimation();
-                                    }
-                                    rearrangeListener.onRearrange(startDragIndex, curDragIndexPos);
-                                    //layout(getLeft(), getTop(), getRight(), getBottom());
-                                    //This prevents lots of flicker
-                                    onLayout(true, getLeft(), getTop(), getRight(), getBottom());
-                                } else {
-                                    //Must clear animation to prevent flicker - even though it just ended.
-                                    getChildAt(startDragIndex).clearAnimation();
-                                    layoutChild(startDragIndex);
-                                }
-
-                                startDragIndex = -1;
-                                isDragging = false;
-                                curDragIndexPos = -1;
-                                animatingDragReposition = false;
-                                draggingView = null;
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-                            }
-
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                            }
-                        });
-
-                        draggingView.startAnimation(move);
-
-                    } else { //Not dragging
-
-                        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                            handled = true;
-
-                            performItemClick(draggingView, startDragIndex, startDragIndex);
-
-                            // Remove the highlight of the pictogram
-                            ((PictogramView) draggingView).placeDown();
-
-                            // Reset the dragging parameters
-                            startDragIndex = -1;
-                            draggingView = null;
-                        }
+                        // Reset the dragging parameters
+                        startDragIndex = -1;
+                        draggingView = null;
                     }
                 }
-
-                return handled;
             }
+
+            return handled;
+        }
 
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
@@ -497,6 +496,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                         //Grap original drag position
                         startDragIndex = indexOfChild(draggingView);
+
 
                         if (isInEditMode) {
                             handled = true;
@@ -528,6 +528,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                 case MotionEvent.ACTION_MOVE:
 
+                    if(draggable) {
                     if (draggingView == null) {  // The user is not touching a pictogram
                         handled = true;
                     } else {  // The user is touching a pictogram
@@ -539,12 +540,10 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 
                         handled = true;
                         handleTouchMove(y);
-                    }
+                    }}
                     break;
             }
-            return handled;
-        }
-        handled = true;
+
         return handled;
     }
 

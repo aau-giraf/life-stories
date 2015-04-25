@@ -19,6 +19,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
 
@@ -34,10 +35,13 @@ import android.widget.TextView;
 public class ScheduleViewActivity extends ScheduleActivity
 {
     int weekDaySelected;
+    private int childId;
+    private int guardianId;
     int amountOfPictograms;
     private GirafButton scheduleImage;
     private GirafButton resetProgress;
     private GirafButton portraitButton;
+    Helper helper;
     int template;
     private Sequence seq;
 
@@ -57,7 +61,13 @@ public class ScheduleViewActivity extends ScheduleActivity
         // the view activity uses a modified version of the edit activity layout
         setContentView(R.layout.schedule_view_activity);
 
+        helper = new Helper(this);
+
         initializeButtons();
+
+        childId = intent.getIntExtra("currentChildID", -1);
+
+        guardianId = intent.getIntExtra("currentGuardianID", -1);
 
         template = intent.getIntExtra("story", -1);
 
@@ -280,10 +290,10 @@ public class ScheduleViewActivity extends ScheduleActivity
     private void displaySequences()
     {
         // load sequences associated with citizen
-        DBController.getInstance().loadCurrentProfileSequences(LifeStory.getInstance().getChild().getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, this);
+        DBController.getInstance().loadCurrentProfileSequences(childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, this);
 
         // get sequences from database
-        List<Sequence> storyList = LifeStory.getInstance().getStories();
+        List<Sequence> storyList = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
 
         int storyIndex = template;
 
@@ -295,7 +305,6 @@ public class ScheduleViewActivity extends ScheduleActivity
 
             Drawable scheduleImageDrawable = new BitmapDrawable(getResources(), seq.getTitleImage());
             scheduleImage.setIcon(scheduleImageDrawable);
-            LifeStory.getInstance().setCurrentStory(seq);
             EditText scheduleName = (EditText) findViewById(R.id.editText);
             scheduleName.setText(seq.getTitle());
             scheduleName.setEnabled(false);
