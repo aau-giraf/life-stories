@@ -25,9 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
@@ -59,6 +57,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
     private Profile guardian;
     private Profile selectedChild;
     private boolean isInEditMode;
+    private boolean emblemToggler = true;
     private boolean isNew;
     private boolean assumeMinimize = true;
     private boolean doingDelete;
@@ -395,13 +394,18 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             @Override
             public void onClick(View v) {
                 if(doingDelete){
+                    if(deletingSomething) {
 
-                    acceptDeleteDialog = GirafInflatableDialog.newInstance(
-                            getApplicationContext().getString(R.string.delete_schedules),
-                            getApplicationContext().getString(R.string.delete_this) + " "
-                                    + getApplicationContext().getString(R.string.marked_schedules),
-                            R.layout.dialog_delete);
-                    acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
+                        acceptDeleteDialog = GirafInflatableDialog.newInstance(
+                                getApplicationContext().getString(R.string.delete_schedules),
+                                getApplicationContext().getString(R.string.delete_this) + " "
+                                        + getApplicationContext().getString(R.string.marked_schedules),
+                                R.layout.dialog_delete);
+                        acceptDeleteDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);
+                    }
+                    else {
+                        deleteClick(v);
+                    }
                 }
                 else {
 
@@ -409,13 +413,15 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                     // Initialize marking array (use markedActivities)
                     doingDelete = true;
                     saveButton.setVisibility(View.INVISIBLE);
-                    scheduleImage.setVisibility(View.INVISIBLE);
+                    scheduleImage.setVisibility(View.GONE);
                     tempNameHolder = scheduleName.getText().toString();
                     scheduleName.setText("Deleting");
                     scheduleName.setEnabled(false);
                     for(SequenceAdapter a : adapterList){
                         a.setDraggability(false);
+                        a.setMode(false);
                     }
+                    setNewMode(false);
                 }
             }
         });
@@ -510,9 +516,8 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
     public void deleteClick(View v) {
 
-        acceptDeleteDialog.dismiss();
-
         if(deletingSomething) {
+            acceptDeleteDialog.dismiss();
             deletingSomething = false;
             for(int i = 0; i < daySequences.size(); i++){
                 for(int j = 0; j <daySequences.get(i).getMediaFrames().size(); j++){
@@ -526,13 +531,16 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
         }
         doingDelete = false;
+        //setNewMode(false);
         saveButton.setVisibility(View.VISIBLE);
         scheduleImage.setVisibility(View.VISIBLE);
         scheduleName.setText(tempNameHolder);
         scheduleName.setEnabled(true);
         for(SequenceAdapter a : adapterList){
             a.setDraggability(true);
+            a.setMode(true);
         }
+        setNewMode(true);
 
 
     }
@@ -540,6 +548,42 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
     public void cancelDeleteClick(View v) {
         // Button to cancel delete of sequences
         acceptDeleteDialog.dismiss();
+    }
+
+    private void toggleEmblems(){
+        List<SequenceViewGroup> seqVs = new ArrayList<SequenceViewGroup>();
+        SequenceViewGroup seqV1 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroupMon);
+        SequenceViewGroup seqV2 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup2);
+        SequenceViewGroup seqV3 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup3);
+        SequenceViewGroup seqV4 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup4);
+        SequenceViewGroup seqV5 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup5);
+        SequenceViewGroup seqV6 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup6);
+        SequenceViewGroup seqV7 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup7);
+
+        seqVs.add(seqV1);
+        seqVs.add(seqV2);
+        seqVs.add(seqV3);
+        seqVs.add(seqV4);
+        seqVs.add(seqV5);
+        seqVs.add(seqV6);
+        seqVs.add(seqV7);
+
+        for(int i = 0; i < seqVs.size(); i++){
+            for(int j = 0; j < seqVs.get(i).getChildCount(); j++){
+                View view = seqVs.get(i).getChildAt(j);
+
+                if (view instanceof PictogramView) {
+                    ((PictogramView) view).setEditModeEnabled(emblemToggler);
+                }
+            }
+        }
+    }
+
+    private void setNewMode(boolean value){
+        if(emblemToggler != value){
+            emblemToggler = value;
+            toggleEmblems();
+        }
     }
 
     private SequenceAdapter setupAdapter(final SequenceAdapter adapter, final Sequence s) {
@@ -1145,6 +1189,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                 }
             }
             doingDelete = false;
+            setNewMode(true);
             saveButton.setVisibility(View.VISIBLE);
             scheduleImage.setVisibility(View.VISIBLE);
         }

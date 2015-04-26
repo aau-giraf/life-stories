@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.tortoise;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -10,10 +9,13 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import dk.aau.cs.giraf.oasis.lib.Helper;
 
@@ -37,7 +39,8 @@ public class PictogramView extends LinearLayout {
 
 	private RoundedImageView pictogram;
 	private TextView title;
-	private ImageButton deleteButton;
+	private ImageView editEmblem;
+    private ImageView deleteEmblem;
 	
 	private boolean isInEditMode = false;
 	
@@ -69,9 +72,9 @@ public class PictogramView extends LinearLayout {
 
         if(inMain) {
             square.addView(createImageViewForMain(radius));
-            square.addView(createDeleteButtonForMain());
+            square.addView(createEmblemsForMain());
 
-            setupOnDeleteClickHandler();
+            //setupOnDeleteClickHandler();
 
             this.addView(square);
 
@@ -79,9 +82,11 @@ public class PictogramView extends LinearLayout {
         }
         else{
             square.addView(createImageView(radius));
-            square.addView(createDeleteButton());
+            for(View v : createEmblems()){
+                square.addView(v);
+            }
 
-            setupOnDeleteClickHandler();
+            //setupOnDeleteClickHandler();
 
             this.addView(square);
 
@@ -114,51 +119,66 @@ public class PictogramView extends LinearLayout {
 		return title;
 	}
 	
-	private View createDeleteButtonForMain() {
-		deleteButton = new ImageButton(getContext());
-		deleteButton.setImageResource(R.drawable.btn_delete);
+	private View createEmblemsForMain() {
+		editEmblem = new ImageView(getContext());
+		editEmblem.setImageResource(R.drawable.icon_edit);
         /*For when the other delete mode is implemented */
-        //deleteButton.setImageResource(R.drawable.icon_edit_small);
+        //editEmblem.setImageResource(R.drawable.icon_edit_small);
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		deleteButton.setLayoutParams(params);
+		editEmblem.setLayoutParams(params);
 
 
 
-		deleteButton.setPadding(4, 4, 4, 4);
-		deleteButton.setBackgroundColor(Color.TRANSPARENT);
+		editEmblem.setPadding(4, 4, 4, 4);
+		editEmblem.setBackgroundColor(Color.TRANSPARENT);
 
-		deleteButton.setFocusable(false);
+		editEmblem.setFocusable(false);
 
         setDeleteButtonVisible(false);
 
-		return deleteButton;
+		return editEmblem;
 	}
-    private View createDeleteButton() {
-        deleteButton = new ImageButton(getContext());
-        deleteButton.setImageResource(R.drawable.btn_delete);
-        /*For when the other delete mode is implemented */
-        //deleteButton.setImageResource(R.drawable.icon_edit_small);
-        deleteButton.setScaleX(0.7f);
-        deleteButton.setScaleY(0.7f);
+    private List<View> createEmblems() {
+        editEmblem = new ImageView(getContext());
+        deleteEmblem = new ImageView(getContext());
+
+        editEmblem.setImageResource(R.drawable.icon_edit);
+        deleteEmblem.setImageResource(R.drawable.btn_delete);
+
+        editEmblem.setScaleX(0.7f);
+        editEmblem.setScaleY(0.7f);
+        deleteEmblem.setScaleX(0.7f);
+        deleteEmblem.setScaleY(0.7f);
+
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        deleteButton.setLayoutParams(params);
+        editEmblem.setLayoutParams(params);
+        deleteEmblem.setLayoutParams(params);
 
-        deleteButton.setY(12);
-        deleteButton.setX(12);
+        editEmblem.setY(12);
+        editEmblem.setX(12);
+        deleteEmblem.setY(12);
+        deleteEmblem.setX(12);
 
-        deleteButton.setPadding(4, 4, 4, 4);
-        deleteButton.setBackgroundColor(Color.TRANSPARENT);
+        editEmblem.setPadding(4, 4, 4, 4);
+        editEmblem.setBackgroundColor(Color.TRANSPARENT);
+        deleteEmblem.setPadding(4, 4, 4, 4);
+        deleteEmblem.setBackgroundColor(Color.TRANSPARENT);
 
-        deleteButton.setFocusable(false);
+        editEmblem.setFocusable(false);
+        deleteEmblem.setFocusable(false);
 
-        setDeleteButtonVisible(false);
+        setEmblemsVisible(false);
 
-        return deleteButton;
+        ArrayList<View> vs = new ArrayList<View>();
+        vs.add(editEmblem);
+        vs.add(deleteEmblem);
+
+        return vs;
     }
 
 	public void setImage(Bitmap bitmap) {
@@ -213,9 +233,17 @@ public class PictogramView extends LinearLayout {
         this.invalidate();
     }
 
+    public void setEmblemsVisible(boolean visible) {
+        deleteEmblem.setVisibility(visible ? View.INVISIBLE : View.VISIBLE);
+        editEmblem.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        invalidate();
+    }
 
     private void setDeleteButtonVisible(boolean visible) {
-        deleteButton.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        if(deleteEmblem != null){
+            deleteEmblem.setVisibility(visible ? View.INVISIBLE : View.VISIBLE);
+        }
+        editEmblem.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         invalidate();
     }
 
@@ -223,10 +251,17 @@ public class PictogramView extends LinearLayout {
         return isInEditMode;
     }
 
-    public void setEditModeEnabled(boolean editMode) {
+    public void setEditModeEnabledForMain(boolean editMode) {
         if (editMode != isInEditMode) {
             isInEditMode = editMode;
             setDeleteButtonVisible(editMode);
+        }
+    }
+
+    public void setEditModeEnabled(boolean editMode) {
+        if (editMode != isInEditMode) {
+            isInEditMode = editMode;
+            setEmblemsVisible(editMode);
         }
     }
 
@@ -258,7 +293,7 @@ public class PictogramView extends LinearLayout {
     }
 
     public void setupOnDeleteClickHandler() {
-        deleteButton.setOnClickListener(new OnClickListener() {
+        editEmblem.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isInEditMode && onDeleteClickListener != null)

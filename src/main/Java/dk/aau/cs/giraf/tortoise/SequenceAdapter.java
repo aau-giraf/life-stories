@@ -29,6 +29,7 @@ public class SequenceAdapter extends BaseAdapter {
 	private Sequence sequence;
 	private Context context;
     private boolean draggable = true;
+    private boolean mode = false;
 	
 	private OnAdapterGetViewListener onAdapterGetViewListener;
     private SelectedFrameAware selectedFrameAware;
@@ -91,6 +92,9 @@ public class SequenceAdapter extends BaseAdapter {
             view.setImage(icon);
         }
 
+        //view.setEmblemsVisible(mode);
+
+
         if (selectedFrameAware != null) {
             final boolean isFrameMarked = selectedFrameAware.isFrameMarked(mediaFrame);
 
@@ -119,6 +123,10 @@ public class SequenceAdapter extends BaseAdapter {
 
         return finalDrawable;
     }
+
+    public boolean getMode(){return mode;}
+
+    public void setMode(boolean value){mode = value;}
 
     public boolean getDraggability(){return draggable;}
 

@@ -195,7 +195,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                     View view = sequenceGrid.getChildAt(i);
 
                     if (view instanceof PictogramView) {
-                        ((PictogramView) view).setEditModeEnabled(isInEditMode);
+                        ((PictogramView) view).setEditModeEnabledForMain(isInEditMode);
                     }
                 }
             }
