@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.tortoise;
 
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -77,8 +78,8 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         setContentView(R.layout.startup_activity);
 
         Intent i = getIntent();
-        // Warn user and do not execute Tortoise if not launched from Giraf
-        if (i.getExtras() == null) {
+        // Warn user and do not execute Tortoise if not launched from Giraf, except if user is a monkey
+        if ((!ActivityManager.isUserAMonkey()) && i.getExtras() == null) {
             GuiHelper.ShowToast(this, "Livshistorier skal startes fra GIRAF");
 
             finish();
@@ -216,7 +217,12 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
         Bundle extras = getIntent().getExtras();
         int guardianId;
-
+        //Put guardian id in extras, if user is monkey.
+        if (ActivityManager.isUserAMonkey()) {
+            extras = new Bundle(); //If started by a monkey, extras is null.
+            extras.putInt("currentGuardianID", helper.profilesHelper.getGuardians().get(0).getId());
+            extras.putInt("currentChildID", -1);
+        }
         //Get GuardianId and ChildId from extras
         guardianId = extras.getInt("currentGuardianID");
         childId = extras.getInt("currentChildID");
