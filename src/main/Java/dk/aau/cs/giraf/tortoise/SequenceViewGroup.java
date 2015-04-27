@@ -300,7 +300,7 @@ public class SequenceViewGroup extends AdapterView<SequenceAdapter> {
 			}
 			
 			View newView = adapter.getView(currentIndex, oldView, this);
-			if (newView instanceof PictogramView) {
+			if (newView instanceof PictogramView && draggable) {
 				((PictogramView)newView).setEditModeEnabled(isInEditMode);
 			}
 

@@ -235,7 +235,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         else {
             schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
                      childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
-            loadSeqGrid();
+            setupChildMode();
             setChild();
             isChildSet = true;
         }
@@ -272,10 +272,14 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
                 ((PictogramView) arg1).liftUp();
 
-                //Create Intent with relevant Extras
-                Intent i = new Intent(getApplicationContext(), ScheduleViewActivity.class);;
+                Intent i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
+                final Sequence sequence = sequenceAdapter.getItem(position);
+                i.putExtra("currentChildID", selectedChild.getId());
+                i.putExtra("currentGuardianID", guardian.getId());
                 i.putExtra("story", position);
+                i.putExtra("sequenceId", sequence.getId());
                 startActivity(i);
+                //Create Intent with relevant Extras
             }
         });
 
@@ -391,9 +395,12 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         for (Sequence seq : markedSequences) {
             DBController.getInstance().deleteSequence(seq, getApplicationContext());
             schedules.remove(seq);//Check to whether cascading delete
+            markedSequences.remove(seq);
         }
+        AsyncFetchDatabase fetchDatabaseSetChild = new AsyncFetchDatabase();
+        fetchDatabaseSetChild.execute();
         sequenceAdapter.notifyDataSetChanged(); // Needs fixing
-
+        markingMode = false;
         addButton.setVisibility(View.VISIBLE);
         deleteButton.setVisibility(View.GONE);
         editButton.setVisibility(View.VISIBLE);
@@ -402,6 +409,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
     public void cancelDeleteClick(View v) {
         // Button to cancel delete of sequences
         acceptDeleteDialog.dismiss();
+        markingMode = false;
     }
 
     public SequenceListAdapter initAdapter() {
