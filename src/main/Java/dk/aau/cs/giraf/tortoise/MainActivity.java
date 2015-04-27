@@ -37,8 +37,10 @@ import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
 
 public class MainActivity extends TortoiseActivity implements SequenceListAdapter.SelectedSequenceAware {
 
-    private final int DIALOG_DELETE = 1;
+
+
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
+    private final int DIALOG_DELETE = 1;
 
     private boolean isInEditMode = false;
     private boolean isInScheduleMode = false;
@@ -80,13 +82,13 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf, except if user is a monkey
         if ((!ActivityManager.isUserAMonkey()) && i.getExtras() == null) {
-            GuiHelper.ShowToast(this, "Livshistorier skal startes fra GIRAF");
+            GuiHelper.ShowToast(this, "Ugeplan skal startes fra GIRAF");
 
             finish();
             return ;
         }
         //Decide to load lifestories or schedules
-        if (i.getIntExtra("app_to_start", -1) == 10)
+        if (i.getIntExtra("app_to_start", -1) == 10){}
             isInScheduleMode = true;
 
         helper = new Helper(this);
@@ -129,7 +131,9 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
             //Open Child Selector when pressing the Child Select Button
             @Override
             public void onClick(View v) {
-                final GProfileSelector childSelector = new GProfileSelector(v.getContext(),
+                pickAndSetChild();
+
+                /*final GProfileSelector childSelector = new GProfileSelector(v.getContext(),
                         guardian,
                         null,
                         false);
@@ -139,19 +143,11 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         //When child is selected, save Child locally and update application accordingly (Title name and Sequences)
-                        selectedChild = helper.profilesHelper.getProfileById((int) id);
-                        childId = (int) id;
-                        schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
-                                childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
-                        //profileName.setText(LifeStory.getInstance().getChild().getName());
 
-                        loadSeqGrid();
-                        isChildSet = true;
-                        childSelector.dismiss();
                     }
                 });
                 try{childSelector.backgroundCancelsDialog(false);}
-                catch (Exception ignored){}
+                catch (Exception ignored){}*/
             }
         });
 
@@ -233,9 +229,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
          if(childId == -1){
             pickAndSetChild();
-            schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
-                     childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
-            //loadSeqGrid();
+
         }
         //Else setup application for a Child
         else {
@@ -401,8 +395,9 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         for (Sequence seq : markedSequences) {
             DBController.getInstance().deleteSequence(seq, getApplicationContext());
             schedules.remove(seq);//Check to whether cascading delete
-            markedSequences.remove(seq);
+
         }
+        markedSequences.clear();
         AsyncFetchDatabase fetchDatabaseSetChild = new AsyncFetchDatabase();
         fetchDatabaseSetChild.execute();
         sequenceAdapter.notifyDataSetChanged(); // Needs fixing
@@ -415,8 +410,9 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
     public void cancelDeleteClick(View v) {
         // Button to cancel delete of sequences
         acceptDeleteDialog.dismiss();
-        markingMode = false;
     }
+
+
 
     public SequenceListAdapter initAdapter() {
 
