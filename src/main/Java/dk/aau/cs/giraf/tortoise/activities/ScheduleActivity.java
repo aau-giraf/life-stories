@@ -201,7 +201,7 @@ public class ScheduleActivity extends TortoiseActivity
                     for(MediaFrame mf : weekdaySequences.get(i).getMediaFrames())
                     {
 
-                        addItems(mf, level3, i);
+                            addItems(mf, level3, i);
                     }
                 markedActivities.add(i, new boolean[weekdaySequences.get(i).getMediaFrames().size()]);
 
