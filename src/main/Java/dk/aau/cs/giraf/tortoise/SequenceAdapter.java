@@ -124,10 +124,6 @@ public class SequenceAdapter extends BaseAdapter {
         return finalDrawable;
     }
 
-    public boolean getMode(){return mode;}
-
-    public void setMode(boolean value){mode = value;}
-
     public boolean getDraggability(){return draggable;}
 
     public void setDraggability(boolean value){draggable = value;}

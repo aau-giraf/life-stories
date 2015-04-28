@@ -419,7 +419,6 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                     scheduleName.setEnabled(false);
                     for(SequenceAdapter a : adapterList){
                         a.setDraggability(false);
-                        a.setMode(false);
                     }
                     setNewMode(false);
                 }
@@ -477,7 +476,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                 if(doingDelete){
                     if(!isFrameMarked(frame)) {
                         deletingSomething = true;
-                        markSequence(position, (PictogramView) view);
+                        markSequence(position, view);
                         sAdapter.notifyDataSetChanged();
                     }
                     else{
@@ -538,7 +537,6 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         scheduleName.setEnabled(true);
         for(SequenceAdapter a : adapterList){
             a.setDraggability(true);
-            a.setMode(true);
         }
         setNewMode(true);
 
@@ -937,7 +935,8 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
     public boolean isFrameMarked(MediaFrame frame) {
         for(int i = 0; i < daySequences.size(); i++){
             if(daySequences.get(i).getMediaFrames().contains(frame)){
-                return markedFrames.get(i)[daySequences.get(i).getMediaFrames().indexOf(frame)];
+                boolean b = markedFrames.get(i)[daySequences.get(i).getMediaFrames().indexOf(frame)];
+                return b;
             }
         }
         return false;
@@ -984,9 +983,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.add_frame_dialog,null));
 
-            GButton getSequence = (GButton) findViewById(R.id.get_sequence);
-            GButton getPictogram = (GButton) findViewById(R.id.get_pictogram);
-            GButton getChoice = (GButton) findViewById(R.id.get_choice);
+            GirafButton getSequence = (GirafButton) findViewById(R.id.get_sequence);
+            GirafButton getPictogram = (GirafButton) findViewById(R.id.get_pictogram);
+            GirafButton getChoice = (GirafButton) findViewById(R.id.get_choice);
 
             getSequence.setOnClickListener(new GButton.OnClickListener() {
 
@@ -1023,9 +1022,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.exit_sequence_dialog,null));
 
-            GButton saveChanges = (GButton) findViewById(R.id.save_changes);
-            GButton discardChanges = (GButton) findViewById(R.id.discard_changes);
-            GButton cancel = (GButton) findViewById(R.id.return_to_editting);
+            GirafButton saveChanges = (GirafButton) findViewById(R.id.save_changes);
+            GirafButton discardChanges = (GirafButton) findViewById(R.id.discard_changes);
+            GirafButton cancel = (GirafButton) findViewById(R.id.return_to_editting);
 
             saveChanges.setOnClickListener(new GButton.OnClickListener() {
 
@@ -1082,8 +1081,8 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
             this.SetView(LayoutInflater.from(this.getContext()).inflate(R.layout.choice_dialog,null));
 
-            GButton saveChoice = (GButton) findViewById(R.id.save_choice);
-            GButton discardChoice = (GButton) findViewById(R.id.discard_choice);
+            GirafButton saveChoice = (GirafButton) findViewById(R.id.save_choice);
+            GirafButton discardChoice = (GirafButton) findViewById(R.id.discard_choice);
 
             //Adapter to display a list of pictograms in the choice dialog
             choiceAdapter = setupChoiceAdapter();

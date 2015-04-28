@@ -6,30 +6,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#ffffffff"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:svg="http://schemas.android.com/tools">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/normal_schedule_image_button_height"
+        android:layout_gravity="center">
+
+        <dk.aau.cs.giraf.gui.GirafButton
+            android:id="@+id/sequenceThumbnail"
+            android:layout_width="@dimen/normal_schedule_image_button_height"
+            android:layout_height="fill_parent"
+            app:icon="@drawable/add_sequence_picture"/>
 
         <EditText
-            android:layout_width="300dp"
+            android:id="@+id/sequenceName"
+            android:layout_width="@dimen/normal_schedule_second_top_bar_width"
             android:layout_height="30dp"
-            android:id="@+id/editText"
-            android:textColor="#000000"
-            android:textSize="20dp"
-            android:background="@drawable/text_background"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:singleLine="true"
-            android:maxLength="24" />
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:hint="@string/unnamed_sequence"
+            android:imeOptions="actionDone"
+            android:inputType="textImeMultiLine"
+            android:text=""
+            android:textSize="16sp"/>
 
-        <Spinner
-            android:layout_width="130dp"
-            android:layout_height="25dp"
-            android:id="@+id/spinner"
-            android:layout_gravity="right|center_vertical" />
-    </FrameLayout>
+    </LinearLayout>
 
     <View
         android:background="#000000"
@@ -42,13 +46,495 @@
         android:layout_height="match_parent"
         android:id="@+id/completeWeekLayout">
 
-        <include layout="@layout/monday"/>
-        <include layout="@layout/tuesday"/>
-        <include layout="@layout/wednesday"/>
-        <include layout="@layout/thursday"/>
-        <include layout="@layout/friday"/>
-        <include layout="@layout/saturday"/>
-        <include layout="@layout/sunday"/>
-    </LinearLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@color/green"
+            android:layout_weight="1"
+            android:id="@+id/sectionMonday">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="@color/green"
+                android:id="@+id/frameLayout7"
+                android:clickable="false"
+                android:focusable="true">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/monday"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/normal_weekday_button_height"
+                    android:scaleType="fitCenter"
+                    android:alpha="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/monday"
+                    android:id="@id/storyName"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/normal_weekday_text_width"
+                    android:textColor="@color/text_color" />
+            </FrameLayout>
+            <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/frameLayout7"
+                android:layout_margin="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
+
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroupMon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    svg:verticalSpacing="5dp"
+                    svg:itemHeight="@dimen/normal_activity_button_height"
+                    svg:itemWidth="@dimen/normal_activity_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
+            </ScrollView>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_monday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout7" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/purple"
+            android:id="@+id/sectionTuesday">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="@color/purple"
+                android:id="@+id/frameLayout">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/tuesday"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/normal_weekday_button_height"
+                    android:scaleType="fitCenter"
+                    android:alpha="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/tuesday"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/normal_weekday_text_width"
+                    android:textColor="@color/text_color" />
+            </FrameLayout>
+            <ScrollView
+                android:id="@+id/scrollView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/frameLayout"
+                android:layout_margin="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
+
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    svg:verticalSpacing="5dp"
+                    svg:itemHeight="@dimen/normal_activity_button_height"
+                    svg:itemWidth="@dimen/normal_activity_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
+            </ScrollView>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_tuesday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/orange"
+            android:id="@+id/sectionWednesday">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="@color/orange"
+                android:id="@+id/frameLayout2">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/wednesday"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/normal_weekday_button_height"
+                    android:scaleType="fitCenter"
+                    android:alpha="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/wednesday"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/normal_weekday_text_width"
+                    android:textColor="@color/text_color" />
+            </FrameLayout>
+            <ScrollView
+                android:id="@+id/scrollView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/frameLayout2"
+                android:layout_margin="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
+
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    svg:verticalSpacing="5dp"
+                    svg:itemHeight="@dimen/normal_activity_button_height"
+                    svg:itemWidth="@dimen/normal_activity_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/frameLayout2"
+                android:id="@+id/border_wednesday"
+                android:layout_alignParentBottom="true"></LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/blue"
+            android:id="@+id/sectionThursday">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="@color/blue"
+                android:id="@+id/frameLayout3">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/thursday"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/normal_weekday_button_height"
+                    android:scaleType="fitCenter"
+                    android:alpha="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/thursday"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/normal_weekday_text_width"
+                    android:textColor="@color/text_color" />
+            </FrameLayout>
+            <ScrollView
+                android:id="@+id/scrollView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/frameLayout3"
+                android:layout_margin="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
+
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    svg:verticalSpacing="5dp"
+                    svg:itemHeight="@dimen/normal_activity_button_height"
+                    svg:itemWidth="@dimen/normal_activity_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_thursday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout3" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/yellow"
+            android:id="@+id/sectionFriday">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="@color/yellow"
+                android:id="@+id/frameLayout4">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/friday"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/normal_weekday_button_height"
+                    android:scaleType="fitCenter"
+                    android:alpha="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/friday"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/normal_weekday_text_width"
+                    android:textColor="#000000" />
+
+            </FrameLayout>
+
+            <ScrollView
+                android:id="@+id/scrollView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/frameLayout4"
+                android:layout_margin="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
+
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    svg:verticalSpacing="5dp"
+                    svg:itemHeight="@dimen/large_activity_button_height"
+                    svg:itemWidth="@dimen/large_activity_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_friday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout4" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/red"
+            android:id="@+id/sectionSaturday">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="@color/red"
+                android:id="@+id/frameLayout5">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/saturday"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/normal_weekday_button_height"
+                    android:scaleType="fitCenter"
+                    android:alpha="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/saturday"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/normal_weekday_text_width"
+                    android:textColor="@color/text_color" />
+            </FrameLayout>
+            <ScrollView
+                android:id="@+id/scrollView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/frameLayout5"
+                android:layout_margin="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
+
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    svg:verticalSpacing="5dp"
+                    svg:itemHeight="@dimen/large_activity_button_height"
+                    svg:itemWidth="@dimen/large_activity_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
+            </ScrollView>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_saturday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout5" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:id="@+id/sectionSunday">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="@color/white"
+                android:id="@+id/frameLayout6">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/sunday"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/normal_weekday_button_height"
+                    android:scaleType="fitCenter"
+                    android:alpha="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/sunday"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/normal_weekday_text_width"
+                    android:textColor="#000000" />
+            </FrameLayout>
+
+            <ScrollView
+                android:id="@+id/scrollView7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/frameLayout6"
+                android:layout_margin="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:overScrollMode="always"
+                android:padding="0dp"
+                android:fadeScrollbars="false">
+
+
+                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                    android:id="@+id/sequenceViewGroup7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    svg:verticalSpacing="5dp"
+                    svg:itemHeight="@dimen/large_activity_button_height"
+                    svg:itemWidth="@dimen/large_activity_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@layout/main_picto_container_bg">
+                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+
+
+            </ScrollView>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_sunday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout6" />
+
+
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

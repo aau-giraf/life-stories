@@ -30,7 +30,6 @@
             android:text="@string/sunday"
             android:layout_gravity="center"
             android:id="@+id/sundayStoryName"
-            android:textSize="@dimen/weekday_text_width"
             android:textColor="#000000" />
     </FrameLayout>
 

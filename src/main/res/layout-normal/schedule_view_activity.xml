@@ -1,0 +1,198 @@
+<LinearLayout
+    android:id="@+id/parent_container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gcomponent="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffffff"
+    android:focusableInTouchMode="true" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/normal_schedule_image_button_height"
+        android:layout_gravity="center">
+
+        <dk.aau.cs.giraf.gui.GirafButton
+            android:id="@+id/schedule_image"
+            android:layout_width="@dimen/normal_schedule_image_button_height"
+            android:layout_height="fill_parent"
+            app:icon="@drawable/add_sequence_picture"/>
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:hint="@string/unnamed_sequence"
+            android:imeOptions="actionDone"
+            android:inputType="textImeMultiLine"
+            android:text=""
+            android:textSize="20sp"/>
+
+
+        <Spinner
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:id="@+id/spinner"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+    <View
+        android:background="#000000"
+        android:layout_height="2dp"
+        android:layout_width="fill_parent"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/completeWeekLayout">
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:gcomponent="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/green"
+            android:layout_weight="1"
+            android:id="@+id/sectionMonday">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/weekday_button_height"
+                android:background="#ff007700"
+                android:clickable="false"
+                android:focusable="true"
+                android:id="@+id/monday_top_frame">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/monday"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/monday"
+                    android:id="@+id/mondayStoryName"
+                    android:layout_gravity="center"
+                    android:textColor="@color/text_color" />
+            </FrameLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/mondayScroll"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentLeft="false"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="60dp"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/layoutMonday"
+                    android:dividerPadding="2dp"
+                    android:gravity="center">
+                </LinearLayout>
+
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_monday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout7" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/purple"
+            android:id="@+id/sectionTuesday"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:gcomponent="http://schemas.android.com/apk/res-auto">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/weekday_button_height"
+                android:background="#ff800080"
+                android:id="@+id/frameLayout">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/tuesday"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/tuesday"
+                    android:layout_gravity="center"
+                    android:id="@+id/tuesdayStoryName"
+                    android:textColor="@color/text_color" />
+            </FrameLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tuesdayScroll"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="60dp"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/layoutTuesday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    />
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_tuesday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout" />
+
+        </RelativeLayout>
+        <include layout="@layout/wednesday"/>
+        <include layout="@layout/thursday"/>
+        <include layout="@layout/friday"/>
+        <include layout="@layout/saturday"/>
+        <include layout="@layout/sunday"/>
+
+    </LinearLayout>
+
+</LinearLayout>
