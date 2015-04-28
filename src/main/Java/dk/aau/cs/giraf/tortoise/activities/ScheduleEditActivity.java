@@ -33,8 +33,8 @@ import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup;
@@ -205,7 +205,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         }
         else
         {
-            List<Sequence> seqs = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            List<Sequence> seqs = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
             schedule = seqs.get(template);
             LifeStory.getInstance().setCurrentStory(schedule);
 
@@ -863,7 +863,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySeq.setTitlePictoId(scheduleSeq.getTitlePictoId());
             daySeq.setId(0);
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
-                    dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
+                    dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     childId, getApplicationContext());
             MediaFrame mf = new MediaFrame();
             mf.setNestedSequenceID(daySeq.getId());
@@ -872,7 +872,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
         //Saves the week sequence with reference to the days
         boolean s2 = DBController.getInstance().saveSequence(scheduleSeq,
-                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE,
                 childId, getApplicationContext());
 
         if (s1 && s2) {
@@ -884,7 +884,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         }
     }
 
-    public void addPictograms(View v)
+    /*public void addPictograms(View v)
     {
         Intent i = new Intent();
         i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
@@ -893,9 +893,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
         ScheduleEditActivity.this.startActivityForResult(i, 4);
-    }
+    }*/
 
-    public void chooseChoicePictogram(View v)
+    /*public void chooseChoicePictogram(View v)
     {
         Intent i = new Intent();
         i.setComponent(new ComponentName("dk.aau.cs.giraf.pictosearch",
@@ -904,7 +904,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         i.putExtra("currentChildID", LifeStory.getInstance().getChild().getId());
         i.putExtra("currentGuardianID", LifeStory.getInstance().getGuardian().getId());
         ScheduleEditActivity.this.startActivityForResult(i, 5);
-    }
+    }*/
 
     public void removeChoiceIcon(View v){
         daySequences.get(weekdaySelected).getMediaFrames().get(lastPosition).setChoicePictogram(null);

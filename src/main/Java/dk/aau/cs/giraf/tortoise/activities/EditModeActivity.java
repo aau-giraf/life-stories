@@ -389,7 +389,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
                     ls.addStory();
                     saveSequence(ls.getCurrentStory(),
-                            dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.STORY,
+                            dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY,
                             ls.getChild().getId());
                     dialog.dismiss();
 				}
@@ -830,7 +830,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			EditModeFrameView editModeFrameView, int ChoiceNumber) {
 	}
 
-    private void saveSequence(Sequence currentStory, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType type, int id) {
+    private void saveSequence(Sequence currentStory, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType type, int id) {
         DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
     }
 

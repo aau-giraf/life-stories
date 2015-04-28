@@ -21,8 +21,8 @@ import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
 //import dk.aau.cs.giraf.oasis.lib.models.Sequence;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
@@ -224,7 +224,23 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         childId = extras.getInt("currentChildID");
 
         //Save guardian locally (Fetch from Database by Id)
-        guardian = helper.profilesHelper.getProfileById(guardianId);
+        List<Profile> guardians = helper.profilesHelper.getGuardians();
+        for(Profile g : guardians){
+            if(g.getId() == guardianId){
+                guardian = g;
+                try{
+                    Profile tempGuardian = helper.profilesHelper.getById(guardianId);
+                }catch(NullPointerException e){
+
+                }
+
+                break;
+            }
+        }
+        if(guardian == null){
+            throw new NullPointerException("No guardian found");
+        }
+
 
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
          if(childId == -1){
@@ -234,7 +250,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         //Else setup application for a Child
         else {
             schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
-                     childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+                     childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
             setupChildMode();
             setChild();
             isChildSet = true;
@@ -249,10 +265,10 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         childSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                selectedChild = helper.profilesHelper.getProfileById((int) id);
+                selectedChild = helper.profilesHelper.getById((int) id);
                 childId = (int) id;
                 schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
-                        childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+                        childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
                 //profileName.setText(LifeStory.getInstance().getChild().getName());
 
                 setChild();
@@ -550,7 +566,8 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
         @Override
         protected List<Sequence> doInBackground(Void... params) {
-            return DBController.getInstance().loadCurrentProfileSequencesAndFrames(selectedChild.getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            return DBController.getInstance().loadCurrentProfileSequencesAndFrames(selectedChild.getId(),
+                    dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
         }
 
         @Override

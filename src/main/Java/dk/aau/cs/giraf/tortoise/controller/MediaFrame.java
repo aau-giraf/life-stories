@@ -6,8 +6,8 @@ import java.util.List;
 
 import android.content.Context;
 
-import dk.aau.cs.giraf.oasis.lib.models.EqualsUtil;
-import dk.aau.cs.giraf.oasis.lib.models.OasisObserver;
+import dk.aau.cs.giraf.dblib.models.EqualsUtil;
+import dk.aau.cs.giraf.dblib.models.OasisObserver;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 

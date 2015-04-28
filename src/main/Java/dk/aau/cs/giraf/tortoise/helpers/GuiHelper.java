@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.widget.Toast;
 
-import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.tortoise.R;
 
 public class GuiHelper extends Activity
