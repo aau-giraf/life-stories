@@ -649,6 +649,32 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         // this method is also called after oncreate()
         // makes sure that current weekday is also marked after resume of the app
         super.onResume();
+        List<SequenceViewGroup> seqVs = new ArrayList<SequenceViewGroup>();
+        SequenceViewGroup seqV1 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroupMon);
+        SequenceViewGroup seqV2 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup2);
+        SequenceViewGroup seqV3 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup3);
+        SequenceViewGroup seqV4 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup4);
+        SequenceViewGroup seqV5 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup5);
+        SequenceViewGroup seqV6 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup6);
+        SequenceViewGroup seqV7 = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup7);
+
+        seqVs.add(seqV1);
+        seqVs.add(seqV2);
+        seqVs.add(seqV3);
+        seqVs.add(seqV4);
+        seqVs.add(seqV5);
+        seqVs.add(seqV6);
+        seqVs.add(seqV7);
+
+        for(int i = 0; i < seqVs.size(); i++){
+            for(int j = 0; j < seqVs.get(i).getChildCount(); j++){
+                View view = seqVs.get(i).getChildAt(j);
+
+                if (view instanceof PictogramView) {
+                    ((PictogramView) view).placeDown();
+                }
+            }
+        }
 
         // mark the current weekday in the scheduler
         markCurrentWeekday();
@@ -1192,6 +1218,8 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             setNewMode(true);
             saveButton.setVisibility(View.VISIBLE);
             scheduleImage.setVisibility(View.VISIBLE);
+            scheduleName.setText(tempNameHolder);
+            scheduleName.setEnabled(true);
         }
     }
 

@@ -30,6 +30,7 @@ import java.util.List;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
 //import dk.aau.cs.giraf.gui.GirafPictogram;
+import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
@@ -42,13 +43,22 @@ import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
 public class ScheduleActivity extends TortoiseActivity
 {
+
+    protected final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
+    protected final int PICTO_EDIT_PICTOGRAM_CALL = 4;
+    protected final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
+    protected final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
+    protected final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
+
     // this is just a variable for a workaround
     public static LinearLayout weekdayLayout;
     public LinearLayout level1;
+    GirafInflatableDialog replaceDialog;
     public GDialog multichoiceDialog;
     public static List<Sequence> weekdaySequences;
     public static int weekdaySelected;
     int lastPosition;
+    protected int pictogramEditPos = -1;
     //int currentActivity = 0;
     int currentWeekday = 0;
     protected int[] progressActivity = new int[2];
@@ -342,6 +352,7 @@ public class ScheduleActivity extends TortoiseActivity
                 int index = getViewIndex(v);
 
                 determineWeekSection(v);
+                pictogramEditPos = index;
                 // if we're in view (citizen) mode
                 if(ScheduleActivity.this instanceof ScheduleViewActivity)
                 {
@@ -356,6 +367,12 @@ public class ScheduleActivity extends TortoiseActivity
                         dlayers[1] = resizeDrawable(r.getDrawable(R.drawable.cancel_button), xy, xy);
                         LayerDrawable layerDrawable = new LayerDrawable(dlayers);
                         iv.setImageDrawable(layerDrawable);
+                        /*replaceDialog = GirafInflatableDialog.newInstance(
+                                getApplicationContext().getString(R.string.delete_schedules),
+                                getApplicationContext().getString(R.string.delete_this) + " "
+                                        + getApplicationContext().getString(R.string.marked_schedules),
+                                R.layout.dialog_replace);
+                        replaceDialog.show(getSupportFragmentManager(), DELETE_SEQUENCES_TAG);*/
                         markedActivities.get(weekdaySelected)[index] = true;
                         progress.setMarkedActivities(markedActivities);
                     }

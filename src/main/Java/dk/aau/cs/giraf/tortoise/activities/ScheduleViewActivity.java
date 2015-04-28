@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.tortoise.activities;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -17,16 +18,14 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
 
 import dk.aau.cs.giraf.tortoise.controller.DBController;
-import dk.aau.cs.giraf.tortoise.controller.SerializableSequence;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
-import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 
 import android.widget.Spinner;
@@ -34,6 +33,11 @@ import android.widget.TextView;
 
 public class ScheduleViewActivity extends ScheduleActivity
 {
+
+    private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
+    private final int PICTO_EDIT_PICTOGRAM_CALL = 4;
+    private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
+    private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     int weekDaySelected;
     private int childId;
     private int guardianId;
@@ -196,6 +200,55 @@ public class ScheduleViewActivity extends ScheduleActivity
         }
         displaySequences();
 
+    }
+
+    public void jaClick(View v) {
+        // Button to accept delete of sequences
+        replaceDialog.dismiss();
+        callPictoAdmin(v, PICTO_EDIT_PICTOGRAM_CALL);
+
+    }
+
+    public void nejClick(View v) {
+        // Button to cancel delete of sequences
+        replaceDialog.dismiss();
+    }
+
+    private void callPictoAdmin(View v, int modeId) {
+        Intent i = new Intent();
+        i.setComponent(new ComponentName(PICTO_ADMIN_PACKAGE, PICTO_ADMIN_CLASS));
+        i.putExtra("currentChildID", childId);
+        i.putExtra("currentGuardianID", guardianId);
+        i.putExtra("purpose", "single");
+
+        ScheduleViewActivity.this.startActivityForResult(i, modeId);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == 4) {
+
+            OnEditPictogramResult(data);
+        }
+    }
+
+    private void OnEditPictogramResult(Intent data) {
+        if (pictogramEditPos < 0)
+            return;
+
+        int[] checkoutIds = data.getExtras().getIntArray(
+                PICTO_INTENT_CHECKOUT_ID);
+
+        if (checkoutIds.length == 0)
+            return;
+
+        MediaFrame frame = weekdaySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos);
+
+        frame.setPictogramId(checkoutIds[0]);
+
+        markedActivities.get(weekdaySelected)[pictogramEditPos] = true;
+        progress.setMarkedActivities(markedActivities);
     }
 
     public void weekdaySelected(View view) {
