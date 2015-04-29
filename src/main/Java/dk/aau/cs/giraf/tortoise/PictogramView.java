@@ -265,7 +265,7 @@ public class PictogramView extends LinearLayout {
         }
     }
 
-    public void setImageFromId(int id) {
+    public void setImageFromId(long id) {
         helper = new Helper(getContext());
         Bitmap bitmap = helper.pictogramHelper.getPictogramById(id).getImage();
         Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());  // Create another image the same size

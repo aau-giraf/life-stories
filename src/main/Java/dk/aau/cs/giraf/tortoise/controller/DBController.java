@@ -144,7 +144,7 @@ public class DBController {
      * @param context
      * @return Sequence
      */
-    public Sequence getSequenceFromID(int id, Context context)
+    public Sequence getSequenceFromID(long id, Context context)
     {
         SequenceController sc = new SequenceController(context);
         return morphDBSequenceToSequence(sc.getSequenceAndFrames(id), context);
@@ -242,10 +242,10 @@ public class DBController {
             Sequence seq, SequenceType seqType, long profileID){
         dk.aau.cs.giraf.dblib.models.Sequence dbSeq = new dk.aau.cs.giraf.dblib.models.Sequence();
 
-        dbSeq.setId((int)seq.getId());
+        dbSeq.setId(seq.getId());
         dbSeq.setName(seq.getTitle());
         dbSeq.setPictogramId(seq.getTitlePictoId());
-        dbSeq.setProfileId((int)profileID);
+        dbSeq.setProfileId((profileID));
         dbSeq.setSequenceType(seqType);
         dbSeq.setFramesList(morphMediaFramesToDBFrames(seq.getMediaFrames()));
 

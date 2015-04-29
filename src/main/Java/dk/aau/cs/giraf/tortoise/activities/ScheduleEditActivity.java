@@ -209,7 +209,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             schedule = seqs.get(template);
             LifeStory.getInstance().setCurrentStory(schedule);
 
-            int dayID = schedule.getMediaFrames().get(0).getNestedSequenceID();
+            long dayID = schedule.getMediaFrames().get(0).getNestedSequenceID();
             mondaySequence = DBController.getInstance().getSequenceFromID(dayID, this);
             Collections.sort(mondaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -219,7 +219,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(0, mondaySequence);
             markedFrames.add(new boolean[mondaySequence.getMediaFrames().size()]);
 
-            int day1ID = schedule.getMediaFrames().get(1).getNestedSequenceID();
+            long day1ID = schedule.getMediaFrames().get(1).getNestedSequenceID();
             tuesdaySequence = DBController.getInstance().getSequenceFromID(day1ID, this);
             Collections.sort(tuesdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -229,7 +229,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(1, tuesdaySequence);
             markedFrames.add(new boolean[tuesdaySequence.getMediaFrames().size()]);
 
-            int day2ID = schedule.getMediaFrames().get(2).getNestedSequenceID();
+            long day2ID = schedule.getMediaFrames().get(2).getNestedSequenceID();
             wednesdaySequence = DBController.getInstance().getSequenceFromID(day2ID, this);
             Collections.sort(wednesdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -239,7 +239,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(2, wednesdaySequence);
             markedFrames.add(new boolean[wednesdaySequence.getMediaFrames().size()]);
 
-            int day3ID = schedule.getMediaFrames().get(3).getNestedSequenceID();
+            long day3ID = schedule.getMediaFrames().get(3).getNestedSequenceID();
             thursdaySequence = DBController.getInstance().getSequenceFromID(day3ID, this);
             Collections.sort(thursdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -249,7 +249,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(3, thursdaySequence);
             markedFrames.add(new boolean[thursdaySequence.getMediaFrames().size()]);
 
-            int day4ID = schedule.getMediaFrames().get(4).getNestedSequenceID();
+            long day4ID = schedule.getMediaFrames().get(4).getNestedSequenceID();
             fridaySequence = DBController.getInstance().getSequenceFromID(day4ID, this);
             Collections.sort(fridaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -259,7 +259,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(4, fridaySequence);
             markedFrames.add(new boolean[fridaySequence.getMediaFrames().size()]);
 
-            int day5ID = schedule.getMediaFrames().get(5).getNestedSequenceID();
+            long day5ID = schedule.getMediaFrames().get(5).getNestedSequenceID();
             saturdaySequence = DBController.getInstance().getSequenceFromID(day5ID, this);
             Collections.sort(saturdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {
@@ -269,7 +269,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(5, saturdaySequence);
             markedFrames.add(new boolean[saturdaySequence.getMediaFrames().size()]);
 
-            int day6ID = schedule.getMediaFrames().get(6).getNestedSequenceID();
+            long day6ID = schedule.getMediaFrames().get(6).getNestedSequenceID();
             sundaySequence = DBController.getInstance().getSequenceFromID(day6ID, this);
             Collections.sort(sundaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
                 public int compare(MediaFrame x, MediaFrame y) {

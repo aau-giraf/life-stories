@@ -22,7 +22,7 @@ public class Sequence extends AbstractSequence {
 		titleImage = null;
 	}
 
-    public Sequence(long id, int titlePictoId, String title, List<MediaFrame> mediaFrames, Context con){
+    public Sequence(long id, long titlePictoId, String title, List<MediaFrame> mediaFrames, Context con){
         super(id, titlePictoId, title);
         this.mediaFrames = mediaFrames;
         setBitmapFromTitlePictoID(con);
@@ -45,7 +45,7 @@ public class Sequence extends AbstractSequence {
             this.titleImage = null;
         }
         else {
-            Bitmap bitmap = PictoFactory.getPictogram(con, this.getTitlePictoId()).getImageData();
+            Bitmap bitmap = PictoFactory.getPictogram(con, (int)this.getTitlePictoId()).getImageData();
             bitmap = LayoutTools.getSquareBitmap(bitmap);
             bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
             this.titleImage = bitmap;

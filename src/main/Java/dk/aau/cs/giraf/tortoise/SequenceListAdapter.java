@@ -50,7 +50,7 @@ public class SequenceListAdapter extends BaseAdapter {
         v.setTitle(s.getTitle());
         v.setEditModeEnabledForMain(isInEditMode);
         
-        Pictogram p = PictoFactory.getPictogram(context, s.getTitlePictoId());
+        Pictogram p = PictoFactory.getPictogram(context, (int) s.getTitlePictoId());
         Bitmap bm = p.getImageData();
         v.setImage(LayoutTools.getSquareBitmap(bm));
 

@@ -830,7 +830,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			EditModeFrameView editModeFrameView, int ChoiceNumber) {
 	}
 
-    private void saveSequence(Sequence currentStory, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType type, int id) {
+    private void saveSequence(Sequence currentStory, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType type, long id) {
         DBController.getInstance().saveSequence(currentStory, type, id, getApplicationContext());
     }
 

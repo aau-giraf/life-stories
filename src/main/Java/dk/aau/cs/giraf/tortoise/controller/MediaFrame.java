@@ -17,8 +17,8 @@ public class MediaFrame extends AbstractMediaFrame{
 	private List<Pictogram> content;
 	private OnContentChangedEventListener mListener;
     private int posY;
-    private int nestedSequenceID;
-    private int pictogramId;
+    private long nestedSequenceID;
+    private long pictogramId;
     private boolean marked = false;
 	
 	public MediaFrame(){
@@ -36,11 +36,11 @@ public class MediaFrame extends AbstractMediaFrame{
 	}
 
 
-    public int getNestedSequenceID() {
+    public long getNestedSequenceID() {
         return nestedSequenceID;
     }
 
-    public void setNestedSequenceID(int nestedSequenceID) {
+    public void setNestedSequenceID(long nestedSequenceID) {
         this.nestedSequenceID = nestedSequenceID;
     }
 
@@ -80,10 +80,10 @@ public class MediaFrame extends AbstractMediaFrame{
     public int getPosY(){return this.posY;}
     public void setPosY(int value){ this.posY = value;}
 
-    public int getPictogramId(){
+    public long getPictogramId(){
         return this.pictogramId;
     }
-    public void setPictogramId(int value){
+    public void setPictogramId(long value){
         this.pictogramId = value;
     }
 

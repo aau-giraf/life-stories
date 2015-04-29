@@ -62,7 +62,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
     public static Activity activityToKill;
 
-    private int childId;
+    private long childId;
 
     private Helper helper;
     GirafInflatableDialog acceptDeleteDialog;
@@ -212,16 +212,16 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
 
         Bundle extras = getIntent().getExtras();
-        int guardianId;
+        long guardianId;
         //Put guardian id in extras, if user is monkey.
         if (ActivityManager.isUserAMonkey()) {
             extras = new Bundle(); //If started by a monkey, extras is null.
-            extras.putInt("currentGuardianID", helper.profilesHelper.getGuardians().get(0).getId());
-            extras.putInt("currentChildID", -1);
+            extras.putLong("currentGuardianID", helper.profilesHelper.getGuardians().get(0).getId());
+            extras.putLong("currentChildID", -1);
         }
         //Get GuardianId and ChildId from extras
-        guardianId = extras.getInt("currentGuardianID");
-        childId = extras.getInt("currentChildID");
+        guardianId = extras.getLong("currentGuardianID");
+        childId = extras.getLong("currentChildID");
 
         //Save guardian locally (Fetch from Database by Id)
         List<Profile> guardians = helper.profilesHelper.getGuardians();
@@ -237,6 +237,8 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                 break;
             }
         }
+        if(guardians.isEmpty())
+            throw new NullPointerException("No guardians recieved");
         if(guardian == null){
             throw new NullPointerException("No guardian found");
         }
