@@ -22,7 +22,7 @@ public class Sequence extends AbstractSequence {
 		titleImage = null;
 	}
 
-    public Sequence(int id, int titlePictoId, String title, List<MediaFrame> mediaFrames, Context con){
+    public Sequence(long id, int titlePictoId, String title, List<MediaFrame> mediaFrames, Context con){
         super(id, titlePictoId, title);
         this.mediaFrames = mediaFrames;
         setBitmapFromTitlePictoID(con);

@@ -63,9 +63,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
     private boolean doingDelete;
     private boolean deletingSomething = false;
     public static boolean choiceMode = false;
-    private int guardianId;
-    private int childId;
-    private int sequenceId;
+    private long guardianId;
+    private long childId;
+    private long sequenceId;
     private int pictogramEditPos = -1;
     private String tempNameHolder;
     private ArrayList<boolean[]> markedFrames = new ArrayList<boolean[]>();
@@ -140,9 +140,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
     private void loadIntents() {
         Bundle extras = getIntent().getExtras();
-        childId = extras.getInt("currentChildID");
-        sequenceId = extras.getInt("sequenceId");
-        guardianId = extras.getInt("currentGuardianID");
+        childId = extras.getLong("currentChildID");
+        sequenceId = extras.getLong("sequenceId");
+        guardianId = extras.getLong("currentGuardianID");
         isInEditMode = extras.getBoolean("EditMode");
         isNew = extras.getBoolean("isNew");
     }
@@ -150,8 +150,8 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
     private void loadProfiles() {
         //Create helper to load Child from Database
         helper = new Helper(this);
-        selectedChild = helper.profilesHelper.getProfileById(childId);
-        guardian = helper.profilesHelper.getProfileById(guardianId);
+        selectedChild = helper.profilesHelper.getProfileById((int)childId);
+        guardian = helper.profilesHelper.getProfileById((int)guardianId);
     }
 
     private void initSequences(Intent intent) {
@@ -866,7 +866,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                     dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     childId, getApplicationContext());
             MediaFrame mf = new MediaFrame();
-            mf.setNestedSequenceID(daySeq.getId());
+            mf.setNestedSequenceID((int)daySeq.getId());
             scheduleSeq.getMediaFrames().add(mf);
         }
 

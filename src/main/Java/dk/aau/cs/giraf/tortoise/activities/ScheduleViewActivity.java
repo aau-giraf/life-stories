@@ -39,8 +39,8 @@ public class ScheduleViewActivity extends ScheduleActivity
     private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
     private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     int weekDaySelected;
-    private int childId;
-    private int guardianId;
+    private long childId;
+    private long guardianId;
     int amountOfPictograms;
     private GirafButton scheduleImage;
     private GirafButton resetProgress;
@@ -69,9 +69,9 @@ public class ScheduleViewActivity extends ScheduleActivity
 
         initializeButtons();
 
-        childId = intent.getIntExtra("currentChildID", -1);
+        childId = intent.getLongExtra("currentChildID", -1);
 
-        guardianId = intent.getIntExtra("currentGuardianID", -1);
+        guardianId = intent.getLongExtra("currentGuardianID", -1);
 
         template = intent.getIntExtra("story", -1);
 

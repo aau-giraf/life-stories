@@ -55,7 +55,7 @@ public class DBController {
      * @param con
      * @return boolean
      */
-    public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
+    public boolean saveSequence(Sequence seq, SequenceType seqType, long profileID, Context con){
         boolean success;
         SequenceController sc = new SequenceController(con);
         dk.aau.cs.giraf.dblib.models.Sequence dbSeq = morphSequenceToDBSequence(seq, seqType, profileID);
@@ -72,7 +72,7 @@ public class DBController {
 
     public boolean existScheduleSequence(Sequence seq, Context con) {
         SequenceController sc = new SequenceController(con);
-        if(sc.getSequenceById(seq.getId()) != null){
+        if(sc.getSequenceById((int)seq.getId()) != null){
             return true;
         }
         return false;
@@ -84,24 +84,24 @@ public class DBController {
      * @param sequenceType
      * @param con
      */
-    public void loadCurrentProfileSequences(int profileID, SequenceType sequenceType, Context con){
+    public void loadCurrentProfileSequences(long profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
         try{
             LifeStory.getInstance().setStories(
                     morphDBSequenceListToSequenceList(
                             sc.getSequencesAndFramesByProfileIdAndType(
-                                    profileID, sequenceType), con));
+                                    (int)profileID, sequenceType), con));
         }catch (NullPointerException e){
             GuiHelper.ShowToast(con, "No sequences found!");
         }
 
     }
 
-    public List<Sequence> loadCurrentProfileSequencesAndFrames(int profileID, SequenceType sequenceType, Context con){
+    public List<Sequence> loadCurrentProfileSequencesAndFrames(long profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
         try{
         List<Sequence> items = morphDBSequenceListToSequenceList(
-                sc.getSequencesAndFramesByProfileIdAndType(profileID, sequenceType),con);
+                sc.getSequencesAndFramesByProfileIdAndType((int)profileID, sequenceType),con);
             return items;
         }catch (NullPointerException e){
             GuiHelper.ShowToast(con, "No sequences found!");
@@ -114,11 +114,11 @@ public class DBController {
      * @param sequenceType
      * @param con
      */
-    public void loadCurrentGuardianTemplates(int profileID, SequenceType sequenceType, Context con){
+    public void loadCurrentGuardianTemplates(long profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
         LifeStory.getInstance().setTemplates(
                 morphDBSequenceListToSequenceList(
-                        sc.getSequencesAndFramesByProfileIdAndType(
+                        sc.getSequencesAndFramesByProfileIdAndType((int)
                                 profileID, sequenceType), con));
     }
 
@@ -129,12 +129,12 @@ public class DBController {
      */
     public void deleteSequence(Sequence seq, Context con){
         SequenceController sc = new SequenceController(con);
-        if (sc.getSequenceById(seq.getId()).getSequenceType() == SequenceType.SCHEDULE){
+        if (sc.getSequenceById((int)seq.getId()).getSequenceType() == SequenceType.SCHEDULE){
             for(MediaFrame mf : seq.getMediaFrames()){
                 sc.remove(mf.getNestedSequenceID());
             }
         }
-        sc.remove(seq.getId());
+        sc.remove((int)seq.getId());
 
     }
 
@@ -239,13 +239,13 @@ public class DBController {
      * @return DBSequence
      */
     private dk.aau.cs.giraf.dblib.models.Sequence morphSequenceToDBSequence(
-            Sequence seq, SequenceType seqType, int profileID){
+            Sequence seq, SequenceType seqType, long profileID){
         dk.aau.cs.giraf.dblib.models.Sequence dbSeq = new dk.aau.cs.giraf.dblib.models.Sequence();
 
-        dbSeq.setId(seq.getId());
+        dbSeq.setId((int)seq.getId());
         dbSeq.setName(seq.getTitle());
         dbSeq.setPictogramId(seq.getTitlePictoId());
-        dbSeq.setProfileId(profileID);
+        dbSeq.setProfileId((int)profileID);
         dbSeq.setSequenceType(seqType);
         dbSeq.setFramesList(morphMediaFramesToDBFrames(seq.getMediaFrames()));
 
