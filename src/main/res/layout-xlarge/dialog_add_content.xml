@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="35dp"
-        android:layout_below="@id/seperatorLine"
         android:text="@string/dialog_add_frames_choices"
         android:textSize="30sp"
         android:textColor="@color/text_color" />
@@ -23,7 +22,7 @@
         android:layout_width="700dp"
         android:layout_below="@id/choicesText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:fadeScrollbars="false">
 
         <LinearLayout
@@ -32,7 +31,7 @@
             android:layout_height="match_parent"
             android:gravity="left"
             android:orientation="horizontal"
-            android:minHeight="75dp">
+            android:minHeight="150dp">
 
             <LinearLayout
                 android:id="@+id/newChoiceContent2"
@@ -40,7 +39,9 @@
                 android:layout_height="match_parent"
                 android:gravity="left"
                 android:orientation="horizontal"
-                android:minHeight="75dp"></LinearLayout>
+                android:minHeight="150dp">
+
+                </LinearLayout>
 
             <ImageButton
                 android:id="@+id/addChoice2"
@@ -52,8 +53,6 @@
                 android:background="@layout/border_selected"
                 android:onClick="addPictograms" />
         </LinearLayout>
-
-
     </HorizontalScrollView>
 
 </RelativeLayout>

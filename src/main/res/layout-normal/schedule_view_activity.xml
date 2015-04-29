@@ -62,7 +62,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/weekday_button_height"
+                android:layout_height="@dimen/normal_weekday_button_height"
                 android:background="#ff007700"
                 android:clickable="false"
                 android:focusable="true"
@@ -73,7 +73,7 @@
                     android:onClick="weekdaySelected"
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:alpha="0" />
 
@@ -84,7 +84,8 @@
                     android:text="@string/monday"
                     android:id="@+id/mondayStoryName"
                     android:layout_gravity="center"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/normal_weekday_text_width"/>
             </FrameLayout>
 
             <ScrollView
@@ -132,7 +133,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/weekday_button_height"
+                android:layout_height="@dimen/normal_weekday_button_height"
                 android:background="#ff800080"
                 android:id="@+id/frameLayout">
 
@@ -141,7 +142,7 @@
                     android:onClick="weekdaySelected"
                     android:id="@+id/tuesday"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:alpha="0" />
 
@@ -152,7 +153,8 @@
                     android:text="@string/tuesday"
                     android:layout_gravity="center"
                     android:id="@+id/tuesdayStoryName"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/normal_weekday_text_width"/>
             </FrameLayout>
 
             <ScrollView
@@ -186,12 +188,348 @@
                 android:layout_alignParentBottom="true"
                 android:layout_below="@+id/frameLayout" />
 
+        </RelativeLayout><RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/orange"
+        android:id="@+id/sectionWednesday"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:gcomponent="http://schemas.android.com/apk/res-auto">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/normal_weekday_button_height"
+            android:background="#ffff8500"
+            android:id="@+id/frameLayout2">
+
+            <dk.aau.cs.giraf.gui.GToggleButton
+                gcomponent:Toggled="true"
+                android:onClick="weekdaySelected"
+                android:id="@+id/wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:alpha="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/wednesday"
+                android:layout_gravity="center"
+                android:id="@+id/wednesdayStoryName"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/normal_weekday_text_width"/>
+        </FrameLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/wednesdayScroll"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="60dp"
+            android:fillViewport="true"
+            >
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/layoutWednesday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:gravity="center"
+                />
+        </ScrollView>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/frameLayout2"
+            android:id="@+id/border_wednesday"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+        <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/blue"
+        android:id="@+id/sectionThursday"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:gcomponent="http://schemas.android.com/apk/res-auto">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/normal_weekday_button_height"
+            android:background="#ff0000ff"
+            android:id="@+id/frameLayout3">
+
+            <dk.aau.cs.giraf.gui.GToggleButton
+                gcomponent:Toggled="true"
+                android:onClick="weekdaySelected"
+                android:id="@+id/thursday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:alpha="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/thursday"
+                android:layout_gravity="center"
+                android:id="@+id/thursdayStoryName"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/normal_weekday_text_width"/>
+        </FrameLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/thursdayScroll"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="60dp"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/layoutThursday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:gravity="center"
+                />
+        </ScrollView>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/border_thursday"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/frameLayout3" />
+
+    </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/yellow"
+            android:id="@+id/sectionFriday">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/normal_weekday_button_height"
+            android:background="#ffffdd00"
+            android:id="@+id/frameLayout4">
+
+            <dk.aau.cs.giraf.gui.GToggleButton
+                gcomponent:Toggled="true"
+                android:onClick="weekdaySelected"
+                android:id="@+id/friday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:alpha="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/friday"
+                android:layout_gravity="center"
+                android:id="@+id/fridayStoryName"
+                android:textColor="#000000"
+                android:textSize="@dimen/normal_weekday_text_width"/>
+
+        </FrameLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fridayScroll"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="60dp"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/layoutFriday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:gravity="center"
+                />
+        </ScrollView>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/border_friday"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/frameLayout4" />
+
         </RelativeLayout>
-        <include layout="@layout/wednesday"/>
-        <include layout="@layout/thursday"/>
-        <include layout="@layout/friday"/>
-        <include layout="@layout/saturday"/>
-        <include layout="@layout/sunday"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/red"
+            android:id="@+id/sectionSaturday"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:gcomponent="http://schemas.android.com/apk/res-auto">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="#ffff0000"
+                android:id="@+id/frameLayout5">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/saturday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/saturday"
+                    android:layout_gravity="center"
+                    android:id="@+id/saturdayStoryName"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/normal_weekday_text_width"/>
+            </FrameLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/saturdayScroll"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="60dp"
+                android:fillViewport="true"
+
+                >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/layoutSaturday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"/>
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_saturday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout5" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:id="@+id/sectionSunday"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:gcomponent="http://schemas.android.com/apk/res-auto">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/normal_weekday_button_height"
+                android:background="#ffffffff"
+                android:id="@+id/frameLayout6">
+
+                <dk.aau.cs.giraf.gui.GToggleButton
+                    gcomponent:Toggled="true"
+                    android:onClick="weekdaySelected"
+                    android:id="@+id/sunday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:alpha="0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/sunday"
+                    android:layout_gravity="center"
+                    android:id="@+id/sundayStoryName"
+                    android:textColor="#000000"
+                    android:textSize="@dimen/normal_weekday_text_width"/>
+            </FrameLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sundayScroll"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="60dp"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/layoutSunday"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center"
+                    />
+            </ScrollView>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/border_sunday"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/frameLayout6" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 

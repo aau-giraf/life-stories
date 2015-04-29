@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="800dp"
+    android:layout_width="400dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:padding="25dp">
+    android:padding="12dp">
 
     <TextView
         android:id="@+id/choicesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="35dp"
-        android:layout_below="@id/seperatorLine"
+        android:layout_marginLeft="75dp"
+        android:layout_marginTop="26.25dp"
         android:text="@string/dialog_add_frames_choices"
-        android:textSize="30sp"
+        android:textSize="22.5sp"
         android:textColor="@color/text_color" />
 
     <HorizontalScrollView
         android:id="@+id/addedChoicesScrollView"
-        android:layout_height="150dp"
-        android:layout_width="700dp"
+        android:layout_height="112.5dp"
+        android:layout_width="525dp"
         android:layout_below="@id/choicesText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:fadeScrollbars="false">
 
         <LinearLayout
@@ -32,7 +31,7 @@
             android:layout_height="match_parent"
             android:gravity="left"
             android:orientation="horizontal"
-            android:minHeight="75dp">
+            android:minHeight="112.5dp">
 
             <LinearLayout
                 android:id="@+id/newChoiceContent2"
@@ -40,13 +39,15 @@
                 android:layout_height="match_parent"
                 android:gravity="left"
                 android:orientation="horizontal"
-                android:minHeight="75dp"></LinearLayout>
+                android:minHeight="112.5dp">
+
+                </LinearLayout>
 
             <ImageButton
                 android:id="@+id/addChoice2"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginLeft="10dp"
+                android:layout_width="112.5dp"
+                android:layout_height="112.5dp"
+                android:layout_marginLeft="7.5dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/add"
                 android:background="@layout/border_selected"
@@ -55,5 +56,4 @@
 
 
     </HorizontalScrollView>
-
 </RelativeLayout>

@@ -22,7 +22,7 @@
         android:layout_width="350dp"
         android:layout_below="@id/choicesText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:fadeScrollbars="false">
 
         <LinearLayout
@@ -31,7 +31,7 @@
             android:layout_height="match_parent"
             android:gravity="left"
             android:orientation="horizontal"
-            android:minHeight="150dp">
+            android:minHeight="75dp">
 
             <LinearLayout
                 android:id="@+id/newChoiceContent2"
@@ -39,7 +39,7 @@
                 android:layout_height="match_parent"
                 android:gravity="left"
                 android:orientation="horizontal"
-                android:minHeight="150dp">
+                android:minHeight="75dp">
 
                 </LinearLayout>
 
