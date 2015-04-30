@@ -6,11 +6,11 @@ import java.util.List;
 
 import android.content.Context;
 
+import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.EqualsUtil;
 import dk.aau.cs.giraf.dblib.models.OasisObserver;
-import dk.aau.cs.giraf.pictogram.PictoFactory;
-import dk.aau.cs.giraf.pictogram.Pictogram;
-
+import dk.aau.cs.giraf.dblib.models.Pictogram;
+import dk.aau.cs.giraf.dblib.controllers.PictogramController;
 public class MediaFrame extends AbstractMediaFrame{
 
     private Pictogram choicePictogram;
@@ -28,8 +28,9 @@ public class MediaFrame extends AbstractMediaFrame{
 	
 	public MediaFrame(Context context, SerializableMediaFrame m) {
 		setContent(new ArrayList<Pictogram>());
+        Helper h = new Helper(context);
 		for(Integer p : m.getContent()) {
-			this.getContent().add(PictoFactory.getPictogram(context, p));
+			this.getContent().add(h.pictogramHelper.getById(p));
 		}
 		this.choiceNumber = m.choiceNumber;
 		this.frames = m.frames;

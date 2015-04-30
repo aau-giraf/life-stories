@@ -32,7 +32,7 @@ import dk.aau.cs.giraf.gui.GToggleButton;
 //import dk.aau.cs.giraf.gui.GirafPictogram;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;

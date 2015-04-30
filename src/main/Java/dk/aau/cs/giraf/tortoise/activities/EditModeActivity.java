@@ -47,12 +47,12 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GRadioButton;
-import dk.aau.cs.giraf.pictogram.PictoFactory;
-import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
@@ -92,6 +92,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     GDialog dialogAddFrames;
     GDialog gdialog;
     GDialog printAlignmentDialog;
+
+    Helper h;
 
     private boolean dialogAddFramesActive;
     private boolean isInEditMode;
@@ -138,6 +140,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         // TODO: Always true.. for now
         isInEditMode = true;
+
+        h = new Helper(getApplicationContext());
 
         // Create Adapter
         adapter = setupAdapter();
@@ -223,7 +227,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			{
                 try{
                     LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-                    Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                    Pictogram picto = h.pictogramHelper.getById(checkoutIds[0]);
                     Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
                     bitmap = LayoutTools.getSquareBitmap(bitmap);
                     bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
@@ -254,7 +258,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 else
                 {
                     try{
-                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+                        Pictogram picto = h.pictogramHelper.getById(checkoutIds[0]);
                         sequence.getMediaFrames().get(lastPosition).setChoicePictogram(picto);
                         renderChoiceIcon(lastPosition);
                     }

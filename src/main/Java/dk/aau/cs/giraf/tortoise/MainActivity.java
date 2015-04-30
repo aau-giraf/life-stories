@@ -375,7 +375,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                             i = new Intent();
                             i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
                             i.putExtra("sequenceId", sequence.getId());
-                            Log.e("Tag", Integer.toString(sequence.getMediaFrames().get(0).getContent().get(0).getPictogramID()));
+                            Log.e("Tag", Long.toString(sequence.getMediaFrames().get(0).getContent().get(0).getId()));
                             i.putExtra("landscapeMode", true);
                             i.putExtra("visiblePictogramCount", 4);
                             i.putExtra("callerType", "Tortoise");

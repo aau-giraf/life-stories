@@ -35,8 +35,7 @@ import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.pictogram.PictoFactory;
-import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 import dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
 import dk.aau.cs.giraf.tortoise.MainActivity;
@@ -708,14 +707,14 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
     private void OnEditSequenceImageResult(Intent data) {
 
-        int[] checkoutIds = data.getExtras().getIntArray(
+        long[] checkoutIds = data.getExtras().getLongArray(
                 PICTO_INTENT_CHECKOUT_ID);
 
         if (checkoutIds.length == 0)
             return;
 
         schedule.setTitlePictoId(checkoutIds[0]);
-        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
+        Pictogram picto = helper.pictogramHelper.getById(checkoutIds[0]);
         Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
         bitmap = LayoutTools.getSquareBitmap(bitmap);
         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 40);
@@ -756,7 +755,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         if (choiceMode) {
 
             for (int id : checkoutIds) {
-                Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
+                Pictogram pictogram = helper.pictogramHelper.getById( id);
                 pictogram.setId(id);
 
                 MediaFrame frame = new MediaFrame();
@@ -773,7 +772,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             choiceAdapter.notifyDataSetChanged();
         } else {
             for (int id : checkoutIds) {
-                Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
+                Pictogram pictogram = helper.pictogramHelper.getById( id);
                 pictogram.setId(id);
 
                 MediaFrame frame = new MediaFrame();
@@ -1071,9 +1070,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                 for (int i = 0; i < adapter.getItem(pictogramEditPos).getContent().size(); i++)
                 {
                     MediaFrame frame = new MediaFrame();
-                    int id = adapter.getItem(pictogramEditPos).getContent().get(i).getPictogramID();
+                    long id = adapter.getItem(pictogramEditPos).getContent().get(i).getId();
                     frame.setPictogramId(id);
-                    Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
+                    Pictogram pictogram = helper.pictogramHelper.getById( id);
                     pictogram.setId(id);
                     frame.addContent(pictogram);
                     choice.addFrame(frame);
@@ -1109,7 +1108,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                     else{
                         frame.setContent(tempPictoList);
                         frame.setChoicePictogram(tempPictoList.get(0));
-                        frame.setPictogramId(tempPictoList.get(0).getPictogramID());
+                        frame.setPictogramId(tempPictoList.get(0).getId());
                     }
 
                     if (pictogramEditPos == -1){

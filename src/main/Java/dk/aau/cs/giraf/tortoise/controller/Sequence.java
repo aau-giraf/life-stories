@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+
+import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -45,7 +47,7 @@ public class Sequence extends AbstractSequence {
             this.titleImage = null;
         }
         else {
-            Bitmap bitmap = PictoFactory.getPictogram(con, (int)this.getTitlePictoId()).getImageData();
+            Bitmap bitmap = new Helper(con).pictogramHelper.getById( (int)this.getTitlePictoId()).getImageData();
             bitmap = LayoutTools.getSquareBitmap(bitmap);
             bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
             this.titleImage = bitmap;

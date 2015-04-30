@@ -10,7 +10,7 @@ import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 import dk.aau.cs.giraf.tortoise.AbstractFrameView;
 import dk.aau.cs.giraf.tortoise.Frame;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
@@ -45,7 +45,7 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 		mainActivity.addOnMainLayoutEventListener(this);
 	}
 	
-	public void detachPictograms() {
+	/*public void detachPictograms() {
 		for(Pictogram p : this.getMediaFrame().getContent()) {
 			if (p.getParent() instanceof FrameLayout)
 				((FrameLayout)p.getParent()).removeView(p);
@@ -54,7 +54,7 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 		}
 
         //this.removePictogram();
-	}
+	}*/
 	
 	public void highLight() {
 		this.setScaleX(1.05f);
