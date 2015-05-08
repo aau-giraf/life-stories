@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.AbstractFrameView;
 import dk.aau.cs.giraf.tortoise.Frame;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
 public class ViewModeFrameView extends AbstractFrameView implements OnDragListener, OnClickListener {
@@ -17,7 +18,7 @@ public class ViewModeFrameView extends AbstractFrameView implements OnDragListen
 	ViewModeActivity viewModeActivity;
 	
 	public ViewModeFrameView(ViewModeActivity viewModeActivity, Context context, RelativeLayout parentLayout,
-			MediaFrame mediaFrame, Frame frame, int width, int height) {
+			PictogramView mediaFrame, Frame frame, int width, int height) {
 		super(context, parentLayout, mediaFrame, frame, width, height);
 		this.viewModeActivity = viewModeActivity;
 		init();
@@ -29,19 +30,18 @@ public class ViewModeFrameView extends AbstractFrameView implements OnDragListen
 	}
 	
 	public void detachPictograms() {
-		for(Pictogram p : this.getMediaFrame().getContent()) {
+		PictogramView p = this.getMediaFrame();
 			if (p.getParent() instanceof LinearLayout)
 				((LinearLayout)p.getParent()).removeView(p);
 			else if(p.getParent() instanceof ViewModeFrameView)
 				((ViewModeFrameView)p.getParent()).removeView(p);
 		}
-	}
 
 	@Override
 	public boolean onDrag(View v, DragEvent event) {
 		switch (event.getAction()) {
 		case DragEvent.ACTION_DROP:
-			Pictogram p =(Pictogram)event.getLocalState();
+			PictogramView p =(PictogramView)v;
 			viewModeActivity.movePictogram(p, p.getParent(), this);
 			break;
 		default:

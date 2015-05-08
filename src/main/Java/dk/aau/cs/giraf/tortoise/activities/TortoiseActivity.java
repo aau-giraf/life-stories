@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
-import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
 public class TortoiseActivity extends GirafActivity
@@ -66,30 +68,28 @@ public class TortoiseActivity extends GirafActivity
         return resizedBitmap;
     }
 
-    public void addContentToMediaFrame(MediaFrame mf, int[] checkoutIds) {
+    public void addContentToMediaFrame(PictogramView mf, int[] checkoutIds) {
 
-        List<Integer> pictoIDList = new ArrayList<Integer>();
+        List<Long> pictoIDList = new ArrayList<Long>();
 
         // get the pictograms that are currently being shown
-        List<Pictogram> pictoList = mf.getContent();
+        PictogramView pictoList = mf;
 
         // put all their IDs in a list
-        for(Pictogram p : pictoList)
-        {
-            pictoIDList.add(p.getPictogramID());
-        }
+        pictoIDList.add((long)pictoList.getId());
 
+        Helper helper = new Helper(getApplicationContext());
         for (int i = 0; i < checkoutIds.length; i++)
         {
-            Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[i]);
-            picto.renderAll();
+            Pictogram picto = helper.pictogramHelper.getById(checkoutIds[i]);
+            //picto.renderAll();
 
             boolean shouldAddToList = true;
 
             // if pictogram already exists, don't add it. We don't want duplicates
-            for (Integer element : pictoIDList)
+            for (Long element : pictoIDList)
             {
-                if(element == picto.getPictogramID())
+                if(element == picto.getId())
                 {
                     shouldAddToList = false;
                 }
@@ -98,8 +98,8 @@ public class TortoiseActivity extends GirafActivity
             if(shouldAddToList)
             {
                 // add pictogram
-                pictoIDList.add(picto.getPictogramID());
-                mf.addContent(picto);
+                pictoIDList.add(picto.getId());
+                //mf.addContent(picto);
             }
         }
 

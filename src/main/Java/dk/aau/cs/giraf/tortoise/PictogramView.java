@@ -17,7 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.dblib.Helper;
 
 
 /**
@@ -55,7 +55,7 @@ public class PictogramView extends LinearLayout {
 	public PictogramView(Context context, float radius, boolean inMain) {
 		super(context);
 		
-		initialize(context, radius, inMain );
+		initialize(context, radius, inMain);
 	}
 	
 	
@@ -265,7 +265,7 @@ public class PictogramView extends LinearLayout {
         }
     }
 
-    public void setImageFromId(int id) {
+    public void setImageFromId(long id) {
         helper = new Helper(getContext());
         Bitmap bitmap = helper.pictogramHelper.getPictogramById(id).getImage();
         Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());  // Create another image the same size

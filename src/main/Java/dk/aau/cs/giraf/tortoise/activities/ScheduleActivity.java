@@ -31,9 +31,10 @@ import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GToggleButton;
 //import dk.aau.cs.giraf.gui.GirafPictogram;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
-import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
@@ -208,7 +209,7 @@ public class ScheduleActivity extends TortoiseActivity
                 LinearLayout level3 = (LinearLayout) level2.getChildAt(0);
                 level3.removeAllViews();
 
-                    for(MediaFrame mf : weekdaySequences.get(i).getMediaFrames())
+                    for(PictogramView mf : weekdaySequences.get(i).getMediaFrames())
                     {
 
                             addItems(mf, level3, i);
@@ -230,11 +231,11 @@ public class ScheduleActivity extends TortoiseActivity
         //showAddButtons();
     }
 
-    public void addItems(MediaFrame mf, LinearLayout layout, final int day)
+    public void addItems(PictogramView mf, LinearLayout layout, final int day)
     {
         try
         {
-            List<Pictogram> pictoList = unpackSequence(mf);
+            List<dk.aau.cs.giraf.dblib.models.Pictogram> pictoList = unpackSequence(mf);
                         // if only one pictogram is in the sequence, just display it in its respective week day
             if(pictoList.size() == 1)
             {
@@ -279,7 +280,7 @@ public class ScheduleActivity extends TortoiseActivity
         return newBitmap;
     }
 
-    public List<Pictogram> unpackSequence(MediaFrame mf)
+    public List<dk.aau.cs.giraf.dblib.models.Pictogram> unpackSequence(PictogramView mf)
     {
         return mf.getContent();
     }

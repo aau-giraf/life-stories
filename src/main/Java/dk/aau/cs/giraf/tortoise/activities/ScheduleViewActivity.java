@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.ProgressTracker;
 import dk.aau.cs.giraf.tortoise.R;
 
@@ -243,7 +244,7 @@ public class ScheduleViewActivity extends ScheduleActivity
         if (checkoutIds.length == 0)
             return;
 
-        MediaFrame frame = weekdaySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos);
+        PictogramView frame = weekdaySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos);
 
         frame.setPictogramId(checkoutIds[0]);
 
@@ -343,10 +344,10 @@ public class ScheduleViewActivity extends ScheduleActivity
     private void displaySequences()
     {
         // load sequences associated with citizen
-        DBController.getInstance().loadCurrentProfileSequences(childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, this);
+        DBController.getInstance().loadCurrentProfileSequences(childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE, this);
 
         // get sequences from database
-        List<Sequence> storyList = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+        List<Sequence> storyList = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
 
         int storyIndex = template;
 

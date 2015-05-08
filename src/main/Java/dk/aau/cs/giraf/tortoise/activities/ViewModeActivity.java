@@ -27,9 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 import dk.aau.cs.giraf.tortoise.ChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.Frame;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.R;
@@ -187,7 +188,7 @@ public class ViewModeActivity extends TortoiseActivity {
 			public boolean onDrag(View v, DragEvent event) {
 				switch (event.getAction()) {
 				case DragEvent.ACTION_DROP:
-					Pictogram p = (Pictogram)event.getLocalState();
+					PictogramView p = (PictogramView)v;
 					movePictogram(p, p.getParent(), v);
 					break;
 				default:
@@ -197,7 +198,7 @@ public class ViewModeActivity extends TortoiseActivity {
 			}
 		});
 		if(currentViewModeFrame != null) {
-			for(Pictogram p : currentViewModeFrame.getMediaFrame().getContent()) {
+			PictogramView p = currentViewModeFrame.getMediaFrame();
 				if(!(p.getParent() instanceof ViewModeFrameView)) {
 					p.setOnTouchListener(new OnTouchListener() {
 						
@@ -240,7 +241,7 @@ public class ViewModeActivity extends TortoiseActivity {
 								}
 								break;
 							case DragEvent.ACTION_DROP:
-								Pictogram p = (Pictogram)event.getLocalState();
+								PictogramView p = (PictogramView)v;
 								movePictogram(p, p.getParent(), v.getParent());
 								break;
 							case DragEvent.ACTION_DRAG_ENDED:
@@ -266,11 +267,10 @@ public class ViewModeActivity extends TortoiseActivity {
 				}	
 			}
 		}
-	}
 	
-	public void addPictogramToChoices(Pictogram pictogram) {
+	public void addPictogramToChoices(PictogramView pictogram) {
 		LinearLayout.LayoutParams params = getLinearLayoutParams();
-		ChoiceFrameView child = new ChoiceFrameView(this, currentViewModeFrame.getMediaFrame(), pictogram, params);
+		ChoiceFrameView child = new ChoiceFrameView(this, currentViewModeFrame.getMediaFrame(),new Pictogram(), params);
 		child.setLayoutParams(params);
 		choices.addView(child);
 	}
@@ -286,7 +286,7 @@ public class ViewModeActivity extends TortoiseActivity {
 		return params;
 	}
 	
-	public void movePictogram(Pictogram p, Object source, Object target) {
+	public void movePictogram(PictogramView p, Object source, Object target) {
 		if(source != target) {
 			if(source instanceof ViewModeFrameView) {
 				ViewModeFrameView s = (ViewModeFrameView)source;
@@ -294,15 +294,15 @@ public class ViewModeActivity extends TortoiseActivity {
 					ViewModeFrameView t = (ViewModeFrameView)target;
 					if(isPictogramInList(p, t)) {
 						if(t.getChildCount() == 1) {
-							Pictogram pTarget = t.getPictogram();
+							PictogramView pTarget = t.getMediaFrame();
 							t.removePictogram();
 							s.removeView(p);
-							t.setPictogram(p);
-							s.setPictogram(pTarget);
+							t.setMediaFrame(p);
+							s.setMediaFrame(pTarget);
 						}
 						else {
 							s.removePictogram();
-							t.setPictogram(p);
+							t.setMediaFrame(p);
 						}
 					}
 				}
@@ -320,18 +320,18 @@ public class ViewModeActivity extends TortoiseActivity {
 					ViewModeFrameView t = (ViewModeFrameView)target;
 					if(isPictogramInList(p, t)) {
 						if(t.getChildCount() == 1) {
-							Pictogram pTarget = t.getPictogram();
+							PictogramView pTarget = t.getMediaFrame();
 							t.removePictogram();
 							s.removeView(p);
 							choices.removeView(s);
-							t.setPictogram(p);
+							t.setMediaFrame(p);
 							addPictogramToChoices(pTarget);
 							
 						}
 						else {
 							s.removeView(p);
 							choices.removeView(s);
-							t.setPictogram(p);
+							t.setMediaFrame(p);
 						}
 					}
 				}
@@ -345,14 +345,14 @@ public class ViewModeActivity extends TortoiseActivity {
      * @param e
      * @return
      */
-	public boolean isPictogramInList(Pictogram p, ViewModeFrameView e) {
+	public boolean isPictogramInList(PictogramView p, ViewModeFrameView e) {
 		boolean isTrue;
-		int index = e.getMediaFrame().getContent().indexOf(p);
+		int index = 0;
 		if(index == -1) {
 			isTrue = false;
 		}
 		else {
-			Pictogram pictogram = e.getMediaFrame().getContent().get(index);
+			PictogramView pictogram = e.getMediaFrame();
 			if(p == pictogram) {
 				isTrue = true;
 			}
@@ -368,25 +368,16 @@ public class ViewModeActivity extends TortoiseActivity {
 		mainLayout.removeAllViews();
 		detatchAllPictos();
 		
-		for (MediaFrame m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
-			for(Pictogram p : m.getContent()) {
-				p.renderAll();
-			}		
-			List<Frame> frames = m.getFrames();
-			for(Frame f : frames) {
-				ViewModeFrameView viewModeFrameView = 
-						new ViewModeFrameView(this, getApplicationContext(), 
-								mainLayout, m, f, f.getHeight(), f.getWidth());
-				params = new RelativeLayout.LayoutParams(f.getWidth(),f.getHeight());
-				params.leftMargin = f.getPosition().x;
-				params.topMargin = f.getPosition().y;
-				viewModeFrameView.setLayoutParams(params);
-				if (m.getContent().size() == 1)
-					viewModeFrameView.setPictogram(m.getContent().get(0));
+		for (int i = 0; i < LifeStory.getInstance().getCurrentStory().getMediaFrames().size(); i++){
+			PictogramView m = LifeStory.getInstance().getCurrentStory().getMediaFrames().get(i);
+            ViewModeFrameView viewModeFrameView =
+						new ViewModeFrameView(this, getApplicationContext(),
+								mainLayout, m, new Frame(m.getWidth(), m.getHeight(), new Point(i,0)), m.getHeight(), m.getWidth());
+				if (m != null)
+					viewModeFrameView.setMediaFrame(m);
 				mainLayout.addView(viewModeFrameView);
 			}
 		}
-	}
 	
 	public void renderMenuBar(int id) {
 		LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -398,13 +389,12 @@ public class ViewModeActivity extends TortoiseActivity {
 	}
 
 	public void detatchAllPictos() {
-		for(MediaFrame m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
-			for(Pictogram p : m.getContent()) {
-				if (p.getParent() instanceof FrameLayout)
-					((FrameLayout)p.getParent()).removeView(p);
-				else if(p.getParent() instanceof ViewModeFrameView)
-					((ViewModeFrameView)p.getParent()).removePictogram();
+		for(PictogramView m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
+			PictogramView p = m;
+            if (p.getParent() instanceof FrameLayout)
+                ((FrameLayout)p.getParent()).removeView(p);
+            else if(p.getParent() instanceof ViewModeFrameView)
+                ((ViewModeFrameView)p.getParent()).removePictogram();
 			}
 		}
 	}
-}

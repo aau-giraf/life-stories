@@ -6,11 +6,12 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.oasis.lib.controllers.PictogramController;
-import dk.aau.cs.giraf.oasis.lib.controllers.SequenceController;
-import dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType;
+import dk.aau.cs.giraf.dblib.controllers.PictogramController;
+import dk.aau.cs.giraf.dblib.controllers.SequenceController;
+import dk.aau.cs.giraf.dblib.models.Sequence.SequenceType;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
 import dk.aau.cs.giraf.tortoise.helpers.LifeStory;
 
@@ -55,10 +56,10 @@ public class DBController {
      * @param con
      * @return boolean
      */
-    public boolean saveSequence(Sequence seq, SequenceType seqType, int profileID, Context con){
+    public boolean saveSequence(Sequence seq, SequenceType seqType, long profileID, Context con){
         boolean success;
         SequenceController sc = new SequenceController(con);
-        dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = morphSequenceToDBSequence(seq, seqType, profileID);
+        dk.aau.cs.giraf.dblib.models.Sequence dbSeq = morphSequenceToDBSequence(seq, seqType, profileID);
         if (seq.getId() == 0) {
             success = sc.insertSequenceAndFrames(dbSeq);
             seq.setId(dbSeq.getId());
@@ -84,7 +85,7 @@ public class DBController {
      * @param sequenceType
      * @param con
      */
-    public void loadCurrentProfileSequences(int profileID, SequenceType sequenceType, Context con){
+    public void loadCurrentProfileSequences(long profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
         try{
             LifeStory.getInstance().setStories(
@@ -97,7 +98,7 @@ public class DBController {
 
     }
 
-    public List<Sequence> loadCurrentProfileSequencesAndFrames(int profileID, SequenceType sequenceType, Context con){
+    public List<Sequence> loadCurrentProfileSequencesAndFrames(long profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
         try{
         List<Sequence> items = morphDBSequenceListToSequenceList(
@@ -114,7 +115,7 @@ public class DBController {
      * @param sequenceType
      * @param con
      */
-    public void loadCurrentGuardianTemplates(int profileID, SequenceType sequenceType, Context con){
+    public void loadCurrentGuardianTemplates(long profileID, SequenceType sequenceType, Context con){
         SequenceController sc = new SequenceController(con);
         LifeStory.getInstance().setTemplates(
                 morphDBSequenceListToSequenceList(
@@ -129,12 +130,12 @@ public class DBController {
      */
     public void deleteSequence(Sequence seq, Context con){
         SequenceController sc = new SequenceController(con);
-        if (sc.getSequenceById(seq.getId()).getSequenceType() == SequenceType.SCHEDULE){
-            for(MediaFrame mf : seq.getMediaFrames()){
-                sc.removeSequence(mf.getNestedSequenceID());
+        if (sc.getById(seq.getId()).getSequenceType() == SequenceType.SCHEDULE){
+            for(PictogramView mf : seq.getMediaFrames()){
+                sc.remove(mf.getNestedSequenceID());
             }
         }
-        sc.removeSequence(seq.getId());
+        sc.remove(seq.getId());
 
     }
 
@@ -144,7 +145,7 @@ public class DBController {
      * @param context
      * @return Sequence
      */
-    public Sequence getSequenceFromID(int id, Context context)
+    public Sequence getSequenceFromID(long id, Context context)
     {
         SequenceController sc = new SequenceController(context);
         return morphDBSequenceToSequence(sc.getSequenceAndFrames(id), context);
@@ -164,9 +165,9 @@ public class DBController {
      * @param con
      * @return a list of Pictogram Sequences
      */
-    private ArrayList<Sequence> morphDBSequenceListToSequenceList(List<dk.aau.cs.giraf.oasis.lib.models.Sequence> dbSeqs, Context con){
+    private ArrayList<Sequence> morphDBSequenceListToSequenceList(List<dk.aau.cs.giraf.dblib.models.Sequence> dbSeqs, Context con){
         ArrayList<Sequence> seqs = new ArrayList<Sequence>();
-        for(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq : dbSeqs){
+        for(dk.aau.cs.giraf.dblib.models.Sequence dbSeq : dbSeqs){
             seqs.add(morphDBSequenceToSequence(dbSeq, con));
         }
         return seqs;
@@ -178,7 +179,7 @@ public class DBController {
      * @param con
      * @return Sequence
      */
-    private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq, Context con){
+    private Sequence morphDBSequenceToSequence(dk.aau.cs.giraf.dblib.models.Sequence dbSeq, Context con){
         /*SequenceController sc = new SequenceController(con);
         if(dbSeq.getPictogramId() == 0){
             sc.removeSequence(dbSeq.getId());
@@ -198,10 +199,10 @@ public class DBController {
      * @param con
      * @return a list of MediaFrames
      */
-    private ArrayList<MediaFrame> morphDBFramesToMediaFrames(
-            List<dk.aau.cs.giraf.oasis.lib.models.Frame> dbFrames, Context con){
-        ArrayList<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
-        for(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame : dbFrames){
+    private ArrayList<PictogramView> morphDBFramesToMediaFrames(
+            List<dk.aau.cs.giraf.dblib.models.Frame> dbFrames, Context con){
+        ArrayList<PictogramView> mediaFrames = new ArrayList<PictogramView>();
+        for(dk.aau.cs.giraf.dblib.models.Frame dbFrame : dbFrames){
             mediaFrames.add(morphDBFrameToMediaFrame(dbFrame, con));
         }
         return mediaFrames;
@@ -213,8 +214,8 @@ public class DBController {
      * @param con
      * @return MediaFrame
      */
-    private MediaFrame morphDBFrameToMediaFrame(dk.aau.cs.giraf.oasis.lib.models.Frame dbFrame, Context con) {
-        MediaFrame mediaFrame = new MediaFrame();
+    private PictogramView morphDBFrameToMediaFrame(dk.aau.cs.giraf.dblib.models.Frame dbFrame, Context con) {
+        PictogramView mediaFrame = new MediaFrame();
         PictogramController pc = new PictogramController(con);
         if (dbFrame.getPictogramId() > 0) {
             mediaFrame.setPictogramId(dbFrame.getPictogramId());
@@ -238,9 +239,9 @@ public class DBController {
      * @param profileID
      * @return DBSequence
      */
-    private dk.aau.cs.giraf.oasis.lib.models.Sequence morphSequenceToDBSequence(
-            Sequence seq, SequenceType seqType, int profileID){
-        dk.aau.cs.giraf.oasis.lib.models.Sequence dbSeq = new dk.aau.cs.giraf.oasis.lib.models.Sequence();
+    private dk.aau.cs.giraf.dblib.models.Sequence morphSequenceToDBSequence(
+            Sequence seq, SequenceType seqType, long profileID){
+        dk.aau.cs.giraf.dblib.models.Sequence dbSeq = new dk.aau.cs.giraf.dblib.models.Sequence();
 
         dbSeq.setId(seq.getId());
         dbSeq.setName(seq.getTitle());
@@ -257,10 +258,10 @@ public class DBController {
      * @param mediaFrames
      * @return
      */
-    private List<dk.aau.cs.giraf.oasis.lib.models.Frame> morphMediaFramesToDBFrames(List<MediaFrame> mediaFrames) {
-        List<dk.aau.cs.giraf.oasis.lib.models.Frame> DBframes = new ArrayList<dk.aau.cs.giraf.oasis.lib.models.Frame>();
+    private List<dk.aau.cs.giraf.dblib.models.Frame> morphMediaFramesToDBFrames(List<PictogramView> mediaFrames) {
+        List<dk.aau.cs.giraf.dblib.models.Frame> DBframes = new ArrayList<dk.aau.cs.giraf.dblib.models.Frame>();
         int x = 0;
-        for (MediaFrame mf :mediaFrames ){
+        for (PictogramView mf :mediaFrames ){
             DBframes.add(morphMediaFramesToDBFrames(mf, x, 0));
             x++;
         }
@@ -268,8 +269,8 @@ public class DBController {
     }
 
 
-    private dk.aau.cs.giraf.oasis.lib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf, int x, int y){
-        dk.aau.cs.giraf.oasis.lib.models.Frame f = new dk.aau.cs.giraf.oasis.lib.models.Frame();
+    private dk.aau.cs.giraf.dblib.models.Frame morphMediaFramesToDBFrames(PictogramView mf, int x, int y){
+        dk.aau.cs.giraf.dblib.models.Frame f = new dk.aau.cs.giraf.dblib.models.Frame();
         if (mf.getChoicePictogram() != null){
             f.setPictogramId(mf.getChoicePictogram().getPictogramID());
         }
@@ -283,16 +284,16 @@ public class DBController {
         return f;
     }
 
-    private List<dk.aau.cs.giraf.oasis.lib.models.Pictogram> morphPictogramsToDBPictograms(List<Pictogram> content) {
-        List<dk.aau.cs.giraf.oasis.lib.models.Pictogram> DBPictos = new ArrayList<dk.aau.cs.giraf.oasis.lib.models.Pictogram>();
+    private List<dk.aau.cs.giraf.dblib.models.Pictogram> morphPictogramsToDBPictograms(List<Pictogram> content) {
+        List<dk.aau.cs.giraf.dblib.models.Pictogram> DBPictos = new ArrayList<dk.aau.cs.giraf.dblib.models.Pictogram>();
         for (Pictogram p :content ){
             DBPictos.add(morphPictogramsToDBPictograms(p));
         }
         return DBPictos;
     }
 
-    private dk.aau.cs.giraf.oasis.lib.models.Pictogram morphPictogramsToDBPictograms(Pictogram picto) {
-        dk.aau.cs.giraf.oasis.lib.models.Pictogram DBPicto = new dk.aau.cs.giraf.oasis.lib.models.Pictogram();
+    private dk.aau.cs.giraf.dblib.models.Pictogram morphPictogramsToDBPictograms(Pictogram picto) {
+        dk.aau.cs.giraf.dblib.models.Pictogram DBPicto = new dk.aau.cs.giraf.dblib.models.Pictogram();
         DBPicto.setId(picto.getPictogramID());
         return DBPicto;
     }

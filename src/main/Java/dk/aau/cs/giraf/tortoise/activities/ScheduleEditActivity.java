@@ -33,8 +33,8 @@ import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GDialogAlert;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup;
@@ -94,7 +94,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
     public static SequenceAdapter choiceAdapter;
 
 
-    private List<MediaFrame> tempFrameList;
+    private List<PictogramView> tempFrameList;
     private final String PICTO_ADMIN_PACKAGE = "dk.aau.cs.giraf.pictosearch";
     private final String PICTO_ADMIN_CLASS = PICTO_ADMIN_PACKAGE + "." + "PictoAdminMain";
     private final String PICTO_INTENT_CHECKOUT_ID = "checkoutIds";
@@ -205,13 +205,13 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         }
         else
         {
-            List<Sequence> seqs = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            List<Sequence> seqs = DBController.getInstance().loadCurrentProfileSequencesAndFrames(childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
             schedule = seqs.get(template);
             LifeStory.getInstance().setCurrentStory(schedule);
 
-            int dayID = schedule.getMediaFrames().get(0).getNestedSequenceID();
+            long dayID = schedule.getMediaFrames().get(0).getNestedSequenceID();
             mondaySequence = DBController.getInstance().getSequenceFromID(dayID, this);
-            Collections.sort(mondaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
+            Collections.sort(mondaySequence.getMediaFrames(), new Comparator<Object>() {
                 public int compare(MediaFrame x, MediaFrame y) {
                     return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
                 }
@@ -219,9 +219,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(0, mondaySequence);
             markedFrames.add(new boolean[mondaySequence.getMediaFrames().size()]);
 
-            int day1ID = schedule.getMediaFrames().get(1).getNestedSequenceID();
+            long day1ID = schedule.getMediaFrames().get(1).getNestedSequenceID();
             tuesdaySequence = DBController.getInstance().getSequenceFromID(day1ID, this);
-            Collections.sort(tuesdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
+            Collections.sort(tuesdaySequence.getMediaFrames(), new Comparator<Object>() {
                 public int compare(MediaFrame x, MediaFrame y) {
                     return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
                 }
@@ -229,9 +229,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(1, tuesdaySequence);
             markedFrames.add(new boolean[tuesdaySequence.getMediaFrames().size()]);
 
-            int day2ID = schedule.getMediaFrames().get(2).getNestedSequenceID();
+            long day2ID = schedule.getMediaFrames().get(2).getNestedSequenceID();
             wednesdaySequence = DBController.getInstance().getSequenceFromID(day2ID, this);
-            Collections.sort(wednesdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
+            Collections.sort(wednesdaySequence.getMediaFrames(), new Comparator<Object>() {
                 public int compare(MediaFrame x, MediaFrame y) {
                     return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
                 }
@@ -239,9 +239,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(2, wednesdaySequence);
             markedFrames.add(new boolean[wednesdaySequence.getMediaFrames().size()]);
 
-            int day3ID = schedule.getMediaFrames().get(3).getNestedSequenceID();
+            long day3ID = schedule.getMediaFrames().get(3).getNestedSequenceID();
             thursdaySequence = DBController.getInstance().getSequenceFromID(day3ID, this);
-            Collections.sort(thursdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
+            Collections.sort(thursdaySequence.getMediaFrames(), new Comparator<Object>() {
                 public int compare(MediaFrame x, MediaFrame y) {
                     return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
                 }
@@ -249,9 +249,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(3, thursdaySequence);
             markedFrames.add(new boolean[thursdaySequence.getMediaFrames().size()]);
 
-            int day4ID = schedule.getMediaFrames().get(4).getNestedSequenceID();
+            long day4ID = schedule.getMediaFrames().get(4).getNestedSequenceID();
             fridaySequence = DBController.getInstance().getSequenceFromID(day4ID, this);
-            Collections.sort(fridaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
+            Collections.sort(fridaySequence.getMediaFrames(), new Comparator<Object>() {
                 public int compare(MediaFrame x, MediaFrame y) {
                     return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
                 }
@@ -259,9 +259,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(4, fridaySequence);
             markedFrames.add(new boolean[fridaySequence.getMediaFrames().size()]);
 
-            int day5ID = schedule.getMediaFrames().get(5).getNestedSequenceID();
+            long day5ID = schedule.getMediaFrames().get(5).getNestedSequenceID();
             saturdaySequence = DBController.getInstance().getSequenceFromID(day5ID, this);
-            Collections.sort(saturdaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
+            Collections.sort(saturdaySequence.getMediaFrames(), new Comparator<Object>() {
                 public int compare(MediaFrame x, MediaFrame y) {
                     return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
                 }
@@ -269,9 +269,9 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySequences.add(5, saturdaySequence);
             markedFrames.add(new boolean[saturdaySequence.getMediaFrames().size()]);
 
-            int day6ID = schedule.getMediaFrames().get(6).getNestedSequenceID();
+            long day6ID = schedule.getMediaFrames().get(6).getNestedSequenceID();
             sundaySequence = DBController.getInstance().getSequenceFromID(day6ID, this);
-            Collections.sort(sundaySequence.getMediaFrames(), new Comparator<MediaFrame>() {
+            Collections.sort(sundaySequence.getMediaFrames(), new Comparator<Object>() {
                 public int compare(MediaFrame x, MediaFrame y) {
                     return Integer.valueOf(x.getPosY()).compareTo(y.getPosY());
                 }
@@ -472,7 +472,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                 // update weekdaySelected
                 currentWeekSection(view);
                 //Save Frame and Position
-                MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(position);
+                PictogramView frame = daySequences.get(weekdaySelected).getMediaFrames().get(position);
 
                 if(doingDelete){
                     if(!isFrameMarked(frame)) {
@@ -759,7 +759,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                 Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
                 pictogram.setId(id);
 
-                MediaFrame frame = new MediaFrame();
+                PictogramView frame = new MediaFrame();
                 frame.setPictogramId(id);
                 frame.addContent(pictogram);
 
@@ -776,7 +776,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                 Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
                 pictogram.setId(id);
 
-                MediaFrame frame = new MediaFrame();
+                PictogramView frame = new MediaFrame();
                 frame.setChoicePictogram(pictogram);
                 frame.setPictogramId(id);
                 frame.addContent(pictogram);
@@ -801,14 +801,14 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
 
         if (choiceMode) {
 
-            MediaFrame frame = choice.getMediaFrames().get(pictogramEditPos);
+            PictogramView frame = choice.getMediaFrames().get(pictogramEditPos);
 
             frame.setPictogramId(checkoutIds[0]);
 
             choiceAdapter.notifyDataSetChanged();
 
         } else {
-            MediaFrame frame = daySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos);
+            PictogramView frame = daySequences.get(weekdaySelected).getMediaFrames().get(pictogramEditPos);
 
             frame.setPictogramId(checkoutIds[0]);
 
@@ -863,16 +863,16 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             daySeq.setTitlePictoId(scheduleSeq.getTitlePictoId());
             daySeq.setId(0);
             s1 = s1 && DBController.getInstance().saveSequence(daySeq,
-                    dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULEDDAY,
+                    dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULEDDAY,
                     childId, getApplicationContext());
-            MediaFrame mf = new MediaFrame();
+            PictogramView mf = new MediaFrame();
             mf.setNestedSequenceID(daySeq.getId());
             scheduleSeq.getMediaFrames().add(mf);
         }
 
         //Saves the week sequence with reference to the days
         boolean s2 = DBController.getInstance().saveSequence(scheduleSeq,
-                dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE,
+                dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.SCHEDULE,
                 childId, getApplicationContext());
 
         if (s1 && s2) {
@@ -934,7 +934,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
     }
 
     @Override
-    public boolean isFrameMarked(MediaFrame frame) {
+    public boolean isFrameMarked(PictogramView frame) {
         for(int i = 0; i < daySequences.size(); i++){
             if(daySequences.get(i).getMediaFrames().contains(frame)){
                 return markedFrames.get(i)[daySequences.get(i).getMediaFrames().indexOf(frame)];
@@ -964,7 +964,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
         ScheduleEditActivity.this.startActivityForResult(i, modeId);
     }
 
-    private void checkFrameMode(MediaFrame frame, View v, final SequenceAdapter adapter) {
+    private void checkFrameMode(PictogramView frame, View v, final SequenceAdapter adapter) {
 
         if (frame.getNestedSequenceID() != 0) {
             createAndShowNestedDialog(v);
@@ -1070,7 +1070,7 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
             if ( pictogramEditPos != -1 ) {
                 for (int i = 0; i < adapter.getItem(pictogramEditPos).getContent().size(); i++)
                 {
-                    MediaFrame frame = new MediaFrame();
+                    PictogramView frame = new MediaFrame();
                     int id = adapter.getItem(pictogramEditPos).getContent().get(i).getPictogramID();
                     frame.setPictogramId(id);
                     Pictogram pictogram = PictoFactory.getPictogram(getApplicationContext(), id);
@@ -1093,10 +1093,10 @@ public class ScheduleEditActivity extends ScheduleActivity implements SequenceAd
                 @Override
                 public void onClick(View v) {
                     tempFrameList = daySequences.get(weekdaySelected).getMediaFrames();
-                    MediaFrame frame = new MediaFrame();
+                    PictogramView frame = new MediaFrame();
                     ArrayList<Pictogram> tempPictoList = new ArrayList<Pictogram>();
 
-                    for(MediaFrame f : choice.getMediaFrames()){
+                    for(PictogramView f : choice.getMediaFrames()){
                         for(Pictogram p : f.getContent()) {
                             tempPictoList.add(p);
                         }

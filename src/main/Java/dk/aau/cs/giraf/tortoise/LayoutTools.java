@@ -36,7 +36,7 @@ public class LayoutTools {
             if (editModeFrameView.getMediaFrame().getFrames().size() == 1) {
                 if (editModeFrameView.getMediaFrame().getChoiceNumber() > 0) {
                     LifeStory.getInstance().getCurrentStory().decrementNumChoices();
-                    for(MediaFrame m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
+                    for(PictogramView m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
                         if(m.getChoiceNumber() > tempChoiceNumber) {
                             m.setChoiceNumber(m.getChoiceNumber() - 1);
                         }
@@ -62,7 +62,7 @@ public class LayoutTools {
     }
     
     public static EditModeFrameView getEditModeFrameView(EditModeActivity mainActivity, RelativeLayout mainLayout, int width, int height) {
-    	MediaFrame mediaFrame = new MediaFrame();
+    	PictogramView mediaFrame = new MediaFrame();
     	Frame frame = new Frame(width, height, new Point(0, 0));
 		mediaFrame.addFrame(frame);
     	EditModeFrameView editModeFrameView = new EditModeFrameView(mainActivity, mainActivity.getApplicationContext(),  mainLayout, mediaFrame, frame, height, width);

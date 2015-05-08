@@ -1,15 +1,15 @@
 package dk.aau.cs.giraf.tortoise.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
 
-import dk.aau.cs.giraf.oasis.lib.models.EqualsUtil;
-import dk.aau.cs.giraf.oasis.lib.models.OasisObserver;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.EqualsUtil;
+import dk.aau.cs.giraf.dblib.models.OasisObserver;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
-import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 
 public class MediaFrame extends AbstractMediaFrame{
 
@@ -17,8 +17,8 @@ public class MediaFrame extends AbstractMediaFrame{
 	private List<Pictogram> content;
 	private OnContentChangedEventListener mListener;
     private int posY;
-    private int nestedSequenceID;
-    private int pictogramId;
+    private long nestedSequenceID;
+    private long pictogramId;
     private boolean marked = false;
 	
 	public MediaFrame(){
@@ -28,19 +28,20 @@ public class MediaFrame extends AbstractMediaFrame{
 	
 	public MediaFrame(Context context, SerializableMediaFrame m) {
 		setContent(new ArrayList<Pictogram>());
-		for(Integer p : m.getContent()) {
-			this.getContent().add(PictoFactory.getPictogram(context, p));
+        Helper helper = new Helper(context);
+		for(Long p : m.getContent()) {
+			this.getContent().add(helper.pictogramHelper.getById(p));
 		}
 		this.choiceNumber = m.choiceNumber;
 		this.frames = m.frames;
 	}
 
 
-    public int getNestedSequenceID() {
+    public long getNestedSequenceID() {
         return nestedSequenceID;
     }
 
-    public void setNestedSequenceID(int nestedSequenceID) {
+    public void setNestedSequenceID(long nestedSequenceID) {
         this.nestedSequenceID = nestedSequenceID;
     }
 
@@ -80,10 +81,10 @@ public class MediaFrame extends AbstractMediaFrame{
     public int getPosY(){return this.posY;}
     public void setPosY(int value){ this.posY = value;}
 
-    public int getPictogramId(){
+    public long getPictogramId(){
         return this.pictogramId;
     }
-    public void setPictogramId(int value){
+    public void setPictogramId(long value){
         this.pictogramId = value;
     }
 

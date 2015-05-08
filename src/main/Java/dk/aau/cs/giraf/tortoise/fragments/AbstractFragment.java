@@ -26,6 +26,7 @@ import java.util.List;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
+import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
@@ -47,10 +48,10 @@ public class AbstractFragment extends Fragment  {
 
         LinearLayout scrollContent = (LinearLayout) view.findViewById(currentWeekday);
         ScrollView scrollView = (ScrollView) scrollContent.getParent();
-        List<Pictogram> pictograms = new ArrayList<Pictogram>();
+        List<dk.aau.cs.giraf.dblib.models.Pictogram> pictograms = new ArrayList<dk.aau.cs.giraf.dblib.models.Pictogram>();
         resizeScrollView(scrollView);
 
-        for (MediaFrame mf : weekday.getMediaFrames()) {
+        for (PictogramView mf : weekday.getMediaFrames()) {
             if (mf.getContent().size() == 1) {
                 pictograms.addAll(mf.getContent());
             } else {
@@ -70,7 +71,7 @@ public class AbstractFragment extends Fragment  {
         }
     }
 
-    private ImageView SetSinglePictogram(Pictogram pictogram){
+    private ImageView SetSinglePictogram(dk.aau.cs.giraf.dblib.models.Pictogram pictogram){
         GuiHelper helper = new GuiHelper();
 
         ImageView iw = new ImageView(getActivity().getApplicationContext());
@@ -123,7 +124,7 @@ public class AbstractFragment extends Fragment  {
         return iw;
     }
 
-    private ImageView SetChoicePictogram(Pictogram pictogram, final ViewGroup view){
+    private ImageView SetChoicePictogram(dk.aau.cs.giraf.dblib.models.Pictogram pictogram, final ViewGroup view){
         GuiHelper helper = new GuiHelper();
 
         ImageView iw = new ImageView(getActivity().getApplicationContext());

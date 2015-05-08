@@ -21,9 +21,9 @@ import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafInflatableDialog;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-//import dk.aau.cs.giraf.oasis.lib.models.Sequence;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
+//import dk.aau.cs.giraf.dblib.models.Sequence;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
 import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
 import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
@@ -36,7 +36,6 @@ import dk.aau.cs.giraf.tortoise.SequenceListAdapter.OnAdapterGetViewListener;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
 
 public class MainActivity extends TortoiseActivity implements SequenceListAdapter.SelectedSequenceAware {
-
 
 
     private final String DELETE_SEQUENCES_TAG = "DELETE_SEQUENCES_TAG";
@@ -62,7 +61,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
     public static Activity activityToKill;
 
-    private int childId;
+    private long childId;
 
     private Helper helper;
     GirafInflatableDialog acceptDeleteDialog;
@@ -70,8 +69,10 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
     private GirafButton addButton;
     private GirafButton editButton;
     private GirafButton deleteButton;
+
     /**
      * Initializes all app elements.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -82,14 +83,14 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         Intent i = getIntent();
         // Warn user and do not execute Tortoise if not launched from Giraf, except if user is a monkey
         if ((!ActivityManager.isUserAMonkey()) && i.getExtras() == null) {
-            GuiHelper.ShowToast(this, "Ugeplan skal startes fra GIRAF");
+            GuiHelper.ShowToast(this, "Livshistorier skal startes fra GIRAF");
 
             finish();
-            return ;
+            return;
         }
         //Decide to load lifestories or schedules
-        if (i.getIntExtra("app_to_start", -1) == 10){}
-            isInScheduleMode = true;
+        if (i.getIntExtra("app_to_start", -1) == 10) {
+        }
 
         helper = new Helper(this);
         // Set guardian- and child profiles
@@ -154,8 +155,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Sequence sequence = new Sequence();
-                addSchedule(sequence, true, v);
+                addStory(v);
             }
         });
 
@@ -177,8 +177,11 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
             @Override
             public void onClick(View v) {
-                if (isInEditMode) { isInEditMode = false; }
-                else { isInEditMode = v.isPressed(); }
+                if (isInEditMode) {
+                    isInEditMode = false;
+                } else {
+                    isInEditMode = v.isPressed();
+                }
                 GridView sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
 
                 // Make sure that all views currently not visible will have the correct
@@ -212,29 +215,29 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         //Create helper to fetch data from database and fetches intents (from Launcher or AddEditSequencesActivity)
 
         Bundle extras = getIntent().getExtras();
-        int guardianId;
+        long guardianId;
         //Put guardian id in extras, if user is monkey.
         if (ActivityManager.isUserAMonkey()) {
             extras = new Bundle(); //If started by a monkey, extras is null.
-            extras.putInt("currentGuardianID", helper.profilesHelper.getGuardians().get(0).getId());
-            extras.putInt("currentChildID", -1);
+            extras.putLong("currentGuardianID", helper.profilesHelper.getGuardians().get(0).getId());
+            extras.putLong("currentChildID", -1);
         }
         //Get GuardianId and ChildId from extras
-        guardianId = extras.getInt("currentGuardianID");
-        childId = extras.getInt("currentChildID");
+        guardianId = extras.getLong("currentGuardianID");
+        childId = extras.getLong("currentChildID");
 
         //Save guardian locally (Fetch from Database by Id)
         guardian = helper.profilesHelper.getProfileById(guardianId);
 
         //Make user pick a child and set up GuardianMode if ChildId is -1 (= Logged in as Guardian)
-         if(childId == -1){
+        if (childId == -1) {
             pickAndSetChild();
 
         }
         //Else setup application for a Child
         else {
-            schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
-                     childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            DBController.getInstance().loadCurrentProfileSequences(
+                    childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY, getApplicationContext());
             setupChildMode();
             setChild();
             isChildSet = true;
@@ -251,8 +254,8 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 selectedChild = helper.profilesHelper.getProfileById((int) id);
                 childId = (int) id;
-                schedules = DBController.getInstance().loadCurrentProfileSequencesAndFrames(
-                        childId, dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+                DBController.getInstance().loadCurrentProfileSequences(
+                        childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY, getApplicationContext());
                 //profileName.setText(LifeStory.getInstance().getChild().getName());
 
                 setChild();
@@ -289,20 +292,15 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         profileSelector.setVisibility(View.INVISIBLE);
     }
 
-    private void loadSeqGrid(){
-        // Clear existing life stories
-        /*LifeStory.getInstance().getStories().clear();
-        if (isInScheduleMode)
-            DBController.getInstance().loadCurrentProfileSequences(
-                    profile.getId(), Sequence.SequenceType.SCHEDULE, getApplicationContext());
-        else
-            DBController.getInstance().loadCurrentProfileSequences(
-                    profile.getId(), Sequence.SequenceType.STORY, getApplicationContext());
+    private void loadSeqGrid() {
+        LifeStory.getInstance().getStories().clear();
+        DBController.getInstance().loadCurrentProfileSequences(
+                childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY, getApplicationContext());
 
         // Initialize grid view
         sequenceGrid = (GridView) findViewById(R.id.sequence_grid);
         sequenceAdapter = initAdapter();
-        sequenceGrid.setAdapter(sequenceAdapter);*/
+        sequenceGrid.setAdapter(sequenceAdapter);
 
 
         sequenceGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -329,8 +327,8 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                 final Sequence sequence = sequenceAdapter.getItem(arg2);
                 selectedChild = helper.profilesHelper.getProfileById(childId);
 
-                if(!markingMode){
-                    if (isInScheduleMode){
+                if (!markingMode) {
+                    if (isInScheduleMode) {
                         if (isInEditMode) {
                             i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
                             i.putExtra("currentChildID", selectedChild.getId());
@@ -364,11 +362,8 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                             startActivityForResult(i, 0);
                         }
                     }
-                }
-                else
-                {
-                    if (markedSequences.contains(sequence))
-                    {
+                } else {
+                    if (markedSequences.contains(sequence)) {
                         unMarkSequence(sequence, arg1);
                     } else {
                         markSequence(sequence, arg1);
@@ -413,10 +408,9 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
     }
 
 
-
     public SequenceListAdapter initAdapter() {
 
-        final SequenceListAdapter adapter = new SequenceListAdapter(MainActivity.this, schedules, MainActivity.this);
+        final SequenceListAdapter adapter = new SequenceListAdapter(MainActivity.this, LifeStory.getInstance().getStories(), MainActivity.this);
 
         adapter.setOnAdapterGetViewListener(new OnAdapterGetViewListener() {
 
@@ -448,7 +442,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
     @Override
     protected void onStop() {
-        if(canFinish) {
+        if (canFinish) {
             finish();
         }
         super.onStop();
@@ -476,22 +470,20 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         switch (dialogId) {
             case DIALOG_DELETE:
                 GDialogMessage gdialog = new GDialogMessage(this,
-                    R.drawable.ic_launcher,
-                    getString(R.string.dialog_delete_title),
-                    getResources().getString(R.string.dialog_delete_message) + " \"" + seq.getTitle() + "\"",
-                    new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            dbc.deleteSequence(seq, parentObj);
-                            lifeStory.removeStory(seq);
+                        R.drawable.ic_launcher,
+                        getString(R.string.dialog_delete_title),
+                        getResources().getString(R.string.dialog_delete_message) + " \"" + seq.getTitle() + "\"",
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dbc.deleteSequence(seq, parentObj);
+                                lifeStory.removeStory(seq);
 
-                            sequenceAdapter.setItems(schedules);
-                            sequenceAdapter.notifyDataSetChanged();
-                        }
+                                sequenceAdapter.setItems(schedules);
+                                sequenceAdapter.notifyDataSetChanged();
+                            }
 
-                    });
+                        });
                 gdialog.show();
                 break;
             default:
@@ -502,8 +494,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
     }
 
-    public void addSchedule(Sequence s, boolean isNew, View v)
-    {
+    public void addSchedule(Sequence s, boolean isNew, View v) {
         canFinish = false;
         Intent i = new Intent(this, ScheduleEditActivity.class);
         i.putExtra("template", -1);
@@ -512,17 +503,14 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         i.putExtra("EditMode", true);
         i.putExtra("isNew", isNew);
         i.putExtra("sequenceId", s.getId());
-        
-        if (i.resolveActivity(getPackageManager()) != null)
-        {
-            try{
-            startActivity(i);
-            } catch (Exception ex)
-            {
+
+        if (i.resolveActivity(getPackageManager()) != null) {
+            try {
+                startActivity(i);
+            } catch (Exception ex) {
                 GuiHelper.ShowToast(this, ex.toString());
             }
-        } else
-        {
+        } else {
             GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte ugeplanlægger");
         }
     }
@@ -530,7 +518,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
     private synchronized void setChild() {
         //Save Child locally and update relevant information for application
         selectedChild = helper.profilesHelper.getProfileById(childId);
-        this.setActionBarTitle(getResources().getString(R.string.app_name_week_schedule) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
+        this.setActionBarTitle(getResources().getString(R.string.title_activity_tortoise_startup_screen) + " - " + selectedChild.getName()); // selectedChild.getName() "Child's name code"
 
         /*sequenceAdapter = initAdapter();
         sequenceGrid.setAdapter(sequenceAdapter);
@@ -550,7 +538,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
 
         @Override
         protected List<Sequence> doInBackground(Void... params) {
-            return DBController.getInstance().loadCurrentProfileSequencesAndFrames(selectedChild.getId(), dk.aau.cs.giraf.oasis.lib.models.Sequence.SequenceType.SCHEDULE, getApplicationContext());
+            return DBController.getInstance().loadCurrentProfileSequencesAndFrames(selectedChild.getId(), dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY, getApplicationContext());
         }
 
         @Override
@@ -574,7 +562,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         }
         //If a Child is selected at this point, update Sequences for the Child
         //Profile child = LifeStory.getInstance().getChild();
-        if(isChildSet) {
+        if (isChildSet) {
             /*sequenceAdapter = initAdapter();
             sequenceGrid.setAdapter(sequenceAdapter);
             */
@@ -606,18 +594,13 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         }
     }
 
-    public void addStory(View v)
-    {
+    public void addStory(View v) {
         canFinish = false;
         Intent i;
-        if(isInScheduleMode){
-            i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-            i.putExtra("template", -1);
-        }else {
-            i = new Intent(getApplicationContext(), EditModeActivity.class);
-            i.putExtra("template", -1);
-        }
-
+        i = new Intent(getApplicationContext(), EditModeActivity.class);
+        i.putExtra("template", -1);
+        i.putExtra("currentChildID",childId);
+        i.putExtra("currentGuardianID",guardian.getId());
         startActivity(i);
     }
 }

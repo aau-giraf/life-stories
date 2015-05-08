@@ -3,8 +3,8 @@ package dk.aau.cs.giraf.tortoise.controller;
 
 public abstract class AbstractSequence {
 
-    private int id;
-	protected int titlePictoId;
+    private long id;
+	protected long titlePictoId;
 	protected String title;
 	protected int numChoices;
 	
@@ -14,26 +14,26 @@ public abstract class AbstractSequence {
 		title = "";
 	}
 
-    public AbstractSequence(int id, int titlePictoId, String title){
+    public AbstractSequence(long id, long titlePictoId, String title){
         this.id = id;
         this.titlePictoId = titlePictoId;
         this.title = title;
         numChoices = 0;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 	
-	public int getTitlePictoId() {
+	public long getTitlePictoId() {
 		return titlePictoId;
 	}
 
-	public void setTitlePictoId(int titlePictoId) {
+	public void setTitlePictoId(long titlePictoId) {
 		this.titlePictoId = titlePictoId;
 	}
 
