@@ -52,8 +52,6 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 			else if(p.getParent() instanceof EditModeFrameView)
 				((EditModeFrameView)p.getParent()).removeView(p);
 		}
-
-        //this.removePictogram();
 	}
 	
 	public void highLight() {

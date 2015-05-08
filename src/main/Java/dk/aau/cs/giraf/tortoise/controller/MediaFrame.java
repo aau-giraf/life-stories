@@ -28,7 +28,6 @@ public class MediaFrame extends AbstractMediaFrame {
 		this.frames = m.frames;
 	}
 
-
     public int getNestedSequenceID() {
         return nestedSequenceID;
     }
@@ -37,13 +36,12 @@ public class MediaFrame extends AbstractMediaFrame {
         this.nestedSequenceID = nestedSequenceID;
     }
 
-
     public interface OnContentChangedEventListener {
 		
 		public void OnIsChoiceListener(MediaFrame mediaFrame, boolean isChoice);
 		public void OnContentSizeChanged(MediaFrame mediaFrame);
 	}
-	
+
 	public void setOnContentChangedListener(OnContentChangedEventListener listener) {
 		mListener = listener;
 	}
@@ -58,10 +56,6 @@ public class MediaFrame extends AbstractMediaFrame {
 	
 	public void addContent(Pictogram content){
 		this.content.add(content);
-/*		if(mListener != null && getContent().size() == 2)
-			mListener.OnIsChoiceListener(this, true);
-		else if (mListener != null)
-			mListener.OnContentSizeChanged(this);*/
 	}
     public Pictogram getChoicePictogram(){
         return choicePictogram;
@@ -70,9 +64,6 @@ public class MediaFrame extends AbstractMediaFrame {
         choicePictogram = picto;
     }
 
-
-
-	
 	public void removeContent(Pictogram content){
 		this.content.remove(content);
 		if(mListener != null && getContent().size() == 1)

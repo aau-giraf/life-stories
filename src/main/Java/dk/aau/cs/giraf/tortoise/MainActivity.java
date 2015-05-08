@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import dk.aau.cs.giraf.gui.GButtonProfileSelect;
 import dk.aau.cs.giraf.gui.GDialogMessage;
@@ -20,8 +19,6 @@ import dk.aau.cs.giraf.gui.GToggleButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.Sequence;
-import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
-import dk.aau.cs.giraf.tortoise.activities.ScheduleViewActivity;
 import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
@@ -166,35 +163,23 @@ public class MainActivity extends TortoiseActivity {
         // Load Sequence
         sequenceGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                canFinish = false;
-                Intent i;
-                if (isInScheduleMode){
-                    if (isInEditMode) {
-                        i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-                        i.putExtra("template", arg2);
-                        startActivity(i);
-                    } else {
-                        i = new Intent(getApplicationContext(), ScheduleViewActivity.class);
-                        i.putExtra("story", arg2);
-                        startActivity(i);
-                    }
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            canFinish = false;
+            Intent i;
+                if (isInEditMode) {
+                    i = new Intent(getApplicationContext(), EditModeActivity.class);
+                    i.putExtra("template", arg2);
+                    startActivity(i);
                 } else {
-                    if (isInEditMode) {
-                        i = new Intent(getApplicationContext(), EditModeActivity.class);
-                        i.putExtra("template", arg2);
-                        startActivity(i);
-                    } else {
-                        i = new Intent();
-                        i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
-                        i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
-                        Log.e("Tag", Integer.toString(LifeStory.getInstance().getStories().get(arg2).getMediaFrames().get(0).getContent().get(0).getPictogramID()));
-                        i.putExtra("landscapeMode", true);
-                        i.putExtra("visiblePictogramCount", 4);
-                        i.putExtra("callerType", "Tortoise");
-                        startActivityForResult(i, 0);
-                    }
+                    i = new Intent();
+                    i.setComponent(new ComponentName("dk.aau.cs.giraf.sequenceviewer", "dk.aau.cs.giraf.sequenceviewer.MainActivity"));
+                    i.putExtra("sequenceId", LifeStory.getInstance().getStories().get(arg2).getId());
+                    Log.e("Tag", Integer.toString(LifeStory.getInstance().getStories().get(arg2).getMediaFrames().get(0).getContent().get(0).getPictogramID()));
+                    i.putExtra("landscapeMode", true);
+                    i.putExtra("visiblePictogramCount", 4);
+                    i.putExtra("callerType", "Tortoise");
+                    startActivityForResult(i, 0);
                 }
             }
         });
@@ -307,37 +292,12 @@ public class MainActivity extends TortoiseActivity {
 
     }
 
-    public void addSchedule(View v)
-    {
-        canFinish = false;
-        Intent i = new Intent(this, ScheduleEditActivity.class);
-        i.putExtra("template", -1);
-
-        if (i.resolveActivity(getPackageManager()) != null)
-        {
-            try{
-            startActivity(i);
-            } catch (Exception ex)
-            {
-                GuiHelper.ShowToast(this, ex.toString());
-            }
-        } else
-        {
-            GuiHelper.ShowToast(getApplicationContext(), "Kunne ikke starte ugeplanlægger");
-        }
-    }
-
     public void addStory(View v)
     {
         canFinish = false;
         Intent i;
-        if(isInScheduleMode){
-            i = new Intent(getApplicationContext(), ScheduleEditActivity.class);
-            i.putExtra("template", -1);
-        }else {
-            i = new Intent(getApplicationContext(), EditModeActivity.class);
-            i.putExtra("template", -1);
-        }
+        i = new Intent(getApplicationContext(), EditModeActivity.class);
+        i.putExtra("template", -1);
 
         startActivity(i);
     }

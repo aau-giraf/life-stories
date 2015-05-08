@@ -27,15 +27,6 @@ public class ViewModeFrameView extends AbstractFrameView implements OnDragListen
 		this.setOnDragListener(this);
 		this.setOnClickListener(this);
 	}
-	
-	public void detachPictograms() {
-		for(Pictogram p : this.getMediaFrame().getContent()) {
-			if (p.getParent() instanceof LinearLayout)
-				((LinearLayout)p.getParent()).removeView(p);
-			else if(p.getParent() instanceof ViewModeFrameView)
-				((ViewModeFrameView)p.getParent()).removeView(p);
-		}
-	}
 
 	@Override
 	public boolean onDrag(View v, DragEvent event) {

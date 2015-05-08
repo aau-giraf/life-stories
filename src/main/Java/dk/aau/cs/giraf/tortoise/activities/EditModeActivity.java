@@ -125,7 +125,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
 		setContentView(R.layout.activity_main);
 		menuBar = (RelativeLayout) findViewById(R.id.menuBar);
-		//mainLayout = (RelativeLayout)findViewById(R.id.mainLayout);
 
         // If called with template, initialize it. Otherwise reate new sequence.
 		initSequence(getIntent());
@@ -152,7 +151,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      */
     private void initSequence(Intent intent) {
         int template = intent.getIntExtra("template", -1);
-
 
         if(template == -1)
         {
@@ -625,18 +623,18 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 		storyName.addTextChangedListener(new TextWatcher() {
-			
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 				// TODO Auto-generated method stub
-				
+
 			}
 			
 			@Override
@@ -691,8 +689,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         print.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //GuiHelper.ShowToast(EditModeActivity.this, "Testtest?");
-                EditModeActivity.this.openPrintAlignmentDialogBox();
+            EditModeActivity.this.openPrintAlignmentDialogBox();
             }
         });
 
@@ -748,7 +745,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         dialogAddFrames.dismiss();
         dialogAddFramesActive = false;
         adapter.notifyDataSetChanged();
-//        renderPictograms();
     }
 
     public void addPictograms(View v) {

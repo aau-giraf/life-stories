@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.activities.EditModeActivity;
-import dk.aau.cs.giraf.tortoise.activities.ScheduleActivity;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import android.graphics.Bitmap;
 
@@ -82,10 +81,6 @@ public class EditChoiceFrameView extends RelativeLayout implements OnClickListen
         if(mainActivity instanceof EditModeActivity)
         {
             ((EditModeActivity) mainActivity).renderContentPictograms(position);
-        }
-        else if(mainActivity instanceof  ScheduleActivity)
-        {
-            ((ScheduleActivity) mainActivity).updateMultiChoiceDialog(position);
         }
 	}
 

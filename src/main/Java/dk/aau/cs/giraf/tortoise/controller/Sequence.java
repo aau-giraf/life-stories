@@ -38,14 +38,12 @@ public class Sequence extends AbstractSequence {
         setBitmapFromTitlePictoID(context);
 	}
 
-
     private void setBitmapFromTitlePictoID(Context con){
         Bitmap bitmap = PictoFactory.getPictogram(con, this.getTitlePictoId()).getImageData();
         bitmap = LayoutTools.getSquareBitmap(bitmap);
         bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, con, 20);
         this.titleImage = bitmap;
     }
-	
 
     public void rearrange(int oldIndex, int newIndex) {
         if (oldIndex < 0 || oldIndex >= mediaFrames.size()) throw new IllegalArgumentException("oldIndex out of range");
@@ -55,12 +53,11 @@ public class Sequence extends AbstractSequence {
         mediaFrames.add(newIndex, temp);
     }
 
-
 	public interface OnNumChoicesEventListener {
 		
 		public void onNumChoicesChanged(int numChoices);
 	}
-	
+
 	public void setOnNumChoicesEventListener(OnNumChoicesEventListener listener) {
 		mListener = listener;
 	}
@@ -82,7 +79,7 @@ public class Sequence extends AbstractSequence {
 			mListener.onNumChoicesChanged(this.getNumChoices());
 		this.numChoices--;
 	}
-	
+
 	public void incrementNumChoices() {
 		if (mListener != null)
 			mListener.onNumChoicesChanged(this.getNumChoices());
@@ -96,7 +93,7 @@ public class Sequence extends AbstractSequence {
 	public void setTitleImage(Bitmap titleImage) {
 		this.titleImage = titleImage;
 	}
-	
+
 	public SerializableSequence getSerializableSequence() {
 		return new SerializableSequence(this);
 	}
