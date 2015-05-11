@@ -328,31 +328,29 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                 selectedChild = helper.profilesHelper.getProfileById(childId);
 
                 if (!markingMode) {
-                    if (isInScheduleMode) {
-                        if (isInEditMode) {
-                            i = new Intent(getApplicationContext(), EditModeActivity.class);
-                            i.putExtra("currentChildID", selectedChild.getId());
-                            i.putExtra("currentGuardianID", guardian.getId());
-                            i.putExtra("story", arg2);
-                            i.putExtra("sequenceId", sequence.getId());
-                            startActivity(i);
-                        } else {
-                            i = new Intent(getApplicationContext(), ViewModeActivity.class);
-                            i.putExtra("currentChildID", selectedChild.getId());
-                            i.putExtra("currentGuardianID", guardian.getId());
-                            i.putExtra("story", arg2);
-                            i.putExtra("sequenceId", sequence.getId());
-                            startActivity(i);
-                        }
+                    if (isInEditMode) {
+                        i = new Intent(getApplicationContext(), EditModeActivity.class);
+                        i.putExtra("currentChildID", selectedChild.getId());
+                        i.putExtra("currentGuardianID", guardian.getId());
+                        i.putExtra("story", arg2);
+                        i.putExtra("sequenceId", sequence.getId());
+                        startActivity(i);
                     } else {
+                        /*i = new Intent(getApplicationContext(), ViewModeActivity.class);
+                        i.putExtra("currentChildID", selectedChild.getId());
+                        i.putExtra("currentGuardianID", guardian.getId());
+                        i.putExtra("story", arg2);
+                        i.putExtra("sequenceId", sequence.getId());
+                        startActivity(i);*/
                     }
                 } else {
-                    if (markedSequences.contains(sequence)) {
-                        unMarkSequence(sequence, arg1);
-                    } else {
-                        markSequence(sequence, arg1);
-                    }
                 }
+                if (markedSequences.contains(sequence)) {
+                    unMarkSequence(sequence, arg1);
+                } else {
+                    markSequence(sequence, arg1);
+                }
+
             }
         });
     }
@@ -373,7 +371,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
         // Delete all selected items
         for (Sequence seq : markedSequences) {
             DBController.getInstance().deleteSequence(seq, getApplicationContext());
-            schedules.remove(seq);//Check to whether cascading delete
+            LifeStory.getInstance().removeStory(seq);//Check to whether cascading delete
 
         }
         markedSequences.clear();

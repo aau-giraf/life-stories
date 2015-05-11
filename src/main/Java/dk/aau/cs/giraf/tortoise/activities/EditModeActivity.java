@@ -47,10 +47,10 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.gui.GDialog;
-import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GRadioButton;
+import dk.aau.cs.giraf.gui.GirafInflatableDialog;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
@@ -64,11 +64,11 @@ import dk.aau.cs.giraf.tortoise.interfaces.OnMainLayoutEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnMediaFrameEventListener;
 import dk.aau.cs.giraf.tortoise.R;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
-import dk.aau.cs.giraf.tortoise.SequenceViewGroup;
+import dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup;
 import dk.aau.cs.giraf.tortoise.SequenceAdapter;
 import dk.aau.cs.giraf.tortoise.PictogramView.OnDeleteClickListener;
-import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnNewButtonClickedListener;
-import dk.aau.cs.giraf.tortoise.SequenceViewGroup.OnRearrangeListener;
+import dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup.OnNewButtonClickedListener;
+import dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup.OnRearrangeListener;
 import dk.aau.cs.giraf.tortoise.PictogramView;
 
 public class EditModeActivity extends TortoiseActivity implements OnCurrentFrameEventListener, SequenceAdapter.SelectedFrameAware {
@@ -78,7 +78,13 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	private static final int DIALOG_EXIT = 2;
 	private static final int DIALOG_PROMT_FOR_TITLE = 3;
 	private static final int DIALOG_SELECT_CHOICE = 4;
-	
+
+    private final String EXIT_DIALOG = "EXIT_DIALOG";
+    private final String SAVE_DIALOG = "SAVE_DIALOG";
+    private final String PROMT_FOR_TITLE = "PROMT_FOR_TITLE";
+    private final String ADD_DIALOG = "ADD_DIALOG";
+    private final String PRINT_DIALOG = "PRINT_DIALOG";
+
 	static int selectedChoice = 0;
 	public List<OnMainLayoutEventListener> mainLayoutListeners =
 			new ArrayList<OnMainLayoutEventListener>();
@@ -88,10 +94,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			new ArrayList<OnMediaFrameEventListener>();
     EditModeFrameView currentEditModeFrame;
 	RelativeLayout menuBar;
-    SequenceViewGroup sequenceViewGroup;
-    GDialog dialogAddFrames;
-    GDialog gdialog;
-    GDialog printAlignmentDialog;
+    HorizontalSequenceViewGroup HorizontalSequenceViewGroup;
+    GirafInflatableDialog dialogAddFrames;
+    GirafInflatableDialog saveDialog;
+    GirafInflatableDialog exitDialog;
+    GirafInflatableDialog printAlignmentDialog;
+    GirafInflatableDialog gdialog;
 
     private boolean dialogAddFramesActive;
     private boolean isInEditMode;
@@ -100,6 +108,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     private int lastPosition;
     private File[] file;
     private String debugEmail = null; // Set this to debug the print sequence function!
+
+    long childId;
+    long guardianId;
+    Profile selectedChild;
+    Profile guardian;
 	
 	public void addOnMainLayoutEventListener(OnMainLayoutEventListener mainLayoutListener) {
 		this.mainLayoutListeners.add(mainLayoutListener);
@@ -143,10 +156,10 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         adapter = setupAdapter();
 
         // Create Sequence Group
-        sequenceViewGroup = setupSequenceViewGroup(adapter);
+        HorizontalSequenceViewGroup = setupHorizontalSequenceViewGroup(adapter);
 
         // Init print alignment dialog
-        printAlignmentDialog = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_print_alignment, null));
+        printAlignmentDialog = GirafInflatableDialog.newInstance("Print livshistorie", "Print livshistorie", R.layout.dialog_print_alignment);
 	}
 
     /**
@@ -156,7 +169,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      */
     private void initSequence(Intent intent) {
         int template = intent.getIntExtra("template", -1);
-
+        childId = intent.getLongExtra("currentChildID", -1);
+        guardianId = intent.getLongExtra("currentGuardianID", -1);
 
         if(template == -1)
         {
@@ -164,8 +178,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         }
         else
         {
-            Sequence passedSequence = LifeStory.getInstance().getStories().get(template);
-            LifeStory.getInstance().setCurrentStory(passedSequence);
+            DBController.getInstance().loadCurrentProfileSequences(childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY,getApplicationContext());
+            //Sequence passedSequence = LifeStory.getInstance().getStories().get(template);
+            //LifeStory.getInstance().setCurrentStory(passedSequence);
         }
 
         // Set current sequence
@@ -183,7 +198,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		super.onActivityResult(requestCode, resultCode, data);
 
         // Remove the highlight from the add pictogram button
-        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup1);
+        final HorizontalSequenceViewGroup sequenceGroup = (HorizontalSequenceViewGroup) findViewById(R.id.horizontalSequenceViewGroup1);
         sequenceGroup.placeDownAddNewButton();
 
         //Add pictograms to NEW MediaFrame
@@ -205,7 +220,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 MediaFrame newMediaFrame = new MediaFrame();
 
                 addContentToMediaFrame(newMediaFrame, checkoutIds);
-
+                newMediaFrame.setPictogramId(checkoutIds[0]);
                 List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
                 mediaFrames = sequence.getMediaFrames();
                 mediaFrames.add(newMediaFrame);
@@ -346,8 +361,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         return adapter;
     }
 
-    private SequenceViewGroup setupSequenceViewGroup(final SequenceAdapter adapter) {
-        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup1);
+    private HorizontalSequenceViewGroup setupHorizontalSequenceViewGroup(final SequenceAdapter adapter) {
+        final HorizontalSequenceViewGroup sequenceGroup = (HorizontalSequenceViewGroup) findViewById(R.id.horizontalSequenceViewGroup1);
         sequenceGroup.setEditModeEnabled(isInEditMode);
         sequenceGroup.setAdapter(adapter);
 
@@ -366,7 +381,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 .setOnNewButtonClickedListener(new OnNewButtonClickedListener() {
                     @Override
                     public void onNewButtonClicked(View v) {
-                        final SequenceViewGroup sequenceGroup = (SequenceViewGroup) findViewById(R.id.sequenceViewGroup1);
+                        final HorizontalSequenceViewGroup sequenceGroup = (HorizontalSequenceViewGroup) findViewById(R.id.horizontalSequenceViewGroup1);
                         sequenceGroup.liftUpAddNewButton();
 
                         addPictograms(findViewById(R.id.addMediaFrame));
@@ -392,66 +407,23 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 		switch (dialogId)
         {
 		case DIALOG_SAVE:
-			dialog.setContentView(R.layout.dialog_save);
+			saveDialog = GirafInflatableDialog.newInstance(getString(R.string.save), getString(R.string.dialog_save_title),R.layout.dialog_save);
 
-			dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-			Button saveYes = (Button)dialog.findViewById(R.id.btn_yes);
-			saveYes.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-                    LifeStory ls = LifeStory.getInstance();
-
-                    ls.addStory();
-                    saveSequence(ls.getCurrentStory(),
-                            dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY,
-                            ls.getChild().getId());
-                    dialog.dismiss();
-				}
-			});
-			Button saveNo = (Button)dialog.findViewById(R.id.btn_no);
-			saveNo.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					dialog.dismiss();
-					
-				}
-			});
+            saveDialog.show(getSupportFragmentManager(), SAVE_DIALOG);
+            showOverlay = false;
 			break;
 		case DIALOG_EXIT:
-			gdialog = new GDialogMessage(this,
-                    R.drawable.ic_launcher,
-                    getString(R.string.dialog_exit_title),
-                    getResources().getString(R.string.dialog_exit_message),
-                    new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    });
-            gdialog.show();
+			exitDialog = GirafInflatableDialog.newInstance(getString(R.string.dialog_exit_title),
+                    getResources().getString(R.string.dialog_exit_message),R.layout.dialog_schedule_exit);
+
+            exitDialog.show(getSupportFragmentManager(), EXIT_DIALOG);
             showOverlay = false;
 			break;
 		case DIALOG_PROMT_FOR_TITLE:
-            GDialog gdialog;
-
-            gdialog = new GDialogMessage(this,
-                    R.drawable.ic_launcher,
-                    getString(R.string.dialog_promt_for_title_title),
-                    getResources().getString(R.string.dialog_promt_for_title_message),
-                    new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            dialog.dismiss();
-                        }
-                    });
-            gdialog.show();
+            gdialog = GirafInflatableDialog.newInstance(getString(R.string.dialog_promt_for_title_title),
+                    getResources().getString(R.string.dialog_promt_for_title_message), R.layout.dialog_alert);
+            gdialog.show(getSupportFragmentManager(), PROMT_FOR_TITLE);
+            showOverlay = false;
 			break;
 		case DIALOG_SELECT_CHOICE:
 			final int numChoices = LifeStory.getInstance().getCurrentStory().getNumChoices();
@@ -529,7 +501,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         else
         {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
-            LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+            LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.getDialog().findViewById(R.id.newChoiceContent2);
             newChoiceContent.removeAllViews();
 
             for(Pictogram p : sequence.getMediaFrames().get(position).getContent()) {
@@ -557,10 +529,10 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         //Otherwise, render the menu.
         else
         {
-        dialogAddFrames = new GDialog(this, LayoutInflater.from(this).inflate(R.layout.dialog_add_content,null));
+        dialogAddFrames = GirafInflatableDialog.newInstance("Tilføj indhold", "Tilføj indhold til din aktivitet",R.layout.dialog_add_content);
 
         //If the dialog is already showing, dismiss it.
-        if(dialogAddFrames.isShowing())
+        if(!dialogAddFrames.isHidden())
         {
             dialogAddFrames.dismiss();
         }
@@ -568,7 +540,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         dialogAddFramesActive = true;
         lastPosition = position;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
-        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.findViewById(R.id.newChoiceContent2);
+        LinearLayout newChoiceContent = (LinearLayout) dialogAddFrames.getDialog().findViewById(R.id.newChoiceContent2);
         newChoiceContent.removeAllViews();
 
         for(Pictogram p : sequence.getMediaFrames().get(position).getContent()) {
@@ -580,7 +552,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         adapter.notifyDataSetChanged();
 
         renderChoiceIcon(position);
-        dialogAddFrames.show();
+        dialogAddFrames.show(getSupportFragmentManager(), ADD_DIALOG);
         }
 	}
 
@@ -682,16 +654,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 
-		GirafButton exit = (GirafButton)findViewById(R.id.exitEditMode);
-		exit.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				EditModeActivity.this.renderDialog(DIALOG_EXIT);
-			}
-		});
-
-        GirafButton save = (GirafButton)findViewById(R.id.save);
+        GirafButton save = new GirafButton(this, getResources().getDrawable(R.drawable.icon_save));
 		save.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -706,7 +669,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 
-        GirafButton print = (GirafButton)findViewById(R.id.printSequence);
+        GirafButton print = new GirafButton(this, getResources().getDrawable(R.drawable.email));
         print.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -748,7 +711,38 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				return true;
 			}
 		});
+        addGirafButtonToActionBar(print,RIGHT);
+        addGirafButtonToActionBar(save,RIGHT);
 	}
+
+
+    public void saveYes(View v){
+        LifeStory ls = LifeStory.getInstance();
+
+        ls.addStory();
+        saveSequence(ls.getCurrentStory(),
+                dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY,
+                childId);
+        saveDialog.dismiss();
+        finish();
+    }
+    public void saveNo(View v){
+        saveDialog.dismiss();
+    }
+
+    public void exitEdit(View v)
+    {
+        exitDialog.dismiss();
+        finish();
+    }
+
+    public void exitDialogCancel(View v){
+        exitDialog.dismiss();
+    }
+
+    public void dismissThis(View v){
+        gdialog.dismiss();
+    }
 
     /**
      * Adds a linear layout View to menuBar
@@ -802,8 +796,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
     public void renderChoiceIcon(int position){
-        ImageView choiceIcon = (ImageView) dialogAddFrames.findViewById(R.id.choiceIcon);
-        ImageView deleteBtn = (ImageView) dialogAddFrames.findViewById(R.id.removeChoiceIcon);
+        ImageView choiceIcon = (ImageView) dialogAddFrames.getDialog().findViewById(R.id.choiceIcon);
+        ImageView deleteBtn = (ImageView) dialogAddFrames.getDialog().findViewById(R.id.removeChoiceIcon);
 
         Pictogram currentChoiceIcon = sequence.getMediaFrames().get(position).getChoicePictogram();
 
@@ -828,18 +822,6 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
 
-    /**
-     * Possibly obsolete, as it overrides an identical method
-     * @param menu
-     * @return
-     */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
 	@Override
 	public void OnCurrentFrameChanged(
 			EditModeFrameView editModeFrameView, int ChoiceNumber) {
@@ -850,11 +832,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
     public void openPrintAlignmentDialogBox(){
-        printAlignmentDialog.show();
+        printAlignmentDialog.show(getSupportFragmentManager(), PRINT_DIALOG);
     }
 
     public void printSequence(View v) {
-        GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
+        GRadioButton verticalButton = (GRadioButton) printAlignmentDialog.getDialog().findViewById(R.id.vertical);
         Bitmap[] combinedSequence;
 
         //Warn the user and stop if trying to print empty sequence.
@@ -1057,12 +1039,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
     }
 
     public void verticalRButtonClicked(View v){
-        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.horizontal);
+        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.getDialog().findViewById(R.id.horizontal);
         radioButton.setChecked(false);
     }
 
     public void horizontalRButtonClicked(View v){
-        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.findViewById(R.id.vertical);
+        GRadioButton radioButton = (GRadioButton) printAlignmentDialog.getDialog().findViewById(R.id.vertical);
         radioButton.setChecked(false);
     }
 

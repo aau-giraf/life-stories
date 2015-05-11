@@ -35,6 +35,7 @@ public class TortoiseActivity extends GirafActivity
     // method for exiting the current activity
     public void doExit(View v)
     {
+
         finish();
     }
 
@@ -68,7 +69,7 @@ public class TortoiseActivity extends GirafActivity
 
     public void addContentToMediaFrame(MediaFrame mf, int[] checkoutIds) {
 
-        List<Integer> pictoIDList = new ArrayList<Integer>();
+        List<Long> pictoIDList = new ArrayList<Long>();
 
         // get the pictograms that are currently being shown
         List<Pictogram> pictoList = mf.getContent();
@@ -87,7 +88,7 @@ public class TortoiseActivity extends GirafActivity
             boolean shouldAddToList = true;
 
             // if pictogram already exists, don't add it. We don't want duplicates
-            for (Integer element : pictoIDList)
+            for (Long element : pictoIDList)
             {
                 if(element == picto.getPictogramID())
                 {

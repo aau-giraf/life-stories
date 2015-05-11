@@ -1,54 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="700dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/dialog_box_bg"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:padding="25dp" >
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="500dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="22dp"
-        android:gravity="left"
-        android:text="@string/dialog_save_title"
-        android:textSize="28sp"
-        android:textColor="@color/text_color" />
+    android:layout_centerInParent="true">
 
     <LinearLayout
-        android:layout_width="400dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal" >
+        android:layout_centerHorizontal="true" >
 
-        <Button
+        <dk.aau.cs.giraf.gui.GirafButton
             android:id="@+id/btn_yes"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="25dp"
-            android:layout_weight="0.5"
-            android:background="@drawable/gbutton"
-            android:gravity="center"
-            android:text="@string/save"
-            android:textSize="26sp"
-            android:textColor="@color/text_color" />
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/giraf_button_height"
+            android:onClick="saveYes"
+            app:text="@string/save"/>
 
-        <Button
+        <dk.aau.cs.giraf.gui.GirafButton
             android:id="@+id/btn_no"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="25dp"
-            android:layout_weight="0.5"
-            android:background="@drawable/gbutton"
-            android:gravity="center"
-            android:text="@string/abort"
-            android:textSize="26sp"
-            android:textColor="@color/text_color" />
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/giraf_button_height"
+            android:onClick="saveNo"
+            app:text="@string/abort"/>
     </LinearLayout>
 
 </RelativeLayout>

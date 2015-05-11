@@ -9,15 +9,15 @@ import dk.aau.cs.giraf.pictogram.Pictogram;
 
 public class SerializableMediaFrame extends AbstractMediaFrame implements Serializable {
 	
-	private List<Integer> content;
+	private List<Long> content;
 
 	public SerializableMediaFrame() {
 		super();
-		setContent(new ArrayList<Integer>());
+		setContent(new ArrayList<Long>());
 	}
 	
 	public SerializableMediaFrame(MediaFrame m) {
-		setContent(new ArrayList<Integer>());
+		setContent(new ArrayList<Long>());
 		for (Pictogram p : m.getContent()) {
 			this.addContent(p.getPictogramID());
 		}
@@ -25,15 +25,15 @@ public class SerializableMediaFrame extends AbstractMediaFrame implements Serial
 		this.frames = m.frames;
 	}
 
-	public List<Integer> getContent() {
+	public List<Long> getContent() {
 		return content;
 	}
 
-	public void setContent(List<Integer> content) {
+	public void setContent(List<Long> content) {
 		this.content = content;
 	}
 	
-	public void addContent(Integer content) {
+	public void addContent(Long content) {
 		this.content.add(content);
 	}
 	

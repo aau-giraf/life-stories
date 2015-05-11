@@ -1,45 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialog_schedule_exit"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true">
 
-    <dk.aau.cs.giraf.gui.GTextView
-        android:id="@+id/dialog_schedule_text_1"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_exit_message"
-        android:textSize="30dp" />
+        android:layout_centerHorizontal="true">
 
-    <dk.aau.cs.giraf.gui.GTextView
-        android:id="@+id/dialog_schedule_text_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/dialog_schedule_text_1"
-        android:text="@string/dialog_exit_title"
-        android:textSize="20dp" />
+        <dk.aau.cs.giraf.gui.GirafButton
+            android:id="@+id/dialog_schedule_exit_ok"
+            android:layout_height="@dimen/giraf_button_height"
+            android:layout_width="wrap_content"
+            android:onClick="exitEdit"
+            app:text="Forlad"/>
 
-<RelativeLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/dialog_schedule_text_2"
-    android:layout_centerHorizontal="true">
+        <dk.aau.cs.giraf.gui.GirafButton
+            android:id="@+id/dialog_schedule_exit_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/giraf_button_height"
+            android:onClick="exitDialogCancel"
+            app:text="Fortryd"/>
 
-    <dk.aau.cs.giraf.gui.GVerifyButton
-        android:id="@+id/dialog_schedule_exit_ok"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:onClick="doExit" />
-
-    <dk.aau.cs.giraf.gui.GCancelButton
-        android:id="@+id/dialog_schedule_exit_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/dialog_schedule_exit_ok"
-        android:onClick="exitDialogCancel" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

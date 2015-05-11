@@ -11,7 +11,6 @@
         android:layout_height="100dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:drawableBottom="@drawable/no_image"
         android:scaleType="centerCrop"
         android:layout_alignParentLeft="true"
         app:icon="@drawable/add_sequence_picture"
@@ -36,46 +35,10 @@
 	    android:hint="@string/story_name"
         android:textIsSelectable="false" />
 
-    <dk.aau.cs.giraf.gui.GirafButton
-        android:id="@+id/exitEditMode"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentRight="true"
-        android:scaleType="fitCenter"
-        app:icon="@drawable/quit"
-        />
-
-    <dk.aau.cs.giraf.gui.GirafButton
-        android:id="@+id/save"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toLeftOf="@id/exitEditMode"
-        android:scaleType="fitCenter"
-        app:icon="@drawable/save"
-        />
-
-
-    <dk.aau.cs.giraf.gui.GirafButton
-        android:id="@+id/printSequence"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/save"
-        android:scaleType="fitCenter"
-        app:icon="@drawable/email"
-        android:visibility="visible"
-        />
-
     <ImageView
         android:id="@+id/bin"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_toLeftOf="@id/printSequence"
         android:layout_marginRight="20dp"
         android:layout_centerVertical="true"
         android:src="@drawable/bin_closed"

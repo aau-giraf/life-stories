@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Pictogram;
 
 
 /**
@@ -267,7 +268,8 @@ public class PictogramView extends LinearLayout {
 
     public void setImageFromId(long id) {
         helper = new Helper(getContext());
-        Bitmap bitmap = helper.pictogramHelper.getById(id).getImage();
+        Pictogram pictogram1 = helper.pictogramHelper.getById(id);
+        Bitmap bitmap = pictogram1.getImage();
         Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());  // Create another image the same size
         imageWithBG.eraseColor(Color.WHITE);  // set its background to white, or whatever color you want
         Drawable[] dList = new Drawable[2];
