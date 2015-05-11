@@ -5,17 +5,18 @@ import android.view.View;
 import android.view.View.OnDragListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import dk.aau.cs.giraf.dblib.models.Pictogram;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.activities.ViewModeActivity;
+import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
 public class ChoiceFrameView extends FrameLayout implements OnDragListener{
 	
 	float scale;
-	private PictogramView mediaFrame;
+	private MediaFrame mediaFrame;
 	private Pictogram pictogram;
 	ViewModeActivity viewModeActivity;
 	
-	public ChoiceFrameView(ViewModeActivity viewModeActivity, PictogramView mediaFrame, Pictogram pictogram, LinearLayout.LayoutParams params) {
+	public ChoiceFrameView(ViewModeActivity viewModeActivity, MediaFrame mediaFrame, Pictogram pictogram, LinearLayout.LayoutParams params) {
 		super(viewModeActivity.getApplicationContext());
 		this.viewModeActivity = viewModeActivity;
 		this.setMediaFrame(mediaFrame);
@@ -23,15 +24,15 @@ public class ChoiceFrameView extends FrameLayout implements OnDragListener{
 		this.scale = viewModeActivity.getApplicationContext().getResources().getDisplayMetrics().density;
 		this.setBackgroundResource(R.layout.border);
 		this.setPadding((int)(15*scale), (int) (15*scale), (int) (15*scale), (int) (15*scale));
-		this.addView(mediaFrame);
+		this.addView(pictogram);
 		this.setLayoutParams(params);
 	}
 
-	public PictogramView getMediaFrame() {
+	public MediaFrame getMediaFrame() {
 		return mediaFrame;
 	}
 
-	public void setMediaFrame(PictogramView mediaFrame) {
+	public void setMediaFrame(MediaFrame mediaFrame) {
 		this.mediaFrame = mediaFrame;
 	}
 
@@ -56,7 +57,7 @@ public class ChoiceFrameView extends FrameLayout implements OnDragListener{
 	public boolean onDrag(View v, DragEvent event) {
 		switch (event.getAction()) {
 		case DragEvent.ACTION_DROP:
-			PictogramView p = (PictogramView)v;
+			Pictogram p = (Pictogram)event.getLocalState();
 			viewModeActivity.movePictogram(p, p.getParent(), v);
 			break;
 		default:

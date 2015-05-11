@@ -47,13 +47,12 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GRadioButton;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
-import dk.aau.cs.giraf.dblib.models.Pictogram;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.EditChoiceFrameView;
 import dk.aau.cs.giraf.tortoise.controller.DBController;
 import dk.aau.cs.giraf.tortoise.helpers.GuiHelper;
@@ -119,7 +118,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	}
 
     @Override
-    public boolean isFrameMarked(PictogramView f) {
+    public boolean isFrameMarked(MediaFrame f) {
         return false;
     }
 
@@ -157,9 +156,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
      */
     private void initSequence(Intent intent) {
         int template = intent.getIntExtra("template", -1);
-        Helper helper = new Helper(getApplicationContext());
-        LifeStory.getInstance().setChild(helper.profilesHelper.getById(intent.getLongExtra("currentChildID",-1)));
-        LifeStory.getInstance().setGuardian(helper.profilesHelper.getById(intent.getLongExtra("currentGuardianID",-1)));
+
 
         if(template == -1)
         {
@@ -191,11 +188,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         //Add pictograms to NEW MediaFrame
 		if (resultCode == RESULT_OK && requestCode == 1) {
-			long[] longIds = data.getExtras().getLongArray("checkoutIds");
-            int[] checkoutIds = new int[longIds.length];
-            for (int i = 0; longIds.length > i; i++){
-                checkoutIds[i] = (int) longIds[i];
-            }
+			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
 
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -204,11 +197,11 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 			else
 			{
-                PictogramView newMediaFrame = new MediaFrame();
+                MediaFrame newMediaFrame = new MediaFrame();
 
                 addContentToMediaFrame(newMediaFrame, checkoutIds);
 
-                List<PictogramView> mediaFrames = new ArrayList<PictogramView>();
+                List<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
                 mediaFrames = sequence.getMediaFrames();
                 mediaFrames.add(newMediaFrame);
 
@@ -228,10 +221,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 			else
 			{
-                Helper helper = new Helper(getApplicationContext());
                 try{
                     LifeStory.getInstance().getCurrentStory().setTitlePictoId(checkoutIds[0]);
-                    Pictogram picto = helper.pictogramHelper.getById(checkoutIds[0]);
+                    Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
                     Bitmap bitmap = picto.getImageData(); //LayoutTools.decodeSampledBitmapFromFile(picto.getImagePath(), 150, 150);
                     bitmap = LayoutTools.getSquareBitmap(bitmap);
                     bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
@@ -261,9 +253,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 }
                 else
                 {
-                    Helper helper = new Helper(getApplicationContext());
                     try{
-                        dk.aau.cs.giraf.dblib.models.Pictogram picto = helper.pictogramHelper.getById((long)checkoutIds[0]);
+                        Pictogram picto = PictoFactory.getPictogram(getApplicationContext(), checkoutIds[0]);
                         sequence.getMediaFrames().get(lastPosition).setChoicePictogram(picto);
                         renderChoiceIcon(lastPosition);
                     }
@@ -287,7 +278,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                 }
                 else
                 {
-                    PictogramView mediaFrame = sequence.getMediaFrame(lastPosition);
+                    MediaFrame mediaFrame = sequence.getMediaFrame(lastPosition);
 
                     addContentToMediaFrame(mediaFrame, checkoutIds);
 
@@ -480,8 +471,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 				public void onClick(View v) {
 					dialog.dismiss();
 					if(selectedChoice != 0) {
-						PictogramView mediaFrame = currentEditModeFrame.getMediaFrame();
-						for (PictogramView m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
+						MediaFrame mediaFrame = currentEditModeFrame.getMediaFrame();
+						for (MediaFrame m : LifeStory.getInstance().getCurrentStory().getMediaFrames()) {
 							if (m.getChoiceNumber() == selectedChoice) {
 								currentEditModeFrame.setMediaFrame(m);
 								m.addFrame(currentEditModeFrame.getFrame());

@@ -1,16 +1,25 @@
 package dk.aau.cs.giraf.tortoise;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import dk.aau.cs.giraf.pictogram.PictoFactory;
+import dk.aau.cs.giraf.pictogram.Pictogram;
+import dk.aau.cs.giraf.tortoise.activities.TortoiseActivity;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import android.graphics.Bitmap;
+import android.widget.ImageView;
+
+import java.util.List;
 
 public class SequenceAdapter extends BaseAdapter {
 
@@ -25,7 +34,7 @@ public class SequenceAdapter extends BaseAdapter {
     private SelectedFrameAware selectedFrameAware;
 
     public interface SelectedFrameAware {
-        boolean isFrameMarked(PictogramView frame);
+        boolean isFrameMarked(MediaFrame frame);
     }
 
 	public SequenceAdapter(Context context, Sequence sequence, SelectedFrameAware selectedFrameAware) {
@@ -66,7 +75,7 @@ public class SequenceAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		PictogramView view;
-		PictogramView mediaFrame = getItem(position);
+		MediaFrame mediaFrame = getItem(position);
 		
 		if (convertView == null) {
 			view = new PictogramView(context, 15f, false);

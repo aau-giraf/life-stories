@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
-import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.pictogram.PictoFactory;
 import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.controller.Sequence;
@@ -51,8 +49,10 @@ public class SequenceListAdapter extends BaseAdapter {
         
         v.setTitle(s.getTitle());
         v.setEditModeEnabledForMain(isInEditMode);
-
-        v.setImageFromId(s.getTitlePictoId());
+        
+        Pictogram p = PictoFactory.getPictogram(context, (int) s.getTitlePictoId());
+        Bitmap bm = p.getImageData();
+        v.setImage(LayoutTools.getSquareBitmap(bm));
 
         if (selectedSequenceAware != null) {
             final boolean isSequenceMarked = selectedSequenceAware.isSequenceMarked(s);

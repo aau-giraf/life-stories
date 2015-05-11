@@ -19,8 +19,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ScrollView;
 
-import dk.aau.cs.giraf.tortoise.activities.ScheduleEditActivity;
-
 /**
  * Layouts its children with fixed sizes and fixed spacing between each child in
  * the horizontal dimension.

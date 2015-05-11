@@ -6,8 +6,6 @@ import java.util.List;
 
 import android.content.Context;
 
-import dk.aau.cs.giraf.tortoise.PictogramView;
-
 public class SerializableSequence extends AbstractSequence implements Serializable{
 	
 	private List<SerializableMediaFrame> mediaFrames;
@@ -19,7 +17,7 @@ public class SerializableSequence extends AbstractSequence implements Serializab
 	
 	public SerializableSequence(Sequence s) {
 		setMediaFrames(new ArrayList<SerializableMediaFrame>());
-		for(PictogramView m : s.getMediaFrames()) {
+		for(MediaFrame m : s.getMediaFrames()) {
 			this.getMediaFrames().add(m.getSerializableMediaFrame());
 		}
 		this.numChoices = s.numChoices;

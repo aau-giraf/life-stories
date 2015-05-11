@@ -55,7 +55,7 @@ public class PictogramView extends LinearLayout {
 	public PictogramView(Context context, float radius, boolean inMain) {
 		super(context);
 		
-		initialize(context, radius, inMain);
+		initialize(context, radius, inMain );
 	}
 	
 	
@@ -267,7 +267,7 @@ public class PictogramView extends LinearLayout {
 
     public void setImageFromId(long id) {
         helper = new Helper(getContext());
-        Bitmap bitmap = helper.pictogramHelper.getPictogramById(id).getImage();
+        Bitmap bitmap = helper.pictogramHelper.getById(id).getImage();
         Bitmap imageWithBG = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());  // Create another image the same size
         imageWithBG.eraseColor(Color.WHITE);  // set its background to white, or whatever color you want
         Drawable[] dList = new Drawable[2];

@@ -131,7 +131,7 @@ public class DBController {
     public void deleteSequence(Sequence seq, Context con){
         SequenceController sc = new SequenceController(con);
         if (sc.getById(seq.getId()).getSequenceType() == SequenceType.SCHEDULE){
-            for(PictogramView mf : seq.getMediaFrames()){
+            for(MediaFrame mf : seq.getMediaFrames()){
                 sc.remove(mf.getNestedSequenceID());
             }
         }
@@ -199,9 +199,9 @@ public class DBController {
      * @param con
      * @return a list of MediaFrames
      */
-    private ArrayList<PictogramView> morphDBFramesToMediaFrames(
+    private ArrayList<MediaFrame> morphDBFramesToMediaFrames(
             List<dk.aau.cs.giraf.dblib.models.Frame> dbFrames, Context con){
-        ArrayList<PictogramView> mediaFrames = new ArrayList<PictogramView>();
+        ArrayList<MediaFrame> mediaFrames = new ArrayList<MediaFrame>();
         for(dk.aau.cs.giraf.dblib.models.Frame dbFrame : dbFrames){
             mediaFrames.add(morphDBFrameToMediaFrame(dbFrame, con));
         }
@@ -214,8 +214,8 @@ public class DBController {
      * @param con
      * @return MediaFrame
      */
-    private PictogramView morphDBFrameToMediaFrame(dk.aau.cs.giraf.dblib.models.Frame dbFrame, Context con) {
-        PictogramView mediaFrame = new MediaFrame();
+    private MediaFrame morphDBFrameToMediaFrame(dk.aau.cs.giraf.dblib.models.Frame dbFrame, Context con) {
+        MediaFrame mediaFrame = new MediaFrame();
         PictogramController pc = new PictogramController(con);
         if (dbFrame.getPictogramId() > 0) {
             mediaFrame.setPictogramId(dbFrame.getPictogramId());
@@ -258,10 +258,10 @@ public class DBController {
      * @param mediaFrames
      * @return
      */
-    private List<dk.aau.cs.giraf.dblib.models.Frame> morphMediaFramesToDBFrames(List<PictogramView> mediaFrames) {
+    private List<dk.aau.cs.giraf.dblib.models.Frame> morphMediaFramesToDBFrames(List<MediaFrame> mediaFrames) {
         List<dk.aau.cs.giraf.dblib.models.Frame> DBframes = new ArrayList<dk.aau.cs.giraf.dblib.models.Frame>();
         int x = 0;
-        for (PictogramView mf :mediaFrames ){
+        for (MediaFrame mf :mediaFrames ){
             DBframes.add(morphMediaFramesToDBFrames(mf, x, 0));
             x++;
         }
@@ -269,7 +269,7 @@ public class DBController {
     }
 
 
-    private dk.aau.cs.giraf.dblib.models.Frame morphMediaFramesToDBFrames(PictogramView mf, int x, int y){
+    private dk.aau.cs.giraf.dblib.models.Frame morphMediaFramesToDBFrames(MediaFrame mf, int x, int y){
         dk.aau.cs.giraf.dblib.models.Frame f = new dk.aau.cs.giraf.dblib.models.Frame();
         if (mf.getChoicePictogram() != null){
             f.setPictogramId(mf.getChoicePictogram().getPictogramID());

@@ -5,40 +5,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import dk.aau.cs.giraf.dblib.models.Pictogram;
-import dk.aau.cs.giraf.tortoise.PictogramView;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 
 public class SerializableMediaFrame extends AbstractMediaFrame implements Serializable {
 	
-	private List<Long> content;
+	private List<Integer> content;
 
 	public SerializableMediaFrame() {
 		super();
-		setContent(new ArrayList<Long>());
+		setContent(new ArrayList<Integer>());
 	}
 	
 	public SerializableMediaFrame(MediaFrame m) {
-		setContent(new ArrayList<Long>());
+		setContent(new ArrayList<Integer>());
 		for (Pictogram p : m.getContent()) {
-			this.addContent(p.getId());
+			this.addContent(p.getPictogramID());
 		}
 		this.choiceNumber = m.choiceNumber;
 		this.frames = m.frames;
 	}
 
-	public List<Long> getContent() {
+	public List<Integer> getContent() {
 		return content;
 	}
 
-	public void setContent(List<Long> content) {
+	public void setContent(List<Integer> content) {
 		this.content = content;
 	}
 	
-	public void addContent(Long content) {
+	public void addContent(Integer content) {
 		this.content.add(content);
 	}
 	
-	public PictogramView getMediaFrame(Context context) {
+	public MediaFrame getMediaFrame(Context context) {
 		return new MediaFrame(context, this);
 	}
 }

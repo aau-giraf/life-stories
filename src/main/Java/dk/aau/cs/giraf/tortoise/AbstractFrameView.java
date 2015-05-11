@@ -4,10 +4,9 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import dk.aau.cs.giraf.dblib.models.Pictogram;
+import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 
     public abstract class AbstractFrameView extends FrameLayout {
@@ -16,14 +15,14 @@ import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 	public int height;
 	protected float scale;
 	protected Frame frame;
-	protected PictogramView mediaFrame;
+	protected MediaFrame mediaFrame;
 	@SuppressWarnings("unused")
 	protected RelativeLayout parentLayout;
 	protected TextView textView;
-	protected PictogramView pictogram;
+	protected Pictogram pictogram;
 	protected RelativeLayout.LayoutParams outerLayoutParams;
 	
-	public AbstractFrameView(Context context, RelativeLayout parentLayout, PictogramView mediaFrame, Frame frame, int width , int height) {
+	public AbstractFrameView(Context context, RelativeLayout parentLayout, MediaFrame mediaFrame, Frame frame, int width , int height) {
 		super(context);
 		this.parentLayout = parentLayout;
 		this.mediaFrame = mediaFrame;
@@ -60,11 +59,11 @@ import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 			this.removeView(textView);
 	}
 
-	public PictogramView getMediaFrame() {
+	public MediaFrame getMediaFrame() {
 		return mediaFrame;
 	}
 
-	public void setMediaFrame(PictogramView mediaFrame) {
+	public void setMediaFrame(MediaFrame mediaFrame) {
 		this.mediaFrame = mediaFrame;
 	}
 
@@ -76,18 +75,19 @@ import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 		this.frame = frame;
 	}
 
-	public PictogramView getPictogram() {
+	public Pictogram getPictogram() {
 		return pictogram;
 	}
 
     /**
      * Adds the Pictogram parameter to this FrameView.
-     * @param pict
+     * @param pictogram
      */
-	public void setPictogram(Pictogram pict) {
-        this.pictogram = new PictogramView(getContext(),16f,true);
-
-        pictogram.setImage(pict.getImage());
+	public void setPictogram(Pictogram pictogram) {
+		this.pictogram = pictogram;
+		FrameLayout.LayoutParams params =
+				new FrameLayout.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+		pictogram.setLayoutParams(params);
 		this.addView(pictogram);
 	}
 

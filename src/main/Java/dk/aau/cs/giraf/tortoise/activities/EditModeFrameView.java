@@ -14,7 +14,6 @@ import dk.aau.cs.giraf.pictogram.Pictogram;
 import dk.aau.cs.giraf.tortoise.AbstractFrameView;
 import dk.aau.cs.giraf.tortoise.Frame;
 import dk.aau.cs.giraf.tortoise.LayoutTools;
-import dk.aau.cs.giraf.tortoise.PictogramView;
 import dk.aau.cs.giraf.tortoise.controller.MediaFrame;
 import dk.aau.cs.giraf.tortoise.interfaces.OnCurrentFrameEventListener;
 import dk.aau.cs.giraf.tortoise.interfaces.OnMainLayoutEventListener;
@@ -32,7 +31,7 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 	int touchPointY;
 	
 	public EditModeFrameView(EditModeActivity mainActivity, Context context, RelativeLayout parentLayout,
-			PictogramView mediaFrame, Frame frame, int width, int height) {
+			MediaFrame mediaFrame, Frame frame, int width, int height) {
 		super(context, parentLayout, mediaFrame, frame, width, height);
 		this.mainActivity = mainActivity;
 		init();
@@ -68,7 +67,7 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 	}
 	
 	@Override
-	public void setMediaFrame(PictogramView mediaFrame) {
+	public void setMediaFrame(MediaFrame mediaFrame) {
 		this.mediaFrame = mediaFrame;
 		if(this.mediaFrame == null) {
 			mainActivity.removeOnCurrentFrameEventListener(this);
@@ -124,7 +123,7 @@ public class EditModeFrameView extends AbstractFrameView implements OnDragListen
 	}
 
 	@Override
-	public void OnMediaFrameChanged(PictogramView mediaFrame) {
+	public void OnMediaFrameChanged(MediaFrame mediaFrame) {
 		if(mediaFrame == this.getMediaFrame()) {
 			this.highLight();
 			this.setBackgroundResource(R.layout.border_selected);
