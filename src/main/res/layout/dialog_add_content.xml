@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:padding="25dp">
-    <!--
+
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/choiceContainer" />
-    -->
+
     <TextView
         android:id="@+id/choicesText"
         android:layout_width="wrap_content"

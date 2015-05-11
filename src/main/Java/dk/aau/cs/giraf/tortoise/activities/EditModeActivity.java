@@ -47,7 +47,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GRadioButton;
@@ -188,7 +188,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 
         //Add pictograms to NEW MediaFrame
 		if (resultCode == RESULT_OK && requestCode == 1) {
-			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+			long[] longCheckoutIds = data.getExtras().getLongArray("checkoutIds");
+
+            int[] checkoutIds = new int[longCheckoutIds.length];
+            for(int i = 0; i < longCheckoutIds.length; i++){
+                checkoutIds[i] = (int) longCheckoutIds[i];
+            }
 
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -213,7 +218,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         //Change story image
 		else if (resultCode == RESULT_OK && requestCode == 2) {
           try{
-			int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+              long[] longCheckoutIds = data.getExtras().getLongArray("checkoutIds");
+
+              int[] checkoutIds = new int[longCheckoutIds.length];
+              for(int i = 0; i < longCheckoutIds.length; i++){
+                  checkoutIds[i] = (int) longCheckoutIds[i];
+              }
 
 			if (checkoutIds.length == 0) {
 				Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
@@ -228,9 +238,9 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
                     bitmap = LayoutTools.getSquareBitmap(bitmap);
                     bitmap = LayoutTools.getRoundedCornerBitmap(bitmap, getApplicationContext(), 20);
                     LifeStory.getInstance().getCurrentStory().setTitleImage(bitmap);
-                    GButton storyImage = (GButton) findViewById(R.id.storyImage);
+                    GirafButton storyImage = (GirafButton) findViewById(R.id.storyImage);
                     Drawable d = new BitmapDrawable(getResources(), bitmap);
-                    storyImage.setCompoundDrawablesWithIntrinsicBounds(null,null,null,d);
+                    storyImage.setIcon(d);
 			    }
                 // We expect a null pointer exception if the pictogram is without image
                 catch (NullPointerException e){
@@ -246,7 +256,12 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         //Change choice icon
         else if (resultCode == RESULT_OK && requestCode == 3){
             try{
-                int[] checkoutIds = data.getExtras().getIntArray("checkoutIds");
+                long[] longCheckoutIds = data.getExtras().getLongArray("checkoutIds");
+
+                int[] checkoutIds = new int[longCheckoutIds.length];
+                for(int i = 0; i < longCheckoutIds.length; i++){
+                    checkoutIds[i] = (int) longCheckoutIds[i];
+                }
                 if (checkoutIds.length == 0) {
                     Toast t = Toast.makeText(EditModeActivity.this, "Ingen pictogrammer valgt.", Toast.LENGTH_LONG);
                     t.show();
@@ -576,7 +591,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	public void renderEditMenu()
     {
 		renderMenuBar(R.layout.edit_menu);
-		GButton storyImage = (GButton) findViewById(R.id.storyImage);
+		GirafButton storyImage = (GirafButton) findViewById(R.id.storyImage);
 		storyImage.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -597,7 +612,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
             try
             {
                 Drawable d = new BitmapDrawable(getResources(), LifeStory.getInstance().getCurrentStory().getTitleImage());
-                storyImage.setCompoundDrawablesWithIntrinsicBounds(null, null, null, d);
+                storyImage.setIcon( d);
             }
             catch (Exception ex)
             {
@@ -667,7 +682,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 
-		GButton exit = (GButton)findViewById(R.id.exitEditMode);
+		GirafButton exit = (GirafButton)findViewById(R.id.exitEditMode);
 		exit.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -676,7 +691,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 
-        GButton save = (GButton)findViewById(R.id.save);
+        GirafButton save = (GirafButton)findViewById(R.id.save);
 		save.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -691,7 +706,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 			}
 		});
 
-        GButton print = (GButton)findViewById(R.id.printSequence);
+        GirafButton print = (GirafButton)findViewById(R.id.printSequence);
         print.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
