@@ -332,7 +332,7 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                         i = new Intent(getApplicationContext(), EditModeActivity.class);
                         i.putExtra("currentChildID", selectedChild.getId());
                         i.putExtra("currentGuardianID", guardian.getId());
-                        i.putExtra("story", arg2);
+                        i.putExtra("template", arg2);
                         i.putExtra("sequenceId", sequence.getId());
                         startActivity(i);
                     } else {
@@ -344,13 +344,13 @@ public class MainActivity extends TortoiseActivity implements SequenceListAdapte
                         startActivity(i);*/
                     }
                 } else {
-                }
-                if (markedSequences.contains(sequence)) {
-                    unMarkSequence(sequence, arg1);
-                } else {
-                    markSequence(sequence, arg1);
-                }
 
+                    if (markedSequences.contains(sequence)) {
+                        unMarkSequence(sequence, arg1);
+                    } else {
+                        markSequence(sequence, arg1);
+                    }
+                }
             }
         });
     }

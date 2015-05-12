@@ -179,8 +179,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         else
         {
             DBController.getInstance().loadCurrentProfileSequences(childId, dk.aau.cs.giraf.dblib.models.Sequence.SequenceType.STORY,getApplicationContext());
-            //Sequence passedSequence = LifeStory.getInstance().getStories().get(template);
-            //LifeStory.getInstance().setCurrentStory(passedSequence);
+            Sequence passedSequence = LifeStory.getInstance().getStories().get(template);
+            LifeStory.getInstance().setCurrentStory(passedSequence);
         }
 
         // Set current sequence
@@ -716,7 +716,8 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
 	}
 
 
-    public void saveYes(View v){
+    public void saveYes(View v)
+    {
         LifeStory ls = LifeStory.getInstance();
 
         ls.addStory();
@@ -726,6 +727,7 @@ public class EditModeActivity extends TortoiseActivity implements OnCurrentFrame
         saveDialog.dismiss();
         finish();
     }
+
     public void saveNo(View v){
         saveDialog.dismiss();
     }
