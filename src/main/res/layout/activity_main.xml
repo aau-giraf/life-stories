@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-            <dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup
+            <dk.aau.cs.giraf.lifestory.HorizontalSequenceViewGroup
                 android:id="@+id/horizontalSequenceViewGroup1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
                 svg:itemWidth="@dimen/activity_main_picto_size"
                 android:layout_gravity="center_vertical"
                 android:background="@layout/main_picto_container_bg">
-            </dk.aau.cs.giraf.tortoise.HorizontalSequenceViewGroup>
+            </dk.aau.cs.giraf.lifestory.HorizontalSequenceViewGroup>
         </FrameLayout>
 
     </HorizontalScrollView>

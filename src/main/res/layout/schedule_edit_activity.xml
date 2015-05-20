@@ -92,7 +92,7 @@
                 android:fadeScrollbars="false">
 
 
-                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                <dk.aau.cs.giraf.lifestory.SequenceViewGroup
                     android:id="@+id/sequenceViewGroupMon"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                     svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
-                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </dk.aau.cs.giraf.lifestory.SequenceViewGroup>
 
 
             </ScrollView>
@@ -160,7 +160,7 @@
                 android:fadeScrollbars="false">
 
 
-                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                <dk.aau.cs.giraf.lifestory.SequenceViewGroup
                     android:id="@+id/sequenceViewGroup2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -169,7 +169,7 @@
                     svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
-                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </dk.aau.cs.giraf.lifestory.SequenceViewGroup>
 
 
             </ScrollView>
@@ -228,7 +228,7 @@
                 android:fadeScrollbars="false">
 
 
-                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                <dk.aau.cs.giraf.lifestory.SequenceViewGroup
                     android:id="@+id/sequenceViewGroup3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -237,7 +237,7 @@
                     svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
-                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </dk.aau.cs.giraf.lifestory.SequenceViewGroup>
 
 
             </ScrollView>
@@ -298,7 +298,7 @@
                 android:fadeScrollbars="false">
 
 
-                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                <dk.aau.cs.giraf.lifestory.SequenceViewGroup
                     android:id="@+id/sequenceViewGroup4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -307,7 +307,7 @@
                     svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
-                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </dk.aau.cs.giraf.lifestory.SequenceViewGroup>
             </ScrollView>
 
             <LinearLayout
@@ -367,7 +367,7 @@
                 android:fadeScrollbars="false">
 
 
-                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                <dk.aau.cs.giraf.lifestory.SequenceViewGroup
                     android:id="@+id/sequenceViewGroup5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -376,7 +376,7 @@
                     svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
-                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </dk.aau.cs.giraf.lifestory.SequenceViewGroup>
 
 
             </ScrollView>
@@ -436,7 +436,7 @@
                 android:fadeScrollbars="false">
 
 
-                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                <dk.aau.cs.giraf.lifestory.SequenceViewGroup
                     android:id="@+id/sequenceViewGroup6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -445,7 +445,7 @@
                     svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
-                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </dk.aau.cs.giraf.lifestory.SequenceViewGroup>
 
 
             </ScrollView>
@@ -505,7 +505,7 @@
                 android:fadeScrollbars="false">
 
 
-                <dk.aau.cs.giraf.tortoise.SequenceViewGroup
+                <dk.aau.cs.giraf.lifestory.SequenceViewGroup
                     android:id="@+id/sequenceViewGroup7"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -514,7 +514,7 @@
                     svg:itemWidth="@dimen/activity_button_height"
                     android:layout_gravity="center_horizontal"
                     android:background="@layout/main_picto_container_bg">
-                </dk.aau.cs.giraf.tortoise.SequenceViewGroup>
+                </dk.aau.cs.giraf.lifestory.SequenceViewGroup>
 
 
             </ScrollView>

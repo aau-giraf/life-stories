@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dk.aau.cs.giraf.tortoise"
+    package="dk.aau.cs.giraf.lifestory"
     android:versionCode="1"
     android:versionName="1.0" 
     xmlns:tools="http://schemas.android.com/tools" >
@@ -19,13 +19,13 @@
         android:theme="@style/GirafTheme"
         tools:replace="label, icon" >
         <activity
-            android:name=".MainActivity"
+            android:name="dk.aau.cs.giraf.lifestory.MainActivity"
             android:label="@string/title_activity_tortoise_startup_screen"
             android:screenOrientation="landscape"
             android:theme="@style/GirafTheme" >
             <!--meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="dk.aau.cs.giraf.TortoiseStartupScreen" /-->
+                android:value="dk.aau.cs.giraf.lifestoryStartupScreen" /-->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,13 +33,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.EditModeActivity"
+            android:name="dk.aau.cs.giraf.lifestory.activities.EditModeActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:theme="@style/GirafTheme">
         </activity>
         <activity
-            android:name=".activities.ViewModeActivity"
+            android:name="dk.aau.cs.giraf.lifestory.activities.ViewModeActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:theme="@style/GirafTheme" >
