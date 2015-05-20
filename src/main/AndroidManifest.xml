@@ -17,7 +17,7 @@
         android:label="@string/title_activity_tortoise_startup_screen"
         android:screenOrientation="landscape"
         android:theme="@style/GirafTheme"
-        tools:replace="icon, label" >
+        tools:replace="label, icon" >
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_tortoise_startup_screen"
